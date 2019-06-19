@@ -6,7 +6,7 @@ Description of T&D co-simulation.
 ![schematic of TDcoSim]()
 
 ## Basics
-The dynamics of the DER are modelled using dynamic phasors. Detailed description of the concepts behind this utility can be found in the IEEE publication **Dynamic Modeling of Solar PV Systems for Distribution System Stability Analysis** and detailed list of equations can be found in the [Model specification document.](docs/PV_DER_model_specification_rev3.docx)
+Detailed information on T&D co-simulation can be found here in []()
 
 ## Links
 * Source code repository: https://github.com/tdcosim/TDcoSim
