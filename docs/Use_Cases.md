@@ -42,5 +42,5 @@ Variable "cosimHome" defines the parent path of the TDcoSim tool. The user needs
         "dyrFilePath":"C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\TNetworks\\118bus\\case118.dyr"        
     }
     
- 
+ Variable "psseConfig" defines the path for the PSS/E transmission system loadflow and dynamic case file that will be used in the TDcoSim tool. "rawFilePath" specifies the path for the loadflow case file for the transmission system. "dyrFilePath" specifies the path for the dynamic case file for the transmission system.
 
