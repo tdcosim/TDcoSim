@@ -26,3 +26,10 @@ previous test case.
 Note: In order to execute the Tutorial, user needs to have PSSE version 30.0.0 or latest and 
 OpenDSS v1.0 or latest.
 ***
+
+# Chapter 2
+
+## Exercise 1: Understanding the Config File
+
+Before starting the operation of TDcoSim tool and running test cases, it is mandatory to understand the configuration file which sets up the simulation conditions. This chapter describes the different components of the 
+
