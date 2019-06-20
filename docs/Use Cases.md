@@ -8,3 +8,4 @@ In this test, the TDcosim tool is tested for three different scenarios:
 3. With distribution system connected to Bus 1 of 118 bus system without any DERs on the distribution system.
 
 ![Pload comparison](Use%20Case%20Results/Study%201/Pload_comparison_study_1.png)
+Figure 1: Active component of load as observed at the T-bus for the cases considered. (A): 10% DER penetration with DER TRIP Settings, (B): 10% DER penetration with DER RT Settings and (C) 0% DER penetration.
