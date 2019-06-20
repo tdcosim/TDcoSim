@@ -31,5 +31,7 @@ OpenDSS v1.0 or latest.
 
 ## Exercise 1: Understanding the Config File
 
-Before starting the operation of TDcoSim tool and running test cases, it is mandatory to understand the configuration file which sets up the simulation conditions. This chapter describes the different components of the 
+Before starting the operation of TDcoSim tool and running test cases, it is mandatory to understand the configuration file which sets up the simulation conditions. This chapter describes the different components of the configuration file and guides the user methods to set up the simulation.
+
+1. "cosimHome":"C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\CoSimulator"
 
