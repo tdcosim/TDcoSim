@@ -1,12 +1,9 @@
 **Status:** Expect regular updates and bug fixes.
-# Utilitiy to perform Co-Simulation of Transmission and Distribution systems
+# Utilitiy to perform Co-Simulation of Transmission, and Distribution systems with DER's
 
 Description of T&D co-simulation.
 
 ![schematic of TDcoSim]()
-
-## Basics
-Detailed information on T&D co-simulation can be found here in []()
 
 ## Links
 * Source code repository: https://github.com/tdcosim/TDcoSim
@@ -15,38 +12,60 @@ Detailed information on T&D co-simulation can be found here in []()
 ## Installation
 You can install the module directly from github with following commands:
 ```
-git clone
+git clone https://github.com/tdcosim/TDcoSim.git
 cd
 pip install -e .
 ```
+### Dependencies:
+* External software: [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html), [OpenDSS](https://sourceforge.net/projects/electricdss/)
+* Python packages: [pvder](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility), SciPy, Numpy, Matlplotlib
+
 ## Using the module
 The module can be imported as a normal python module:
 ```
 import tdcosim
 ```
-The following features are available currently:
-1. Co-simulation with trasmission system defined in PSSE and distribution system defined in OpenDSS.
-2. 
-### Example: T&D co-simulation with 118 bus IEEE system
-The following steps are required:
-1. First import the following classes:
+The basic simulation steps are as follows:
+1. Setup desired T+D or T+D+DER system by making necessary entries in the config file.
+
+2. Read the config file and initialize the T&D system.
 ```
-from from procedure.procedure import Procedure
+tdcosim.GlobalData.set_config('config.json')
+tdcosim.GlobalData.set_TDdata()
 ```
+3. Create a procedure object for the simulation and call simuate().
+```
+procedure = tdcosim.Procedure()
+procedure.simulate()
+```
+4. Generate report after simuate() exits.
+```
+tdcosim.generateReport(tdcosim.GlobalData,fname='report.xlsx')
+```
+
+### Use cases:
+Following example use cases are provided:
+1. [118 bus T + 123 bus D + DER](docs/Use%20Cases.md)
 
 ## Module details
-A schematic showing the software architecture of the package is shown in the figure below:
-![schematic of software architecture](docs/pvder_integration_info_flow.pdf)
-
-Dependencies: SciPy, Numpy, Matlplotlib
+Further information on the module can be found here:
+1. [Co-simulation data flow](docs/pvder_integration_info_flow.pdf)
+2. [Software components](docs/software_details.md)
 
 ## Issues
 Please feel free to raise an issue when bugs are encountered or if you are need further documentation.
 
 ## Who is responsible?
+Project PI:
 - Ning Kang kang@anl.gov
+
+Core developers:
 - Karthikeyan Balasubramaniam kbalasubramaniam@anl.gov
 - Sang-il Yim yim@anl.gov
+
+Support:
+- Siby Jose Plathottam splathottam@anl.gov
+- Rojan Bhattarai rbhattarai@anl.gov
 
 ## Acknowledgement
 The authors would like to acknowledge [Shrirang Abhyankar](https://github.com/abhyshr) for his contribution.
