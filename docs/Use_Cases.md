@@ -43,4 +43,22 @@ Variable "cosimHome" defines the parent path of the TDcoSim tool. The user needs
     }
     
  Variable "psseConfig" defines the path for the PSS/E transmission system loadflow and dynamic case file that will be used in the TDcoSim tool. "rawFilePath" specifies the path for the loadflow case file for the transmission system. "dyrFilePath" specifies the path for the dynamic case file for the transmission system.
+ 
+ 3. "openDSSConfig":{        
+        "defaultFeederConfig":{
+            "filePath":["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+            "solarFlag":0,
+            "solarPenetration":0.0
+            }
+            }
+            
+ Variable "openDSSConfig" defines the path for the distribution system network used in the TDcoSim tool and configuration for the DER in the distribution system. There are two configuration used for the distribution system and DER, namely : "defaultFeederConfig" and "manualFeederConfig". For each configuration there are other variables that specify the path of the distribution network, penetration level of DER and status of the DER. 
+ 
+ Variable "filePath" specifies the path for the OpenDSS File used in the tool.
+ 
+ Variable "solarFlag" specifies whether the DER are present in the distribution system or not.
+ 
+ Variable "solarPenetration" specifies the penetration level of DER within the distribution network.
+            
+        
 
