@@ -35,5 +35,12 @@ Before starting the operation of TDcoSim tool and running test cases, it is mand
 
 1. "cosimHome":"C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\CoSimulator"
 
-Variable "cosimHome" defines the parent path of the TDcoSim tool.
+Variable "cosimHome" defines the parent path of the TDcoSim tool. The user needs to specify the parent path of the tool once the tool is installed in their workstation.
+
+2. "psseConfig":{
+        "rawFilePath":"C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\TNetworks\\118bus\\case118.raw",
+        "dyrFilePath":"C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\TNetworks\\118bus\\case118.dyr"        
+    }
+    
+ 
 
