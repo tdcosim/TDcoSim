@@ -11,3 +11,18 @@ In this test, the TDcosim tool is tested for three different scenarios:
 Figure 1: Active component of load as observed at the T-bus for the cases considered. (A): 10% DER penetration with DER TRIP Settings, (B): 10% DER penetration with DER RT Settings and (C) 0% DER penetration.
 
 Figure 1 above compares the active power component of the load observed in the T-bus for the three cases considered. It can be observed that case C, without DER on the DS starts off with higher initial net load. Case A and Case B has a lower initial net load due to the DER connected in the distribution system masking the portion of total load in the system. A fault is applied in bus of the T-system which causes a lower voltage sag in the D-system connected in bus 1. For the DER trip case, Case A, it can be observed that the net load observed in the bus increases to a value equal to the case without any DERs in the system, which is an expected response of the system. A similar response can be observed for the reactive power component of the net load in the system as shown in Figure 2.
+
+
+# Chapter 1
+## Introduction to the Tutorial
+
+This tutorial is intended to introduce the user to the TDcoSim tool. The user will be guided
+through the creation and development of multiple test cases so as to gain familiarity with the 
+basic features and functionalities of the tool. The tutorial project is developed in a 
+sequential manner in which each of the use case builds upon what has been completed in the 
+previous test case. 
+
+***
+Note: In order to execute the Tutorial, user needs to have PSSE version 30.0.0 or latest and 
+OpenDSS v1.0 or latest.
+***
