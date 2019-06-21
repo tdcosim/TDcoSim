@@ -120,5 +120,13 @@ Variable "dt" specifies the solution time step for the DER object.
 
 5. After specifying the transmission system, distribution system and DER, the next set of variables in the configuration file specifies the simulation configuration. Variable "simulationConfig" specifies the simulation configuration. TDcoSim tool has two sets of simulation configuration 1. Dynamic and 2. Static.
 
+Variable "dynamicConfig" specifies the various events in the dynamic simulation.
+
+Variable "staticConfig" specifies the configuration for the static simulation.
+
+Variable "protocol" specifies the nature of coupling between Transmission system and Distribution System.
+
+6. Variable "outputConfig" specifies the output filename and type of the simulation results file. Please note that the TDcoSim tool do not have result analysis tool embedded in it in its current version. It is advised that the user uses data analysis tool and scripts to analyze the output of the simulation.
+
         
 
