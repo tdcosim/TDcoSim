@@ -113,6 +113,7 @@ Variable "protocol" specifies the nature of coupling between Transmission system
 
 6. Variable "outputConfig" specifies the output filename and type of the simulation results file. Please note that the TDcoSim tool do not have result analysis tool embedded in it in its current version. It is advised that the user uses data analysis tool and scripts to analyze the output of the simulation.
 
+
 # Chapter 3
 
 ## Starting TDcoSim
@@ -137,125 +138,6 @@ python starts the python process and runs the python code "main2.py" which start
 
 
 
-
-# Chapter 4
-
-## Test of TDcoSim
-
-### Example 1: Dynamic Case Study with Single Distribution System with and without DER
-
-In this test, the TDcosim tool is tested for three different scenarios:
-1. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below V_LV1 voltage level. The DER configuration used for this case is shown below:
-
-                    "nodenumber": 1,
-                    "filePath: ["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "solarPenetration":0.1,
-                    "DERParameters":{
-                        "power_rating": 50,
-                        "voltage_rating":174,
-                        "SteadyState": true,
-                        "V_LV1": 0.70,
-                        "V_LV2": 0.88,
-                        "t_LV1_limit": 10.0,  
-                        "t_LV2_limit": 20.0,
-                        "LVRT_INSTANTANEOUS_TRIP": true,
-                        "LVRT_MOMENTARY_CESSATION": false,
-                        "pvderScale": 1.0,
-                        "solarPenetrationUnit":"kw",
-                        "avoidNodes":["sourcebus","rg60"],
-                        "dt":0.008333
-                    
-
-
-2. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system Ride Through the fault causing voltage sag below V_LV1 voltage level. The DER configuration used for this case is shown below:
-
-
-                    "nodenumber": 1,
-                    "filePath: ["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "solarPenetration":0.1,
-                    "DERParameters":{
-                        "power_rating": 50,
-                        "voltage_rating":174,
-                        "SteadyState": true,
-                        "V_LV1": 0.70,
-                        "V_LV2": 0.88,
-                        "t_LV1_limit": 10.0,  
-                        "t_LV2_limit": 20.0,
-                        "LVRT_INSTANTANEOUS_TRIP": false,
-                        "LVRT_MOMENTARY_CESSATION": false,
-                        "pvderScale": 1.0,
-                        "solarPenetrationUnit":"kw",
-                        "avoidNodes":["sourcebus","rg60"],
-                        "dt":0.008333
-                        
-3. With distribution system connected to Bus 1 of 118 bus system without any DERs on the distribution system. The DER configuration used for this case is shown below:
-
-
-        "nodenumber": 1,
-                    "filePath: ["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":0,
-                    "solarPenetration":0.0,
-                    "DERParameters":{
-                        "power_rating": 50,
-                        "voltage_rating":174,
-                        "SteadyState": true,
-                        "V_LV1": 0.70,
-                        "V_LV2": 0.88,
-                        "t_LV1_limit": 10.0,  
-                        "t_LV2_limit": 20.0,
-                        "LVRT_INSTANTANEOUS_TRIP": false,
-                        "LVRT_MOMENTARY_CESSATION": false,
-                        "pvderScale": 1.0,
-                        "solarPenetrationUnit":"kw",
-                        "avoidNodes":["sourcebus","rg60"],
-                        "dt":0.008333
-                        
-
-![Pload comparison](Use%20Case%20Results/Study%201/Pload_comparison_study_1.png)
-Figure 1: Active component of load as observed at the T-bus for the cases considered. (A): 10% DER penetration with DER TRIP Settings, (B): 10% DER penetration with DER RT Settings and (C) 0% DER penetration.
-
-Figure 1 above compares the active power component of the load observed in the T-bus for the three cases considered. It can be observed that case C, without DER on the distribution starts off with higher initial net load. Case A and Case B has a lower initial net load due to the DER connected in the distribution system masking the portion of total load in the system. Here net load is defined as the difference of the total load in the distribution system and the DER connected in the distribution system. 
-
-A fault is applied in bus 5 of the T-system which causes a lower voltage sag in the D-system connected in bus 1. The simulation configuration to apply fault on bus 5 is shown below.
-
-
-        "simulationConfig":{
-        "simType":"dynamic",
-        "dynamicConfig":{
-            "events":{
-                "1":{
-                     "time":0.5,
-                    "type":"faultOn",
-                    "faultBus":5,
-                    "faultImpedance":[0.0,-2.0E11]
-                },
-                "2":{
-                    "type":"faultOff",
-                    "time":0.6,
-                    "faultBus":5
-                },
-                "3":{
-                    "type":"simEnd",
-                    "time":10.0
-                }
-            }
-        },
-        "staticConfig":{
-            "loadShape": [1,1.1,1.2,0.9]
-        },
-        "protocol":"loose_coupling"
-    },
-    "outputConfig":{
-        "outputfilename": "output.csv",
-        "type": "csv"
-    }
-}
-
-
-
-For the DER trip case, Case A, it can be observed that the net load observed in the bus increases to a value equal to the case without any DERs in the system, which is an expected response of the system. A similar response can be observed for the reactive power component of the net load in the system as shown in Figure 2.
 
 
         
