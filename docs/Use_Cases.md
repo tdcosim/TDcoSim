@@ -123,9 +123,13 @@ This chapter walks the user through the step to start the simulation after setti
 
 Figure: Opening Command Window from Cosimulator Folder.
 
-![Open_CMD](images/Starting_TDcoSim_tool.png)
+Once the command window is opened. The user can type in the following command, as shown in Figure below, to start the simulation using TDcoSim tool.
+                        "python main2.py > log_file.txt"
+
+![Starting_TDcoSim_tool](images/Starting_TDcoSim_tool.PNG)
 
 Figure: Starting TDcoSim tool from Command Window.
+
 
 
 
