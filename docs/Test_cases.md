@@ -115,5 +115,6 @@ A fault is applied in bus 5 of the T-system which causes a lower voltage sag in 
 }
 
 
+For the DER trip case, Case A, it can be observed that the net load observed in the bus increases to a value equal to the case without any DERs in the system, case C, which is an expected response of the system as net load in the T-bus reverts back to the total load as DER in the distribution system trips. A similar response can be observed for the reactive power component of the net load in the system as shown in Figure 2, which shows that the net reactive power equals the total reactive power as when DER trips, the system reverts back to the operational condition before DER connection in the system.
 
-For the DER trip case, Case A, it can be observed that the net load observed in the bus increases to a value equal to the case without any DERs in the system, which is an expected response of the system. A similar response can be observed for the reactive power component of the net load in the system as shown in Figure 2.
+
