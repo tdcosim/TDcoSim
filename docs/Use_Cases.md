@@ -118,6 +118,7 @@ Variable "avoidNodes": specifies the nodes in the distribution system that are t
 
 Variable "dt" specifies the solution time step for the DER object.   
 
-5. After specifying the transmission system, distribution system and DER, the next set of variables in the configuration file specifies the simulation configuration. Variable "simulationConfig" specifies the simulation configuration. TDcoSim tool has two sets of simulation configuration. 
+5. After specifying the transmission system, distribution system and DER, the next set of variables in the configuration file specifies the simulation configuration. Variable "simulationConfig" specifies the simulation configuration. TDcoSim tool has two sets of simulation configuration 1. Dynamic and 2. Static.
+
         
 
