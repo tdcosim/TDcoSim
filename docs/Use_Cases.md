@@ -29,7 +29,7 @@ OpenDSS v1.0 or latest.
 
 # Chapter 2
 
-## Exercise 1: Understanding the Config File
+## Understanding the Config File
 
 Before starting the operation of TDcoSim tool and running test cases, it is mandatory to understand the configuration file which sets up the simulation conditions. This chapter describes the different components of the configuration file and guides the user methods to set up the simulation.
 
@@ -87,6 +87,14 @@ Variable "cosimHome" defines the parent path of the TDcoSim tool. The user needs
   Variable "manualFeederConfig" manually specifies the configuration of the test distribution network. Using manual configuration, the transmission bus where the distribution system is to be connected is specified. Manual configuration has variable "nodes" which specifies the configuration each of the distribution system.
   
   Variable "nodenumber" specifies the transmission bus where the distribution system is to be connected.
+  
+  Variable "filePath" specifies the path for the OpenDSS File used in the tool.
+  
+  Variable "solarFlag" specifies whether the DER are present in the distribution system or not.
+ 
+ Variable "solarPenetration" specifies the penetration level of DER within the distribution network.
+ 
+ Variable "DERParameters" specifies the configuration of DERs to be used in the distribution system.
             
         
 
