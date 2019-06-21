@@ -94,7 +94,30 @@ Variable "cosimHome" defines the parent path of the TDcoSim tool. The user needs
  
  Variable "solarPenetration" specifies the penetration level of DER within the distribution network.
  
- Variable "DERParameters" specifies the configuration of DERs to be used in the distribution system.
-            
+ Variable "DERParameters" specifies the configuration of DERs to be used in the distribution system. Variable "DERParameters" have more variable associated with it which specifies the different parameters of the DER.
+ 
+Variable "power_rating" specifies the power rating of DER in kW.
+
+Variable "voltage_rating":174 specifies the voltage rating of an individual DER to be connected in the distribution system. The tool automatically adds a transformer to connect the DER with the distribution system and match the voltage at both ends of the transformer.
+
+Variable "SteadyState" specifies whether the DER is to be initialized in steady state or not before connecting ot to the distribution system.
+                        
+Variable "V_LV1" specifies the under-voltage 1 trip set point. This is the lower limit of the DER trip voltage.
+
+Variable "V_LV2" specifies the under-voltage 2 trip set point. This is the upper limit of the DER trip voltage.
+
+Variable "t_LV1_limit" specifies the under-voltage 1 trip time set point. This is the trip time associated with lower limit of the DER trip voltage. Note that the timer have a scaling factor of 10 associated with them. 10 secs specification in the variable transforms to actual trip time of 1 secs.
+
+Variable "t_LV2_limit" specifies the under-voltage 2 trip time set point. This is the trip time associated with upper limit of the DER trip voltage. Note that the timer have a scaling factor of 10 associated with them. 10 secs specification in the variable transforms to actual trip time of 1 secs.
+
+Variable "pvderScale": specifies the scaling factor associated with the individual DER power output. This helps to increase the rating of DER at a particular location thereby reducing the number of DER components in a distribution feeder which helps to speed up the overall simulation.
+
+Varibale "solarPenetrationUnit" specifies the unit of solar penetration in the distribution system.
+
+Variable "avoidNodes": specifies the nodes in the distribution system that are to be avoided when placing the DER. As of now the tool automatically places the DER at different nodes of the distribution system and avoids the nodes mentioned under the variable "avoidNodes".
+
+Variable "dt" specifies the solution time step for the DER object.   
+
+4. After the 
         
 
