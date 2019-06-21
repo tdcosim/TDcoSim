@@ -115,6 +115,14 @@ Variable "protocol" specifies the nature of coupling between Transmission system
 
 # Chapter 3
 
+## Starting TDcoSim
+
+This chapter walks the user through the step to start the simulation after setting up the configuration file. To start the simulation the user needs to open the folder where the TDcoSim tool is installed. Once the folder where the tool is installed is identified the user needs to open the "CoSimulator" branch and open up a command window from the "CoSimulator" folder. To do that the user needs to go the box on the folder where we specify path and type Shift+C+M+D as shown in Figure below.
+
+
+
+# Chapter 4
+
 ## Test of TDcoSim
 
 ### Example 1: Dynamic Case Study with Single Distribution System with and without DER
