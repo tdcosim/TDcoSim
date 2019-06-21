@@ -117,10 +117,32 @@ Variable "protocol" specifies the nature of coupling between Transmission system
 
 ## Test of TDcoSim
 
-### Dynamic Case Study with Single Distribution System with and without DER
+### Example 1: Dynamic Case Study with Single Distribution System with and without DER
 
 In this test, the TDcosim tool is tested for three different scenarios:
-1. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below UV2 voltage level.
+1. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below V_LV1 voltage level. The DER configuration used in this is shown below:
+
+                    "nodenumber": 1,
+                    "filePath: ["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "solarFlag":1,
+                    "solarPenetration":0.1,
+                    "DERParameters":{
+                        "power_rating": 50,
+                        "voltage_rating":174,
+                        "SteadyState": true,
+                        "V_LV1": 0.70,
+                        "V_LV2": 0.88,
+                        "t_LV1_limit": 10.0,  
+                        "t_LV2_limit": 20.0,
+                        "LVRT_INSTANTANEOUS_TRIP": false,
+                        "LVRT_MOMENTARY_CESSATION": false,
+                        "pvderScale": 1.0,
+                        "solarPenetrationUnit":"kw",
+                        "avoidNodes":["sourcebus","rg60"],
+                        "dt":0.008333
+                    
+
+
 2. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system Ride Through the fault causing voltage sag below UV2 voltage level.
 3. With distribution system connected to Bus 1 of 118 bus system without any DERs on the distribution system.
 
