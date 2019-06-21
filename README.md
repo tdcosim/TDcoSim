@@ -6,7 +6,7 @@ Description of T&D co-simulation.
 
 
 
-![schematic of TDcoSim](C:\Users\splathottam\Documents\GitHub\TDcoSim\docs\images\software_simple_block_diagram.png)
+![schematic of TDcoSim](docs/images/software_simple_block_diagram.png)
 
 ## Links
 * Source code repository: https://github.com/tdcosim/TDcoSim
