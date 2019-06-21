@@ -123,6 +123,10 @@ This chapter walks the user through the step to start the simulation after setti
 
 Figure: Opening Command Window from Cosimulator Folder.
 
+![Open_CMD](images/Starting_TDcoSim_tool.png)
+
+Figure: Starting TDcoSim tool from Command Window.
+
 
 
 # Chapter 4
