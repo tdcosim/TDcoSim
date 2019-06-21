@@ -59,6 +59,34 @@ Variable "cosimHome" defines the parent path of the TDcoSim tool. The user needs
  Variable "solarFlag" specifies whether the DER are present in the distribution system or not.
  
  Variable "solarPenetration" specifies the penetration level of DER within the distribution network.
+ 
+ 4. "manualFeederConfig":{
+            "nodes": [
+                {
+                    "nodenumber": 2,
+                    "filePath": ["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "solarFlag":0,
+                    "solarPenetration":0.0,
+                    "DERParameters":{
+                        "power_rating": 50,
+                        "voltage_rating":174,
+                        "SteadyState": true,
+                        "V_LV1": 0.70,
+                        "V_LV2": 0.88,
+                        "t_LV1_limit": 10.0,  
+                        "t_LV2_limit": 20.0,
+                        "LVRT_INSTANTANEOUS_TRIP": false,
+                        "LVRT_MOMENTARY_CESSATION": false,
+                        "pvderScale": 1.0,
+                        "solarPenetrationUnit":"kw",
+                        "avoidNodes":["sourcebus","rg60"],
+                        "dt":0.008333
+                    }
+                }
+                
+  Variable "manualFeederConfig" manually specifies the configuration of the test distribution network. Using manual configuration, the transmission bus where the distribution system is to be connected is specified. Manual configuration has variable "nodes" which specifies the configuration each of the distribution system.
+  
+  Variable "nodenumber" specifies the transmission bus where the distribution system is to be connected.
             
         
 
