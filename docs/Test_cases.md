@@ -126,4 +126,6 @@ Figure 3:  T-bus 1 voltage comparison for the cases considered. (A): 10% DER pen
 ![speed comparison](Use%20Case%20Results/Study%201/Generator1_speed_study_1.png)
 Figure 4:  Generator 1 Speed Comparison for the different cases considered.
 
+Figure 3 shows the transmission bus voltage for bus 1 for the three cases considered. It can be observed that the voltage at bus 1 is same for all the cases considered. This is because for this case bus 1, where distribution system is connected, also had a synchronous generator connected to it which was regulating the bus voltage. Figure 4 shows the generator rotor frequency for the cases considered. It can be observed that the frequency nadir following system fault close to the fault location is lower for the case with DER trip. More tests with more distribution system and DERs should be performed to properly study the impact of DERs on system frequency response.
+
 
