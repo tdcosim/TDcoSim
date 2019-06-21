@@ -119,6 +119,10 @@ Variable "protocol" specifies the nature of coupling between Transmission system
 
 This chapter walks the user through the step to start the simulation after setting up the configuration file. To start the simulation the user needs to open the folder where the TDcoSim tool is installed. Once the folder where the tool is installed is identified the user needs to open the "CoSimulator" branch and open up a command window from the "CoSimulator" folder. To do that the user needs to go the box on the folder where we specify path and type Shift+C+M+D as shown in Figure below.
 
+![Open_CMD](images/Open_CMD.png)
+
+Figure: Opening Command Window from Cosimulator Folder.
+
 
 
 # Chapter 4
