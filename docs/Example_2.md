@@ -1,4 +1,4 @@
-### Example 2: Dynamic Case Study with Single Distribution System with different DER penetration and no disturbances
+### Example 1: Dynamic Case Study with Single Distribution System with different DER penetration and no disturbances
 
 In this test study, different penetration level of DERs within one distribution system connected to a transmission bus is studied. The purpose of this study is to test the ability of the tool to properly initialize all the dynamic components of the system. Without any disturbance introduced in the system through changes in operating point or faults, it is expected that the responses observed at the various point in the system be a flat profile.
 
