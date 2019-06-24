@@ -15,7 +15,7 @@ OpenDSS v1.0 or latest.
 
 The tutorial is divided into following sections:
 * [Chapter 2 - Understanding the config file](chapter_2_understanding_config_file.md) 
-* [Chapter 3 - Starting a simulation in TDcoSim](chapter_2_understanding_config_file.md)
+* [Chapter 3 - Starting a simulation in TDcoSim](chapter_3_starting_simlation.md)
 * [Chapter 4 - Software details](software_details.md)
 * Chapter 5 - Case studies
   * [Example 1 - Dynamic Studies with single distribution system without disturbances](Example_2.md)
