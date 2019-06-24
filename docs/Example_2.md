@@ -41,3 +41,5 @@ Figure 9 shows the voltage plot for bus 1 for the different cases considered. It
 
 Such differences in settling time were not observed in electrically distant buses as shown in Figure 11, even though steady state differences were observed between different cases.
 
+Note that the tool takes few seconds for the system to reach a steady state solution for the dynamic cases. The developers are working on the initialization of system dyanmic states so as to obtain a steady state solution from time t=0.
+
