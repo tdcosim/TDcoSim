@@ -1,8 +1,4 @@
 
-# Chapter 4
-
-## Test of TDcoSim
-
 ### Example 1: Dynamic Case Study with Single Distribution System with and without DER
 
 In this test, the TDcosim tool is tested for three different scenarios:
