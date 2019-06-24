@@ -1,5 +1,5 @@
 
-### Example 2: Dynamic Case Study with Single Distribution System with and without DER
+### Example 2: Dynamic Case Study with Single Distribution System with different DER penetration level and disturbance.
 
 In this test, the TDcosim tool is tested for three different scenarios:
 1. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below V_LV1 voltage level. The DER configuration used for this case is shown below:
