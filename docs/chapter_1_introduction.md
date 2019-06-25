@@ -7,6 +7,9 @@ basic features and functionalities of the tool. The tutorial project is develope
 sequential manner in which each of the use case builds upon what has been completed in the 
 previous test case. 
 
+The TDcoSim tool simulates the transmission and distribution networks with PVDERs. The following figure is shown the example networks that are simulated by TDcoSim tool.
+![14-bus transmission, 13-bus distribution network, and Solar PVDER](images/simulation_objects.png)
+
 ***
 Note: In order to execute the Tutorial, user needs to have PSSE version 30.0.0 or latest and 
 OpenDSS v1.0 or latest.
