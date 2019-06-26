@@ -15,7 +15,7 @@ To start the simulation with the default config file, open a [command line promp
 python runtdcosim.py > log_file.txt
 ```
 
-**rundtdcosim.py ** is a script that starts the co-simulation and logs generated during the co-simulation are written to **log_file.txt** (or any other user specified .txt file).
+**rundtdcosim.py** is a script that starts the co-simulation. Logs generated during co-simulation are written to **log_file.txt** (or any other user specified .txt file).
 
 ### Using TDcoSim within your script
 The basic steps to write your own co-simulation program are as follows:
@@ -55,6 +55,6 @@ The basic steps to write your own co-simulation program are as follows:
 
 ![Open_CMD](images/Open_CMD.png)
 <h5><center>Figure 1: Opening command line</center></h5>
-![Starting_TDcoSim_tool](images/Starting_TDcoSim_tool.PNG)
 
-<h5><center>Figure 2: Starting TDcoSim tool from commandline</center>
+![Starting_TDcoSim_tool](images/Starting_TDcoSim_tool.PNG)
+<h5><center>Figure 2: Starting TDcoSim tool from command line</center> 
