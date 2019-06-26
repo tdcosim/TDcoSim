@@ -26,40 +26,12 @@ You can install the module directly from github with following commands:
 * Python packages: [pvder](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility), SciPy, Numpy, Matlplotlib
 
 ## Quick start
-The module can be imported as a normal python module:
-   ```python
-   import python
-   ```
 
-The basic steps to start a simulation are as follows:
+To start the simulation with the default config file, open a [command line prompt ](#visual-guide) within the folder containing the **runtdcosim.py** file (for e.g. by typing Shift+C+M+D). Then run the following script.
 
-1. Setup desired T+D or T+D+DER system by making necessary entries in the [config](docs/chapter_2_understanding_config_file.md) file.
-
-2. Import necessary classes
-
-   ```python
-   from report import generateReport
-   from global_data import GlobalData
-   from procedure.procedure import Procedure
-   ```
-
-3. Read the config file and initialize the T&D system.
-    ```python
-    GlobalData.set_config('config.json')
-    GlobalData.set_TDdata()
-    ```
-
-4. Create a procedure object for the simulation and call simuate().
-    ```python
-    procedure = Procedure()
-    procedure.simulate()
-    ```
-
-5. Generate report after simuate() exits.
-    ```python
-    generateReport(tdcosim.GlobalData,fname='report.xlsx')
-    ```
-
+```
+python runtdcosim.py > log_file.txt
+```
 ### Use cases:
 Following example use cases are provided:
 1. [118 bus T + 123 bus D + DER](docs/Example_2.md)
