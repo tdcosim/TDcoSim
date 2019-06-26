@@ -5,6 +5,9 @@ This tutorial is intended to introduce the user to the TDcoSim tool. The user wi
 
 TDcoSim can be installed and used as a normal Python module. Detailed installation instructions for can be found [**here**](installation.md). 
 
+The TDcoSim tool can be used to perform static and dynamic co-simulation of transmission and distribution networks with PV-DER's. The following figure illustrates the various components that can simulated using the TDcoSim tool.
+![14-bus transmission, 13-bus distribution network, and Solar PVDER](images/simulation_objects.png)
+
 The tutorial is divided into following sections:
 * [Chapter 2 - What is cosimulation?](cosimulation_details.md) 
 * [Chapter 3 - Understanding the config file](chapter_2_understanding_config_file.md) 
