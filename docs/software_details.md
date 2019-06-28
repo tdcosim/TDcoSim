@@ -3,7 +3,7 @@
 
 ### Features
 1. Capable of launching sub-processes for individual feeders.
-2. Capable of configuring each feeder with different DER penetration levels, DER ratings, and ride through settings.
+2. Capable of configuring each feeder with different DER penetration levels, ratings, and ride through settings.
 3. Introduce fault events during simulation.
 4. Capture and report data for each transmission for the entirety of the simulation.
 
@@ -11,7 +11,8 @@
 The T&D co-simulation tool comprises a transmission simulator, a distribution simulator, an interface module linking T&D simulators with sockets and interaction protocols, and a synchronization module.
 
 **1. T&D interface:**
-A Python program that passes along and iterates information (voltages, currents, and powers) between T&D simulators through loosely coupled or tightly coupled protocols.
+A Python program that exchanges and iterates information (voltages, currents, and powers) between T&D simulators through synchronization protocols (loosely or tightly coupled). The data being exchanged, and the utilized protocols and the T&D interface will be introduced in the later section of the document. The Python-based T&D interface is simple and light-weighted. Moreover, for version change of PSSE and/or OpenDSS, may be covered with the libraries  of the software. 
+
   * Loosely coupled methods: There is a one-step lag in information exchange between transmission and distribution, but less computation is required. 
 
 **2. D+DER interface:**
@@ -38,6 +39,20 @@ The T&D co-simulation tool runs with multiple processes. The main process runs t
 The detail simulation architecture is shown in the figure below:
 ![detail simulation architecture](images/simulation_architecture.png)
 The simulation is managed by procedures for each model. The procedures define the simulation orders between multiple simulation objects. The models represent the single simulation object that includes the control of the power system. The procedures have hierarchical one-to-many relationships. The simulation type procedures are connected to multiple OpenDSS procedures via OpenDSS model, and the OpenDSS procedures are connected to multiple PVDER procedures via PVDER Aggregation model.
+
+#### Sequence of operations
+
+The sequence of operations within the program is listed below:
+
+1. Open TCP server sockets
+2. Create a transmission network object
+3. Create transmission network bus objects
+4. Create distribution network objects
+5. Create sub-processes
+6. Establish TCP connection
+7. Connect to OpenDSS via COM-Interface
+8. Run the distribution network simulation
+
 
 
 Copyright © 2019, UChicago Argonne, LLC
