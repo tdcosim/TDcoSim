@@ -10,5 +10,4 @@ The TDcoSim tool can be used to perform static and dynamic co-simulation of tran
 ![14-bus transmission, 13-bus distribution network, and Solar PVDER](images/simulation_objects.png)
 
 <center>Fig.1. Components that can be simulated using TDcoSim.</center> 
-
-[Continue to Chapter 2 - What is T&D cosimulation?](cosimulation_details.md) 
+[Continue to What is T&D cosimulation?](user_guide_cosimulation_details.ipynb) 

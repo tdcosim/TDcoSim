@@ -112,4 +112,4 @@ The example below shows the **config** file for a T+D dynamic simulation with a 
 }
 ```
 
-Copyright © 2019, UChicago Argonne, LLC
+[Continue to How to use TDcoSim?](user_guide_using_tdcosim.md)
