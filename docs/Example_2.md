@@ -2,6 +2,30 @@
 
 In this test study, different penetration level of DERs within one distribution system connected to a transmission bus is studied. The purpose of this study is to test the ability of the tool to properly initialize all the dynamic components of the system. Without any disturbance introduced in the system through changes in operating point or faults, it is expected that the responses observed at the various point in the system be a flat profile.
 
+The DER configuration used in this case is as follows, where the "solarPenetartion" was incremented with 10% increment for each of the cases: 
+
+    "manualFeederConfig":{
+            "nodes": [
+                {
+                    "nodenumber": 1,
+                    "filePath": ["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "solarFlag":1,
+                    "solarPenetration":0.0,  
+                    "DERParameters":{
+                        "power_rating": 50,
+                        "voltage_rating":174,
+                        "SteadyState": true,
+                        "V_LV1": 0.70,
+                        "V_LV2": 0.88,
+                        "t_LV1_limit": 10.0,  
+                        "t_LV2_limit": 20.0,
+                        "LVRT_INSTANTANEOUS_TRIP": false,
+                        "LVRT_MOMENTARY_CESSATION": false
+                    }
+                }
+            ]
+        }
+
 The study was done with distribution system connected to bus 1 of the 118 bus system and five different DER penetration ranging from 0 to 40% with the step increment of 10% is studied.
 
 
