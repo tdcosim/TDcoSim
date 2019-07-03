@@ -32,12 +32,20 @@ It is a three-phase unbalanced distribution system dynamic simulator, is a distr
 It is Python utility than can simulate dynamics of grid connected solar PV-DER systems. It uses dynamic phasor models and has single and three phase PV-DER's. 
 
 ### Software architecture
-A schematic showing the software architecture of the TDcoSim package is shown in the figure below:
-![highlevel software architecture](images/highlevel_software_architecture.png)
-The T&D co-simulation tool runs with multiple processes. The main process runs the transmission network simulation with PSSE and generates a report of the simulation. Each sub processes runs the distribution network simulation with OpenDSS and PV-DER. The tool uses the TCP sockets to exchange the data between main and sub processes.
+A schematic showing the software architecture of the TDcoSim package is shown in the Fig. 1.
 
-The detail simulation architecture is shown in the figure below:
+![highlevel software architecture](images/highlevel_software_architecture.png)
+<p align="center">
+  <strong>Fig. 1.</strong> Highlevel software architecture
+</p>
+
+The T&D co-simulation tool runs with multiple processes. The main process runs the transmission network simulation with PSSE and generates a report of the simulation. Each sub processes runs the distribution network simulation with OpenDSS and PV-DER. The tool uses the TCP sockets to exchange the data between main and sub processes. The detail simulation architecture is shown in the Fig.2.
+
 ![detail simulation architecture](images/simulation_architecture.png)
+<p align="center">
+  <strong>Fig. 2.</strong> Detailed simulation architecture
+</p>
+
 The simulation is managed by procedures for each model. The procedures define the simulation orders between multiple simulation objects. The models represent the single simulation object that includes the control of the power system. The procedures have hierarchical one-to-many relationships. The simulation type procedures are connected to multiple OpenDSS procedures via OpenDSS model, and the OpenDSS procedures are connected to multiple PVDER procedures via PVDER Aggregation model.
 
 #### Sequence of operations

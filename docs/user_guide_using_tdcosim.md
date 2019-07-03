@@ -49,11 +49,17 @@ The basic steps to write your own co-simulation program are as follows:
        generateReport(tdcosim.GlobalData,fname='report.xlsx')
    ```
 
-
 ### Visual guide
 
 ![Open_CMD](images/Open_CMD.png)
-<center>Fig. 1. Opening command line</center>
+<p align="center">
+  <strong>Fig. 1.</strong> Opening command line
+</p>
 
 ![Starting_TDcoSim_tool](images/Starting_TDcoSim_tool.PNG)
-<center>Fig. 2. Starting TDcoSim tool from command line</center> 
+
+<p align="center">
+  <strong>Fig. 2.</strong> Starting TDcoSim tool from command line
+</p>
+
+[Continue to Software details](user_guide_software_details.md)

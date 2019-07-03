@@ -13,3 +13,4 @@
 7. Appendix
     * API documentation
     * [Software License](../LICENSE.md)
+    * Test workstation configuration
