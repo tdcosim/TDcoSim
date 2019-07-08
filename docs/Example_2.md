@@ -1,6 +1,6 @@
 ### Example 1: Dynamic Case Study with Single Distribution System with different DER penetration and no disturbances
 
-In this test study, different penetration level of DERs within one distribution system connected to a transmission bus is studied. The purpose of this study is to test the ability of the tool to properly initialize all the dynamic components of the system. Without any disturbance introduced in the system through changes in operating point or faults, it is expected that the responses observed at the various point in the system be a flat profile.
+In this test study, different penetration level of DERs within one distribution system connected to a transmission bus is studied. The purpose of this study is to test the ability of the tool to properly initialize all the dynamic components of the system. Without any disturbance introduced in the system through changes in operating point or faults, it is expected that the responses observed at the various point in the system be a flat profile if the state of the various components are properly initialized.
 
 The DER configuration used in this case is as follows, where the "solarPenetartion" was incremented with 10% increment for each of the cases: 
 
@@ -26,7 +26,7 @@ The DER configuration used in this case is as follows, where the "solarPenetarti
             ]
         }
 
-The study was done with distribution system connected to bus 1 of the 118 bus system and five different DER penetration ranging from 0 to 40% with the step increment of 10% is studied.
+The study was done with 123 node distribution system connected to bus 1 of the IEEE 118 bus system and five different DER penetration level relative to load in bus 1 ranging from 0 to 40% with the step increment of 10% is studied.
 
 
 ![Pload comparison](Use%20Case%20Results/Study%202/active_power_comparison_bus_1.png)
