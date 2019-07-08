@@ -45,7 +45,7 @@ Figure 8: Reactive power observed in bus 100 for the different cases considered.
 
 Figure 6 shows the flat start performance of the TDcosim tool for different penetration level of DER. It can be observed that with the DER added into the test system, TDcosim tool takes couple of secs to reach the steady state active power consumption at the DER connected bus. Also, note that the settling value of the net active power is slightly below to the calculated net load power based on DER penetration.
 
-Figure 7 shows the reactive power observed in bus 1 for the different cases considered. It can be observed that the reactive power consumed at the DS & DER connected bus decreases as DER penetration increases. Figure 8 shows no change in the reactive power for a random bus (bus 100) other than DER connected bus at different DER penetration level.
+Figure 7 shows the reactive power observed in bus 1 for the different cases considered. It can be observed that the reactive power consumed at the DS & DER connected bus decreases as DER penetration increases. Figure 8 shows no change in the reactive power for a random bus (bus 100).
 
 ![Voltage_1 comparison](Use%20Case%20Results/Study%202/voltage_profile_comparison_bus_1.png)
 
@@ -65,5 +65,4 @@ Figure 9 shows the voltage plot for bus 1 for the different cases considered. It
 
 Such differences in settling time were not observed in electrically distant buses as shown in Figure 11, even though steady state differences were observed between different cases.
 
-Note that the tool takes few seconds for the system to reach a steady state solution for the dynamic cases. The developers are working on the initialization of system dyanmic states so as to obtain a steady state solution from time t=0.
-
+Please note that the tool takes few simulation seconds for the system to reach a steady state solution for the dynamic cases. The developers are working on the initialization of system dynamic states so as to obtain a steady state solution from time t=0+. So for the current version of the tool, to study the system dynamics change of operating points and disturbances are applied only after the system reaches a certain steady state threshold. i.e. at least 0.5 seconds.
