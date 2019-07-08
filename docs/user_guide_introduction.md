@@ -1,6 +1,6 @@
 # Introduction
 
-The TDcoSim tool can be used to perform static and dynamic co-simulation of transmission and distribution networks with PV-DER's. The following figure illustrates the various components that can simulated using the TDcoSim tool.
+The TDcoSim tool can be used to perform static and dynamic co-simulation of transmission and distribution networks with photovoltaic systems as distributed energy resources (PV-DER's). The following figure illustrates the various components that can simulated using the TDcoSim tool.
 
 ![14-bus transmission, 13-bus distribution network, and Solar PVDER](images/simulation_objects.png)
 
