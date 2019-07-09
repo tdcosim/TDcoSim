@@ -111,24 +111,21 @@ The disturbance applied in this case is the fault on bus 5. The simulation confi
 }
 
 ![Pload comparison](Use%20Case%20Results/Study%204/no_DER_vs_DER_RT.png)
-Figure 1: Active component of load as observed at the T-bus ‘2’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
+Figure 1: Active component of load as observed at the distribution system connected T-buses for the case with no DER and with DER with Ride Through Settings.
 
 ![Pload comparison](Use%20Case%20Results/Study%204/DER_Trip_vs_no_DER.png)
-Figure 2: Active component of load as observed at the T-bus ‘3’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
+Figure 2: Active component of load as observed at the distribution system connected T-buses for the case with DER with Instantaneous Trip settings and with DER with Ride Through Settings.
 
 ![Pload comparison](Use%20Case%20Results/Study%204/DER_Trip_vs_DER_RT.png)
-Figure 3: Active component of load as observed at the T-bus ‘1’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
+Figure 3: Active component of load as observed at the distribution system connected T-buses for the case with no DER and with DER with Instantaneous Trip Settings.
 
 ![Volt comparison](Use%20Case%20Results/Study%204/Transmission_bus_volt_no_DER_vs_DER_trip.png)
-
-Figure 4: Reactive component of load as observed at the T-bus ‘2’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
-
+Figure 4: Transmission bus voltage comparison of the 118 bus system for the case with no DER with the case with DER with instantaneous trip settings.
 
 ![Qload comparison](Use%20Case%20Results/Study%204/Gen_speed_no_DER_vs_DER_trip.png)
-Figure 5: Reactive component of load as observed at the T-bus ‘3’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
-
+Figure 5: Generator Frequency comparison of the 118 bus system for the case with no DER with the case with DER with instantaneous trip settings.
 
 ![Qload comparison](Use%20Case%20Results/Study%204/Generator_4_speed.png)
-Figure 6: Reactive component of load as observed at the T-bus ‘1’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
+Figure 6: Generator Speed comparison of generator 4 for the three cases considered. a) No DER Case b) 10% DER with Ride Through Settings and c) 10% DER with instantaneous trip settings.
 
 
