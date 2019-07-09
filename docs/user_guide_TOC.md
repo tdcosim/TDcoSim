@@ -11,6 +11,7 @@
     * [Example 1 - Dynamic Studies with single distribution system without disturbances](Example_2.md)
     * [Example 2 - Dynamic Studies with single distribution system with disturbances](Test_cases.md)
     * [Example 3 - Dynamic Studies with two distribution system with disturbances](Example_3.md)
+    * [Example 4 - Dynamic Studies with eight distribution system with disturbances](Example_4.md)
 7. Appendix
     * API documentation
     * [Software License](../LICENSE.md)
