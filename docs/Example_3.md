@@ -110,11 +110,13 @@ The disturbance applied in this case is the fault on bus 5. The simulation confi
     }
 }
 
-![Pload comparison](Use%20Case%20Results/Study%203/Pload_comparison_study_1.png)
+![Pload comparison](Use%20Case%20Results/Study%203/bus_2_plod.png)
 Figure 1: Active component of load as observed at the T-bus ‘2’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
+![Pload comparison](Use%20Case%20Results/Study%203/bus_3_plod.png)
 Figure 2: Active component of load as observed at the T-bus ‘3’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
+![Pload comparison](Use%20Case%20Results/Study%203/bus_1_plod.png)
 Figure 3: Active component of load as observed at the T-bus ‘1’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
 Figure 1 and 2 above compares the active power component of the load observed in the T-bus (2 and 3 where the DER connected distribution system is modelled) for the three cases considered. It can be observed that case B, without DER on the DS starts off with higher initial net load. Case A and Case C has a lower initial net load due to the DER connected in the distribution system masking the portion of total load in the system. A fault is applied in bus 5 of the T-system which causes a lower voltage sag in the D-system connected in bus 2 and bus 3. For the DER trip case, Case C, it can be observed that the net load observed in the bus increases to a value equal to the case without any DERs in the system, which is an expected response of the system. 
@@ -125,15 +127,23 @@ Figure 3 compares the active power component of the load observed in bus 1 of th
 
 A similar response can be observed in Figure 6 for reactive power component of net load connected at bus ‘1’ as no distribution system was connected in bus 1.
 
-
+![Qload comparison](Use%20Case%20Results/Study%203/bus_2_qlod.png)
 Figure 4: Reactive component of load as observed at the T-bus ‘2’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
+
+![Qload comparison](Use%20Case%20Results/Study%203/bus_3_qlod.png)
 Figure 5: Reactive component of load as observed at the T-bus ‘3’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
+
+![Qload comparison](Use%20Case%20Results/Study%203/bus_1_qlod.png)
 Figure 6: Reactive component of load as observed at the T-bus ‘1’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
+
+![Qload comparison](Use%20Case%20Results/Study%203/bus_2_volt.png)
 Figure 7: Voltage of bus 2 for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
+
+![Qload comparison](Use%20Case%20Results/Study%203/bus_3_volt.png)
 Figure 8: Voltage of bus 3 for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
 Figure 7 and Figure 8 shows the transmission bus voltage for bus 2 and bus 3 respectively, for the three cases considered. It can be observed that the voltage at bus 2 and bus 3 is almost the same for all the cases considered which could be associated with the low DER penetration and effect of nearby synchronous machine’s voltage regulation. 
