@@ -128,6 +128,7 @@ Figure 3 compares the active power component of the load observed in bus 1 of th
 A similar response can be observed in Figure 6 for reactive power component of net load connected at bus ‘1’ as no distribution system was connected in bus 1.
 
 ![Qload comparison](Use%20Case%20Results/Study%203/bus_2_qlod.png)
+
 Figure 4: Reactive component of load as observed at the T-bus ‘2’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
 
@@ -140,6 +141,7 @@ Figure 6: Reactive component of load as observed at the T-bus ‘1’ for the ca
 
 
 ![volt comparison](Use%20Case%20Results/Study%203/bus_2_volt.png)
+
 Figure 7: Voltage of bus 2 for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
 
