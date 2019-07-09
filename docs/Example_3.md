@@ -1,10 +1,10 @@
 
-### Example 2: Dynamic Case Study with Two Distribution System with different DER penetration level and Ride Through Settings and disturbances applied.
+### Example 3: Dynamic Case Study with Two Distribution System with different DER penetration level and Ride Through Settings and disturbances applied.
 
 In this test, the TDcosim tool is tested for three different scenarios:
-1. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below V_LV1 voltage level. The DER configuration used for this case is shown below:
+1. With distribution system connected to Bus 2 and Bus 3 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below V_LV1 voltage level. The DER configuration used for this case is shown below (for bus number 2):
 
-                    "nodenumber": 1,
+                    "nodenumber": 2,
                     "filePath: ["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
                     "solarPenetration":0.1,
@@ -24,11 +24,12 @@ In this test, the TDcosim tool is tested for three different scenarios:
                         "dt":0.008333
                     
 
+Same configuration was used for DERs in bus number 3.
 
-2. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system Ride Through the fault causing voltage sag below V_LV1 voltage level. The DER configuration used for this case is shown below:
+2. With distribution system connected to Bus 2 and Bus 3 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system Ride Through the fault causing voltage sag below V_LV1 voltage level. The DER configuration used for this case is shown below (for bus number 3):
 
 
-                    "nodenumber": 1,
+                    "nodenumber": 3,
                     "filePath: ["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
                     "solarPenetration":0.1,
@@ -47,7 +48,9 @@ In this test, the TDcosim tool is tested for three different scenarios:
                         "avoidNodes":["sourcebus","rg60"],
                         "dt":0.008333
                         
-3. With distribution system connected to Bus 1 of 118 bus system without any DERs on the distribution system. The DER configuration used for this case is shown below:
+Same configuration was used for DERs in bus number 2.
+
+3. With distribution system connected to Bus 2 and Bus 3 of 118 bus system without any DERs on the distribution system. The DER configuration used for this case is shown below:
 
 
         "nodenumber": 1,
