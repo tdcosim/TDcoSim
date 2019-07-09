@@ -133,6 +133,8 @@ Figure 4 compares the transmission bus voltage of the 118 bus system for the cas
 ![Qload comparison](Use%20Case%20Results/Study%204/Gen_speed_no_DER_vs_DER_trip.png)
 Figure 5: Generator Frequency comparison of the 118 bus system for the case with no DER with the case with DER with instantaneous trip settings.
 
+Figure 5 compares the generator speed of the various generators in the 118 bus test system for the case with No DER and case with 10% DER with instantaneous trip settings. The speed response of the generators for these two cases are identical as the DER penetration level comapred to the overall system is insignificant. However, some impact can be observed locally as in the case of generator 4 as shown in Figure 6. Figure 6 shows that the frequency response of the generator 4 is worst in the case in the DER in the system trip instantaneously.
+
 ![Qload comparison](Use%20Case%20Results/Study%204/Generator_4_speed.PNG)
 Figure 6: Generator Speed comparison of generator 4 for the three cases considered. a) No DER Case b) 10% DER with Ride Through Settings and c) 10% DER with instantaneous trip settings.
 
