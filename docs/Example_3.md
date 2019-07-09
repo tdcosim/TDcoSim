@@ -139,11 +139,11 @@ Figure 5: Reactive component of load as observed at the T-bus ‘3’ for the ca
 Figure 6: Reactive component of load as observed at the T-bus ‘1’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
 
-![Qload comparison](Use%20Case%20Results/Study%203/bus_2_volt.png)
+![volt comparison](Use%20Case%20Results/Study%203/bus_2_volt.png)
 Figure 7: Voltage of bus 2 for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
 
-![Qload comparison](Use%20Case%20Results/Study%203/bus_3_volt.png)
+![volt comparison](Use%20Case%20Results/Study%203/bus_3_volt.png)
 Figure 8: Voltage of bus 3 for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
 Figure 7 and Figure 8 shows the transmission bus voltage for bus 2 and bus 3 respectively, for the three cases considered. It can be observed that the voltage at bus 2 and bus 3 is almost the same for all the cases considered which could be associated with the low DER penetration and effect of nearby synchronous machine’s voltage regulation. 
