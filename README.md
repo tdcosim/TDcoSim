@@ -60,6 +60,8 @@ Please feel free to raise an issue when bugs are encountered or if you are need 
 ## Acknowledgement
 The authors would like to acknowledge [Shrirang Abhyankar](https://github.com/abhyshr) for his contribution.
 
+This project is supported by Ali Ghassemian and Dan Ton, [U.S. DOE Office of Electricity, Advanced Grid Research and Development](https://www.energy.gov/oe/mission/advanced-grid-research-and-development).
+
 ## Citation
 If you use this code please cite it as:
 ```
