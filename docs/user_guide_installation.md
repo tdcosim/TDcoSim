@@ -1,8 +1,8 @@
 # Installation
-From GttHub::
+From GitHub::
 
-    git clone https://github.com/deephyper/deephyper.git
-    cd deephyper/
+    git clone https://github.com/tdcosim/TDcoSim.git
+    cd tdcosim/
     pip install -e .
 
 ### Dependencies:
