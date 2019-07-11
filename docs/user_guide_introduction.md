@@ -1,6 +1,12 @@
 # Introduction
 
-The TDcoSim tool can be used to perform static and dynamic co-simulation of transmission and distribution networks with photovoltaic systems as distributed energy resources (PV-DER's). The following figure illustrates the various components that can simulated using the TDcoSim tool. Note that transmission and distribution network are simulated in PSS/E, and OpenDSS respectively while PV-DER's are simulated using [Solar PV-DER simulation-utility.](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility)
+T&D co-simulation can be a powerful tool to capture short and long term dynamics between the transmission system and distribution system with a higher degree of fidelity and convenience than would be possible with running separate simulations for each system.
+
+This guide is intended to introduce the user to the usage and working of the Argonne T&D co-simulation tool (**TDcoSim**). Multiple examples, have also been included to illustrate the capabilities of the tool.
+
+## What is it?
+
+**TDcoSim** is a software tool that  can be used to perform static and dynamic co-simulation of transmission and distribution networks with photovoltaic systems as distributed energy resources (PV-DER's). The following figure illustrates the various components that can be simulated using **TDcoSim**. 
 
 ![14-bus transmission, 13-bus distribution network, and Solar PVDER](images/simulation_objects.png)
 
@@ -8,45 +14,45 @@ The TDcoSim tool can be used to perform static and dynamic co-simulation of tran
   <strong>Fig. 1.</strong>Components that can be simulated using TDcoSim.
 </p>
 
-This guide is intended to introduce the user to the basic functionalities of the TDcoSim tool and allow them to get started with using the tool within a short amount of time. Multiple case studies, have also been included which can be used by the user as a starting point.
+## How can I use it?
+**TDcoSim** is available as an open source Python package and can be installed for free from it's GitHub repository. Additionally, the user needs to separately install [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html) for simulating the transmission network, [OpenDSS](https://sourceforge.net/projects/electricdss/) for simulating the distribution network, and [Solar PV-DER simulation-utility.](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility) for simulating PV-DER's. Detailed installation instructions and links can be found [**here**](user_guide_installation.md).
 
-TDcoSim can be installed and used as a normal Python module. Detailed installation instructions for can be found [**here**](user_guide_installation.md). 
+## What are it's inputs?
+
+In order to run a co-simulation using **TDcoSim**, the user needs to provide the following inputs:
+
+* Transmission and distribution system model in a format that is understood by PSS/E and OpenDSS respectively (required).
+* DER penetration level and ratings (optional).
+* Fault events (optional).
+
+## What are it's outputs?
+
+**TDcoSim** provides following outputs from each component of the T&D co-simulation:
+
+* Transmission bus: voltage, frequency, active and reactive load, generator active and reactive power output
+* Distribution feeder node: voltage, active and reactive load, DER active and reactive power output
 
 ## Intended use cases
 
-TDcoSim is intended to be a generic co-simulation platform like HELIC's. It is specifically meant to be used as a tool for studying static and dynamic impact of distributed energy resources on the transmission system. A few of the intended use cases are specified below:
+**TDcoSim** is not intended to be used a generic co-simulation platform like HELIC's. It is specifically meant to be used as a tool for studying static and dynamic impact of distributed energy resources on the transmission system. The use cases possible with the current version of the software are listed below:
 
 * Static studies
   1. Analyze generator dispatch with DER over 24 hours.
-  2. Analyze voltage profile.
+  2. Analyze voltage profile with DER.
 
 * Dynamic studies
-  1. Study impact of DER's tripping during transmission system faults.
-  2. Study impact of DER's riding through during transmission system faults.
-  3. Study impact of cloud cover event on transmission system.
+  1. Impact of DER's tripping during transmission system faults.
+  2. Impact of DER's riding through during transmission system faults.
 
-## Solution time
+The use cases planned in the next version of the software are listed below:
 
-The solution time for a T+D+DER co-simulation primarily depends on the number of OpenDSS instances and PV-DER instances. The solution times 10 %, and 25 % penetration for various power system configurations are given in Table I and Table II respectively. The configuration of the work station used to run the co-simulation is provide in the appendix.
+* Dynamic studies
+  1. Impact of cloud cover event on conventional generators.
+  2. Impact of unbalanced faults.
+  3. Impact of line outages. 
 
-<p align="center">
-  <strong>Table I.</strong> Solution times for 10 % penetration.
-</p>
+## Scalability and Solution time
 
-| Transmission system buses|Distribution system nodes|PV-DER rating|Solution time|
-|----------|:-------------:|:------:|:------:|
-| 14 |13| 50 | |
-| 118|123|50 | |
-| 118|8500|50 | |
+The size and complexity of the T+D+DER system to be co-simulated is only limited by the available  memory (RAM) in the workstation. The solution time for a T+D+DER co-simulation depends both on the OpenDSS instances and PV-DER instances as well as the number of of logical cores available in the workstation. 
 
-<p align="center">
-  <strong>Table II.</strong> Solution times for 25 % penetration.
-</p>
-
-| Transmission system buses|Distribution system nodes|PV-DER rating|Solution time|
-|----------|:-------------:|:------:|:------:|
-| 14 |13| 50 ||
-| 118|123|50 ||
-| 118|8500|50 ||
-
-[Continue to What is T&D cosimulation?](user_guide_cosimulation_details.ipynb) 
+[Continue to Getting Started?](user_guide_getting_started.md) 

@@ -1,4 +1,4 @@
-# How to use TDcoSim?
+# Using TDcoSim in Python scripts
 ### Importing TDcoSim
 The TDcoSim module can be imported and used like a normal Python module. Note that package name is in lower case.
 
@@ -8,13 +8,7 @@ The TDcoSim module can be imported and used like a normal Python module. Note th
 
 ### Quick start a simulation using the default config file
 
-To start the simulation with the default config file, open a [command line prompt ](#visual-guide) within the folder containing the **runtdcosim.py** file (for e.g. by typing Shift+C+M+D). Then run the following script.
-
-```
-python runtdcosim.py > log_file.txt
-```
-
-**rundtdcosim.py** is a script that starts the co-simulation. Logs generated during co-simulation are written to **log_file.txt** (or any other user specified .txt file).
+To start the simulation with the default config file, open a [command line prompt ](user_guide_visual_guide.md) within the CoSimulator folder in TDcoSim repository and run the **runtdcosim.py** file. 
 
 ### Using TDcoSim within your script
 The basic steps to write your own co-simulation program are as follows:
@@ -48,18 +42,5 @@ The basic steps to write your own co-simulation program are as follows:
    ```python
        generateReport(tdcosim.GlobalData,fname='report.xlsx')
    ```
-
-### Visual guide
-
-![Open_CMD](images/Open_CMD.png)
-<p align="center">
-  <strong>Fig. 1.</strong> Opening command line
-</p>
-
-![Starting_TDcoSim_tool](images/Starting_TDcoSim_tool.PNG)
-
-<p align="center">
-  <strong>Fig. 2.</strong> Starting TDcoSim tool from command line
-</p>
 
 [Continue to Software details](user_guide_software_details.md)
