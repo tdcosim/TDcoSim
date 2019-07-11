@@ -7,8 +7,8 @@
 
 ### Recommended Requirements:
 * OS: Windows
-* Processor: Intel Core i7, 2.6 GHz, 4 cores
-* Memory (RAM): 32.0 GB
+* Processor: Intel Core i9, 4.4 GHz, 8 cores
+* Memory (RAM): 64.0 GB
 
 ***
 ***Note:*** Capability to run on a cluster  will be added in the future.
