@@ -1,6 +1,9 @@
 # Introduction
 
-T&D co-simulation can be a powerful tool to capture short and long term dynamics between the transmission system and distribution system with a higher degree of fidelity and convenience than would be possible with running separate simulations for each system.
+T&D co-simulation that includes detailed transmission and distribution system models can be a powerful tool to conduct studies that capture short and long term dynamics between these two systems. It would have following advantages over existing approaches:
+
+1. Higher degree of fidelity since there will not be aggregation of loads at the distribution system or generation sources at the transmission system.
+2. Convenience of running a single simulation as opposed separate simulations for each system and manually combining the results.
 
 This guide is intended to introduce the user to the usage and working of the Argonne T&D co-simulation tool (**TDcoSim**). Multiple examples, have also been included to illustrate the capabilities of the tool.
 
@@ -34,7 +37,7 @@ In order to run a co-simulation using **TDcoSim**, the user needs to provide the
 
 ## Intended use cases
 
-**TDcoSim** is not intended to be used a generic co-simulation platform like HELIC's. It is specifically meant to be used as a tool for studying static and dynamic impact of distributed energy resources on the transmission system. The use cases possible with the current version of the software are listed below:
+**TDcoSim** is not intended to be used as a generic co-simulation platform like HELIC's. It is specifically meant to be used as a tool for studying static and dynamic impact of distributed energy resources on the transmission system. The use cases possible with the current version of the software are listed below:
 
 * Static studies
   1. Analyze generator dispatch with DER over 24 hours.

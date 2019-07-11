@@ -8,14 +8,14 @@
 4. Capture and report data for each transmission for the entirety of the simulation.
 
 ### Main components
-The T&D co-simulation tool comprises a transmission simulator, a distribution simulator, an interface module linking T&D simulators with sockets and interaction protocols, and a synchronization module.
+The T&D co-simulation tool comprises of interface modules and  synchronization module. There are separate interface modules with sockets and interaction protocols for both the T & D and D & DER simulators.
 
 **1. T&D interface:**
 A Python program that exchanges and iterates information (voltages, currents, and powers) between T&D simulators through synchronization protocols (loosely or tightly coupled). The data being exchanged, and the utilized protocols and the T&D interface will be introduced in the later section of the document. The Python-based T&D interface is simple and light-weighted. Moreover, for version change of PSSE and/or OpenDSS, may be covered with the libraries  of the software. 
 
   * Loosely coupled methods: There is a one-step lag in information exchange between transmission and distribution, but less computation is required. 
 
-**2. D+DER interface:**
+**2. D&DER interface:**
 A Python program that exchanges information between the distribution system and the dynamic DER model.
 
 **3. Configuration file:**

@@ -17,16 +17,18 @@ The config file can be divided into three sections. The purpose of each option i
 
 ### OpenDSS + DER configuration
 
+The configuration options provided through **defaultFeederConfig**  is universally applied to the distribution feeders connected to all the transmission system buses unless otherwise they have been configured using **manualFeederConfig**.
+
 1. **openDSSConfig:** Configuration for distribution feeder. There is option to provide a default feeder configuration or individually for each feeder.
-   * ***defaultFeederConfig:*** Default feeder configuration (applies to feeders on all buses).
+   * ***defaultFeederConfig:*** Default feeder configuration that applies to distribution feeders on all buses.
      * *filePath (string):* Specifies the path for the OpenDSS File **( *.dss)**.
    
      * solarFlag (Boolean): Specifies presence or absence of PV-DER's in the feeder.
    
      * *solarPenetration (float):* Specifies the total rated capacity of PV-DER's as a fraction of the total feeder load.
    
-   * ***manualFeederConfig:*** Manually specify the configuration of the distribution network.
-     * *nodes:* Specifies the configuration each of the distribution system.
+   * ***manualFeederConfig:*** Manually specify the distribution system configuration at the desired transmission bus.
+     * *nodes:* Specifies the configuration of the distribution system.
      * *nodenumber (integer)*: Specifies the transmission bus where the distribution system is to be connected.
    
      * *filePath (string)*: Specifies the path for the OpenDSS File **( *.dss)**.
@@ -36,7 +38,7 @@ The config file can be divided into three sections. The purpose of each option i
      * solarPenetration (float) : Specifies the total rated capacity of DER's as a fraction of the total feeder load.
      
      * *DERParameters*: Specifies the configuration of DERs to be used in the distribution system.
-       * *power_rating (float):* Specifies the power rating of DER in kW.
+       * *power_rating (float):* Specifies the power rating of DER in kW (valid options: 50, 250).
        
        * *voltage_rating (float):* Specifies the voltage rating of the DER in Volts (L-G RMS). The tool automatically adds a transformer to connect the DER with the distribution system.
        
