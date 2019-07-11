@@ -38,7 +38,7 @@ In order to run a co-simulation using **TDcoSim**, the user needs to provide the
 
 * Static studies
   1. Analyze generator dispatch with DER over 24 hours.
-  2. Analyze voltage profile with DER.
+  2. Analyze voltage profile of both T-system and D-system with DER.
 
 * Dynamic studies
   1. Impact of DER's tripping during transmission system faults.
@@ -48,9 +48,10 @@ The use cases planned in the next version of the software are listed below:
 
 * Dynamic studies
   1. Impact of cloud cover event on conventional generators.
-  2. Impact of unbalanced faults.
+  2. Impact of unbalanced faults on DER tripping and ride through.
   3. Impact of line outages. 
-
+  4. Impact of generator and load outages on system frequency under high DER penetration.
+  
 ## Scalability and Solution time
 
 The size and complexity of the T+D+DER system to be co-simulated is only limited by the available  memory (RAM) in the workstation. The solution time for a T+D+DER co-simulation depends both on the OpenDSS instances and PV-DER instances as well as the number of of logical cores available in the workstation. 
