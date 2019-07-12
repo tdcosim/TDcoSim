@@ -8,7 +8,7 @@ T&D co-simulation performed with detailed transmission and distribution system m
 This guide introduces users to Argonne's T & D co-simulation tool (**TDcoSim**). Multiple examples that illustrate the capabilities of the tool are also included.
 
 ***
-***Note:*** Should we add **NERC brochure** as an appendix?
+***To Do:*** Should we add **NERC brochure** as an appendix?
 
 ***
 
@@ -29,7 +29,8 @@ This guide introduces users to Argonne's T & D co-simulation tool (**TDcoSim**).
 
 In order to run a co-simulation using **TDcoSim**, the user needs to provide the following inputs:
 
-* Transmission and distribution system model in a format that is understood by PSS/E and OpenDSS respectively (required).
+* Transmission system model in a format compatible with PSS/E (required)
+* Distribution system model in a format compatible with OpenDSS (required)
 * DER penetration level and ratings (optional).
 * Fault events (optional).
 
