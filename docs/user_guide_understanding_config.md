@@ -1,6 +1,7 @@
 # Understanding the config file
 
 The **config** file is the primary user interface for the TDcoSim package. Before starting the operation of TDcoSim tool and running test cases, it is necessary to understand how the configuration file can be used to setup the simulation conditions. This chapter describes the options within the configuration file and aid the user in setting up a simulation. 
+
 ## Config file options
 
 The config file can be divided into three sections. The purpose of each option in every section is explained below:

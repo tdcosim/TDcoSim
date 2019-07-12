@@ -1,13 +1,12 @@
-# Chapter 5
-## Software details
+# Software details
 
-### Features
+## Features
 1. Capable of launching sub-processes for individual feeders.
 2. Capable of configuring each feeder with different DER penetration levels, ratings, and ride through settings.
 3. Introduce fault events during simulation.
 4. Capture and report data for each transmission for the entirety of the simulation.
 
-### Main components
+## Main components
 The T&D co-simulation tool comprises of interface modules and  synchronization module. There are separate interface modules with sockets and interaction protocols for both the T & D and D & DER simulators.
 
 **1. T&D interface:**
@@ -21,7 +20,7 @@ A Python program that exchanges information between the distribution system and 
 **3. Configuration file:**
 It is the main user interface that allows user to configure a T+D or T+D+DER co-simulation. 
 
-### External components
+## External components
 1.[PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html)
 It is an off-the-shelf positive-sequence dynamic simulator, is a transmission simulator. 
 
@@ -31,7 +30,7 @@ It is a three-phase unbalanced distribution system dynamic simulator, is a distr
 3.[Solar PV-DER simulation utility](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility)
 It is Python utility than can simulate dynamics of grid connected solar PV-DER systems. It uses dynamic phasor models and has single and three phase PV-DER's. 
 
-### Software architecture
+## Software architecture
 A schematic showing the software architecture of the TDcoSim package is shown in the Fig. 1.
 
 ![highlevel software architecture](images/highlevel_software_architecture.png)
@@ -48,7 +47,7 @@ The T&D co-simulation tool runs with multiple processes. The main process runs t
 
 The simulation is managed by procedures for each model. The procedures define the simulation orders between multiple simulation objects. The models represent the single simulation object that includes the control of the power system. The procedures have hierarchical one-to-many relationships. The simulation type procedures are connected to multiple OpenDSS procedures via OpenDSS model, and the OpenDSS procedures are connected to multiple PVDER procedures via PVDER Aggregation model.
 
-#### Sequence of operations
+### Sequence of operations
 
 The sequence of operations within the program is listed below:
 

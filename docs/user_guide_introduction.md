@@ -44,6 +44,7 @@ In order to run a co-simulation using **TDcoSim**, the user needs to provide the
 ## Types of studies
 
 **TDcoSim** is intended to be used as a tool for studying static and dynamic impacts of distributed energy resources on the transmission system.
+
 ### Capabilities of current release
 The studies that can be conducted with the current version of the software are listed below:
 
