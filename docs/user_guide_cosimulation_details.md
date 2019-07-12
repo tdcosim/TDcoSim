@@ -66,6 +66,4 @@ The data exchange protocol for steady-state co-simulation is loosely coupled. Th
 8. Add <img src="/docs/tex/c68c74ed5963cb122d055dfc4055d1a8.svg?invert_in_darkmode&sanitize=true" align=middle width=58.51439054999999pt height=22.465723500000017pt/> and <img src="/docs/tex/b603e2286164063e0a47f868215bdd83.svg?invert_in_darkmode&sanitize=true" align=middle width=60.95616779999998pt height=22.465723500000017pt/> as fixed compensating shunt in PSSE.
 9. Repeat steps 2 to 8 until the user specified simulation end time is reached.
 
-A time step of half a cycle is utilized in the dynamic co-simulation process. 
-
-[Continue to Understanding the config file](user_guide_understanding_config.md) 
+A time step of half a cycle is utilized in the dynamic co-simulation process.
