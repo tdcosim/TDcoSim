@@ -1,5 +1,4 @@
-# Chapter 2
-## Understanding the config file
+# Understanding the config file
 
 The **config** file is the primary user interface for the TDcoSim package. Before starting the operation of TDcoSim tool and running test cases, it is necessary to understand how the configuration file can be used to setup the simulation conditions. This chapter describes the options within the configuration file and aid the user in setting up a simulation. 
 ## Config file options
@@ -78,8 +77,7 @@ The configuration options provided through **defaultFeederConfig**  is universal
      * *loadShape (list of floats):* N/A
    *  ***protocol (string):*** Specifies the nature of coupling between Transmission system and Distribution System (**'loose_coupling'**).
 
-config.json example
-----
+## config.json example
 The example below shows the **config** file for a T+D dynamic simulation with a [IEEE 118 bus transmission system](https://icseg.iti.illinois.edu/ieee-118-bus-system/) having [IEEE 123 node test feeder](http://sites.ieee.org/pes-testfeeders/resources/) connected to all the buses for a simulation lasting for 1.0 seconds.
 
 ```json
@@ -113,5 +111,3 @@ The example below shows the **config** file for a T+D dynamic simulation with a 
     }
 }
 ```
-
-[Continue to How to use TDcoSim?](user_guide_using_tdcosim.md)

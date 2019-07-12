@@ -1,6 +1,6 @@
 # Solution time
 
-## Dynamic simulations
+## Dynamic simulation
 
 The solution times to perform co-simulations with 10 % and 25 % DER penetration for various power system configurations using the [recommended workstation configuration](user_guide_sys_requirements.md) are given in Table I and Table II respectively.
 
