@@ -73,7 +73,7 @@ The configuration options provided through **defaultFeederConfig**  is universal
        * *time (float):* Specifies the time at which event occurs.
        * *type (string):* Specifies type of event (**'simEnd'**, **'faultOn'** or **'faultOff'** ).
        * *faultBus (integer):* Specifies the transmission bus at which fault occurs.
-       * faultImpedance (list of floats):* Specifies the impedance of fault.
+       * faultImpedance (list of floats): Specifies the impedance of fault.
    * ***staticConfig:*** Configuration options for **'static'** simulation.
      * *loadShape (list of floats):* N/A
    *  ***protocol (string):*** Specifies the nature of coupling between Transmission system and Distribution System (**'loose_coupling'**).

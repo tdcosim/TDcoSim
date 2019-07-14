@@ -56,7 +56,7 @@ In order to run a co-simulation using **TDcoSim**, the user needs to provide the
 
 ***
 
-## Future roadmap
+## Future development
 
 The studies that can be conducted in the next version of the software are listed below:
 
@@ -67,6 +67,7 @@ The studies that can be conducted in the next version of the software are listed
   4. Impact of generator and load outages on system frequency under high DER penetration.
 
 Following capabilities are planned in be added in the future:
+
 * Capability to include other types of DER's like battery storage.
 * Capability to introduce insolation change events.
 
