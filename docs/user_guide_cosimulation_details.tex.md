@@ -1,6 +1,10 @@
-# What is T+D co-simulation?
+# T & D co-simulation with PSS/E and OpenDSS
+This section provides a brief overview of T & D co-simulation with PSSE and OpenDSS as implemented in TDcoSim. Further details and theory can be found in [A combined transmission and distribution system co-simulation framework for assessing the impact of Volt/VAR control on transmission system](https://ieeexplore.ieee.org/document/8274633) and [Load Model Parameter Estimation by Transmission-Distribution Co-Simulation.](https://ieeexplore.ieee.org/document/8442939)
 
-This section provides a brief overview of T+D co-simulation with PSSE and OpenDSS as implemented in TDcoSim. Further details and theory can be found in [A combined transmission and distribution system co-simulation framework for assessing the impact of Volt/VAR control on transmission system](https://ieeexplore.ieee.org/document/8274633) and [Load Model Parameter Estimation by Transmission-Distribution Co-Simulation.](https://ieeexplore.ieee.org/document/8442939)
+## Advantages
+It offers two major advantages over doing separate simulations for the transmission and distribution system models.
+   1. Higher degree of fidelity since there will not be aggregation of loads at the distribution system or generation sources at the transmission system.
+   2. Running  a single co-simulation provides time savings over running separate  simulations for each system and manually combining the results.
 
 ## Assumptions in current software version
 
@@ -12,7 +16,6 @@ The transmission system simulator (TSS) and distribution system simulator (DSS) 
 
 ### Data exchange
 The TSS, PSSE uses positive sequence quantities while the DSS, OpenDSS uses phasor quantities. Hence it is necessary to convert one positive sequence to equivalent phasor quantity and vice-versa. After PSSE completes a solution, it outputs the sequence voltages at the T&D interface. Then (1) is applied to convert the sequence voltages at the boundary bus to phase voltages. Using the phase voltages at the boundary bus, the DSS completes a solution and outputs the phase current injection at the boundary bus, which are expressed in (2).
-
 
 $$
 \begin{equation}
@@ -43,7 +46,7 @@ S_{TS,+}=3.\bar{V}_{TS,+}.\bar{I}^*_{TS,+}\tag{4}
 \end{equation}
 $$
 
-The obtained value of $S_{TS,+}$ is used as the total power requirement for the said load bus at the transmission system. It is worth mentioning that the equivalence load that is replaced with the distribution system simulator is modeled as a constant power load with respect to the transmission system simulator . The data exchange across the T&D interface is illustrated in Fig. 1.
+The obtained value of S_TS,+ is used as the total power requirement for the said load bus at the transmission system. It is worth mentioning that the equivalence load that is replaced with the distribution system simulator is modeled as a constant power load with respect to the transmission system simulator . The data exchange across the T&D interface is illustrated in Fig. 1.
 
 ![loosely coupled protocol](images/T_D_data_interface.png)
 

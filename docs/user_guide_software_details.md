@@ -4,10 +4,10 @@
 1. Capable of launching sub-processes for individual feeders.
 2. Capable of configuring each feeder with different DER penetration levels, ratings, and ride through settings.
 3. Introduce fault events during simulation.
-4. Capture and report data for each transmission for the entirety of the simulation.
+4. Captures and reports data from both transmission and distribution system for the entirety of the co-simulation.
 
 ## Main components
-The T&D co-simulation tool comprises of interface modules and  synchronization module. There are separate interface modules with sockets and interaction protocols for both the T & D and D & DER simulators.
+The T&D co-simulation tool comprise interface modules and a synchronization module. There are separate interface modules with sockets and interaction protocols for both the T & D and D & DER co-simulations.
 
 **1. T&D interface:**
 A Python program that exchanges and iterates information (voltages, currents, and powers) between T&D simulators through synchronization protocols (loosely or tightly coupled). The data being exchanged, and the utilized protocols and the T&D interface will be introduced in the later section of the document. The Python-based T&D interface is simple and light-weighted. Moreover, for version change of PSSE and/or OpenDSS, may be covered with the libraries  of the software. 

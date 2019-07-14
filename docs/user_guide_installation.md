@@ -12,6 +12,7 @@ TDcoSim can be installed from GitHub through command line as shown below.
 
 ## Dependencies:
 The packages listed below must be installed separately:
+
 * [Python, version = 2.7.5](https://www.python.org/)
 * Power system simulator: [PSS®E, version =  33](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html) 
 * Distribution system simulator: [OpenDSS, version >= 8.6.1.1](https://sourceforge.net/projects/electricdss/) 
