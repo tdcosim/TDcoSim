@@ -58,11 +58,21 @@ Figure 10: Voltage profile observed in bus 2 for the different cases considered.
 
 ![Voltage_100 comparison](Use%20Case%20Results/Study%202/voltage_profile_comparison_bus_100.png)
 
-Figure 11: Voltage profile observed in bus 100 for the different cases considered. (Green: No DER, Red: 10% DER, Cyan: 20% DER, Black: 30% DER, Blue: 40% DER):
+Figure 11: Voltage profile observed in bus 100 for the different cases considered. (Green: No DER, Red: 10% DER, Cyan: 20% DER, Black: 30% DER, Blue: 40% DER)
 
 
 Figure 9 shows the voltage plot for bus 1 for the different cases considered. It can be observed that the with the DER added in the system, the bus voltage settles at a higher steady state voltage and it takes almost 4 secs for the system to reach a steady state. Similar settling time were observed in the buses nearby the DER connected buses as shown in Figure 10.
 
 Such differences in settling time were not observed in electrically distant buses as shown in Figure 11, even though steady state differences were observed between different cases.
+
+Figure 12 shows the generator speed profile for the base case scenario without any DER penetration. It can be observed that the system frequency is initialized at exactly 60 Hz and stays constant at 60 Hz throughout the simulation. Figure 13 shows the generator speed profile for the 40 percent DER pemetration case. It can be observed that the generator speed has few oscillations that dies down slowly over time. The oscillations are due to the mismatch in the calculation of initial conditions for load and generation.
+
+![frequency_00 plot](Use%20Case%20Results/Study%202/Frequency_plot_for_00_percent_case.png)
+
+Figure 11: Frequency plot for the system generators for the basecase with zero DER penetration.
+
+![frequency_40 plot](Use%20Case%20Results/Study%202/Frequency_plot_for_40_percent_case.png)
+
+Figure 11: Frequency plot for the system generators for the case with 40 percent DER penetration.
 
 Please note that the tool takes few simulation seconds for the system to reach a steady state solution for the dynamic cases. The developers are working on the initialization of system dynamic states so as to obtain a steady state solution from time t=0+. So for the current version of the tool, to study the system dynamics change of operating points and disturbances are applied only after the system reaches a certain steady state threshold. i.e. at least 0.5 seconds.
