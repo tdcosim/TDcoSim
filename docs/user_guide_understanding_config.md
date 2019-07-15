@@ -11,8 +11,8 @@ The config file can be divided into three sections. The purpose of each option i
 1. **cosimHome:** Directory containing config file, and models for T and D system (e.g. "C:\\\project_folder).
 
 2. **psseConfig:** Configuration for  transmission system.
-* ***rawFilePath***: Full path for the PSS/E transmission system loadflow case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\\\**case118.raw**").
-* ***dyrFilePath***: Full path for the PSS/E transmission system dynamic case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\**case118.dyr**").
+   * ***rawFilePath***: Full path for the PSS/E transmission system loadflow case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\\\**case118.raw**").
+   * ***dyrFilePath***: Full path for the PSS/E transmission system dynamic case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\\**case118.dyr**").
 
 ### OpenDSS + DER configuration
 

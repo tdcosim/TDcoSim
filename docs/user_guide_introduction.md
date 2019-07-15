@@ -2,7 +2,7 @@
 
 T&D co-simulation is a powerful tool to conduct studies that capture short and long term interactions between  transmission and distribution systems with and without distributed energy resources.
 
-This manual introduces users to Argonne’s T & D co-simulation tool (TDcoSim), provides a step-by-step guide to its installation and use, and offers examples of its capabilities as a tool for conducting studies. A list of case studies possible with TDcoSim can be found [here](#types-of-studies).
+This manual introduces users to Argonne’s T & D co-simulation tool (**TDcoSim**), provides a step-by-step guide to its installation and use, and offers examples of its capabilities as a tool for conducting studies. A list of case studies possible with **TDcoSim** can be found [here](#types-of-studies).
 
 ***
 ***To Do:*** Should we add **NERC brochure** as an appendix?
@@ -21,7 +21,9 @@ This manual introduces users to Argonne’s T & D co-simulation tool (TDcoSim), 
 
 ## How can I use it?
 
-TDcoSim is available as an open source Python package and can be installed at no cost from its [GitHub repository](https://github.com/tdcosim/TDcoSim) . Additionally, the user needs to separately install  [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html) for simulating the transmission network, [OpenDSS](https://sourceforge.net/projects/electricdss/) for simulating the distribution network, and [Solar PV-DER simulation-utility.](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility). for simulating PV-DER’s. Detailed installation instructions and links to the requisite supporting software can be found [here](user_guide_installation.md).
+TDcoSim is available as an open source Python package and can be installed at no cost from its [GitHub repository](https://github.com/tdcosim/TDcoSim) . Additionally, the user needs to separately install  [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html) for simulating the transmission network, [OpenDSS](https://sourceforge.net/projects/electricdss/) for simulating the distribution network, and [Solar PV-DER simulation-utility.](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility). for simulating PV-DER’s. 
+
+Detailed installation instructions and links to the requisite supporting software can be found [here](user_guide_installation.md). Information for technical support is available [here](user_guide_technical_support.md).
 
 ## What are the inputs?
 
@@ -29,8 +31,10 @@ In order to run a co-simulation using **TDcoSim**, the user needs to provide the
 
 * Transmission system model in a format compatible with PSS/E (required)
 * Distribution system model in a format compatible with OpenDSS (required)
-* DER penetration level and ratings (optional).
-* Fault events (optional).
+* DER penetration level and ratings (optional)
+* Fault events (optional)
+
+Detailed description of each input can be found [here](user_guide_getting_started.md).
 
 ## What are the outputs?
 

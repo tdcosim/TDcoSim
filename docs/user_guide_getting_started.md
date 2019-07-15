@@ -1,6 +1,6 @@
 # Getting started with TDcoSim
 
-In this section, we describe how you can get started with using TDcoSim to conduct static or dynamic co-simulation studies for T & D systems with DER penetration and fault events. A list of studies possible with TDcoSim can be found [here](user_guide_introduction.md#studies).
+In this section, we describe how you can get started with using TDcoSim to conduct static or dynamic co-simulation studies for T & D systems with DER penetration and fault events.
 
 ## 1. Setup TDcoSim
 
@@ -32,26 +32,30 @@ In this section, we describe how you can get started with using TDcoSim to condu
 
 ## 3. Transferring the configuration to TDcoSim
 
-The power system configuration defined in previous step can be transferred to TDcoSim using the **config** file (detailed explanations for every entry in the config file is provided [here](user_guide_cosimulation_details.ipynb).) The file formats currently supported are:
+The power system configuration defined in previous step can be transferred to TDcoSim using the **config** file (detailed explanations for every entry in the **config** file is provided [here](user_guide_cosimulation_details.ipynb)). The file formats currently supported are:
 
 * Transmission system model: *.raw, *.dyr
 * Distribution system model: *.dss
 
 ***
-***Note:*** The config file can be edited with Notepad++.
+***Note:*** The **config** file can be edited with Notepad++.
+
+***
+***
+***Note:*** The **config** file should be in the same folder as **tdcosimapp.py**.
 
 ***
 
 ## 4.  Starting co-simulation
 
-Once the **config** file has been filled with the required entries and saved, the user can start the co-simulation by running **runtdcosim.py** Python script. To do this open the [command line prompt ](user_guide_visual_guide.md) within the folder containing the **runtdcosim.py** and run following script.
+Once the **config** file has been filled with the required entries and saved, the user can start the co-simulation by running **tdcosimapp.py** Python script. To do this open the [command line prompt ](user_guide_visual_guide.md) within the folder containing the **tdcosimapp.py** and run following script.
 
 ```
-python runtdcosim.py > log_file.txt
+python runtdcosimapp.py > log_file.txt
 ```
 
 ***
-***Note:*** rundtdcosim.py is the default name of script that starts the co-simulation. If desired the user can write his own script by following the instructions given [here](user_guide_using_tdcosim.md).
+***Note:*** tdcosimapp.py is the default name of script that starts the co-simulation. If desired the user can write his own script by following the instructions given [here](user_guide_using_tdcosim.md).
 
 ***
 ***
@@ -62,3 +66,12 @@ python runtdcosim.py > log_file.txt
 ## 5.  Accessing the results
 
 Outputs (from both transmission and distribution system) are saved as an MS Excel file (**.xlsx**) at the end of the co-simulation. Additionally a PSS/E channel output file (**.out**) is also created containing all the simulated quantities from PSS/E.
+
+***
+***Note:*** Both the **.xlsx** file and the **.out** file will be found in the same folder as tdcosimapp.py.
+
+***
+
+## Prebuilt templates
+
+**config** files for static and dynamic co-simulation scenarios are provided in the '**examples**' folder within the TDcoSim repository. These may be run by executing run_qsts.py and run_time_domain.py respectively as shown in step 4 (after replacing tdcosimapp.py with the appropriate file name).
