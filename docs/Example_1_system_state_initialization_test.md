@@ -1,8 +1,8 @@
 ### Example 1: Test of system state initialization with TDcoSim tool
 
-In this test study, different penetration level of DERs within one distribution system connected to a transmission bus is studied. The purpose of this study is to test the ability of the tool to properly initialize all the dynamic components of the system. Without any disturbance introduced in the system through changes in operating point or faults, it is expected that the responses observed at the various point in the system be a flat profile if the state of the various components are properly initialized.
+In this test study, different penetration level of DERs within one distribution system connected to a transmission bus is studied. The purpose of this study is to test the ability of the tool to properly initialize the states of all the dynamic components of the system. Without any disturbance introduced in the system through changes in operating points or faults, it is expected that the responses of the various components in the system be a flat profile if the state of the various components are properly initialized.i.e. all the variables hsould have a constant value throughout the duration of simulation.
 
-The DER configuration used in this case is as follows, where the "solarPenetartion" was incremented with 10% increment for each of the cases: 
+The DER configuration used in this case is as follows, where the "solarPenetartion" was varied with 10% increment for each of the cases: 
 
     "manualFeederConfig":{
             "nodes": [
@@ -43,7 +43,7 @@ Figure 8: Reactive power observed in bus 100 for the different cases considered.
 
 
 
-Figure 6 shows the flat start performance of the TDcosim tool for different penetration level of DER. It can be observed that with the DER added into the test system, TDcosim tool takes couple of secs to reach the steady state active power consumption at the DER connected bus. Also, note that the settling value of the net active power is slightly below to the calculated net load power based on DER penetration.
+Figure 6 shows the flat start performance of the TDcosim tool for different penetration level of DER. It can be observed that with the DER added into the test system, TDcosim tool takes couple of secs to reach the steady state active power consumption at the DER connected bus. Also, note that the settling value of the net active power is slightly below to the calculated net load power based on DER penetration. One of the reason for this is that the addition of DER within the distribution feeder doesn't amount to an exact amount of net load drop within the distribution feeder. This depends on the vraious factors like power output of the DER, loacation of DER, narure of the loads modelled and so on. We are working to have the net load initialzed properly.
 
 Figure 7 shows the reactive power observed in bus 1 for the different cases considered. It can be observed that the reactive power consumed at the DS & DER connected bus decreases as DER penetration increases. Figure 8 shows no change in the reactive power for a random bus (bus 100).
 
