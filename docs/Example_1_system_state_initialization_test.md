@@ -17,8 +17,8 @@ The DER configuration used in this case is as follows, where the "solarPenetarti
                         "SteadyState": true,
                         "V_LV1": 0.70,
                         "V_LV2": 0.88,
-                        "t_LV1_limit": 10.0,  
-                        "t_LV2_limit": 20.0,
+                        "t_LV1_limit": 1.0,  
+                        "t_LV2_limit": 2.0,
                         "LVRT_INSTANTANEOUS_TRIP": false,
                         "LVRT_MOMENTARY_CESSATION": false
                     }
