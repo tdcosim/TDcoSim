@@ -23,6 +23,10 @@ In this test, the TDcosim tool is tested for three different scenarios:
                         "avoidNodes":["sourcebus","rg60"],
                         "dt":0.008333
                     
+The DER trip settimg used for this case is shown in Figure A below.
+
+![Instant_trip_settings](Use%20Case%20Results/Study%201/Inst_trip_settings.png)
+Figure A: DER operational settings curve for the instantaneous trip settings.
 
 
 2. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system Ride Through the fault causing voltage sag below V_LV1 voltage level. The DER configuration used for this case is shown below:
@@ -46,6 +50,11 @@ In this test, the TDcosim tool is tested for three different scenarios:
                         "solarPenetrationUnit":"kw",
                         "avoidNodes":["sourcebus","rg60"],
                         "dt":0.008333
+                        
+ The DER trip settimg used for this case is shown in Figure B below.
+ 
+ ![Ride_through_settings](Use%20Case%20Results/Study%201/Ride_through_settings.png)
+ Figure B: DER operational settings curve for the DER ride through settings.
                         
 3. With distribution system connected to Bus 1 of 118 bus system without any DERs on the distribution system. The DER configuration used for this case is shown below:
 
