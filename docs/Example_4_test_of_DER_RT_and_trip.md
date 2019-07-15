@@ -2,7 +2,7 @@
 ### Example 4: Test Example with Eight Distribution System comparing the impact of DER Tripping with DER riding through fault.
 
 In this test, the TDcosim tool is tested for three different scenarios:
-1. With distribution system connected to Bus 2,3,7,11,13,14,16 and 117 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below V_LV1 voltage level. The DER configuration used for this case is shown below (for bus number 2):
+1. With distribution system connected to Bus 2,3,7,11,13,14,16 and 117 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below V_LV2 voltage level. The DER configuration used for this case is shown below (for bus number 2):
 
                     "nodenumber": 2,
                     "filePath: ["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
@@ -26,7 +26,7 @@ In this test, the TDcosim tool is tested for three different scenarios:
 
 Same configuration was used for DERs in distribution system in bus number Bus 3,7,11,13,14,16 and 117.
 
-2. With distribution system connected to Bus 2,3,7,11,13,14,16 and 117 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system Ride Through the fault causing voltage sag below V_LV1 voltage level. The DER configuration used for this case is shown below (for bus number 3):
+2. With distribution system connected to Bus 2,3,7,11,13,14,16 and 117 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system Ride Through the fault causing voltage sag below V_LV2 voltage level. The DER configuration used for this case is shown below (for bus number 3):
 
 
                     "nodenumber": 2,
