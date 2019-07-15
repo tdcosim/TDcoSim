@@ -8,12 +8,11 @@ The config file can be divided into three sections. The purpose of each option i
 
 ### PSSE configuration
 
-1. **cosimHome:** Directory containing config file, and models for T and D system.
+1. **cosimHome:** Directory containing config file, and models for T and D system (e.g. "C:\\\project_folder).
 
 2. **psseConfig:** Configuration for  transmission system.
-
-   * ***rawFilePath***: Full path for the PSS/E transmission system loadflow case file (***.raw** ).
-   * ***dyrFilePath***: Full path for the PSS/E transmission system dynamic case file (***.dyr** ).
+* ***rawFilePath***: Full path for the PSS/E transmission system loadflow case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\\\**case118.raw**").
+   * ***dyrFilePath***: Full path for the PSS/E transmission system dynamic case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\**case118.dyr**").
 
 ### OpenDSS + DER configuration
 
@@ -21,7 +20,7 @@ The configuration options provided through **defaultFeederConfig**  is universal
 
 1. **openDSSConfig:** Configuration for distribution feeder. There is option to provide a default feeder configuration or individually for each feeder.
    * ***defaultFeederConfig:*** Default feeder configuration that applies to distribution feeders on all buses.
-     * *filePath (string):* Specifies the path for the OpenDSS File **( *.dss)**.
+     * *filePath (string):* Specifies the path for the OpenDSS File (e.g. "C:\\\project_folder\\\data\\\DNetworks\\\123bus\\\\**case123ZIP.dss**").
    
      * solarFlag (Boolean): Specifies presence or absence of PV-DER's in the feeder.
    
@@ -31,7 +30,7 @@ The configuration options provided through **defaultFeederConfig**  is universal
      * *nodes:* Specifies the configuration of the distribution system.
      * *nodenumber (integer)*: Specifies the transmission bus where the distribution system is to be connected.
    
-     * *filePath (string)*: Specifies the path for the OpenDSS File **( *.dss)**.
+     * *filePath (string)*: Specifies the path for the OpenDSS File. (e.g. "C:\\\project_folder\\\data\\\DNetworks\\\123bus\\\\**case123ZIP.dss**")
        
      * *solarFlag (Boolean):* Specifies whether the DER are present in the distribution system or not.
      
