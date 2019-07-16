@@ -4,7 +4,7 @@ In this section, we describe how you can get started with using **TDcoSim** to c
 
 ## 1. Setup TDcoSim
 
-Please install the software per installation instructions as the first step (Installation instructions for can be found [here](user_guide_installation.md#installation)). Make sure the system requirements are satisfied (System requirements can be found [here](user_guide_installation.md#system-requirements)). 
+Please install the software per installation instructions as the first step (Installation instructions for can be found [here](user_guide_installation.md#installation)). Make sure the system requirements are satisfied (System requirements can be found [here](user_guide_sys_requirements.md)). 
 
 ## 2. Configure T & D & DER models and simulation scenarios
 

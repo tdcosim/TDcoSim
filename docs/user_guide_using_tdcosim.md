@@ -11,7 +11,7 @@ TDcoSim can be imported and used like a normal Python module. Note that package 
 ## Using TDcoSim within your script
 The basic steps to write your own co-simulation program are as follows:
 
-1. Setup desired T+D or T+D+DER system by making necessary entries in the [**config**](docs/chapter_2_understanding_config_file.md) file.
+1. Setup desired T+D or T+D+DER system by making necessary entries in the [**config**](user_guide_understanding_config.md) file.
 
 2. Import necessary classes.
 
