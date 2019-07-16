@@ -8,10 +8,10 @@
 6. [Using TDcoSim in Python scripts](user_guide_using_tdcosim.md)
 8. [Software details](user_guide_software_details.md)
 9. Examples
-    * [Example 1 - Dynamic Studies with single distribution system without disturbances](Example_2.md)
-    * [Example 2 - Dynamic Studies with single distribution system with disturbances](Test_cases.md)
-    * [Example 3 - Dynamic Studies with two distribution system with disturbances](Example_3.md)
-    * [Example 4 - Dynamic Studies with eight distribution system with disturbances](Example_4.md)
+    * [Example 1 - Dynamic Studies with single distribution system without disturbances](Example_1_system_state_initialization_test.md)
+    * [Example 2 - Dynamic Studies with single distribution system with disturbances](Example_2_test_of_DER_RT_and_trip.md)
+    * [Example 3 - Dynamic Studies with two distribution system with disturbances](Example_3_test_of_DER_RT_and_trip.md)
+    * [Example 4 - Dynamic Studies with eight distribution system with disturbances](Example_4_test_of_DER_RT_and_trip.md)
 10. Appendix
     * [Installation](user_guide_installation.md)
     * [System requirements](user_guide_sys_requirements.md)
