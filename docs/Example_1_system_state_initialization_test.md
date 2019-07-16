@@ -1,4 +1,4 @@
-### Example 1: Test of system state initialization with TDcoSim tool
+# Example 1: Test of system state initialization with TDcoSim tool
 
 In this test study, different penetration level of DERs within one distribution system connected to a transmission bus is studied. The purpose of this study is to test the ability of the tool to properly initialize the states of all the dynamic components of the system. Without any disturbance introduced in the system through changes in operating points or faults, it is expected that the responses of the various components in the system be a flat profile if the state of the various components are properly initialized.i.e. all the variables hsould have a constant value throughout the duration of simulation.
 

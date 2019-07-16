@@ -1,5 +1,5 @@
 
-### Example 2: Test Example with Single Distribution System comparing the impact of DER Tripping with DER riding through fault.
+# Example 2: Test Example with Single Distribution System comparing the impact of DER Tripping with DER riding through fault.
 
 In this test, the TDcosim tool is tested for three different scenarios:
 1. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below V_LV2 voltage level. The DER configuration used for this case is shown below:
@@ -22,7 +22,8 @@ In this test, the TDcosim tool is tested for three different scenarios:
                         "solarPenetrationUnit":"kw",
                         "avoidNodes":["sourcebus","rg60"],
                         "dt":0.008333
-                    
+                
+
 The DER trip settimg used for this case is shown in Figure A below.
 
 ![Instant_trip_settings](Use%20Case%20Results/Study%201/Inst_trip_settings.png)
@@ -50,9 +51,9 @@ Figure A: DER operational settings curve for the instantaneous trip settings.
                         "solarPenetrationUnit":"kw",
                         "avoidNodes":["sourcebus","rg60"],
                         "dt":0.008333
-                        
+
  The DER trip settimg used for this case is shown in Figure B below.
- 
+
  ![Ride_through_settings](Use%20Case%20Results/Study%201/Ride_through_settings.png)
  Figure B: DER operational settings curve for the DER ride through settings.
                         
@@ -77,7 +78,7 @@ Figure A: DER operational settings curve for the instantaneous trip settings.
                         "solarPenetrationUnit":"kw",
                         "avoidNodes":["sourcebus","rg60"],
                         "dt":0.008333
-                        
+
 
 
 A fault is applied in bus 5 of the T-system which causes a lower voltage sag in the D-system connected in bus 1. The simulation configuration to apply fault on bus 5 is shown below.

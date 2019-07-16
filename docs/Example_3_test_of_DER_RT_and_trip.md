@@ -1,5 +1,5 @@
 
-### Example 3: Test Example with Two Distribution System comparing the impact of DER Tripping with DER riding through fault.
+# Example 3: Test Example with Two Distribution System comparing the impact of DER Tripping with DER riding through fault.
 
 In this test, the TDcosim tool is tested for three different scenarios:
 1. With distribution system connected to Bus 2 and Bus 3 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below V_LV2 voltage level. The DER configuration used for this case is shown below (for bus number 2):
@@ -22,7 +22,7 @@ In this test, the TDcosim tool is tested for three different scenarios:
                         "solarPenetrationUnit":"kw",
                         "avoidNodes":["sourcebus","rg60"],
                         "dt":0.008333
-                    
+                
 
 Same configuration was used for DERs in bus number 3.
 
@@ -47,7 +47,7 @@ Same configuration was used for DERs in bus number 3.
                         "solarPenetrationUnit":"kw",
                         "avoidNodes":["sourcebus","rg60"],
                         "dt":0.008333
-                        
+
 Same configuration was used for DERs in bus number 2.
 
 3. With distribution system connected to Bus 2 and Bus 3 of 118 bus system without any DERs on the distribution system. The DER configuration used for this case is shown below:
@@ -71,7 +71,7 @@ Same configuration was used for DERs in bus number 2.
                         "solarPenetrationUnit":"kw",
                         "avoidNodes":["sourcebus","rg60"],
                         "dt":0.008333
-                        
+
 
 
 

@@ -19,9 +19,9 @@ Fig. 1. below illustrates the various components that currently can be simulated
 
 ## How can I use it?
 
-**TDcoSim** is available as an open source Python package and can be installed at no cost from its [GitHub repository](https://github.com/tdcosim/TDcoSim) . Additionally, the user needs to separately install  [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html) for simulating a transmission network, [OpenDSS](https://sourceforge.net/projects/electricdss/) for simulating distribution networks, and [Solar PV-DER simulation-utility.](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility). for simulating dynamic PV-DERs. 
+**TDcoSim** is available as an open source Python package and can be installed at no cost from its [GitHub repository](https://github.com/tdcosim/TDcoSim) . Additionally, the user needs to separately install  [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html) for simulating a transmission network, [OpenDSS](https://sourceforge.net/projects/electricdss/) for simulating distribution networks, and [Solar PV-DER simulation-utility](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility) for simulating dynamic PV-DERs. 
 
-Detailed installation instructions and links to the requisite supporting software can be found [here](user_guide_installation.md). Information for technical support is available [here](user_guide_technical_support.md).
+Detailed installation instructions and links to the requisite supporting software can be found [here](user_guide_installation.md#installation).
 
 ## What are the inputs?
 
@@ -34,7 +34,7 @@ In order to run a co-simulation using **TDcoSim**, the user needs to provide the
 * DER ratings and ride through settings (optional)
 * Simulation events (optional)
 
-Detailed description of each input can be found [here](user_guide_getting_started.md).
+Detailed description of each input can be found [here](user_guide_getting_started.md#getting-started-with TDcoSim).
 
 ## What are the outputs?
 
@@ -106,4 +106,4 @@ Following capabilities are planned in be added in the future:
 
 The scale of the T & D system (including PV-DERs) to be co-simulated is limited only by the available memory (RAM) in the workstation where **TDcoSim** is installed. The solution time for the dynamic co-simulation depends on the number of distribution feeder instances and DER instances as well as on the number of logical cores available in the workstation.
 
-[Continue to Getting Started](user_guide_getting_started.md) 
+[Continue to Getting Started](user_guide_getting_started.md)

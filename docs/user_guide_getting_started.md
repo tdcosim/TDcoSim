@@ -4,7 +4,7 @@ In this section, we describe how you can get started with using **TDcoSim** to c
 
 ## 1. Setup TDcoSim
 
-Please install the software per installation instructions as the first step (Installation instructions for can be found [here](user_guide_sys_requirements.md)). Make sure the system requirements are satisfied (System requirements can be found [here](user_guide_installation.md).) 
+Please install the software per installation instructions as the first step (Installation instructions for can be found [here](user_guide_installation.md#installation)). Make sure the system requirements are satisfied (System requirements can be found [here](user_guide_installation.md#system-requirements)). 
 
 ## 2. Configure T & D & DER models and simulation scenarios
 
@@ -41,7 +41,7 @@ Please install the software per installation instructions as the first step (Ins
 
 ### Transfer the configuration to TDcoSim
 
-The power system models and simulation scenarios defined in the previous section can be transferred to TDcoSim using the **config** file (detailed explanations for every entry in the **config** file is provided [here](user_guide_cosimulation_details.ipynb)). The file formats currently supported are:
+The power system models and simulation scenarios defined in the previous section can be transferred to TDcoSim using the **config** file (detailed explanations for every entry in the **config** file is provided [here](user_guide_understanding_config.md#understanding-the-config-file)). The file formats currently supported are:
 
 * Transmission system model: *.raw, *.dyr
 * Distribution system model: *.dss
@@ -64,7 +64,7 @@ python tdcosimapp.py > log_file.txt
 ```
 
 ***
-***Note:*** tdcosimapp.py is the default name of script that starts the co-simulation. If desired the user can write his/her own script by following the instructions given [here](user_guide_using_tdcosim.md).
+***Note:*** tdcosimapp.py is the default name of script that starts the co-simulation. If desired the user can write his/her own script by following the instructions given [here](user_guide_using_tdcosim.md#tdcosim-advanced-usage).
 
 ***
 ***
