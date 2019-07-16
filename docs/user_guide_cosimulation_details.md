@@ -1,18 +1,20 @@
 # T & D co-simulation with PSS/E and OpenDSS
-This section provides a brief overview of T & D co-simulation with PSSE and OpenDSS as implemented in TDcoSim. Further details and theory can be found in [A combined transmission and distribution system co-simulation framework for assessing the impact of Volt/VAR control on transmission system](https://ieeexplore.ieee.org/document/8274633) and [Load Model Parameter Estimation by Transmission-Distribution Co-Simulation.](https://ieeexplore.ieee.org/document/8442939)
+
+This section provides a brief overview of T & D co-simulation with PSSE and OpenDSS as implemented in TDcoSim.
 
 ## Advantages
-It offers two major advantages over doing separate simulations for the transmission and distribution system models.
-   1. Higher degree of fidelity since there will not be aggregation of loads at the distribution system or generation sources at the transmission system.
-   2. Running  a single co-simulation provides time savings over running separate  simulations for each system and manually combining the results.
+
+The state-of-the-art approach of studying DER impact on the bulk power system entails developing aggregate positive-sequence load and DER model for distribution systems and then applying these models in conventional positive-sequence transmission system simulation software such as PSSE, PSLF, etc. **TDcoSim** offers higher degree of fidelity since there is no need to parameterize the aggregate load and DER models for distribution system, which are only approximate representation of actual distribution system behaviors, 
+
+**TDcoSim** also offers time savings by running an integrated T&D co-simulation compared to the approaches of running separate simulations for T&D systems and manually combining the results.
 
 ## Assumptions in current software version
 
 1. It is assumed that all the distribution feeders connected to the transmission system load bus have the same characteristics. Hence only one distribution feeder is simulated in an OpenDSS instance. The power output from the single feeder is then multiplied with a scaling factor (calculated automatically by TDcoSim) so that we can match the rated load at the transmission bus with the total load from all the feeders connected to the bus.
-2. No Sub-station is not explicity added to the distribution network model by TDcoSim to interface the T bus with the distribution feeder. However if the user provided distribution network model comes with a sub-station, then it is used.
+2. No Sub-station is explicity added to the distribution network model by TDcoSim to interface the T bus with the distribution feeder. However if the user provided distribution network model comes with a sub-station, then it is used.
 
 ## T&D interface
-The transmission system simulator (TSS) and distribution system simulator (DSS) are separate programs with their own solution methods. TDcoSim is responsible for exchanging data and synchronizing their runs.
+The transmission system simulator (TSS) and distribution system simulator (DSS) are separate programs with their own solution methods. **TDcoSim** is responsible for exchanging data and synchronizing their runs.
 
 ### Data exchange
 The TSS, PSSE uses positive sequence quantities while the DSS, OpenDSS uses phasor quantities. Hence it is necessary to convert one positive sequence to equivalent phasor quantity and vice-versa. After PSSE completes a solution, it outputs the sequence voltages at the T&D interface. Then (1) is applied to convert the sequence voltages at the boundary bus to phase voltages. Using the phase voltages at the boundary bus, the DSS completes a solution and outputs the phase current injection at the boundary bus, which are expressed in (2).
@@ -44,7 +46,7 @@ Both static and dynamic co-simulation starts with an initialization for both PSS
   <strong>Fig. 2. </strong>Loosely couple protocol.
 </p>
 
-## Steady-state T&D Co-simulation Process
+## Steady-state T&D co-simulation process
 The data exchange protocol for steady-state co-simulation is loosely coupled. The initialization steps are:
 
 1. Input case files (both PSSE and OpenDSS).
@@ -56,7 +58,7 @@ The data exchange protocol for steady-state co-simulation is loosely coupled. Th
 
 The scaling factor (see [assumptions](#assumptions)) is calculated by dividing the total load at a transmission system load bus and the load of one distribution feeder.
 
-## Dynamic T&D Co-simulation Process
+## Dynamic T&D co-simulation process
 The data exchange protocol for steady-state co-simulation is loosely coupled. The initialization steps are:
 
 1. Input case files (both PSSE and OpenDSS).
