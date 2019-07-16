@@ -57,10 +57,10 @@ The power system models and simulation scenarios defined in the previous section
 
 ## 3.  Start a co-simulation
 
-Once the **config** file has been filled with the required entries and saved, the user can start the co-simulation by running **tdcosimapp.py** Python script. To do this open the [command line prompt ](user_guide_visual_guide.md) within the folder containing the **tdcosimapp.py** and run the following script.
+Once the **config** file has been filled with the required entries and saved, the user can start the co-simulation by running **tdcosimapp.py** Python script. To do this open the command line prompt within the folder containing the **tdcosimapp.py** and run the following script.
 
 ```
-python runtdcosimapp.py > log_file.txt
+python tdcosimapp.py > log_file.txt
 ```
 
 ***
@@ -72,7 +72,7 @@ python runtdcosimapp.py > log_file.txt
 
 ***
 
-## 5.  Accessing the results
+## 4.  Accessing the results
 
 Outputs (from both transmission and distribution systems) are saved as an MS Excel file (**.xlsx**) at the end of the co-simulation as shown in Fig. 1. Additionally a PSS/E channel output file (**.out**) is created containing all the simulated quantities from PSS/E.
 
@@ -88,4 +88,4 @@ Outputs (from both transmission and distribution systems) are saved as an MS Exc
 
 ## Prebuilt templates
 
-**config** files for static and dynamic co-simulation scenarios are provided in the '**examples**' folder within the TDcoSim repository. These may be run by executing run_qsts.py and run_time_domain.py respectively as shown in step 4 (after replacing tdcosimapp.py with the appropriate file name).
+**config** files for static and dynamic co-simulation scenarios are provided in the '**examples**' folder within the TDcoSim repository. These may be run by executing run_qsts.py and run_time_domain.py respectively as shown in step 3 (after replacing tdcosimapp.py with the appropriate file name).

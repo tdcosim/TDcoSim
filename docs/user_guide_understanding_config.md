@@ -24,7 +24,7 @@ The default feeder configuration is **defaultFeederConfig**, which automatically
    
      * solarFlag (Boolean): Specifies presence or absence of PV-DERs in a feeder.
    
-     * *solarPenetration (float):* Specifies the total rated capacity of PV-DERs as a percentage of the total feeder load (e.g. 0.1).
+     * *solarPenetration (float):* Specifies the total rated capacity of PV-DERs as a percentage of the total feeder load in dynamic co-simulation (e.g. 0.1).
    
    * ***manualFeederConfig:*** Manually specify the distribution system configuration at the desired transmission bus.
      * *nodes:* Specifies the configuration of the distribution system.
@@ -34,7 +34,7 @@ The default feeder configuration is **defaultFeederConfig**, which automatically
        
      * *solarFlag (Boolean):* Specifies presence or absence of PV-DERs in a feeder.
      
-     * solarPenetration (float) : Specifies the total rated capacity of PV-DERs as a percentage of the total feeder load (e.g. 0.1).
+     * solarPenetration (float) : Specifies the total rated capacity of PV-DERs as a percentage of the total feeder load in dynamic co-simulation (e.g. 0.1).
      
      * *DERParameters*: Specifies the configuration of PV-DERs to be used in the distribution system.
        * *power_rating (float):* Specifies the power rating of DER in kW (valid options: 50, 250).
@@ -56,12 +56,6 @@ The default feeder configuration is **defaultFeederConfig**, which automatically
        * *LVRT_MOMENTARY_CESSATION (Boolean):* Specifies whether DER should ramp back to nominal power when voltage recovers above the under-voltage 2 trip voltage set point.
 
        * *pvderScale (float):* Specifies the scaling factor associated with the DER power output from the feeder. A higher value of *pvderScale* for similar *solarPenetration* will result in lower number of DER model instances.
-         
-       * *solarPenetrationUnit (string):*  specifies the unit of solar penetration in the distribution system.
-         
-       * *avoidNodes (list of strings):* Specifies the nodes in the distribution system that are to be avoided when placing the DER. The tool automatically places the DER at different nodes of the distribution system while avoiding the nodes specified here.
-         
-       * *dt:* Specifies the time step at which voltage/power information is exchanged with DER model instance.
 
 ***
 ***Note:*** Please check sections 6.4.1 and 6.4.2 in [IEEE 1547-2018](https://standards.ieee.org/standard/1547-2018.html) for more information on voltage ride-through and trip settings.
@@ -84,6 +78,10 @@ The default feeder configuration is **defaultFeederConfig**, which automatically
 
 ***
 ***Note:*** Tight coupling protocol is only available for static co-simulation in current version.
+
+***
+***
+***Note:*** For static co-simulation, solar penetration needs to be implemented through the **.dss** file. Option to add solar shape through config file will be implemented in next version.
 
 ***
 

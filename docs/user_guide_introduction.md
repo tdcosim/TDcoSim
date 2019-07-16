@@ -2,7 +2,7 @@
 
 Argonne’s transmission and distribution systems  co-simulation tool (**TDcoSim**) is a powerful tool to conduct studies that capture short- and long-term interactions between transmission and distribution systems with and without distributed energy resources (DER). It is capable of both steady-state and dynamic simulations. Consideration of inverter-based DER dynamics along with its protection and controls are among the most salient features of this tool. **TDcoSim** is designed to be used in offline planning, operational, and control studies. Transmission system entities can use the tool to study high-penetration DER scenarios, which will assist in ensuring secure, reliable, and economic grid planning and operations.
 
-This manual intends to introduce users to **TDcoSim**, provide a step-by-step guide to its installation and use, and offer examples of its capabilities as a tool for conducting studies. A list of case studies possible with **TDcoSim** can be found [here](#types-of-studies) and a brochure can be found [here](). 
+This manual intends to introduce users to **TDcoSim**, provide a step-by-step guide to its installation and use, and offer examples of its capabilities as a tool for conducting studies. A list of case studies possible with **TDcoSim** can be found [here](#types-of-studies) and a brochure with FAQ related to the project goals can found [here](references/NERC_TDcoSim_brochure.pdf). 
 
 ## What is TDcoSim?
 
@@ -19,7 +19,7 @@ Fig. 1. below illustrates the various components that currently can be simulated
 
 ## How can I use it?
 
-**TDcoSim** is available as an open source Python package and can be installed at no cost from its [GitHub repository](https://github.com/tdcosim/TDcoSim) . Additionally, the user needs to separately install  [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html) for simulating the transmission network, [OpenDSS](https://sourceforge.net/projects/electricdss/) for simulating the distribution network, and [Solar PV-DER simulation-utility.](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility). for simulating dynamic PV-DER’s. 
+**TDcoSim** is available as an open source Python package and can be installed at no cost from its [GitHub repository](https://github.com/tdcosim/TDcoSim) . Additionally, the user needs to separately install  [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html) for simulating a transmission network, [OpenDSS](https://sourceforge.net/projects/electricdss/) for simulating distribution networks, and [Solar PV-DER simulation-utility.](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility). for simulating dynamic PV-DERs. 
 
 Detailed installation instructions and links to the requisite supporting software can be found [here](user_guide_installation.md). Information for technical support is available [here](user_guide_technical_support.md).
 
@@ -27,9 +27,10 @@ Detailed installation instructions and links to the requisite supporting softwar
 
 In order to run a co-simulation using **TDcoSim**, the user needs to provide the following inputs:
 
-* Transmission system model in a format compatible with PSS/E (required)
+* A Transmission system model in a format compatible with PSS/E (required)
 * Distribution system models in a format compatible with OpenDSS (required)
-* DER penetration levels (required)
+* Simulation type - steady-state or dynamic (required)
+* DER penetration levels (required for dynamic co-simulation)
 * DER ratings and ride through settings (optional)
 * Simulation events (optional)
 
@@ -50,16 +51,20 @@ The output format is an Excel spreadsheet.
 
 **TDcoSim** is intended to be used as a tool for studying static and dynamic impacts of distributed energy resources on the transmission system. Studies that can be conducted with the current version of the software are listed below:
 
-* Static studies
-  1. Analyze generator dispatch with DER over 24 hours.
-  2. Analyze voltage profile of both T-system and D-system with DER.
+* Steady-state studies
 
+  1. Impact of DER on bulk power system load following or ramping requirements throughout the day and over the course of the seasons.
+  2. Analyze voltage profile of both T-system and D-system with varying levels of DER penetrations.
+  3. Impact of different DER penetration levels on the voltage stability of BES via continuations power flow analysis.
+  
 * Dynamic studies
-  1. Impact of DER's tripping during transmission system faults.
-  2. Impact of DER's riding through during transmission system faults.
+
+  1. Impact of DER’s tripping/ride-through settings on bulk power system stability (both frequency and voltage) during and post transmission system faults.
+  2. Parameterization and performance verification of DER_A and composite load model. 
+  3. Impact of DER on the small-signal stability of bulk power system
 
 ***
-***Note:*** Examples of dynamic studies performed with TDcoSim are included in appendix.
+***Note:*** Examples of dynamic studies performed with TDcoSim are included in the **Examples** section.
 
 ***
 
@@ -68,15 +73,34 @@ The output format is an Excel spreadsheet.
 The studies that can be conducted in the next version of the software are listed below:
 
 * Dynamic studies
-  1. Impact of cloud cover event on conventional generators.
-  2. Impact of unbalanced faults on DER tripping and ride through.
-  3. Impact of line outages. 
-  4. Impact of generator and load outages on system frequency under high DER penetration.
+
+  1. Impact of cloud cover events on conventional synchronous generators and operations of bulk power system.
+  2. Impact of DER dynamic reactive power support on bulk power system stability (both frequency and voltage) during and post transmission system faults.  
+  3. Impact of line outages on bulk power system operations and stability under high-DER-penetration scenarios.
+  4. Impact of generator and/or load outages on system frequency under high DER penetration.
+  5. Impact of sudden load increase/decrease on the stability of bulk power system.
+
+* Protection studies
+
+  1. Analyze impact of high DER penetration on coordination among distribution-system protection devices and DER protection relays, and other protection schemes such as under voltage load shedding (UVLS) and under frequency load shedding (UFLS) schemes.
+  2. Determine (a) appropriate DER frequency and voltage ride-through settings; and (b) distribution system protection devices settings. These settings will help ensure bulk system reliability and also satisfy distribution-system safety requirements (e.g. prevention of unintentional islanding).
+  3. Short-circuit analysis.
+
+* T&D operations coordination studies
+
+  1. Aggregation of DER is an effective approach to integrate DER as a dispatchable resource into the planning and operation of distribution and transmission systems. DERMS has emerged as an effective tool sitting between the transmission and distribution operators to manage the aggregation of DERs at the substation and feeder level.
+  2. TDcoSim, in conjunction with DERMS, can be used to manage DERs to provide T&D coordinated congestion management, system balancing, frequency and voltage control, and flexibility. 
+
+The following figure illustrates how **TDcoSim** can assist in T&D planning and operations coordination for future high-DER-penetration grid.
+
+![T & D planning and operationsl](images/TD_planning_operations.png)
 
 Following capabilities are planned in be added in the future:
 
-* Capability to include other types of DER's like battery storage.
+* Capability to include other types of DERs such as energy battery storage system.
 * Capability to introduce insolation change events.
+* Capability to simulate generator tripping, line outages, load increase/decrease.
+* Capability to consider distribution system UFLS and UVLS schemes. 
 
 ## Scalability and solution time
 

@@ -15,8 +15,6 @@
 10. Appendix
     * [Installation](user_guide_installation.md)
     * [System requirements](user_guide_sys_requirements.md)
-    * [Solution time](user_guide_solution_times.md)
     * [Technical support](user_guide_technical_support.md)
-    * API documentation
     * [References](user_guide_references.md)
     * [Software License](../LICENSE.md)
