@@ -2,7 +2,6 @@
 ## Table of Contents
 
 1. [Introduction](user_guide_introduction.md)
-2. [Installation](user_guide_installation.md) 
 3. [Getting Started](user_guide_getting_started.md)
 4. [Understanding the config file](user_guide_understanding_config.md)
 5. [T & D co-simulation details](user_guide_cosimulation_details.md)
@@ -14,8 +13,10 @@
     * [Example 3 - Dynamic Studies with two distribution system with disturbances](Example_3.md)
     * [Example 4 - Dynamic Studies with eight distribution system with disturbances](Example_4.md)
 10. Appendix
+    * [Installation](user_guide_installation.md)
     * [System requirements](user_guide_sys_requirements.md)
     * [Solution time](user_guide_solution_times.md)
     * [Technical support](user_guide_technical_support.md)
     * API documentation
+    * [References](user_guide_references.md)
     * [Software License](../LICENSE.md)

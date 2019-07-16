@@ -1,17 +1,15 @@
 # Introduction
 
-T&D co-simulation is a powerful tool to conduct studies that capture short and long term interactions between  transmission and distribution systems with and without distributed energy resources.
+Argonne’s transmission and distribution systems  co-simulation tool (**TDcoSim**) is a powerful tool to conduct studies that capture short- and long-term interactions between transmission and distribution systems with and without distributed energy resources (DER). It is capable of both steady-state and dynamic simulations. Consideration of inverter-based DER dynamics along with its protection and controls are among the most salient features of this tool. **TDcoSim** is designed to be used in offline planning, operational, and control studies. Transmission system entities can use the tool to study high-penetration DER scenarios, which will assist in ensuring secure, reliable, and economic grid planning and operations.
 
-This manual introduces users to Argonne’s T & D co-simulation tool (**TDcoSim**), provides a step-by-step guide to its installation and use, and offers examples of its capabilities as a tool for conducting studies. A list of case studies possible with **TDcoSim** can be found [here](#types-of-studies).
-
-***
-***To Do:*** Should we add **NERC brochure** as an appendix?
-
-***
+This manual intends to introduce users to **TDcoSim**, provide a step-by-step guide to its installation and use, and offer examples of its capabilities as a tool for conducting studies. A list of case studies possible with **TDcoSim** can be found [here](#types-of-studies) and a brochure can be found [here](). 
 
 ## What is TDcoSim?
 
-**TDcoSim** is a software tool that  can be used to perform static and dynamic co-simulation of transmission and distribution networks with photovoltaic systems as distributed energy resources (PV-DER's). The following figure illustrates the various components that can be simulated using **TDcoSim**. 
+**TDcoSim** is a software tool that can be used to perform static and dynamic co-simulation of transmission and distribution networks as well as DER. Currently, the tool has incorporated dynamic photovoltaic (PV) systems (referred to as PV-DER) for its dynamic simulation capabilities. Dynamic models of other inverter-based distributed generations (DG) (e.g. battery energy storage systems (BESS), wind turbines (WT)) will be included in future versions. Interested users can also integrate their own dynamic DER models into the tool. 
+
+Fig. 1. below illustrates the various components that currently can be simulated using **TDcoSim**. It features a representative IEEE 14-bus transmission system, IEEE 13-bus distribution systems, and solar PV-DERs. Please note that [Solar PV-DER simulation-utility](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility) is used to simulate PV-DER's in dynamic T&D co-simulations. Default OpenDSS standard generator models for PV or other DER are used in steady-state T&D co-simulations.
+
 
 ![14-bus transmission, 13-bus distribution network, and Solar PVDER](images/simulation_objects.png)
 
@@ -21,7 +19,7 @@ This manual introduces users to Argonne’s T & D co-simulation tool (**TDcoSim*
 
 ## How can I use it?
 
-TDcoSim is available as an open source Python package and can be installed at no cost from its [GitHub repository](https://github.com/tdcosim/TDcoSim) . Additionally, the user needs to separately install  [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html) for simulating the transmission network, [OpenDSS](https://sourceforge.net/projects/electricdss/) for simulating the distribution network, and [Solar PV-DER simulation-utility.](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility). for simulating PV-DER’s. 
+**TDcoSim** is available as an open source Python package and can be installed at no cost from its [GitHub repository](https://github.com/tdcosim/TDcoSim) . Additionally, the user needs to separately install  [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html) for simulating the transmission network, [OpenDSS](https://sourceforge.net/projects/electricdss/) for simulating the distribution network, and [Solar PV-DER simulation-utility.](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility). for simulating dynamic PV-DER’s. 
 
 Detailed installation instructions and links to the requisite supporting software can be found [here](user_guide_installation.md). Information for technical support is available [here](user_guide_technical_support.md).
 
@@ -30,9 +28,10 @@ Detailed installation instructions and links to the requisite supporting softwar
 In order to run a co-simulation using **TDcoSim**, the user needs to provide the following inputs:
 
 * Transmission system model in a format compatible with PSS/E (required)
-* Distribution system model in a format compatible with OpenDSS (required)
-* DER penetration level and ratings (optional)
-* Fault events (optional)
+* Distribution system models in a format compatible with OpenDSS (required)
+* DER penetration levels (required)
+* DER ratings and ride through settings (optional)
+* Simulation events (optional)
 
 Detailed description of each input can be found [here](user_guide_getting_started.md).
 
@@ -40,12 +39,16 @@ Detailed description of each input can be found [here](user_guide_getting_starte
 
 **TDcoSim** provides following outputs from each component of the T&D co-simulation:
 
-* Transmission bus: voltage, frequency, active and reactive load, generator active and reactive power output
-* Distribution feeder node: voltage, active and reactive load, DER active and reactive power output
+* Transmission bus: voltage, frequency, load active and reactive power consumption (if a bus is connected with a load), generator active and reactive power output (if a bus is connected with a generator).
+* Distribution feeder node: voltage, active and reactive load, DER active and reactive power output (if a bus is connected with a DER).
+
+Please note that the output comes in an interval of half-a-cycle for dynamic simulations. For steady-state simulations, the output comes at an interval corresponding to the time step of users’ choice, which can range from seconds, minutes, hours, to years. 
+
+The output format is an Excel spreadsheet.
 
 ## Types of studies
 
-**TDcoSim** is intended to be used as a tool for studying static and dynamic impacts of distributed energy resources on the transmission system. The studies that can be conducted with the current version of the software are listed below:
+**TDcoSim** is intended to be used as a tool for studying static and dynamic impacts of distributed energy resources on the transmission system. Studies that can be conducted with the current version of the software are listed below:
 
 * Static studies
   1. Analyze generator dispatch with DER over 24 hours.
@@ -75,8 +78,8 @@ Following capabilities are planned in be added in the future:
 * Capability to include other types of DER's like battery storage.
 * Capability to introduce insolation change events.
 
-## Scalability and Solution time
+## Scalability and solution time
 
-The scale of the T & D system (including DER) to be co-simulated is limited only by the available memory (RAM) in the workstation where TDcoSim is installed. The solution time for the dynamic co-simulation depends on the number of distribution feeder instances and DER instances as well as on the number of logical cores available in the workstation. Solution times for a couple of dynamic co-simulation case studies that were obtained on a workstation with recommended system requirements can be found [here](user_guide_solution_times.md).
+The scale of the T & D system (including PV-DERs) to be co-simulated is limited only by the available memory (RAM) in the workstation where **TDcoSim** is installed. The solution time for the dynamic co-simulation depends on the number of distribution feeder instances and DER instances as well as on the number of logical cores available in the workstation. Solution times for a couple of dynamic co-simulation case studies that were obtained on a workstation with recommended system requirements can be found [here](user_guide_solution_times.md).
 
-[Continue to Installation](user_guide_installation.md) 
+[Continue to Getting Started](user_guide_getting_started.md) 
