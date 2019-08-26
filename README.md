@@ -8,7 +8,7 @@ The T&D co-simulation tool is a Python module that can be used to perform co-sim
 
 ## Links
 * Source code repository: https://github.com/tdcosim/TDcoSim
-* [User guide](docs/user_guide/user_guide_TOC.md)
+* User guide: [Markdown](docs/user_guide/user_guide_TOC.md), [PDF](docs/user_guide/tdcosim_user_guide.pdf)
 * API Documentation:
 
 ## Installation
@@ -25,10 +25,10 @@ You can install the module directly from github with following commands:
 
 ## Quick start
 
-To start the simulation with the default config file, open a [command line prompt ](#visual-guide) within the folder containing the **runtdcosim.py** file (for e.g. by typing Shift+C+M+D). Then run the following script.
+The [config.json file](config.json) provided in the repository can be used to do a co-simulation after editing in the path names (with any text editor). Then open a command line prompt within the folder containing the **tdcosimapp.py** file (for e.g. by typing Shift+C+M+D) and run the following script to start the co-simulation.
 
 ```
-python runtdcosim.py > log_file.txt
+python tdcosimapp.py > log_file.txt
 ```
 ### Use cases:
 Following example use cases are provided:
@@ -65,7 +65,14 @@ This project is supported by Ali Ghassemian and Dan Ton, [U.S. DOE Office of Ele
 ## Citation
 If you use this code please cite it as:
 ```
-
+@misc{TDcoSim,
+  title = {Transmission and Distribution System Co-simulation Tool}: A co-simulation utility},
+  author = "{Karthikeyan Balasubramaniam, Sang-il Yim, Ning Kang}",
+  howpublished = {\url{https://github.com/tdcosim/TDcoSim}},
+  url = "https://github.com/tdcosim/TDcoSim",
+  year = 2019,
+  note = "[Online; accessed 23-August-2019]"
+}
 ```
 ### Copyright and License
 Copyright © 2019, UChicago Argonne, LLC
