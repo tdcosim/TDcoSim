@@ -2,7 +2,7 @@
 
 Argonne’s transmission and distribution systems  co-simulation tool (**TDcoSim**) is a powerful tool to conduct studies that capture short- and long-term interactions between transmission and distribution systems with and without distributed energy resources (DER). It is capable of both steady-state and dynamic simulations. Consideration of inverter-based DER dynamics along with its protection and controls are among the most salient features of this tool. **TDcoSim** is designed to be used in offline planning, operational, and control studies. Transmission system entities can use the tool to study high-penetration DER scenarios, which will assist in ensuring secure, reliable, and economic grid planning and operations.
 
-This manual intends to introduce users to **TDcoSim**, provide a step-by-step guide to its installation and use, and offer examples of its capabilities as a tool for conducting studies. A list of case studies possible with **TDcoSim** can be found [here](#types-of-studies) and a brochure with FAQ related to the project goals can found [here](../references/NERC_TDcoSim_brochure.pdf). 
+This manual intends to introduce users to **TDcoSim**, provide a step-by-step guide to its installation and use, and offer examples of its capabilities as a tool for conducting studies. A list of case studies possible with **TDcoSim** can be found [here](#types-of-studies) and a brochure with FAQ related to the project goals can found [here](https://www.wecc.org/Administrative/ANL-TD%20co-simulation%20tool%20informational%20brochure.pdf). 
 
 ## What is TDcoSim?
 
