@@ -34,13 +34,13 @@ python tdcosimapp.py > log_file.txt
 Following example use cases are provided:
 1. [118 bus T + 123 bus D + DER](docs/user_guide/examples/Example_1_system_state_initialization_test.md)
 
-## Module details
-Technical information on the module can be found here:
+## Package details
+Technical information on the package can be found here:
 1. [T&D Co-simulation](docs/user_guide/user_guide_cosimulation_details.md)
 2. [Software components](docs/user_guide/user_guide_software_details.md)
 
 ## Issues
-Please feel free to raise an issue when bugs are encountered or if you are need further documentation.
+Please feel free to raise an issue for bugs or feature requests.
 
 ## Who is responsible?
 **Project PI:**
@@ -58,7 +58,9 @@ Please feel free to raise an issue when bugs are encountered or if you are need 
 - Rojan Bhattarai rbhattarai@anl.gov
 
 ## Acknowledgement
-The authors would like to acknowledge [Shrirang Abhyankar](https://github.com/abhyshr) for his contribution.
+We want to acknowledge [Shrirang Abhyankar](https://github.com/abhyshr) for his contributions to the code base development.
+
+We would like to recognize the support of the EPRI technical team led by [Roger Dugan](https://www.linkedin.com/in/roger-dugan-974b2812/) and [Davis Montenegro](https://www.linkedin.com/in/davis-montenegro-martinez-11269345/) and the use of the [EPRI OpenDSS open source software](http://smartgrid.epri.com/SimulationTool.aspx). 
 
 This project is supported by Ali Ghassemian and Dan Ton, [U.S. DOE Office of Electricity, Advanced Grid Research and Development](https://www.energy.gov/oe/mission/advanced-grid-research-and-development).
 
