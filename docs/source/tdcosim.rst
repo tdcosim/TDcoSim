@@ -14,10 +14,8 @@ Submodules
 
 .. toctree::
 
-   tdcosim.conf
    tdcosim.confighelper
-   tdcosim.global_data
-   tdcosim.main2
+   tdcosim.global_data  
    tdcosim.report
 
 Module contents

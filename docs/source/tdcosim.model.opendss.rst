@@ -18,9 +18,6 @@ Submodules
    tdcosim.model.opendss.opendss_data
    tdcosim.model.opendss.opendss_model
    tdcosim.model.opendss.opendss_server
-   tdcosim.model.opendss.test_opendss_procedure
-   tdcosim.model.opendss.test_pvder_aggregated_procedure
-   tdcosim.model.opendss.test_pvder_procedure
 
 Module contents
 ---------------
