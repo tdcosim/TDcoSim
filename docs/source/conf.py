@@ -12,16 +12,15 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, u'C:\Users\yim\OneDrive - Argonne National Laboratory\Argonne\TDProject\cosiminstall\NERC_PSSE_OpenDSS\tdcosim')
-
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
 project = u'tdcosim'
-copyright = u'2019, Author'
-author = u'Author'
+copyright = u'2019, Argonne National Laboratory'
+author = u'Balasubramaniam, Karthikeyan'
 
 # The short X.Y version
 version = u''
