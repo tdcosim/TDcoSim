@@ -14,7 +14,8 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../../'))
+sys.path.insert(0, os.path.abspath('../'))
 
 # -- Project information -----------------------------------------------------
 
@@ -23,9 +24,9 @@ copyright = u'2019, Argonne National Laboratory'
 author = u'Balasubramaniam, Karthikeyan'
 
 # The short X.Y version
-version = u''
+version = u'1.0.0'
 # The full version, including alpha/beta/rc tags
-release = u''
+release = u'1.0.0'
 
 
 # -- General configuration ---------------------------------------------------
