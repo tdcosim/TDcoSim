@@ -1,0 +1,288 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>tdcosim.confighelper module &#8212; tdcosim  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tdcosim.global_data module" href="tdcosim.global_data.html" />
+    <link rel="prev" title="tdcosim.conf module" href="tdcosim.conf.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-tdcosim.confighelper">
+<span id="tdcosim-confighelper-module"></span><h1>tdcosim.confighelper module<a class="headerlink" href="#module-tdcosim.confighelper" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="tdcosim.confighelper.ConfigHelper">
+<em class="property">class </em><code class="descclassname">tdcosim.confighelper.</code><code class="descname">ConfigHelper</code><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to help the user create config for cosimulation.
+Most methods are names add_* and remove_*. add _* adds a
+particular configuration while remove_* will undo the change.
+There is also a read, write, show and validate methods to
+read an existing config file, write the current self.data
+to a file, show the contents of self.data and validate the
+configuration in self.data.</p>
+<p>Typical usage,
+foo=ConfigHelper()
+foo.add_*()
+foo.validate()
+foo.write()</p>
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.PrintException">
+<code class="descname">PrintException</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.PrintException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.PrintException" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.add_cosimhome">
+<code class="descname">add_cosimhome</code><span class="sig-paren">(</span><em>cosimHome</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.add_cosimhome"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.add_cosimhome" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.add_defaultfeederconfig">
+<code class="descname">add_defaultfeederconfig</code><span class="sig-paren">(</span><em>filePath</em>, <em>solarFlag</em>, <em>solarPenetration</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.add_defaultfeederconfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.add_defaultfeederconfig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.add_derparameters">
+<code class="descname">add_derparameters</code><span class="sig-paren">(</span><em>nodenumber</em>, <em>power_rating=50</em>, <em>voltage_rating=174</em>, <em>SteadyState=True</em>, <em>V_LV1=0.7</em>, <em>V_LV2=0.88</em>, <em>t_LV1_limit=10.0</em>, <em>t_LV2_limit=20.0</em>, <em>LVRT_INSTANTANEOUS_TRIP=False</em>, <em>LVRT_MOMENTARY_CESSATION=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.add_derparameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.add_derparameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add DER parameters to a given nodenumber (nodeID/busID/busNumber)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.add_fault">
+<code class="descname">add_fault</code><span class="sig-paren">(</span><em>faultBus</em>, <em>faultImpedance</em>, <em>faultOnTime</em>, <em>faultOffTime</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.add_fault"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.add_fault" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.add_loadshape">
+<code class="descname">add_loadshape</code><span class="sig-paren">(</span><em>loadShape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.add_loadshape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.add_loadshape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.add_manualfeederconfig">
+<code class="descname">add_manualfeederconfig</code><span class="sig-paren">(</span><em>nodenumber</em>, <em>filePath</em>, <em>solarFlag</em>, <em>solarPenetration</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.add_manualfeederconfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.add_manualfeederconfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Each input should be a list such that the entries in the list index should match.
+for ex:nodenumber=[1,2],filePath=[‘case13.dss’,’case123.dss’],solarFlag=[0,1],
+solarPenetration=[0,50] implies case13.dss is attached to transmission bus 1 and that there
+is no solar generation in the distribution system.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.add_outputconfig">
+<code class="descname">add_outputconfig</code><span class="sig-paren">(</span><em>outputFileName</em>, <em>outputFileType</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.add_outputconfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.add_outputconfig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.add_pssepath">
+<code class="descname">add_pssepath</code><span class="sig-paren">(</span><em>rawFilePath</em>, <em>dyrFilePath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.add_pssepath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.add_pssepath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.add_simend">
+<code class="descname">add_simend</code><span class="sig-paren">(</span><em>simEndTime</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.add_simend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.add_simend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.add_simulationconfig">
+<code class="descname">add_simulationconfig</code><span class="sig-paren">(</span><em>simType</em>, <em>protocol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.add_simulationconfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.add_simulationconfig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>fpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will load the config data from an existing config file.
+Use this method to make modifications to an existing file.
+P.S. This will overwrite self.data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.remove_cosimhome">
+<code class="descname">remove_cosimhome</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.remove_cosimhome"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.remove_cosimhome" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.remove_defaultfeederconfig">
+<code class="descname">remove_defaultfeederconfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.remove_defaultfeederconfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.remove_defaultfeederconfig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.remove_derparameters">
+<code class="descname">remove_derparameters</code><span class="sig-paren">(</span><em>nodenumber</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.remove_derparameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.remove_derparameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove DER parameters of a given nodenumber (nodeID/busID/busNumber)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.remove_fault">
+<code class="descname">remove_fault</code><span class="sig-paren">(</span><em>faultBus</em>, <em>faultOnTime</em>, <em>faultOffTime</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.remove_fault"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.remove_fault" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.remove_loadshape">
+<code class="descname">remove_loadshape</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.remove_loadshape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.remove_loadshape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.remove_manualfeederconfig">
+<code class="descname">remove_manualfeederconfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.remove_manualfeederconfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.remove_manualfeederconfig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.remove_outputconfig">
+<code class="descname">remove_outputconfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.remove_outputconfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.remove_outputconfig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.remove_pssepath">
+<code class="descname">remove_pssepath</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.remove_pssepath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.remove_pssepath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.remove_simend">
+<code class="descname">remove_simend</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.remove_simend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.remove_simend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.remove_simulationconfig">
+<code class="descname">remove_simulationconfig</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.remove_simulationconfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.remove_simulationconfig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.show">
+<code class="descname">show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will print out the configuration data in self.data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates if the provided settings are valid.
+P.S. Validity in this context simply means that the provided options
+satisfy the minimum requirements. When the config options are validated
+by this method it does not mean that the cosimulation will run without
+errors. For instance, this method does not verify, if a given filepath
+exists.</p>
+<p>P.S. This method will not find the issues when used in optimized mode
+i.e. python -O foo.py or python -OO foo.py</p>
+<p>Sample call: self.validate() will return without error when config is correct.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="tdcosim.confighelper.ConfigHelper.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>fpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tdcosim/confighelper.html#ConfigHelper.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tdcosim.confighelper.ConfigHelper.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will write the configuration data in self.data to the given filename.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">tdcosim</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="tdcosim.html">tdcosim package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tdcosim.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tdcosim.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tdcosim.conf.html">tdcosim.conf module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">tdcosim.confighelper module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tdcosim.global_data.html">tdcosim.global_data module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tdcosim.main2.html">tdcosim.main2 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tdcosim.report.html">tdcosim.report module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tdcosim.html#module-tdcosim">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="tdcosim.html">tdcosim package</a><ul>
+      <li>Previous: <a href="tdcosim.conf.html" title="previous chapter">tdcosim.conf module</a></li>
+      <li>Next: <a href="tdcosim.global_data.html" title="next chapter">tdcosim.global_data module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/tdcosim.confighelper.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
