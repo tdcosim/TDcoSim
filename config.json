@@ -18,7 +18,7 @@
                     "solarFlag":0,
                     "solarPenetration":0,
                     "DERParameters":{
-                        "scaling_factor": 1,
+                        "pvderScale": 1,
                         "V_LV1": 0.70,
                         "V_LV2": 0.88,
                         "t_LV1_limit": 10.0,  
@@ -44,7 +44,7 @@
                 "2":{
                     "type":"faultOff",
                     "time":0.667,
-                    "faultBus":1
+                    "faultBus":60
                 },
                 "3":{
                     "type":"simEnd",
