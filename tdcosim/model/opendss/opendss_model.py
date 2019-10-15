@@ -25,19 +25,33 @@ class OpenDSSModel:
                 if 'voltage_rating' not in entry['DERParameters']:
                     entry['DERParameters']['voltage_rating'] = 174
                 if 'SteadyState' not in entry['DERParameters']:
-                    entry['DERParameters']['SteadyState'] = False
+                    entry['DERParameters']['SteadyState'] = True
+                if 'V_LV0' not in entry['DERParameters']:
+                    entry['DERParameters']['V_LV0'] = 0.5
                 if 'V_LV1' not in entry['DERParameters']:
                     entry['DERParameters']['V_LV1'] = 0.70
                 if 'V_LV2' not in entry['DERParameters']:
                     entry['DERParameters']['V_LV2'] = 0.88
+                if 'V_HV1' not in entry['DERParameters']:
+                    entry['DERParameters']['V_HV1'] = 1.06
+                if 'V_HV2' not in entry['DERParameters']:
+                    entry['DERParameters']['V_HV2'] = 1.12                
+                if 't_LV0_limit' not in entry['DERParameters']:
+                    entry['DERParameters']['t_LV0_limit'] = 0.1
                 if 't_LV1_limit' not in entry['DERParameters']:
                     entry['DERParameters']['t_LV1_limit'] = 1.0
                 if 't_LV2_limit' not in entry['DERParameters']:
                     entry['DERParameters']['t_LV2_limit'] = 2.0
-                if 'LVRT_INSTANTANEOUS_TRIP' not in entry['DERParameters']:
-                    entry['DERParameters']['LVRT_INSTANTANEOUS_TRIP'] = False
-                if 'LVRT_MOMENTARY_CESSATION' not in entry['DERParameters']:
-                    entry['DERParameters']['LVRT_MOMENTARY_CESSATION'] = False
+                if 't_HV1_limit' not in entry['DERParameters']:
+                    entry['DERParameters']['t_HV1_limit'] = 2.0
+                if 't_HV2_limit' not in entry['DERParameters']:
+                    entry['DERParameters']['t_HV2_limit'] = 1/60.0
+                if 'VRT_INSTANTANEOUS_TRIP' not in entry['DERParameters']:
+                    entry['DERParameters']['VRT_INSTANTANEOUS_TRIP'] = False
+                if 'VRT_MOMENTARY_CESSATION' not in entry['DERParameters']:
+                    entry['DERParameters']['VRT_MOMENTARY_CESSATION'] = False
+                if 'OUTPUT_RESTORE_DELAY' not in entry['DERParameters']:
+                    entry['DERParameters']['OUTPUT_RESTORE_DELAY'] = 0.5               
                 if 'pvderScale' not in entry['DERParameters']:
                     entry['DERParameters']['pvderScale'] = 1.0
                 if 'solarPenetrationUnit' not in entry['DERParameters']:
@@ -55,13 +69,20 @@ class OpenDSSModel:
                     totalSolarGen+=GlobalData.data['TNet']['BusRealPowerLoad'][entry['nodenumber']]*entry['solarPenetration']
                 GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['power_rating'] = entry['DERParameters']['power_rating']
                 GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['voltage_rating'] = entry['DERParameters']['voltage_rating']
-                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['SteadyState'] = entry['DERParameters']['SteadyState']
+                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['SteadyState'] = bool(entry['DERParameters']['SteadyState'])
+                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['V_LV0'] = entry['DERParameters']['V_LV0']
                 GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['V_LV1'] = entry['DERParameters']['V_LV1']
                 GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['V_LV2'] = entry['DERParameters']['V_LV2']
+                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['t_LV0_limit'] = entry['DERParameters']['t_LV0_limit']               
                 GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['t_LV1_limit'] = entry['DERParameters']['t_LV1_limit']
                 GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['t_LV2_limit'] = entry['DERParameters']['t_LV2_limit']
-                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['LVRT_INSTANTANEOUS_TRIP'] = bool(entry['DERParameters']['LVRT_INSTANTANEOUS_TRIP'])
-                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['LVRT_MOMENTARY_CESSATION'] = bool(entry['DERParameters']['LVRT_MOMENTARY_CESSATION'])
+                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['V_HV1'] = entry['DERParameters']['V_HV1']
+                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['V_HV2'] = entry['DERParameters']['V_HV2']
+                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['t_HV1_limit'] = entry['DERParameters']['t_HV1_limit']
+                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['t_HV2_limit'] = entry['DERParameters']['t_HV2_limit']
+                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['VRT_INSTANTANEOUS_TRIP'] = bool(entry['DERParameters']['VRT_INSTANTANEOUS_TRIP'])
+                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['VRT_MOMENTARY_CESSATION'] = bool(entry['DERParameters']['VRT_MOMENTARY_CESSATION'])
+                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['OUTPUT_RESTORE_DELAY'] = entry['DERParameters']['OUTPUT_RESTORE_DELAY']
                 GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['pvderScale'] = entry['DERParameters']['pvderScale']
                 GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['solarPenetrationUnit'] = entry['DERParameters']['solarPenetrationUnit']
                 GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['avoidNodes'] = entry['DERParameters']['avoidNodes']

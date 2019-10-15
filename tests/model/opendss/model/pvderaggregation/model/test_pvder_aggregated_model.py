@@ -9,24 +9,20 @@ dirlocation = os.path.abspath(sys.modules['__main__'].__file__)
 rootindex = dirlocation.index('tdcosim_pkg')
 dirlocation = dirlocation[0:rootindex+11]
 
-OpenDSSData.config['myconfig'] = {
-    "nodenumber": 11,
-    "filePath": [dirlocation+"\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-    "solarFlag":1,
-    "solarPenetration":0.1,
-    "DERParameters":{
-        "power_rating": 50,
-        "voltage_rating":174,
-        "SteadyState": True,
-        "V_LV1": 0.70,
-        "V_LV2": 0.88,
-        "t_LV1_limit": 10.0,  
-        "t_LV2_limit": 20.0,
-        "LVRT_INSTANTANEOUS_TRIP": False,
-        "LVRT_MOMENTARY_CESSATION": False
-    }
-}
-
+OpenDSSData.config= {'myconfig':{"nodenumber": 11,
+                                 'solarFlag':1,"solarPenetration":0.1,
+                                 "filePath":[dirlocation+"\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                                 'DERParameters':{'power_rating': 50,'voltage_rating':174,'SteadyState':True,
+                                                  'V_LV0':0.5,'V_LV1':0.70,'V_LV2':0.88,
+                                                  't_LV0_limit': 0.1, 't_LV1_limit':1.0,'t_LV2_limit':2.0,
+                                                  'V_HV1':1.06,'V_HV2':1.12,
+                                                  't_HV1_limit':3.0,'t_HV2_limit':0.016,
+                                                 'VRT_INSTANTANEOUS_TRIP':False,'VRT_MOMENTARY_CESSATION':False,'OUTPUT_RESTORE_DELAY':0.5,
+                                                  'pvderScale':1.0,'solarPenetrationUnit':'kw',
+                                                  'avoidNodes': ['sourcebus','rg60'],'dt':1/120.0
+                                                 }
+                                }
+                    }
 
 
 class TestPVDERAggregatedModel(unittest.TestCase):
