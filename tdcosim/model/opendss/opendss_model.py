@@ -11,75 +11,9 @@ class OpenDSSModel:
         if GlobalData.config['openDSSConfig']['manualFeederConfig']['nodes']:
             totalSolarGen=0; reductionPercent=0
             for entry in GlobalData.config['openDSSConfig']['manualFeederConfig']['nodes']:
-                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]={}
-                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['filepath'] = entry['filePath'][0]
-
-                if 'solarFlag' not in entry:
-                    entry['solarFlag'] = 0
-                if 'solarPenetration' not in entry:
-                    entry['solarPenetration'] = 0.0
-                if 'DERParameters' not in entry:
-                    entry['DERParameters'] = {}
-                if 'power_rating' not in entry['DERParameters']:
-                    entry['DERParameters']['power_rating'] = 50
-                if 'voltage_rating' not in entry['DERParameters']:
-                    entry['DERParameters']['voltage_rating'] = 174
-                if 'SteadyState' not in entry['DERParameters']:
-                    entry['DERParameters']['SteadyState'] = True
-                if 'V_LV0' not in entry['DERParameters']:
-                    entry['DERParameters']['V_LV0'] = 0.5
-                if 'V_LV1' not in entry['DERParameters']:
-                    entry['DERParameters']['V_LV1'] = 0.70
-                if 'V_LV2' not in entry['DERParameters']:
-                    entry['DERParameters']['V_LV2'] = 0.88
-                if 'V_HV1' not in entry['DERParameters']:
-                    entry['DERParameters']['V_HV1'] = 1.06
-                if 'V_HV2' not in entry['DERParameters']:
-                    entry['DERParameters']['V_HV2'] = 1.12                
-                if 't_LV0_limit' not in entry['DERParameters']:
-                    entry['DERParameters']['t_LV0_limit'] = 1.0
-                if 't_LV1_limit' not in entry['DERParameters']:
-                    entry['DERParameters']['t_LV1_limit'] = 10.0
-                if 't_LV2_limit' not in entry['DERParameters']:
-                    entry['DERParameters']['t_LV2_limit'] = 20.0
-                if 't_HV1_limit' not in entry['DERParameters']:
-                    entry['DERParameters']['t_HV1_limit'] = 3.0
-                if 't_HV2_limit' not in entry['DERParameters']:
-                    entry['DERParameters']['t_HV2_limit'] = 1/60.0
-                if 'VRT_INSTANTANEOUS_TRIP' not in entry['DERParameters']:
-                    entry['DERParameters']['VRT_INSTANTANEOUS_TRIP'] = False
-                if 'VRT_MOMENTARY_CESSATION' not in entry['DERParameters']:
-                    entry['DERParameters']['VRT_MOMENTARY_CESSATION'] = True
-                if 'OUTPUT_RESTORE_DELAY' not in entry['DERParameters']:
-                    entry['DERParameters']['OUTPUT_RESTORE_DELAY'] = 0.5               
-                if 'pvderScale' not in entry['DERParameters']:
-                    entry['DERParameters']['pvderScale'] = 1.0                
-                if 'solarPenetrationUnit' not in entry['DERParameters']:
-                    entry['DERParameters']['solarPenetrationUnit'] = 'kw'
-                if 'avoidNodes' not in entry['DERParameters']:
-                    entry['DERParameters']['avoidNodes'] = ['sourcebus','rg60']
-                if 'dt' not in entry['DERParameters']:
-                    entry['DERParameters']['dt'] = 1/120.
-                
-                
-                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['solarFlag']= bool(entry['solarFlag'])
-                GlobalData.data['DNet']['Nodes'][entry['nodenumber']]['solarPenetration']= entry['solarPenetration']
-                for key in entry['DERParameters']:
-                    if isinstance(entry['DERParameters'][key], basestring): #PYTHON3: isinstance(entry['DERParameters'][key], str)
-                        if entry['DERParameters'][key].lower() == 'true':
-                            GlobalData.data['DNet']['Nodes'][entry['nodenumber']][key] = True
-                        elif entry['DERParameters'][key].lower() == 'false':
-                            GlobalData.data['DNet']['Nodes'][entry['nodenumber']][key] = False
-                        elif self.is_float(entry['DERParameters'][key]):
-                            GlobalData.data['DNet']['Nodes'][entry['nodenumber']][key] = float(entry['DERParameters'][key])
-                        else:
-                            GlobalData.data['DNet']['Nodes'][entry['nodenumber']][key] = entry['DERParameters'][key]
-                    else:
-                        GlobalData.data['DNet']['Nodes'][entry['nodenumber']][key] = entry['DERParameters'][key]
-            
+                self.setDERParameter(entry, entry['nodenumber'])
                 if adjustOpPoint:
                     totalSolarGen+=GlobalData.data['TNet']['BusRealPowerLoad'][entry['nodenumber']]*entry['solarPenetration']
-            
             if adjustOpPoint:
                 reductionPercent=totalSolarGen/GlobalData.data['TNet']['TotalRealPowerLoad']
         else:
@@ -87,7 +21,7 @@ class OpenDSSModel:
             solarPenetration=GlobalData.config["openDSSConfig"]["defaultFeederConfig"]["solarPenetration"]
             for entry in GlobalData.data['TNet']['LoadBusNumber']:
                 GlobalData.data['DNet']['Nodes'][entry]={}
-                GlobalData.data['DNet']['Nodes'][entry]['filepath']=GlobalData.config['openDSSConfig']['defaultFeederConfig']['filePath'][0]
+                self.setDERParameter(GlobalData.config['openDSSConfig']['defaultFeederConfig'], entry)                
             reductionPercent=solarPenetration # the amount of syn gen reduction
 
         GlobalData.data['DNet']['ReductionPercent'] = reductionPercent
@@ -126,5 +60,70 @@ class OpenDSSModel:
             return False
         return True
 
+    def setDERParameter(self, entry, nodenumber):
+        GlobalData.data['DNet']['Nodes'][nodenumber]={}
+        GlobalData.data['DNet']['Nodes'][nodenumber]['filepath'] = entry['filePath'][0]
 
+        if 'solarFlag' not in entry:
+            entry['solarFlag'] = 0
+        if 'solarPenetration' not in entry:
+            entry['solarPenetration'] = 0.0
+        if 'DERParameters' not in entry:
+            entry['DERParameters'] = {}
+        if 'power_rating' not in entry['DERParameters']:
+            entry['DERParameters']['power_rating'] = 50
+        if 'voltage_rating' not in entry['DERParameters']:
+            entry['DERParameters']['voltage_rating'] = 174
+        if 'SteadyState' not in entry['DERParameters']:
+            entry['DERParameters']['SteadyState'] = True
+        if 'V_LV0' not in entry['DERParameters']:
+            entry['DERParameters']['V_LV0'] = 0.5
+        if 'V_LV1' not in entry['DERParameters']:
+            entry['DERParameters']['V_LV1'] = 0.70
+        if 'V_LV2' not in entry['DERParameters']:
+            entry['DERParameters']['V_LV2'] = 0.88
+        if 'V_HV1' not in entry['DERParameters']:
+            entry['DERParameters']['V_HV1'] = 1.06
+        if 'V_HV2' not in entry['DERParameters']:
+            entry['DERParameters']['V_HV2'] = 1.12                
+        if 't_LV0_limit' not in entry['DERParameters']:
+            entry['DERParameters']['t_LV0_limit'] = 1.0
+        if 't_LV1_limit' not in entry['DERParameters']:
+            entry['DERParameters']['t_LV1_limit'] = 10.0
+        if 't_LV2_limit' not in entry['DERParameters']:
+            entry['DERParameters']['t_LV2_limit'] = 20.0
+        if 't_HV1_limit' not in entry['DERParameters']:
+            entry['DERParameters']['t_HV1_limit'] = 3.0
+        if 't_HV2_limit' not in entry['DERParameters']:
+            entry['DERParameters']['t_HV2_limit'] = 1/60.0
+        if 'VRT_INSTANTANEOUS_TRIP' not in entry['DERParameters']:
+            entry['DERParameters']['VRT_INSTANTANEOUS_TRIP'] = False
+        if 'VRT_MOMENTARY_CESSATION' not in entry['DERParameters']:
+            entry['DERParameters']['VRT_MOMENTARY_CESSATION'] = True
+        if 'OUTPUT_RESTORE_DELAY' not in entry['DERParameters']:
+            entry['DERParameters']['OUTPUT_RESTORE_DELAY'] = 0.5               
+        if 'pvderScale' not in entry['DERParameters']:
+            entry['DERParameters']['pvderScale'] = 1.0                
+        if 'solarPenetrationUnit' not in entry['DERParameters']:
+            entry['DERParameters']['solarPenetrationUnit'] = 'kw'
+        if 'avoidNodes' not in entry['DERParameters']:
+            entry['DERParameters']['avoidNodes'] = ['sourcebus','rg60']
+        if 'dt' not in entry['DERParameters']:
+            entry['DERParameters']['dt'] = 1/120.
+        
+        
+        GlobalData.data['DNet']['Nodes'][nodenumber]['solarFlag']= bool(entry['solarFlag'])
+        GlobalData.data['DNet']['Nodes'][nodenumber]['solarPenetration']= entry['solarPenetration']
+        for key in entry['DERParameters']:
+            if isinstance(entry['DERParameters'][key], basestring): #PYTHON3: isinstance(entry['DERParameters'][key], str)
+                if entry['DERParameters'][key].lower() == 'true':
+                    GlobalData.data['DNet']['Nodes'][nodenumber][key] = True
+                elif entry['DERParameters'][key].lower() == 'false':
+                    GlobalData.data['DNet']['Nodes'][nodenumber][key] = False
+                elif self.is_float(entry['DERParameters'][key]):
+                    GlobalData.data['DNet']['Nodes'][nodenumber][key] = float(entry['DERParameters'][key])
+                else:
+                    GlobalData.data['DNet']['Nodes'][nodenumber][key] = entry['DERParameters'][key]
+            else:
+                GlobalData.data['DNet']['Nodes'][nodenumber][key] = entry['DERParameters'][key]
 
