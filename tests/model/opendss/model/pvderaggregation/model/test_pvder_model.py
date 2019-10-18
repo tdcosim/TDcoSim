@@ -7,9 +7,7 @@ from tdcosim.model.opendss.model.pvderaggregation.model.pvder_model import PVDER
 from pvder.DER_components_three_phase  import SolarPV_DER_ThreePhase
 
 dirlocation = os.path.abspath(sys.modules['__main__'].__file__)
-rootindex = dirlocation.index('tdcosim_pkg')
-dirlocation = dirlocation[0:rootindex+11]
-
+dirlocation = dirlocation[0:len(dirlocation)-14]
 OpenDSSData.config= {'myconfig':{"nodenumber": 11,
                                  'solarFlag':1,"solarPenetration":0.1,
                                  "filePath":[dirlocation+"\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],

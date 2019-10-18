@@ -6,8 +6,8 @@ from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.model.pvderaggregation.model.pvder_aggregated_model import PVDERAggregatedModel
 
 dirlocation = os.path.abspath(sys.modules['__main__'].__file__)
-rootindex = dirlocation.index('tdcosim_pkg')
-dirlocation = dirlocation[0:rootindex+11]
+dirlocation = dirlocation[0:len(dirlocation)-14]
+
 
 OpenDSSData.config= {'myconfig':{"nodenumber": 11,
                                  'solarFlag':1,"solarPenetration":0.1,
