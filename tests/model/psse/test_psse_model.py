@@ -6,9 +6,8 @@ from tdcosim.global_data import GlobalData
 from tdcosim.model.psse.psse_model import PSSEModel
 
 dirlocation = os.path.abspath(sys.modules['__main__'].__file__)
-rootindex = dirlocation.index('tdcosim_pkg')
-dirlocation = dirlocation[0:rootindex+11]
-configlocation = dirlocation+'\\test\\testconfig.json'
+dirlocation = dirlocation[0:len(dirlocation)-14]
+configlocation = dirlocation+'\\tests\\testconfig.json'
 
 GlobalData.set_config(configlocation)
 GlobalData.set_TDdata()

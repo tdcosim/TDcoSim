@@ -19,13 +19,21 @@
                     "solarPenetration":0,
                     "DERParameters":{
                         "pvderScale": 1,
+                        "V_LV0": 0.50,                        
                         "V_LV1": 0.70,
                         "V_LV2": 0.88,
+                        "t_LV0_limit": 1.0,  
                         "t_LV1_limit": 10.0,  
                         "t_LV2_limit": 20.0,
-                        "LVRT_INSTANTANEOUS_TRIP": false,
-                        "LVRT_MOMENTARY_CESSATION": true,
-                        "power_rating":50
+                        "V_HV1":1.06,
+                        "V_HV2":1.12,
+                        "t_HV1_limit": 3.0,
+                        "t_HV2_limit": 0.016,
+                        "VRT_INSTANTANEOUS_TRIP": false,
+                        "VRT_MOMENTARY_CESSATION": true,
+                        "OUTPUT_RESTORE_DELAY": 0.5,
+                        "power_rating":50,
+                        "SteadyState":true
                     }
                 }
             ]

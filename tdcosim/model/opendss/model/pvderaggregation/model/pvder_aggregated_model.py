@@ -98,35 +98,6 @@ class PVDERAggregatedModel:
             J[n*nEqs+row,n*nEqs+col]=thisJ[thisJ!=0]
         return J
 
-    def __setDERParameters(self):
-        OpenDSSData.data['DNet']['DER']['DERParameters']['avoidNodes']=['sourcebus','rg60']
-        OpenDSSData.data['DNet']['DER']['DERParameters']['dt']=1/120.
-        OpenDSSData.data['DNet']['DER']['DERParameters']['solarPenetrationUnit']='kw' # can be kw or kva
-        OpenDSSData.data['DNet']['DER']['DERParameters']['solarPenetration']=0.0
-        OpenDSSData.data['DNet']['DER']['DERParameters']['pvderScale']=1.0
-        OpenDSSData.data['DNet']['DER']['DERParameters']['V_LV1']=0.70
-        OpenDSSData.data['DNet']['DER']['DERParameters']['V_LV2']=0.88
-        OpenDSSData.data['DNet']['DER']['DERParameters']['t_LV1_limit']=1.0
-        OpenDSSData.data['DNet']['DER']['DERParameters']['t_LV2_limit']=2.0
-        OpenDSSData.data['DNet']['DER']['DERParameters']['LVRT_INSTANTANEOUS_TRIP']=False
-        OpenDSSData.data['DNet']['DER']['DERParameters']['LVRT_MOMENTARY_CESSATION']=False
-        
-        if 'solarPenetration' in OpenDSSData.config['myconfig']:
-            OpenDSSData.data['DNet']['DER']['DERParameters']['solarPenetration'] = OpenDSSData.config['myconfig']['solarPenetration']
-        if 'DERParameters' in OpenDSSData.config['myconfig']:
-            if 'V_LV1' in OpenDSSData.config['myconfig']['DERParameters']:
-                OpenDSSData.data['DNet']['DER']['DERParameters']['V_LV1'] = OpenDSSData.config['myconfig']['DERParameters']['V_LV1']
-            if 'V_LV2' in OpenDSSData.config['myconfig']['DERParameters']:
-                OpenDSSData.data['DNet']['DER']['DERParameters']['V_LV2'] = OpenDSSData.config['myconfig']['DERParameters']['V_LV2']
-            if 't_LV1_limit' in OpenDSSData.config['myconfig']['DERParameters']:
-                OpenDSSData.data['DNet']['DER']['DERParameters']['t_LV1_limit'] = OpenDSSData.config['myconfig']['DERParameters']['t_LV1_limit']
-            if 't_LV2_limit' in OpenDSSData.config['myconfig']['DERParameters']:
-                OpenDSSData.data['DNet']['DER']['DERParameters']['t_LV2_limit'] = OpenDSSData.config['myconfig']['DERParameters']['t_LV2_limit']
-            if 'LVRT_INSTANTANEOUS_TRIP' in OpenDSSData.config['myconfig']['DERParameters']:
-                OpenDSSData.data['DNet']['DER']['DERParameters']['LVRT_INSTANTANEOUS_TRIP'] = OpenDSSData.config['myconfig']['DERParameters']['LVRT_INSTANTANEOUS_TRIP']
-            if 'LVRT_MOMENTARY_CESSATION' in OpenDSSData.config['myconfig']['DERParameters']:
-                OpenDSSData.data['DNet']['DER']['DERParameters']['LVRT_MOMENTARY_CESSATION'] = OpenDSSData.config['myconfig']['DERParameters']['LVRT_MOMENTARY_CESSATION']
-    
     def run(self, V,nEqs=23,dt=1/120.):
         try:
             P = {}
