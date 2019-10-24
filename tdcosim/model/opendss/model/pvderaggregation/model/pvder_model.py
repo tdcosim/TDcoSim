@@ -79,13 +79,15 @@ class PVDERModel:
                                                                 standAlone=False,STEADY_STATE_INITIALIZATION=SteadyState,
                                                                 pvderConfig=pvderConfig,identifier=DER_location)
 
-            self.PV_model.LVRT_ENABLE = True  #Disconnects PV-DER based on ride through settings in case of voltage anomaly
+            self.PV_model.LVRT_ENABLE = True  #Disconnects PV-DER based on ride through settings in case of low voltage anomaly
+            self.PV_model.HVRT_ENABLE = True  #Disconnects PV-DER based on ride through settings in case of high voltage anomaly
+            self.PV_model.use_frequency_estimate=True #Estimate frequency from phase angles
             self.sim = DynamicSimulation(PV_model=PV_model,events = events,LOOP_MODE=True,COLLECT_SOLUTION=True)
             self.sim.jacFlag = True      #Provide analytical Jacobian to ODE solver
             self.sim.DEBUG_SOLVER = False #Check whether solver is failing to converge at any step
-            
+            OpenDSSData.log('Voltage:{},{},{}'.format(abs(Va),abs(Vb),abs(Vc)))
             self.results = SimulationResults(simulation = self.sim,PER_UNIT=True)
-            
+            OpenDSSData.log('Duty cycles:{},{},{}'.format(abs(self.PV_model.ma),abs(self.PV_model.mb),abs(self.PV_model.mc)))
             self.lastSol=copy.deepcopy(self.sim.y0) # mutable,make copy
             self.lastT=0
         except Exception as e:

@@ -4,8 +4,8 @@ class PVDERProcedure:
     def __init__(self):        
         self._pvderModel = PVDERModel()        
 
-    def setup(self, nodeid):
-        self._pvderModel.setup(nodeid)        
+    def setup(self, nodeid, V0):
+        self._pvderModel.setup(nodeid, V0)        
 
     def prerun(self, Va, Vb, Vc):
         self._pvderModel.prerun(Va, Vb, Vc)

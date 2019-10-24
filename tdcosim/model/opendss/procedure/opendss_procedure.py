@@ -26,10 +26,10 @@ class OpenDSSProcedure:
             V0 = self._opendssinterface.getVoltage(vtype='actual')
             pvdermap = self._pvderAggProcedure.setup(S0, V0)
             self._opendssinterface.setupDER(pvdermap)            
-            for n in range(50):# 25 cycles to synchronize
-                V = self._opendssinterface.getVoltage(vtype='actual')
-                derP, derQ = self._pvderAggProcedure.run(V)
-                self._opendssinterface.pvderInjection(derP, derQ)
+            #for n in range(1):# 25 cycles to synchronize
+            #    V = self._opendssinterface.getVoltage(vtype='actual')
+            #    derP, derQ = self._pvderAggProcedure.run(V)
+            #    self._opendssinterface.pvderInjection(derP, derQ)
         
         return P, Q
 
