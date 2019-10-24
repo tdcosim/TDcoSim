@@ -20,7 +20,7 @@ class PVDERModel:
         self._lastSol = {}
         self._lastT = 0
 
-    def setup(self, nodeid):
+    def setup(self, nodeid, V0):
         try:
             VpuInitial=1.0
             SinglePhase = False
@@ -47,11 +47,16 @@ class PVDERModel:
                     power_rating = 10.0e3
                 else:
                     power_rating = 50.0e3
-
             
-            Va = (.50+0j)*Grid.Vbase
-            Vb = (-.25-.43301270j)*Grid.Vbase
-            Vc = (-.25+.43301270j)*Grid.Vbase
+            #Va = (.50+0j)*Grid.Vbase
+            #Vb = (-.25-.43301270j)*Grid.Vbase
+            #Vc = (-.25+.43301270j)*Grid.Vbase
+            
+            #Find turns ratio based on node voltage at HV side and user defined voltage rating
+            a = utility_functions.Urms_calc(V0['a'],V0['b'],V0['c'])/OpenDSSData.config['myconfig']['DERParameters']['voltage_rating'] 
+            Va = (V0['a']/a)  #Convert node voltage at HV side to LV
+            Vb = (V0['b']/a)
+            Vc = (V0['c']/a)
             
             events = SimulationEvents()
             

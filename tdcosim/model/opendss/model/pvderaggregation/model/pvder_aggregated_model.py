@@ -41,9 +41,7 @@ class PVDERAggregatedModel:
             # create instances of pvder            
             for n in range(nSolar):
                 self._pvders[n]=PVDERProcedure()
-                
-            
-
+           
             # find all three phase nodes
             threePhaseNode=[]
             for node in V0:
@@ -62,7 +60,7 @@ class PVDERAggregatedModel:
                     OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']=0
                 OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey][OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']]=entry
                 OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']+=1
-                self._pvders[entry].setup(thisKey)
+                self._pvders[entry].setup(thisKey,V0[thisKey])  #Pass both node id and node voltage during DER setup
 
             for entry in OpenDSSData.data['DNet']['DER']['PVDERMap']:
                 thisNode=OpenDSSData.data['DNet']['DER']['PVDERData'][entry]={}
