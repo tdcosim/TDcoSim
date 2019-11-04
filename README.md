@@ -45,7 +45,8 @@ Please feel free to raise an issue for bugs or feature requests.
 ## Who is responsible?
 **Project PI:**
 
-- Ning Kang kang@anl.gov
+- Karthikeyan Balasubramaniam kbalasubramaniam@anl.gov (September 2019 to present)
+- Ning Kang ning.kang@inl.gov (January 2018 to August 2019)
 
 **Core developers:**
 
