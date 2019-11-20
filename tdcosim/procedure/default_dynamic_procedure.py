@@ -39,8 +39,9 @@ class DefaultDynamicProcedure(DefaultProcedure):
                         self._tnet_model.faultOff()    
                 while mismatch>tol and iteration<maxIter:
                     try:
-                        self._tnet_model.runDynamic(t+dt)                    
                         t = t + dt
+                        iteration+=1
+                        self._tnet_model.runDynamic(t+dt)                                            
                         print ("Sim time: " + str(t))
                         Vpcc = self._tnet_model.getVoltage()
                         self._dnet_model.setVoltage(Vpcc)
@@ -62,7 +63,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
                         #TODO: tight_coupling isn't implemented
                         if GlobalData.config['simulationConfig']['protocol'].lower()=='tight_coupling' and mismatch>tol:
                             print ("Tight Couping is not implemented")
-                        iteration+=1
+                        
                     except Exception as e:
                         print ('failed to run dynamic simulation')
                         GlobalData.data['TNet']['Dynamic'][t] = {
