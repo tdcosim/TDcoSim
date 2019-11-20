@@ -41,7 +41,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
                     try:
                         t = t + dt
                         iteration+=1
-                        self._tnet_model.runDynamic(t+dt)                                            
+                        self._tnet_model.runDynamic(t)                                            
                         print ("Sim time: " + str(t))
                         Vpcc = self._tnet_model.getVoltage()
                         self._dnet_model.setVoltage(Vpcc)
