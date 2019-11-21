@@ -31,6 +31,7 @@ class PVDERModel:
                     power_rating = OpenDSSData.config['myconfig']['DERParameters']['power_rating']*1e3
                     voltage_rating = OpenDSSData.config['myconfig']['DERParameters']['voltage_rating']
                     SteadyState = OpenDSSData.config['myconfig']['DERParameters']['SteadyState']
+                    UnbalancedInitialization  = True#OpenDSSData.config['myconfig']['DERParameters']['UnbalancedInitialization']
                 
                 if 'nodenumber' in OpenDSSData.config['myconfig']:
                     DER_location = str(os.getpid()) + '-' + 'bus_' + str(OpenDSSData.config['myconfig']['nodenumber']) +'-'+ 'node_' + nodeid          
@@ -42,7 +43,7 @@ class PVDERModel:
                 pvderConfig = None
                 SteadyState = True
                 DER_location = 'node_' + nodeid
-                
+                UnbalancedInitialization = True
                 if SinglePhase:
                     power_rating = 10.0e3
                 else:
@@ -67,7 +68,7 @@ class PVDERModel:
                                                                  gridVoltagePhaseB = Vb*VpuInitial,
                                                                  gridVoltagePhaseC = Vc*VpuInitial,
                                                                  gridFrequency=2*math.pi*60.0,
-                                                                 standAlone=False,STEADY_STATE_INITIALIZATION=SteadyState,
+                                                                 standAlone=False,STEADY_STATE_INITIALIZATION=SteadyState,allow_unbalanced_m = UnbalancedInitialization,
                                                                  pvderConfig=pvderConfig,identifier=DER_location)
             else:
                 self.PV_model=PV_model = SolarPV_DER_ThreePhase(events=events,
@@ -76,18 +77,19 @@ class PVDERModel:
                                                                 gridVoltagePhaseB = Vb*VpuInitial,
                                                                 gridVoltagePhaseC = Vc*VpuInitial,
                                                                 gridFrequency=2*math.pi*60.0,
-                                                                standAlone=False,STEADY_STATE_INITIALIZATION=SteadyState,
+                                                                standAlone=False,STEADY_STATE_INITIALIZATION=SteadyState,allow_unbalanced_m = UnbalancedInitialization,
                                                                 pvderConfig=pvderConfig,identifier=DER_location)
 
             self.PV_model.LVRT_ENABLE = True  #Disconnects PV-DER based on ride through settings in case of low voltage anomaly
             self.PV_model.HVRT_ENABLE = True  #Disconnects PV-DER based on ride through settings in case of high voltage anomaly
             self.PV_model.use_frequency_estimate=True #Estimate frequency from phase angles
+            self.PV_model._del_t_frequency_estimate = 1/120.0
             self.sim = DynamicSimulation(PV_model=PV_model,events = events,LOOP_MODE=True,COLLECT_SOLUTION=True)
             self.sim.jacFlag = True      #Provide analytical Jacobian to ODE solver
             self.sim.DEBUG_SOLVER = False #Check whether solver is failing to converge at any step
             OpenDSSData.log('Voltage:{},{},{}'.format(abs(Va),abs(Vb),abs(Vc)))
-            self.results = SimulationResults(simulation = self.sim,PER_UNIT=True)
             OpenDSSData.log('Duty cycles:{},{},{}'.format(abs(self.PV_model.ma),abs(self.PV_model.mb),abs(self.PV_model.mc)))
+            self.results = SimulationResults(simulation = self.sim,PER_UNIT=True)
             self.lastSol=copy.deepcopy(self.sim.y0) # mutable,make copy
             self.lastT=0
         except Exception as e:
