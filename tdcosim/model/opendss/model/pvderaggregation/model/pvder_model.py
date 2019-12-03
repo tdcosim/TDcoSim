@@ -43,7 +43,7 @@ class PVDERModel:
                 pvderConfig = None
                 SteadyState = True
                 DER_location = 'node_' + nodeid
-                UnbalancedInitialization = True
+                UnbalancedInitialization = False
                 if SinglePhase:
                     power_rating = 10.0e3
                 else:

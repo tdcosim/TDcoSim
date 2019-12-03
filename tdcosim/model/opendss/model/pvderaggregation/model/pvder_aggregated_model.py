@@ -4,10 +4,14 @@ import pdb
 
 import numpy as np
 from scipy.integrate import ode
+import cmath
+import math
 
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.model.pvderaggregation.procedure.pvder_procedure import PVDERProcedure
-
+from pvder.DER_components_three_phase  import SolarPV_DER_ThreePhase
+from pvder.simulation_events import SimulationEvents
+from pvder import utility_functions
 
 class PVDERAggregatedModel:
     def __init__(self):         
@@ -17,18 +21,43 @@ class PVDERAggregatedModel:
         self._pvders = {}
 
 
+    def getDERRatedPower(self,powerRating,voltageRating):
+        """Return actual real and reactive power rating of DER for given power and voltage rating.
+        
+        Args:
+             powerRating (float): Rated power of DER in kW. 
+             voltageRating (float): Rated voltage of DER in L-G RMS. 
+        """
+        
+        Va = cmath.rect(voltageRating*math.sqrt(2),0.0)
+        Vb = utility_functions.Ub_calc(Va)
+        Vc = utility_functions.Uc_calc(Va)
+        
+        PV_model = SolarPV_DER_ThreePhase(events=SimulationEvents(),
+                                                        Sinverter_rated = powerRating*1e3,Vrms_rated = voltageRating,
+                                                        gridVoltagePhaseA = Va,
+                                                        gridVoltagePhaseB = Vb,
+                                                        gridVoltagePhaseC = Vc,
+                                                        gridFrequency=2*math.pi*60.0,
+                                                        standAlone=False,STEADY_STATE_INITIALIZATION=True,allow_unbalanced_m=False)
+        
+        return PV_model.S_PCC.real*PV_model.Sbase,PV_model.S_PCC.imag*PV_model.Sbase    
+    
     def setup(self, S0, V0):
         try:
             # set the random number seed
             
             randomSeed = 2500             
             np.random.seed(randomSeed)
+            
+            DERRatingReal,DERRatingImag = self.getDERRatedPower(OpenDSSData.config['myconfig']['DERParameters']['power_rating'],OpenDSSData.config['myconfig']['DERParameters']['voltage_rating'])
 
             #Set Default Values      
             # each pvder produces 46 kw at pf=1
-            OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'] = OpenDSSData.config['myconfig']['DERParameters']['power_rating'] * OpenDSSData.config['myconfig']['DERParameters']['pvderScale']
-            OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'] = 0 * OpenDSSData.config['myconfig']['DERParameters']['pvderScale']
-
+                        
+            OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'] = (DERRatingReal/1e3)*OpenDSSData.config['myconfig']['DERParameters']['pvderScale']
+            OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'] = (DERRatingImag/1e3)*OpenDSSData.config['myconfig']['DERParameters']['pvderScale']
+            
             rating=0 # rating will be in kVA as Default
             for entry in S0['P']:
                 if OpenDSSData.config['myconfig']['DERParameters']['solarPenetrationUnit']=='kva':
