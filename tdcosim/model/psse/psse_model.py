@@ -293,6 +293,6 @@ class PSSEModel:
 		self.faultindex = self.faultindex + 1
 	def faultOff(self, faultBus):
 		if faultBus in self.faultmap:
-			self._psspy.dist_clear_fault(faultmap[faultBus])
-		else
+			self._psspy.dist_clear_fault(self.faultmap[faultBus])
+		else:
 			print("Failed Fault Off, Fault was not applied to the Bus Number: ", faultBus)
