@@ -36,7 +36,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
                     if eventData[event]['type']=='faultOn':
                         self._tnet_model.faultOn(eventData[event]['faultBus'],eventData[event]['faultImpedance'])
                     elif eventData[event]['type']=='faultOff':
-                        self._tnet_model.faultOff()    
+                        self._tnet_model.faultOff(eventData[event]['faultBus'])    
                 while mismatch>tol and iteration<maxIter:
                     try:
                         t = t + dt

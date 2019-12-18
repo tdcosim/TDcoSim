@@ -17,6 +17,9 @@ class PSSEModel:
 		psspy.progress_output(6,'',[])
 		psspy.alert_output(6,'',[])
 		psspy.prompt_output(6,'',[])
+
+		self.faultmap = {}
+		self.faultindex = 1
 		
 		return None
 
@@ -286,5 +289,10 @@ class PSSEModel:
 		self._psspy.run(tpause=tpause)
 	def faultOn(self, faultBus, faultImpedance):
 		self._psspy.dist_bus_fault(faultBus, 1,0.0,faultImpedance)
-	def faultOff(self):
-		self._psspy.dist_clear_fault()
+		self.faultmap[faultBus] = self.faultindex
+		self.faultindex = self.faultindex + 1
+	def faultOff(self, faultBus):
+		if faultBus in self.faultmap:
+			self._psspy.dist_clear_fault(faultmap[faultBus])
+		else
+			print("Failed Fault Off, Fault was not applied to the Bus Number: ", faultBus)
