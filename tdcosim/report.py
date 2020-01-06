@@ -1,6 +1,7 @@
 from __future__ import division
 import string
 import json
+import pdb
 
 import xlsxwriter
 
@@ -25,7 +26,6 @@ def generateReport(GlobalData,fname='report.xlsx',sim='dynamic'):
         for col,val in zip(colNumber,colHeader):
             ws.write(col,val,bold)
 
-        
         row=1
         t_all=data['TNet']['Dynamic'].keys()
         t_all.sort()
@@ -35,19 +35,17 @@ def generateReport(GlobalData,fname='report.xlsx',sim='dynamic'):
                 ws.write(row,1,busID)
                 ws.write(row,2,data['TNet']['Dynamic'][t]['S'][busID]['P'])
                 ws.write(row,3,data['TNet']['Dynamic'][t]['S'][busID]['Q'])
-
-            for busID in data['TNet']['Dynamic'][t]['V']:
                 ws.write(row,4,data['TNet']['Dynamic'][t]['V'][busID])
-            row+=1
+                row+=1
+
     elif sim=='static':
         colHeader=['dispatch_number','bus_number','P','Q','Vmag']
         ws={}
         # find all the distribution nodes
         staticData=data['static']
-        for dispatch in staticData:
-            for node in staticData[dispatch]['S']:
-                if node not in ws:
-                    ws[node]=wb.add_worksheet('qsts_results_{}'.format(node))
+        for node in staticData[0]['S']:
+            if node not in ws:
+                ws[node]=wb.add_worksheet('qsts_results_{}'.format(node))
 
         for node in ws:
             for n in range(len(colHeader)):
@@ -63,7 +61,7 @@ def generateReport(GlobalData,fname='report.xlsx',sim='dynamic'):
                 ws[node].write(row,2,staticData[dispatch]['S'][node]['P'])
                 ws[node].write(row,3,staticData[dispatch]['S'][node]['Q'])
                 ws[node].write(row,4,staticData[dispatch]['V'][node])
-                row+=1
+            row+=1
 
     # add monitor data
     ws={}
