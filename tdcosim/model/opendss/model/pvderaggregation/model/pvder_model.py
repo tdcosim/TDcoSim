@@ -20,15 +20,16 @@ class PVDERModel:
         self._lastSol = {}
         self._lastT = 0
 
-    def setup(self, nodeid,plantid=None):
+    def setup(self, nodeid):
         try:
             VpuInitial=1.0
             SinglePhase = False
             
             if 'myconfig' in OpenDSSData.config and 'DERParameters' in OpenDSSData.config['myconfig']:
+                # for manual feeder config based on PVPlacement
                 pvderConfig = copy.deepcopy(OpenDSSData.config['myconfig']['DERParameters'])
-                if plantid!=None:# for manual feeder config based on PVPlacement
-                    assert isinstance(plantid,int)
+                if 'PVPlacement' in OpenDSSData.config['myconfig']['DERParameters']:
+                    plantid=OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'].index(nodeid)
                     for entry in pvderConfig:
                         if isinstance(pvderConfig[entry],list):
                             pvderConfig[entry]=pvderConfig[entry][plantid]

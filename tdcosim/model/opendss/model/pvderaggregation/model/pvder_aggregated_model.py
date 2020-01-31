@@ -26,8 +26,18 @@ class PVDERAggregatedModel:
 
             #Set Default Values      
             # each pvder produces 46 kw at pf=1
-            OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'] = OpenDSSData.config['myconfig']['DERParameters']['power_rating'][0] * OpenDSSData.config['myconfig']['DERParameters']['pvderScale'][0]
-            OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'] = 0 * OpenDSSData.config['myconfig']['DERParameters']['pvderScale'][0]
+            if 'PVPlacement' in OpenDSSData.config['myconfig']['DERParameters']:
+                OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'] = \
+                OpenDSSData.config['myconfig']['DERParameters']['power_rating'][0] * \
+                OpenDSSData.config['myconfig']['DERParameters']['pvderScale'][0]
+                OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'] = \
+                0 * OpenDSSData.config['myconfig']['DERParameters']['pvderScale'][0]
+            else:
+                OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'] = \
+                OpenDSSData.config['myconfig']['DERParameters']['power_rating'] * \
+                OpenDSSData.config['myconfig']['DERParameters']['pvderScale']
+                OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'] = \
+                0 * OpenDSSData.config['myconfig']['DERParameters']['pvderScale']
 
             rating=0 # rating will be in kVA as Default
             for entry in S0['P']:
@@ -76,7 +86,7 @@ class PVDERAggregatedModel:
                 if not PVPlacement:
                     self._pvders[entry].setup(thisKey)
                 else:
-                    self._pvders[entry].setup(thisKey,plantid=count)
+                    self._pvders[entry].setup(thisKey)
                 count+=1
 
             for entry in OpenDSSData.data['DNet']['DER']['PVDERMap']:
