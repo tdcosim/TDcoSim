@@ -26,8 +26,8 @@ class PVDERAggregatedModel:
 
             #Set Default Values      
             # each pvder produces 46 kw at pf=1
-            OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'] = OpenDSSData.config['myconfig']['DERParameters']['power_rating'] * OpenDSSData.config['myconfig']['DERParameters']['pvderScale']
-            OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'] = 0 * OpenDSSData.config['myconfig']['DERParameters']['pvderScale']
+            OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'] = OpenDSSData.config['myconfig']['DERParameters']['power_rating'][0] * OpenDSSData.config['myconfig']['DERParameters']['pvderScale'][0]
+            OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'] = 0 * OpenDSSData.config['myconfig']['DERParameters']['pvderScale'][0]
 
             rating=0 # rating will be in kVA as Default
             for entry in S0['P']:
@@ -57,17 +57,27 @@ class PVDERAggregatedModel:
             if 'PVPlacement' in OpenDSSData.config['myconfig']['DERParameters']:
                 assert not set(OpenDSSData.config['myconfig']['DERParameters']['PVPlacement']).difference(threePhaseNode)
                 threePhaseNode=OpenDSSData.config['myconfig']['DERParameters']['PVPlacement']
+                PVPlacement=True
+            else:
+                PVPlacement=False
 
             # now map each solar to the available nodes            
-            nThreePhaseNode=len(threePhaseNode)
+            nThreePhaseNode=len(threePhaseNode); count=0
             for entry in self._pvders:
-                thisKey=threePhaseNode[np.random.randint(0,nThreePhaseNode)]
+                if not PVPlacement:
+                    thisKey=threePhaseNode[np.random.randint(0,nThreePhaseNode)]
+                else:
+                    thisKey=threePhaseNode[count]
                 if thisKey not in OpenDSSData.data['DNet']['DER']['PVDERMap']:
                     OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]={}
                     OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']=0
                 OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey][OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']]=entry
                 OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']+=1
-                self._pvders[entry].setup(thisKey)
+                if not PVPlacement:
+                    self._pvders[entry].setup(thisKey)
+                else:
+                    self._pvders[entry].setup(thisKey,plantid=count)
+                count+=1
 
             for entry in OpenDSSData.data['DNet']['DER']['PVDERMap']:
                 thisNode=OpenDSSData.data['DNet']['DER']['PVDERData'][entry]={}

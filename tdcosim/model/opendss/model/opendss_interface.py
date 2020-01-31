@@ -1,7 +1,10 @@
 import os
 import math
+import pdb
+
 import numpy as np
 import win32com.client
+
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 
 
@@ -265,22 +268,26 @@ class OpenDSSInterface:
         
     def pvderInjection(self, derP, derQ):
         try:
-            pvderScale=OpenDSSData.config['myconfig']['DERParameters']['pvderScale']            
             V=self.getVoltage(vtype='actual')# this will get the last known solution            
             P_pv=0; Q_pv=0
             
+            plantid=0
             for node in OpenDSSData.data['DNet']['DER']['PVDERMap']:# compute solar injection at each node
-                
+                if isinstance(OpenDSSData.config['myconfig']['DERParameters']['pvderScale'],list):
+                    pvderScale=OpenDSSData.config['myconfig']['DERParameters']['pvderScale'][plantid]
+                else:
+                    pvderScale=OpenDSSData.config['myconfig']['DERParameters']['pvderScale']
+
                 P=derP[node]
                 Q=derQ[node]
                 
                 # now update the injection
-                
                 directive='Edit Load.{}_pvder kW={} kvar={}'.format(node, P*pvderScale, Q*pvderScale)
                 self.Text.Command=directive
                 
                 P_pv+=P*pvderScale
                 Q_pv+=Q*pvderScale
+                plantid+=1
             
             OpenDSSData.data['DNet']['DER']['PVDERData']['P']=P_pv
             OpenDSSData.data['DNet']['DER']['PVDERData']['Q']=Q_pv
