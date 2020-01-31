@@ -18,6 +18,7 @@
                     "solarFlag":1,
                     "solarPenetration":0.1,
                     "DERParameters":{
+                        "PVPlacement":["50","51"],
                         "pvderScale": 1,
                         "V_LV0": 0.50,   
                         "V_LV1": 0.70,

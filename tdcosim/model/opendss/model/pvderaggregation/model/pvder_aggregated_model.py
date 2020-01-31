@@ -36,13 +36,14 @@ class PVDERAggregatedModel:
                 elif OpenDSSData.config['myconfig']['DERParameters']['solarPenetrationUnit']=='kw':
                     rating+=S0['P'][entry]
             # number of 50 kVA solar installtions required            
-            nSolar=int(np.ceil((rating/OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'])*OpenDSSData.config['myconfig']['solarPenetration']))            
+            if 'PVPlacement' in OpenDSSData.config['myconfig']['DERParameters']:
+                nSolar=len(OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'])
+            else:
+                nSolar=int(np.ceil((rating/OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'])*OpenDSSData.config['myconfig']['solarPenetration']))            
 
             # create instances of pvder            
             for n in range(nSolar):
                 self._pvders[n]=PVDERProcedure()
-                
-            
 
             # find all three phase nodes
             threePhaseNode=[]
@@ -52,6 +53,10 @@ class PVDERAggregatedModel:
                     count+=1
                 if count==3 and node not in OpenDSSData.config['myconfig']['DERParameters']['avoidNodes']: # three phase node
                     threePhaseNode.append(node)
+
+            if 'PVPlacement' in OpenDSSData.config['myconfig']['DERParameters']:
+                assert not set(OpenDSSData.config['myconfig']['DERParameters']['PVPlacement']).difference(threePhaseNode)
+                threePhaseNode=OpenDSSData.config['myconfig']['DERParameters']['PVPlacement']
 
             # now map each solar to the available nodes            
             nThreePhaseNode=len(threePhaseNode)
