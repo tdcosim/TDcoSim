@@ -31,7 +31,7 @@ class PVDERModel:
                 if 'PVPlacement' in OpenDSSData.config['myconfig']['DERParameters']:
                     plantid=OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'].index(nodeid)
                     for entry in pvderConfig:
-                        if isinstance(pvderConfig[entry],list):
+                        if isinstance(pvderConfig[entry],list) and entry!='avoidNodes':
                             pvderConfig[entry]=pvderConfig[entry][plantid]
                 power_rating = pvderConfig['power_rating']*1e3
                 voltage_rating = pvderConfig['voltage_rating']
