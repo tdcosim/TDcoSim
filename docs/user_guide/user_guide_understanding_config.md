@@ -8,54 +8,51 @@ The config file can be divided into three sections. The purpose of each option i
 
 ### PSSE configuration
 
-1. **cosimHome:** directory containing config file, and models for T and D systems (e.g. "C:\\\project_folder).
+1. **cosimHome (string):** directory containing config file, and models for T and D systems (e.g. "C:\\\project_folder).
 
-2. **psseConfig:** configuration for the transmission system.
-   * ***rawFilePath***: full path for the PSS/E transmission system loadflow case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\\\**case118.raw**").
-   * ***dyrFilePath***: full path for the PSS/E transmission system dynamic case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\\**case118.dyr**").
+2. **psseConfig (dict):** configuration for the transmission system.
+   * ***rawFilePath (string)*** : full path for the PSS/E transmission system loadflow case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\\\**case118.raw**").
+   * ***dyrFilePath (string)***: full path for the PSS/E transmission system dynamic case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\\**case118.dyr**").
 
 ### OpenDSS + DER configuration
 
 The default feeder configuration is **defaultFeederConfig**, which automatically assigns the same feeder to all the transmission system buses unless otherwise configured using **manualFeederConfig**.
 
-1. **openDSSConfig:** configuration for distribution feeders. The user can choose a default feeder configuration through defaultFeederConfig option or specify individual feeder for each transmission bus through manualFeederConfig option.
-   * ***defaultFeederConfig:*** Default feeder configuration that assigns identical distribution feeders to all the transmission buses.
+1. **openDSSConfig (dict):** Configuration for distribution feeders. The user can choose a default feeder configuration through defaultFeederConfig option or specify individual feeder for each transmission bus through manualFeederConfig option.
+   * ***defaultFeederConfig (dict):*** Default feeder configuration that assigns identical distribution feeders to all the transmission buses.
+     
      * *filePath (string):* Specifies the path for the OpenDSS File (e.g. "C:\\\project_folder\\\data\\\DNetworks\\\123bus\\\\**case123ZIP.dss**").
-   
+     
      * solarFlag (Boolean): Specifies presence or absence of PV-DERs in a feeder.
-   
+     
      * *solarPenetration (float):* Specifies the total rated capacity of PV-DERs as a percentage of the total feeder load in dynamic co-simulation (e.g. 0.1).
-   
+     
    * ***manualFeederConfig:*** Manually specify the distribution system configuration at the desired transmission bus.
-     * *nodes:* Specifies the configuration of the distribution system.
-     * *nodenumber (integer)*: Specifies the transmission bus where the distribution system is to be connected.
+     * *nodes (list of dict):* Specifies the configuration of the distribution system and DERs.
+       * *nodenumber (integer)*: Specifies the transmission bus to which the distribution system will be connected.
    
-     * *filePath (string)*: Specifies the path for the OpenDSS File. (e.g. "C:\\\project_folder\\\data\\\DNetworks\\\123bus\\\\**case123ZIP.dss**")
-       
-     * *solarFlag (Boolean):* Specifies presence or absence of PV-DERs in a feeder.
+       * *filePath (string)*: Specifies the path for the OpenDSS File containing the distribution system model. (e.g. "C:\\\project_folder\\\data\\\DNetworks\\\123bus\\\\**case123ZIP.dss**")
+   
+       * *solarFlag (Boolean):* Specifies presence or absence of PV-DERs in the distribution system.
+   
+       * *solarPenetration (float)*: Specifies the total rated capacity of PV-DERs as a percentage of the total feeder load in dynamic co-simulation (e.g. 0.1). It will be ignored if the *PVPlacement* parameter is provided.
+   
+       * *DERParameters* (dict): Specifies the configuration of PV-DERs to be used in the distribution system. If *PVPlacement* **is provided**, the DER at each node will need a separate set of DER parameters. If *PVPlacement* **is not provided**, DERs at all nodes will use the same DER settings.
+         * *PVPlacement (list of strings):* Specifies the distribution system node to which the DER will be connected. This is an optional input. (valid options: any three phase node in the OpenDSS model). 
+         * *power_rating (float or list of float):* Specifies the power rating of DER in kW (valid options: 50, 250).
+         * *pvderScale (float or list of float):* Specifies the scaling factor with which to multiply the DER power output from any given node. A higher value of *pvderScale* for similar *solarPenetration* will result in lower number of DER model instances.
+         * *voltage_rating (float or list of float):* Specifies the voltage rating of the PV-DER in Volts (L-G RMS). The tool automatically adds a transformer to connect the DER to the distribution system.
+         * *SteadyState (Boolean or list of Boolean):* Specifies whether the states in PV-DER model is to be initialized with steady state values before simulation is started.
+         * *LVRT (dict or list of dict):* Low voltage ride through settings.  An arbitrary number of ride through settings may be defined based on voltage thresholds.
+           * *V_threshold (float):* Specifies the voltage threshold for low voltage anomaly in p.u. 
+           * *t_threshold (float):* Specifies the trip time threshold for low voltage anomaly in seconds. 
+           * *mode (string):* Specifies the DER operating behavior during ride through (options: 'momentary_cessation','mandatory_operation'). 
+         * *HVRT (dict or list of dict):* High voltage ride through settings. An arbitrary number of ride through settings may be defined based on voltage thresholds.
+           * *V_threshold (float):* Specifies the voltage threshold for high voltage anomaly in p.u. 
+           * *t_threshold (float):* Specifies the trip time threshold for high voltage anomaly in seconds. 
+           * *mode (string):* Specifies the DER operating behavior during ride through (options: 'momentary_cessation','mandatory_operation'). 
      
-     * solarPenetration (float) : Specifies the total rated capacity of PV-DERs as a percentage of the total feeder load in dynamic co-simulation (e.g. 0.1).
-     
-     * *DERParameters*: Specifies the configuration of PV-DERs to be used in the distribution system.
-       * *power_rating (float):* Specifies the power rating of DER in kW (valid options: 50, 250).
-       
-       * *voltage_rating (float):* Specifies the voltage rating of the PV-DER in Volts (L-G RMS). The tool automatically adds a transformer to connect the DER to the distribution system.
-       
-       * *SteadyState (Boolean):* Specifies whether the states in PV-DER model is to be initialized with steady state values before connecting to the distribution system.
-         
-       * *V_LV1 (float):* Specifies the under-voltage 1 trip voltage set point in p.u. This is the lower limit of the DER trip voltage.
-         
-       * *V_LV2 (float):* Specifies the under-voltage 2 trip voltage set point in p.u. This is the upper limit of the DER trip voltage.
-         
-       * *t_LV1_limit (float):* Specifies the under-voltage 1 trip time set point in seconds. This is the trip time associated with lower limit of the DER trip voltage.
-         
-       * *t_LV2_limit (float):* Specifies the under-voltage 2 trip time set point in seconds. This is the trip time associated with upper limit of the DER trip voltage.
-         
-       * *LVRT_INSTANTANEOUS_TRIP (Boolean):* Specifies whether DER should trip immediately (within one cycle) after under-voltage 2 trip voltage set point has been breached.
-       
-       * *LVRT_MOMENTARY_CESSATION (Boolean):* Specifies whether DER should ramp back to nominal power when voltage recovers above the under-voltage 2 trip voltage set point.
-
-       * *pvderScale (float):* Specifies the scaling factor associated with the DER power output from the feeder. A higher value of *pvderScale* for similar *solarPenetration* will result in lower number of DER model instances.
+         * *OUTPUT_RESTORE_DELAY (float or list of float):* Specifies the time delay before DER starts restoring power output after momentary cessation.
 
 ***
 ***Note:*** Please check sections 6.4.1 and 6.4.2 in [IEEE 1547-2018](https://standards.ieee.org/standard/1547-2018.html) for more information on voltage ride-through and trip settings.
@@ -64,15 +61,15 @@ The default feeder configuration is **defaultFeederConfig**, which automatically
 
 ### Simulation configuration
 
-1. **simulationConfig:** Configuration options for the simulation.
-   * ***simType:*** A string specifying whether the simulation is **'static'** or **'dynamic'**.
-   * ***dynamicConfig:*** Configuration options for **'dynamic'** simulation.
-     * *events (key):* Specifies the various events in the dynamic simulation listed sequentially.
+1. **simulationConfig (dict):** Configuration options for the simulation.
+   * ***simType (string):*** A string specifying whether the simulation is **'static'** or **'dynamic'**.
+   * ***dynamicConfig (dict):*** Configuration options for **'dynamic'** simulation.
+     * *events (dict):* Specifies the various events in the dynamic simulation listed sequentially.
        * *time (float):* Specifies the time at which an event occurs.
        * *type (string):* Specifies the type of an event (**'simEnd'**, **'faultOn'** or **'faultOff'** ).
        * *faultBus (integer):* Specifies the transmission bus at which the fault occurs.
        * faultImpedance (list of floats): Specifies the impedance of the fault.
-   * ***staticConfig:*** Configuration options for **'static'** simulation.
+   * ***staticConfig (dict):*** Configuration options for **'static'** simulation.
      * *loadShape (list of floats):* Load served by the T+D system at each time interval (e.g. [0.81,0.75,0.72,..])
    *  ***protocol (string):*** Specifies the nature of coupling between Transmission system and Distribution System (valid options:**'loose_coupling'**,**'tight_coupling'**).
 
@@ -84,6 +81,11 @@ The default feeder configuration is **defaultFeederConfig**, which automatically
 ***Note:*** For static co-simulation, solar penetration needs to be implemented through the **.dss** file. Option to add solar shape through config file will be implemented in next version.
 
 ***
+### Output configuration
+
+1. **outputConfig (dict):** Configuration options for the data generated during simulation..
+   * ***outputfilename (string):*** File name under which the data generated during simulation would be stored.
+   * ***type (string):*** Format in which the data generated during simulation would be stored.
 
 ## config.json example
 The example below shows the **config** file for a T & D **dynamic** co-simulation with a [IEEE 118 bus transmission system](https://icseg.iti.illinois.edu/ieee-118-bus-system/) having [IEEE 123 node test feeder](http://sites.ieee.org/pes-testfeeders/resources/) connected to all the buses for a simulation lasting for **1.0** seconds, with **0 %** PV-DER penetration.
