@@ -2,6 +2,7 @@ import copy
 import os
 import math
 import pdb
+import logging
 
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 
@@ -53,11 +54,10 @@ class PVDERModel:
                 else:
                     power_rating = 50.0e3
 
-            
             Va = (.50+0j)*Grid.Vbase
             Vb = (-.25-.43301270j)*Grid.Vbase
             Vc = (-.25+.43301270j)*Grid.Vbase
-            
+            logging.debug('Creating DER instance for {} node.'.format(DER_location))
             events = SimulationEvents()
             
             if SinglePhase:

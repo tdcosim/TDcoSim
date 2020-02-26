@@ -18,23 +18,26 @@
                     "solarFlag":1,
                     "solarPenetration":0.1,
                     "DERParameters":{
-                        "PVPlacement":["50","51"],
-                        "pvderScale": [1,2],
-                        "V_LV0": [0.50,0.50],   
-                        "V_LV1": [0.70,0.70],
-                        "V_LV2": [0.88,0.88],
-                        "t_LV0_limit": [1.0,1.0],
-                        "t_LV1_limit": [10.0,10.0],
-                        "t_LV2_limit": [20.0,20.0],
-                        "V_HV1":[1.06,1.06],
-                        "V_HV2":[1.12,1.12],
-                        "t_HV1_limit": [3.0,3.0],
-                        "t_HV2_limit": [0.016,0.016],
-                        "VRT_INSTANTANEOUS_TRIP": [false,false],
-                        "VRT_MOMENTARY_CESSATION": [true,true],
-                        "OUTPUT_RESTORE_DELAY": [0.5,0.5],
-                        "power_rating":[50,50],
-                        "SteadyState":[true,true]
+                        "PVPlacement":["50","51","49"],
+                        "pvderScale":[1,1,1],
+                        "LVRT":[{"0":{"V_threshold":0.5,"t_threshold":1.0,"mode":"momentary_cessation"},
+                                  "1":{"V_threshold":0.7,"t_threshold":10.0,"mode":"mandatory_operation"},
+                                  "2":{"V_threshold":0.88,"t_threshold":20.0,"mode":"mandatory_operation"}},
+                                 {"0":{"V_threshold":0.5,"t_threshold":1.0,"mode":"momentary_cessation"},
+                                  "1":{"V_threshold":0.7,"t_threshold":10.0,"mode":"mandatory_operation"},
+                                  "2":{"V_threshold":0.88,"t_threshold":20.0,"mode":"momentary_cessation"}},
+                                 {"0":{"V_threshold":0.5,"t_threshold":1.0,"mode":"momentary_cessation"},
+                                  "1":{"V_threshold":0.7,"t_threshold":0.1,"mode":"mandatory_operation"},
+                                  "2":{"V_threshold":0.88,"t_threshold":0.1,"mode":"mandatory_operation"}}],
+                        "HVRT":[{"0":{"V_threshold":1.12,"t_threshold":0.016,"mode":"momentary_cessation"},
+                                  "1":{"V_threshold":1.06,"t_threshold":3.0,"mode":"momentary_cessation"}},
+                                 {"0":{"V_threshold":1.12,"t_threshold":0.016,"mode":"momentary_cessation"},
+                                  "1":{"V_threshold":1.06,"t_threshold":3.0,"mode":"momentary_cessation"}},
+                                 {"0":{"V_threshold":1.12,"t_threshold":0.016,"mode":"momentary_cessation"},
+                                  "1":{"V_threshold":1.06,"t_threshold":3.0,"mode":"momentary_cessation"}}],
+                        "OUTPUT_RESTORE_DELAY": [0.4,0.4,0.4],
+                        "power_rating":[50,50,50],
+                        "SteadyState":[true,true,true]
                     }
                 }
             ]
@@ -47,17 +50,17 @@
                 "1":{
                      "time":0.5,
                     "type":"faultOn",
-                    "faultBus":60,
+                    "faultBus":10,
                     "faultImpedance":[0.0,-10000]
                 },
                 "2":{
                     "type":"faultOff",
                     "time":0.667,
-                    "faultBus":60
+                    "faultBus":10
                 },
                 "3":{
                     "type":"simEnd",
-                    "time":1.0
+                    "time":1.5
                 }
             }
         },
