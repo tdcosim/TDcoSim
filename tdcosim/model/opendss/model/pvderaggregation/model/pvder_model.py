@@ -26,12 +26,17 @@ class PVDERModel:
             SinglePhase = False
             
             if 'myconfig' in OpenDSSData.config and 'DERParameters' in OpenDSSData.config['myconfig']:
-                if 'DERParameters' in OpenDSSData.config['myconfig']:
-                    pvderConfig = OpenDSSData.config['myconfig']['DERParameters']
-                    power_rating = OpenDSSData.config['myconfig']['DERParameters']['power_rating']*1e3
-                    voltage_rating = OpenDSSData.config['myconfig']['DERParameters']['voltage_rating']
-                    SteadyState = OpenDSSData.config['myconfig']['DERParameters']['SteadyState']
-                
+                # for manual feeder config based on PVPlacement
+                pvderConfig = copy.deepcopy(OpenDSSData.config['myconfig']['DERParameters'])
+                if 'PVPlacement' in OpenDSSData.config['myconfig']['DERParameters']:
+                    plantid=OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'].index(nodeid)
+                    for entry in pvderConfig:
+                        if isinstance(pvderConfig[entry],list) and entry!='avoidNodes':
+                            pvderConfig[entry]=pvderConfig[entry][plantid]
+                power_rating = pvderConfig['power_rating']*1e3
+                voltage_rating = pvderConfig['voltage_rating']
+                SteadyState = pvderConfig['SteadyState']
+
                 if 'nodenumber' in OpenDSSData.config['myconfig']:
                     DER_location = str(os.getpid()) + '-' + 'bus_' + str(OpenDSSData.config['myconfig']['nodenumber']) +'-'+ 'node_' + nodeid          
                 else:

@@ -1,6 +1,7 @@
 import numpy as np
 import sys
 import os
+import re
 pssePath="C:\Program Files (x86)\PTI\PSSE33\PSSBIN"
 sys.path.append(pssePath)
 os.environ['PATH']+=';'+pssePath
@@ -127,6 +128,11 @@ class PSSEModel:
 
 			dyrDataStr=''; Zr={}; Zx={}
 			for line in dyrData:
+				line=line.lstrip().rstrip()
+				if line[-1]==r'/':
+					line=line[0:-1]
+				if "," not in line:
+					line=re.sub('\s{1,}',',',line)
 				entry=line.split(',')
 				for item in ind:
 					if entry[1]=="'{}'".format(item):
