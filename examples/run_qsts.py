@@ -14,7 +14,7 @@ def main():
     GlobalData.set_config('config_qsts.json')
     GlobalData.set_TDdata()
     simulate()  
-    generateReport(GlobalData,fname='report.xlsx',sim=GlobalData.config['simulationConfig']['simType'])
+#    generateReport(GlobalData,fname='report.xlsx',sim=GlobalData.config['simulationConfig']['simType'])
     return 0
 
 def simulate():

@@ -17,7 +17,8 @@ class DefaultStaticProcedure(DefaultProcedure):
         targetS, Vpcc = self._tnet_model.staticInitialize()        
         power = self._dnet_model.initialize(targetS, Vpcc)        
         self._tnet_model.shunt(targetS, Vpcc, power)
-    def run(self):        
+    def run(self,memory_threshold=100):
+        """Memory_threshold should be in MB"""
         GlobalData.data['static'] = {}
         maxIter = 20
         tol=10**-4

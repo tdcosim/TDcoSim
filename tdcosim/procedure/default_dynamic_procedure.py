@@ -1,7 +1,15 @@
+import os
+import pdb
+import uuid
+import json
+
+import psutil
+
 from default_procedure import DefaultProcedure
 from tdcosim.model.psse.psse_model import PSSEModel
 from tdcosim.model.opendss.opendss_model import OpenDSSModel
 from tdcosim.global_data import GlobalData
+
 class DefaultDynamicProcedure(DefaultProcedure):
     def __init__(self):
         self._tnet_model = PSSEModel()
@@ -15,8 +23,8 @@ class DefaultDynamicProcedure(DefaultProcedure):
         targetS, Vpcc = self._tnet_model.dynamicInitialize()        
         power = self._dnet_model.initialize(targetS, Vpcc)        
         self._tnet_model.shunt(targetS, Vpcc, power)
-    def run(self):
-        
+    def run(self,memory_threshold=100):
+        """Memory_threshold should be in MB"""
         GlobalData.data['monitorData']={}
         GlobalData.data['TNet']['Dynamic'] = {}    
         dt = 0.0083333
@@ -27,7 +35,13 @@ class DefaultDynamicProcedure(DefaultProcedure):
         eventData=GlobalData.config['simulationConfig']['dynamicConfig']['events']
         events=eventData.keys()
         events.sort()
-        t = 0
+        
+        t = 0; stepCount=0; stepThreshold=1e6; lastWriteInd=0; nPart=0
+        
+        # setup output dir
+        savePath='{}\\{}'.format(os.getcwd(),uuid.uuid4())
+        os.system('mkdir {}'.format(savePath))
+        
         for event in events:
             while t<eventData[event]['time']:
                 iteration=0
@@ -59,11 +73,32 @@ class DefaultDynamicProcedure(DefaultProcedure):
                                             'V': Vpcc,
                                             'S': S
                                         }
+
+                        # write to disk if running low on memory based on memory threshold
+                        try:
+                            if stepCount==0:
+                                currentMemUsage=psutil.Process().memory_full_info().uss*1e-6
+                            elif stepCount==1:
+                                memUseRate=psutil.Process().memory_full_info().uss*1e-6-currentMemUsage
+                                stepThreshold=int(memory_threshold/memUseRate)
+                            elif stepCount>1 and stepCount%stepThreshold==0:
+                                allT=GlobalData.data['monitorData'].keys()
+                                allT.sort()
+                                thisPortion={thisT:GlobalData.data['monitorData'][thisT] for \
+                                thisT in allT[lastWriteInd:stepCount+1]}
+                                json.dump(thisPortion,open('{}\\monitorData_{}.json'.format(
+                                savePath,nPart),'w'))
+                                for thisT in thisPortion:# empty data
+                                    GlobalData.data['monitorData'][thisT]={}
+                                nPart+=1; lastWriteInd=stepCount
+                            stepCount+=1
+                        except:
+                            pdb.set_trace()
+
                         #mismatch=Vprev-V ##TODO: Need to update mismatch
                         #TODO: tight_coupling isn't implemented
                         if GlobalData.config['simulationConfig']['protocol'].lower()=='tight_coupling' and mismatch>tol:
                             print ("Tight Couping is not implemented")
-                        
                     except Exception as e:
                         print ('failed to run dynamic simulation')
                         GlobalData.data['TNet']['Dynamic'][t] = {
@@ -78,3 +113,12 @@ class DefaultDynamicProcedure(DefaultProcedure):
                                     break;
                         if DSSconvergenceFlg is False:
                             print ('OpenDSS Convergence Failed')
+
+        # write out remaining portion
+        allT=GlobalData.data['monitorData'].keys()
+        allT.sort()
+        thisPortion={thisT:GlobalData.data['monitorData'][thisT] for \
+        thisT in allT[lastWriteInd:stepCount+1]}
+        json.dump(thisPortion,open('{}\\monitorData_{}.json'.format(savePath,nPart),'w'))
+
+

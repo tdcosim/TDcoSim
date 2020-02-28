@@ -14,5 +14,5 @@ class Procedure(DefaultProcedure):
 	def simulate(self):
 		self._procedure.setup()	
 		self._procedure.initialize()
-		self._procedure.run()	
+		self._procedure.run(memory_threshold=2)
 
