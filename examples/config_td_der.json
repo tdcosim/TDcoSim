@@ -1,0 +1,64 @@
+{
+    "cosimHome": "..\\tdcosim",
+    "psseConfig":{
+        "rawFilePath":"..\\SampleData\\TNetworks\\118bus\\case118.raw",
+        "dyrFilePath":"..\\SampleData\\TNetworks\\118bus\\case118.dyr"        
+    },
+    "openDSSConfig":{        
+        "defaultFeederConfig":{
+            "filePath":["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+            "solarFlag":0,
+            "solarPenetration":0.0
+        },
+        "manualFeederConfig":{
+            "nodes": [
+                {
+                    "nodenumber": 11,
+                    "filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "solarFlag":1,
+                    "solarPenetration":0.1,
+                    "DERParameters":{
+                        "PVPlacement":["50","51","49"],
+                        "pvderScale":[1,1,1],
+                        "derId":['50','50','50_type1'],                        
+                    }
+                }
+            ]
+        }
+    },
+    "simulationConfig":{
+        "simType":"dynamic",
+        "dynamicConfig":{
+            "events":{
+                "1":{
+                     "time":0.5,
+                    "type":"faultOn",
+                    "faultBus":10,
+                    "faultImpedance":[0.0,-10000]
+                },
+                "2":{
+                    "type":"faultOff",
+                    "time":0.667,
+                    "faultBus":10
+                },
+                "3":{
+                    "type":"simEnd",
+                    "time":1.5
+                }
+            }
+        },
+        "staticConfig":{
+            "loadShape": [0.81518164, 0.77456979, 0.74237094, 0.72439771, 0.71946463,
+            0.72891013, 0.75212237, 0.76833652, 0.783174  , 0.79468451,
+            0.80634799, 0.80370937, 0.8016826 , 0.79288719, 0.79437859,
+             0.79720841, 0.82271511, 0.92470363, 1.0, 0.99021033,
+             0.97101338, 0.94042065, 0.88397706, 0.81097514]
+        },
+        "protocol":"loose_coupling"
+    },
+    "outputConfig":{
+        "outputfilename": "output.csv",
+        "type": "csv"
+    }
+}
+    
