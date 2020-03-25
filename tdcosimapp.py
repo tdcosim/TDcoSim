@@ -1,7 +1,6 @@
 import os
 os.environ["PATH"] += os.getcwd()
 import time
-import pdb
 
 from tdcosim.report import generateReport
 from tdcosim.global_data import GlobalData
@@ -15,12 +14,26 @@ def main():
     
     GlobalData.set_config('config.json')
     GlobalData.set_TDdata()
+    setOutLocation()
     startTime=time.time()        
     simulate()
 #    GlobalData.print_data()
     print ('Simulation time: ' + str(time.time()-startTime) + "sec")
-    generateReport(GlobalData,fname='report.xlsx',sim=GlobalData.config['simulationConfig']['simType'])
+    generateReport(GlobalData,fname=GlobalData.config["outputPath"] + "/reportfin.xlsx",sim=GlobalData.config['simulationConfig']['simType'])
     return 0
+
+def setOutLocation():
+    t = time.localtime()
+    current_time = time.strftime("%m-%d-%y-%H-%M-%S", t)
+    print("output folder name: " + current_time)
+    outputfoldername = "./output/" + current_time
+
+    try:
+        os.mkdir(outputfoldername)
+    except:
+        print("Filead create output folder")
+
+    GlobalData.config["outputPath"] = outputfoldername
 
 def simulate():
     '''
