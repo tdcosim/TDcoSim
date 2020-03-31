@@ -69,11 +69,11 @@ class OpenDSSInterface:
             # the node in pvderMap. pv is attached as a negative load (generator)
             # to the low side of the tfr.
             V=self.getVoltage(vtype='actual')
-            Vpu=self.getVoltage(vtype='pu')
-            lowSideV=OpenDSSData.config['myconfig']['DERParameters']['voltage_rating']*math.sqrt(3)*1e-3
-
+            Vpu=self.getVoltage(vtype='pu')            
+            
             for node in pvdermap:
                 thisTransformer="Transformer.{}_pvder".format(node)
+                lowSideV=OpenDSSData.data['DNet']['DER']['PVDERData']['lowSideV'][node]*math.sqrt(3)*1e-3
                 self.Text.Command="New {}  Phases=3   Windings=2  XHL=1".format(thisTransformer)
                 self._changeObj([[thisTransformer,'Wdg',1,'set']])# set for winging 1
                 self._changeObj([   [thisTransformer,'Conn','wye','set'],
@@ -96,8 +96,8 @@ class OpenDSSInterface:
                                 ]) # high side to existing bus
 
                 kv=lowSideV
-                kw=-OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'] #-ve load=>gen
-                kvar=-OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal']
+                kw=-OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'][node] #-ve load=>gen
+                kvar=-OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'][node]
                 directive='New Load.{}_pvder Bus1={}_tfr Phases=3 Conn=Wye Model=1 kV={} kW={} kvar={} vminpu=0.5 vmaxpu=1.2 vlowpu=0.0'.format(node,node,kv,kw,kvar)# connect to low side bus of tfr
                 self.Text.Command=directive
 
@@ -271,12 +271,13 @@ class OpenDSSInterface:
             V=self.getVoltage(vtype='actual')# this will get the last known solution            
             P_pv=0; Q_pv=0
             
-            for node in OpenDSSData.data['DNet']['DER']['PVDERMap']:# compute solar injection at each node
-                if isinstance(OpenDSSData.config['myconfig']['DERParameters']['pvderScale'],list):
-                    plantid=OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'].index(node)
-                    pvderScale=OpenDSSData.config['myconfig']['DERParameters']['pvderScale'][plantid]
+            for node in OpenDSSData.data['DNet']['DER']['PVDERMap']:# compute solar injection at each node               
+                if OpenDSSData.config['myconfig']['DERSetting'] == 'PVPlacement':                    
+                    pvderScale=OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'][node]['pvderScale']
+                elif OpenDSSData.config['myconfig']['DERSetting'] == 'default':
+                    pvderScale=OpenDSSData.config['myconfig']['DERParameters']['default']['pvderScale']
                 else:
-                    pvderScale=OpenDSSData.config['myconfig']['DERParameters']['pvderScale']
+                    raise ValueError('{} is an invalid DER setting!'.format(OpenDSSData.config['myconfig']['DERSetting']))
 
                 P=derP[node]
                 Q=derQ[node]

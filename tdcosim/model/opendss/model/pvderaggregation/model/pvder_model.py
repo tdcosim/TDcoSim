@@ -1,6 +1,7 @@
 import copy
 import os
 import math
+import cmath
 import pdb
 import logging
 
@@ -12,7 +13,7 @@ from pvder.grid_components import Grid
 from pvder.dynamic_simulation import DynamicSimulation
 from pvder.simulation_events import SimulationEvents
 from pvder.simulation_utilities import SimulationUtilities,SimulationResults
-from pvder import utility_functions
+from pvder import utility_functions,templates
 
 class PVDERModel:
     def __init__(self):
@@ -27,58 +28,74 @@ class PVDERModel:
             SinglePhase = False
             
             if 'myconfig' in OpenDSSData.config and 'DERParameters' in OpenDSSData.config['myconfig']:
-                # for manual feeder config based on PVPlacement
-                pvderConfig = copy.deepcopy(OpenDSSData.config['myconfig']['DERParameters'])
-                if 'PVPlacement' in OpenDSSData.config['myconfig']['DERParameters']:
-                    plantid=OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'].index(nodeid)
-                    for entry in pvderConfig:
-                        if isinstance(pvderConfig[entry],list) and entry!='avoidNodes':
-                            pvderConfig[entry]=pvderConfig[entry][plantid]
-                power_rating = pvderConfig['power_rating']*1e3
-                voltage_rating = pvderConfig['voltage_rating']
-                SteadyState = pvderConfig['SteadyState']
-
-                if 'nodenumber' in OpenDSSData.config['myconfig']:
-                    DER_location = str(os.getpid()) + '-' + 'bus_' + str(OpenDSSData.config['myconfig']['nodenumber']) +'-'+ 'node_' + nodeid          
+                #pvderConfig = copy.deepcopy(OpenDSSData.config['myconfig']['DERParameters'])
+                
+                DERFilePath = OpenDSSData.config['myconfig']['DERFilePath']
+                DERSetting = OpenDSSData.config['myconfig']['DERSetting']                
+                
+                DERParameters = OpenDSSData.config['myconfig']['DERParameters']
+                
+                if DERSetting == 'default':                    
+                    pvderConfig = self.get_derconfig(DERParameters['default'])
+                    DERArguments = self.get_derarguments(DERParameters['default'])
+                    
+                elif DERSetting == 'PVPlacement': # for manual feeder config based on PVPlacement
+                    if nodeid in DERParameters['PVPlacement']:
+                        pvderConfig = self.get_derconfig(DERParameters['PVPlacement'][nodeid])
+                        DERArguments = self.get_derarguments(DERParameters['PVPlacement'][nodeid])                       
+                    else:
+                        raise ValueError('Distribution node {} not found in config file!'.format(nodeid))
                 else:
-                    DER_location = str(os.getpid()) + '-' + 'node_' + nodeid    
+                    raise ValueError('{} is not a valid DER setting in config file!'.format(DERSetting))
+                
+                if 'nodenumber' in OpenDSSData.config['myconfig']:
+                    DERLocation = str(os.getpid()) + '-' + 'bus_' + str(OpenDSSData.config['myconfig']['nodenumber']) +'-'+ 'node_' + nodeid          
+                else:
+                    DERLocation = str(os.getpid()) + '-' + 'node_' + nodeid    
                 
             else:
                 print('DERParameters not found in `OpenDSSData` object - using default ratings and parameters!')
-                pvderConfig = None
+                DERArguments = {}
+                pvderConfig = {}
                 SteadyState = True
-                DER_location = 'node_' + nodeid
-                
                 if SinglePhase:
-                    power_rating = 10.0e3
+                    powerRating = 10.0e3
                 else:
-                    power_rating = 50.0e3
-
-            Va = (.50+0j)*Grid.Vbase
-            Vb = (-.25-.43301270j)*Grid.Vbase
-            Vc = (-.25+.43301270j)*Grid.Vbase
-            logging.debug('Creating DER instance for {} node.'.format(DER_location))
+                    powerRating = 50.0e3
+                DERLocation = 'node_' + nodeid 
+                
+                DERArguments.update({'pvderConfig':pvderConfig})
+                DERArguments.update({'powerRating':powerRating}) 
+                DERArguments.update({'SteadyState':SteadyState}) 
+            
+            #Va = (.50+0j)*Grid.Vbase
+            #Vb = (-.25-.43301270j)*Grid.Vbase
+            #Vc = (-.25+.43301270j)*Grid.Vbase
+            
+            Va = cmath.rect(DERArguments['VrmsRating']*math.sqrt(2),0.0)
+            Vb = utility_functions.Ub_calc(Va)
+            Vc = utility_functions.Uc_calc(Va)
+            
+            DERArguments.update({'identifier':DERLocation})            
+            DERArguments.update({'derConfig':pvderConfig})
+            DERArguments.update({'standAlone':False})
+            DERArguments.update({'gridFrequency':2*math.pi*60.0})
+           
+            DERArguments.update({'gridVoltagePhaseA':Va})
+            DERArguments.update({'gridVoltagePhaseB':Vb})
+            DERArguments.update({'gridVoltagePhaseC':Vc})
+            #print(DERArguments)
+            
+            logging.debug('Creating DER instance for {} node.'.format(DERLocation))
             events = SimulationEvents()
             
             if SinglePhase:
-                self.PV_model=PV_model = SolarPV_DER_SinglePhase(events=events,
-                                                                 Sinverter_rated = power_rating,Vrms_rated = voltage_rating,
-                                                                 gridVoltagePhaseA = Va*VpuInitial,
-                                                                 gridVoltagePhaseB = Vb*VpuInitial,
-                                                                 gridVoltagePhaseC = Vc*VpuInitial,
-                                                                 gridFrequency=2*math.pi*60.0,
-                                                                 standAlone=False,STEADY_STATE_INITIALIZATION=SteadyState,
-                                                                 pvderConfig=pvderConfig,identifier=DER_location)
+               self.PV_model=PV_model = SolarPV_DER_SinglePhase(events,DERFilePath,
+                                                                **DERArguments)
             else:
-                self.PV_model=PV_model = SolarPV_DER_ThreePhase(events=events,
-                                                                Sinverter_rated = power_rating,Vrms_rated = voltage_rating,
-                                                                gridVoltagePhaseA = Va*VpuInitial,
-                                                                gridVoltagePhaseB = Vb*VpuInitial,
-                                                                gridVoltagePhaseC = Vc*VpuInitial,
-                                                                gridFrequency=2*math.pi*60.0,
-                                                                standAlone=False,STEADY_STATE_INITIALIZATION=SteadyState,
-                                                                pvderConfig=pvderConfig,identifier=DER_location)
-
+               self.PV_model=PV_model = SolarPV_DER_ThreePhase(events,DERFilePath,
+                                                               **DERArguments)
+            
             self.PV_model.LVRT_ENABLE = True  #Disconnects PV-DER based on ride through settings in case of voltage anomaly
             self.sim = DynamicSimulation(PV_model=PV_model,events = events,LOOP_MODE=True,COLLECT_SOLUTION=True)
             self.sim.jacFlag = True      #Provide analytical Jacobian to ODE solver
@@ -91,6 +108,30 @@ class PVDERModel:
         except Exception as e:
             OpenDSSData.log("Failed Setup PVDER at node:{}!".format(nodeid))            
 
+    def get_derconfig(self,DERParameters):
+        """DER config."""
+        
+        derConfig = {}
+        for entry in DERParameters:
+            if entry in templates.RT_config_template.keys():
+               derConfig.update({entry:DERParameters[entry]})
+        
+        return derConfig
+
+    def get_derarguments(self,DERParameters):
+        """DER config."""
+        
+        DERArguments = {}
+        
+        for entry in templates.DER_argument_template:
+            if entry in DERParameters:               
+               DERArguments.update({entry:DERParameters[entry]})
+            
+        if 'powerRating' in DERArguments:
+            DERArguments.update({'powerRating':DERArguments['powerRating']*1e3})
+        
+        return DERArguments
+    
     def prerun(self,gridVoltagePhaseA,gridVoltagePhaseB,gridVoltagePhaseC):
         """Prerun will set the required data in pvder model. This method should be run before
         running the integrator."""
