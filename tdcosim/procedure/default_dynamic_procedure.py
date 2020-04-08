@@ -2,7 +2,8 @@ from default_procedure import DefaultProcedure
 from tdcosim.model.psse.psse_model import PSSEModel
 from tdcosim.model.opendss.opendss_model import OpenDSSModel
 from tdcosim.global_data import GlobalData
-
+from tdcosim.report import generateReport
+import sys
 import psutil
 class DefaultDynamicProcedure(DefaultProcedure):
     def __init__(self):
@@ -78,19 +79,27 @@ class DefaultDynamicProcedure(DefaultProcedure):
                         try:
                             if stepCount==0:
                                 currentMemUsage=psutil.Process().memory_full_info().uss*1e-6
-                                print(currentMemUsage)
+                                print("Current Memoery: " + str(currentMemUsage))
                             elif stepCount==1:
                                 memUseRate=psutil.Process().memory_full_info().uss*1e-6-currentMemUsage
                                 stepThreshold=int(memory_threshold/memUseRate)
-                                print(stepThreshold)
-                            elif stepCount>1 and stepCount%stepThreshold==0:
-                                generateReport(GlobalData,fname=GlobalData.config["outputPath"] + "/report{}.xlsx".format(nPart),sim=GlobalData.config['simulationConfig']['simType'])
+                                print("Step Threshhold: " + str(stepThreshold))
+                            elif stepCount>1 and stepCount%stepThreshold==0:   
+                                ffullpath = str(GlobalData.config["outputPath"] + "\\report{}.xlsx".format(nPart))
+                                stype = str(GlobalData.config['simulationConfig']['simType'])                                
+                                generateReport(GlobalData,fname=ffullpath,sim=stype)
+                                print("generated report part" + str(nPart))
+                                thisPortion = GlobalData.data['monitorData']                                
                                 for thisT in thisPortion:# empty data
                                     GlobalData.data['monitorData'][thisT]={}
+                                thisPortion = GlobalData.data['TNet']['Dynamic']                                
+                                for thisT in thisPortion:# empty data
+                                    GlobalData.data['TNet']['Dynamic'][thisT]={}
                                 nPart+=1; lastWriteInd=stepCount
                             stepCount+=1
                         except:
-                            print("Failed write the data on the file to protect the memory")
+                            print("Failed write the data on the file to protect the memory")                            
+                            print("Unexpected error:", sys.exc_info()[0])
 
                         #mismatch=Vprev-V ##TODO: Need to update mismatch
                         #TODO: tight_coupling isn't implemented

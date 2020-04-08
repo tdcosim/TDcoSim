@@ -19,14 +19,14 @@ def main():
     simulate()
 #    GlobalData.print_data()
     print ('Simulation time: ' + str(time.time()-startTime) + "sec")
-    generateReport(GlobalData,fname=GlobalData.config["outputPath"] + "/reportfin.xlsx",sim=GlobalData.config['simulationConfig']['simType'])
+    generateReport(GlobalData,fname=GlobalData.config["outputPath"] + "\\reportfin.xlsx",sim=GlobalData.config['simulationConfig']['simType'])
     return 0
 
 def setOutLocation():
     t = time.localtime()
     current_time = time.strftime("%m-%d-%y-%H-%M-%S", t)
     print("output folder name: " + current_time)
-    outputfoldername = "./output/" + current_time
+    outputfoldername = os.getcwd() + "\\output\\" + str(current_time)
 
     try:
         os.mkdir(outputfoldername)
