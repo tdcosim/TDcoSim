@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(name='tdcosim',
       version=open("tdcosim/_version.py").readlines()[-1].split()[-1].strip("\"'"),
-      packages=['tdcosim',],
+      packages=setuptools.find_packages(),
       description='Transmission and Distribution Network co-Simulation for Power System',
       author = 'TDcoSim Team',
       author_email='yim@anl.gov',
