@@ -1,12 +1,12 @@
 {
-    "cosimHome": "D:\\Sam\\memoryerr\\TDcoSim\\tdcosim",
+    "cosimHome": "..\\tdcosim",
     "psseConfig":{
-        "rawFilePath":"D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\TNetworks\\68bus\\68_bus.raw",
-        "dyrFilePath":"D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\TNetworks\\68bus\\68_bus.dyr"        
+        "rawFilePath":"..\\SampleData\\TNetworks\\68bus\\68_bus.raw",
+        "dyrFilePath":"..\\SampleData\\TNetworks\\68bus\\68_bus.dyr"        
     },
     "openDSSConfig":{        
         "defaultFeederConfig":{
-            "filePath":["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+            "filePath":["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
             "solarFlag":0,
             "solarPenetration":0.0
         },
@@ -14,7 +14,7 @@
             "nodes": [
                 {
                     "nodenumber": 59,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
                     "solarPenetration":0.1,
                     "DERParameters":{
@@ -39,7 +39,7 @@
                 },
 				{
                     "nodenumber": 23,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
                     "solarPenetration":0.1,
                     "DERParameters":{
@@ -64,7 +64,7 @@
                 },
 				{
                     "nodenumber": 28,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
                     "solarPenetration":0.1,
                     "DERParameters":{
@@ -89,7 +89,7 @@
                 },
 				{
                     "nodenumber": 64,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
                     "solarPenetration":0.1,
                     "DERParameters":{
@@ -114,7 +114,7 @@
                 },
 				{
                     "nodenumber": 56,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
                     "solarPenetration":0.1,
                     "DERParameters":{
@@ -139,7 +139,7 @@
                 },
 				{
                     "nodenumber": 21,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
                     "solarPenetration":0.1,
                     "DERParameters":{
@@ -164,7 +164,7 @@
                 },
 				{
                     "nodenumber": 26,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
                     "solarPenetration":0.1,
                     "DERParameters":{
@@ -189,7 +189,7 @@
                 },
 				{
                     "nodenumber": 55,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
                     "solarPenetration":0.1,
                     "DERParameters":{
@@ -217,7 +217,6 @@
     },
     "simulationConfig":{
         "simType":"dynamic",
-	"memoryThreshold": 100.0,
         "dynamicConfig":{
             "events":{
                 "1":{
