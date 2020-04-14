@@ -4,57 +4,74 @@ import pdb
 
 import numpy as np
 from scipy.integrate import ode
+import cmath
+import math
 
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.model.pvderaggregation.procedure.pvder_procedure import PVDERProcedure
+from pvder.DER_components_three_phase  import SolarPV_DER_ThreePhase
+from pvder.simulation_events import SimulationEvents
+from pvder import utility_functions
 
 
 class PVDERAggregatedModel:
     def __init__(self):         
         OpenDSSData.data['DNet']['DER'] = {}
         OpenDSSData.data['DNet']['DER']['PVDERData'] = {}
+        OpenDSSData.data['DNet']['DER']['PVDERData'].update({'lowSideV':{},'PNominal':{},'QNominal':{}})
         OpenDSSData.data['DNet']['DER']['PVDERMap'] = {}                
         self._pvders = {}
 
+    
+    def getDERRatedPower(self,powerRating,voltageRating):
+        """Return actual real and reactive power rating of DER for given power and voltage rating.
+        
+        Args:
+             powerRating (float): Rated power of DER in kW. 
+             voltageRating (float): Rated voltage of DER in L-G RMS. 
+        """
 
+        DERFilePath = OpenDSSData.config['myconfig']['DERFilePath']
+        
+        Va = cmath.rect(voltageRating*math.sqrt(2),0.0)
+        Vb = utility_functions.Ub_calc(Va)
+        Vc = utility_functions.Uc_calc(Va)
+
+        DER_model = SolarPV_DER_ThreePhase(events=SimulationEvents(),configFile=DERFilePath,
+                                          powerRating = powerRating*1e3,
+                                          VrmsRating = voltageRating,
+                                          gridVoltagePhaseA = Va,
+                                          gridVoltagePhaseB = Vb,
+                                          gridVoltagePhaseC = Vc,
+                                          gridFrequency=2*math.pi*60.0,
+                                          standAlone=False,steadyStateInitialization=True)
+
+        return DER_model.S_PCC.real*DER_model.Sbase,DER_model.S_PCC.imag*DER_model.Sbase    
+    
     def setup(self, S0, V0):
         try:
             # set the random number seed
-            
             randomSeed = 2500             
-            np.random.seed(randomSeed)
-
-            #Set Default Values      
-            # each pvder produces 46 kw at pf=1
-            if 'PVPlacement' in OpenDSSData.config['myconfig']['DERParameters']:
-                OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'] = \
-                OpenDSSData.config['myconfig']['DERParameters']['power_rating'][0] * \
-                OpenDSSData.config['myconfig']['DERParameters']['pvderScale'][0]
-                OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'] = \
-                0 * OpenDSSData.config['myconfig']['DERParameters']['pvderScale'][0]
-            else:
-                OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'] = \
-                OpenDSSData.config['myconfig']['DERParameters']['power_rating'] * \
-                OpenDSSData.config['myconfig']['DERParameters']['pvderScale']
-                OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'] = \
-                0 * OpenDSSData.config['myconfig']['DERParameters']['pvderScale']
-
-            rating=0 # rating will be in kVA as Default
-            for entry in S0['P']:
+            np.random.seed(randomSeed)            
+            
+            feeder_load=0 # rating will be in kVA as Default
+            for entry in S0['P']: #Sum all the loads in the feeder
                 if OpenDSSData.config['myconfig']['DERParameters']['solarPenetrationUnit']=='kva':
-                    rating+=abs(S0['P'][entry]+S0['Q'][entry]*1j)
+                   feeder_load+=abs(S0['P'][entry]+S0['Q'][entry]*1j)
                 elif OpenDSSData.config['myconfig']['DERParameters']['solarPenetrationUnit']=='kw':
-                    rating+=S0['P'][entry]
-            # number of 50 kVA solar installtions required            
-            if 'PVPlacement' in OpenDSSData.config['myconfig']['DERParameters']:
-                nSolar=len(OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'])
+                   feeder_load+=S0['P'][entry]
+            
+            if OpenDSSData.config['myconfig']['DERSetting'] == 'PVPlacement':
+               PVPlacement = True
+               nSolar=len(OpenDSSData.config['myconfig']['DERParameters']['PVPlacement']) #Number of solarpv DERs              
+               
+            elif OpenDSSData.config['myconfig']['DERSetting'] == 'default':
+               PVPlacement = False
+               nSolar=int(np.ceil((feeder_load/OpenDSSData.config['myconfig']['DERParameters']['default']['powerRating'])*OpenDSSData.config['myconfig']['DERParameters']['default']['solarPenetration']))  # number of 50 kVA solar installtions required            
+                
             else:
-                nSolar=int(np.ceil((rating/OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'])*OpenDSSData.config['myconfig']['solarPenetration']))            
-
-            # create instances of pvder            
-            for n in range(nSolar):
-                self._pvders[n]=PVDERProcedure()
-
+                raise ValueError('{} is not a valid DER setting in config file'.format(OpenDSSData.config['myconfig']['DERSetting']))
+            
             # find all three phase nodes
             threePhaseNode=[]
             for node in V0:
@@ -63,14 +80,19 @@ class PVDERAggregatedModel:
                     count+=1
                 if count==3 and node not in OpenDSSData.config['myconfig']['DERParameters']['avoidNodes']: # three phase node
                     threePhaseNode.append(node)
-
-            if 'PVPlacement' in OpenDSSData.config['myconfig']['DERParameters']:
-                assert not set(OpenDSSData.config['myconfig']['DERParameters']['PVPlacement']).difference(threePhaseNode)
-                threePhaseNode=OpenDSSData.config['myconfig']['DERParameters']['PVPlacement']
-                PVPlacement=True
-            else:
-                PVPlacement=False
-
+                        
+            if PVPlacement:
+                invalid_nodes = set(OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'].keys()).difference(threePhaseNode)
+                if not invalid_nodes:
+                    threePhaseNode=OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'].keys()
+                else:
+                    raise ValueError('Config file contains following invalid nodes:{}'.format(invalid_nodes))
+                #print('Selected three phase nodes:',threePhaseNode)            
+           
+            # create instances of pvder            
+            for n in range(nSolar):
+                self._pvders[n]=PVDERProcedure()            
+            
             # now map each solar to the available nodes            
             nThreePhaseNode=len(threePhaseNode); count=0
             for entry in self._pvders:
@@ -78,15 +100,20 @@ class PVDERAggregatedModel:
                     thisKey=threePhaseNode[np.random.randint(0,nThreePhaseNode)]
                 else:
                     thisKey=threePhaseNode[count]
+                    
                 if thisKey not in OpenDSSData.data['DNet']['DER']['PVDERMap']:
                     OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]={}
                     OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']=0
                 OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey][OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']]=entry
                 OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']+=1
+                
                 if not PVPlacement:
                     self._pvders[entry].setup(thisKey)
                 else:
                     self._pvders[entry].setup(thisKey)
+                
+                self.initialize_PQVnominal(thisKey,self._pvders[entry]._pvderModel.PV_model)
+                
                 count+=1
 
             for entry in OpenDSSData.data['DNet']['DER']['PVDERMap']:
@@ -106,7 +133,38 @@ class PVDERAggregatedModel:
             return OpenDSSData.data['DNet']['DER']['PVDERMap']
         except Exception as e:
             OpenDSSData.log("Failed Setup PVDERAGG")
-
+    
+    def initialize_PQVnominal(self,node,DERModel):
+        """Initialize Pnominal and Qnominal."""
+        
+        initializeWithActual = OpenDSSData.config['myconfig']['initializeWithActual']
+        
+        if initializeWithActual:
+           DERRatingReal = DERModel.S_PCC.real*DERModel.Sbase
+           DERRatingImag = DERModel.S_PCC.imag*DERModel.Sbase
+        
+        if OpenDSSData.config['myconfig']['DERSetting'] == 'PVPlacement':
+             lowSideV = OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'][node]['VrmsRating'] 
+             
+             if initializeWithActual:
+                 PNominal = (DERRatingReal/1e3)*OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'][node]['pvderScale']
+                 QNominal = (DERRatingImag/1e3)*OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'][node]['pvderScale']
+             else:
+                 PNominal = OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'][node]['powerRating'] * OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'][node]['pvderScale']
+                 QNominal = 0 * OpenDSSData.config['myconfig']['DERParameters']['PVPlacement'][node]['pvderScale']
+        elif OpenDSSData.config['myconfig']['DERSetting'] == 'default':
+             lowSideV = OpenDSSData.config['myconfig']['DERParameters']['default']['VrmsRating'] 
+             
+             if initializeWithActual:
+                 PNominal = (DERRatingReal/1e3)*OpenDSSData.config['myconfig']['DERParameters']['default']['pvderScale']
+                 QNominal = (DERRatingImag/1e3)*OpenDSSData.config['myconfig']['DERParameters']['default']['pvderScale']
+             else:
+                 PNominal = OpenDSSData.config['myconfig']['DERParameters']['default']['powerRating'] * OpenDSSData.config['myconfig']['DERParameters']['default']['pvderScale']
+                 QNominal = 0 * OpenDSSData.config['myconfig']['DERParameters']['default']['pvderScale']
+        
+        OpenDSSData.data['DNet']['DER']['PVDERData']['lowSideV'][node] = lowSideV
+        OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'][node] = PNominal
+        OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'][node] = QNominal
 
     def funcval(self,t,y,nEqs=23):
         fvalue=[]

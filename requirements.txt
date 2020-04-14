@@ -2,3 +2,4 @@ matplotlib==2.0.2
 numpy>=1.16.2
 scipy>=1.2.1
 xlsxwriter>=1.2.0
+psutil>=5.7.0
