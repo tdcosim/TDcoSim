@@ -1,217 +1,159 @@
 {
-    "cosimHome": "D:\\Sam\\memoryerr\\TDcoSim\\tdcosim",
+    "cosimHome": ".\\tdcosim",
     "psseConfig":{
-        "rawFilePath":"D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\TNetworks\\68bus\\68_bus.raw",
-        "dyrFilePath":"D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\TNetworks\\68bus\\68_bus.dyr"        
+        "rawFilePath":".\\SampleData\\TNetworks\\68bus\\68_bus.raw",
+        "dyrFilePath":".\\SampleData\\TNetworks\\68bus\\68_bus.dyr"        
     },
     "openDSSConfig":{        
         "defaultFeederConfig":{
-            "filePath":["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+            "filePath":[".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
             "solarFlag":0,
             "solarPenetration":0.0
         },
         "manualFeederConfig":{
             "nodes": [
                 {
-                    "nodenumber": 59,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+					"nodenumber": 59,
+                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
-                    "solarPenetration":0.1,
+                    "DERFilePath": ".\\examples\\config_der.json",
+                    "initializeWithActual":true,
+                    "DERSetting":"PVPlacement",
                     "DERParameters":{
-                        "PVPlacement":["25", "13", "54", "56", "197", "7"],
-                        "pvderScale": [1,1,1,1,1,1],
-                        "V_LV0": [0.50,0.50,0.50,0.50,0.50,0.50],   
-                        "V_LV1": [0.70,0.70,0.70,0.70,0.70,0.70],
-                        "V_LV2": [0.88,0.88,0.88,0.88,0.88,0.88],
-                        "t_LV0_limit": [0.133,0.133,0.133,0.133,0.133,0.133],
-                        "t_LV1_limit": [10.0,10.0,10.0,10.0,10.0,10.0],
-                        "t_LV2_limit": [20.0,20.0,20.0,20.0,20.0,20.0],
-                        "V_HV1":[1.06,1.06,1.06,1.06,1.06,1.06],
-                        "V_HV2":[1.12,1.12,1.12,1.12,1.12,1.12],
-                        "t_HV1_limit": [3.0,3.0,3.0,3.0,3.0,3.0],
-                        "t_HV2_limit": [0.32,0.32,0.32,0.32,0.32,0.32],
-                        "VRT_INSTANTANEOUS_TRIP": [false,false,false,false,false,false],
-                        "VRT_MOMENTARY_CESSATION": [false,false,false,false,false,false],
-                        "OUTPUT_RESTORE_DELAY": [0.5,0.5,0.5,0.5,0.5,0.5],
-                        "power_rating":[50,50,50,50,50,50],
-                        "SteadyState":[true,true,true,true,true,true]
-                    }
-                },
-				{
-                    "nodenumber": 23,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                        "default":{
+                        "solarPenetration":0.1,
+                        "derId":"50",
+                        "powerRating":50,
+                        "VrmsRating":177.0,
+                        "steadyStateInitialization":true,
+                        "pvderScale": 1,
+                        "LVRT":{"0":{"V_threshold":0.5,"t_threshold":1.0,"mode":"momentary_cessation"},
+                                "1":{"V_threshold":0.7,"t_threshold":10.0,"mode":"mandatory_operation"},
+                                "2":{"V_threshold":0.88,"t_threshold":20.0,"mode":"mandatory_operation"}},
+                        "HVRT":{"0":{"V_threshold":1.12,"t_threshold":0.016,"mode":"momentary_cessation"},
+                                "1":{"V_threshold":1.06,"t_threshold":3.0,"mode":"momentary_cessation"}},
+                        "outputRestoreDelay":0.4                        
+                         },
+                        "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
+                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
+                                      }
+					}},				  
+                  {
+					"nodenumber": 23,
+                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
-                    "solarPenetration":0.1,
+                    "DERFilePath": "..\\examples\\config_der.json",
+                    "initializeWithActual":true,
+                    "DERSetting":"PVPlacement",
                     "DERParameters":{
-                        "PVPlacement":["25", "13", "54", "56", "197", "7"],
-                        "pvderScale": [1,1,1,1,1,1],
-                        "V_LV0": [0.50,0.50,0.50,0.50,0.50,0.50],   
-                        "V_LV1": [0.70,0.70,0.70,0.70,0.70,0.70],
-                        "V_LV2": [0.88,0.88,0.88,0.88,0.88,0.88],
-                        "t_LV0_limit": [0.133,0.133,0.133,0.133,0.133,0.133],
-                        "t_LV1_limit": [10.0,10.0,10.0,10.0,10.0,10.0],
-                        "t_LV2_limit": [20.0,20.0,20.0,20.0,20.0,20.0],
-                        "V_HV1":[1.06,1.06,1.06,1.06,1.06,1.06],
-                        "V_HV2":[1.12,1.12,1.12,1.12,1.12,1.12],
-                        "t_HV1_limit": [3.0,3.0,3.0,3.0,3.0,3.0],
-                        "t_HV2_limit": [0.32,0.32,0.32,0.32,0.32,0.32],
-                        "VRT_INSTANTANEOUS_TRIP": [false,false,false,false,false,false],
-                        "VRT_MOMENTARY_CESSATION": [false,false,false,false,false,false],
-                        "OUTPUT_RESTORE_DELAY": [0.5,0.5,0.5,0.5,0.5,0.5],
-                        "power_rating":[50,50,50,50,50,50],
-                        "SteadyState":[true,true,true,true,true,true]
-                    }
-                },
-				{
-                    "nodenumber": 28,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
+                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
+                                      }
+					}},				  
+                  {
+					"nodenumber": 28,
+                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
-                    "solarPenetration":0.1,
+                    "DERFilePath": ".\\examples\\config_der.json",
+                    "initializeWithActual":true,
+                    "DERSetting":"PVPlacement",
                     "DERParameters":{
-                        "PVPlacement":["25", "13", "54", "56", "197", "7"],
-                        "pvderScale": [1,1,1,1,1,1],
-                        "V_LV0": [0.50,0.50,0.50,0.50,0.50,0.50],   
-                        "V_LV1": [0.70,0.70,0.70,0.70,0.70,0.70],
-                        "V_LV2": [0.88,0.88,0.88,0.88,0.88,0.88],
-                        "t_LV0_limit": [0.133,0.133,0.133,0.133,0.133,0.133],
-                        "t_LV1_limit": [10.0,10.0,10.0,10.0,10.0,10.0],
-                        "t_LV2_limit": [20.0,20.0,20.0,20.0,20.0,20.0],
-                        "V_HV1":[1.06,1.06,1.06,1.06,1.06,1.06],
-                        "V_HV2":[1.12,1.12,1.12,1.12,1.12,1.12],
-                        "t_HV1_limit": [3.0,3.0,3.0,3.0,3.0,3.0],
-                        "t_HV2_limit": [0.32,0.32,0.32,0.32,0.32,0.32],
-                        "VRT_INSTANTANEOUS_TRIP": [false,false,false,false,false,false],
-                        "VRT_MOMENTARY_CESSATION": [false,false,false,false,false,false],
-                        "OUTPUT_RESTORE_DELAY": [0.5,0.5,0.5,0.5,0.5,0.5],
-                        "power_rating":[50,50,50,50,50,50],
-                        "SteadyState":[true,true,true,true,true,true]
-                    }
-                },
-				{
-                    "nodenumber": 64,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
+                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
+                                      }
+					}},		
+                  {
+					"nodenumber": 64,
+                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
-                    "solarPenetration":0.1,
+                    "DERFilePath": ".\\examples\\config_der.json",
+                    "initializeWithActual":true,
+                    "DERSetting":"PVPlacement",
                     "DERParameters":{
-                        "PVPlacement":["25", "13", "54", "56", "197", "7"],
-                        "pvderScale": [1,1,1,1,1,1],
-                        "V_LV0": [0.50,0.50,0.50,0.50,0.50,0.50],   
-                        "V_LV1": [0.70,0.70,0.70,0.70,0.70,0.70],
-                        "V_LV2": [0.88,0.88,0.88,0.88,0.88,0.88],
-                        "t_LV0_limit": [0.133,0.133,0.133,0.133,0.133,0.133],
-                        "t_LV1_limit": [10.0,10.0,10.0,10.0,10.0,10.0],
-                        "t_LV2_limit": [20.0,20.0,20.0,20.0,20.0,20.0],
-                        "V_HV1":[1.06,1.06,1.06,1.06,1.06,1.06],
-                        "V_HV2":[1.12,1.12,1.12,1.12,1.12,1.12],
-                        "t_HV1_limit": [3.0,3.0,3.0,3.0,3.0,3.0],
-                        "t_HV2_limit": [0.32,0.32,0.32,0.32,0.32,0.32],
-                        "VRT_INSTANTANEOUS_TRIP": [false,false,false,false,false,false],
-                        "VRT_MOMENTARY_CESSATION": [false,false,false,false,false,false],
-                        "OUTPUT_RESTORE_DELAY": [0.5,0.5,0.5,0.5,0.5,0.5],
-                        "power_rating":[50,50,50,50,50,50],
-                        "SteadyState":[true,true,true,true,true,true]
-                    }
-                },
-				{
-                    "nodenumber": 56,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
+                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
+                                      }
+					}},				
+                  {
+					"nodenumber": 56,
+                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
-                    "solarPenetration":0.1,
+                    "DERFilePath": "..\\examples\\config_der.json",
+                    "initializeWithActual":true,
+                    "DERSetting":"PVPlacement",
                     "DERParameters":{
-                        "PVPlacement":["25", "13", "54", "56", "197", "7"],
-                        "pvderScale": [1,1,1,1,1,1],
-                        "V_LV0": [0.50,0.50,0.50,0.50,0.50,0.50],   
-                        "V_LV1": [0.70,0.70,0.70,0.70,0.70,0.70],
-                        "V_LV2": [0.88,0.88,0.88,0.88,0.88,0.88],
-                        "t_LV0_limit": [0.133,0.133,0.133,0.133,0.133,0.133],
-                        "t_LV1_limit": [10.0,10.0,10.0,10.0,10.0,10.0],
-                        "t_LV2_limit": [20.0,20.0,20.0,20.0,20.0,20.0],
-                        "V_HV1":[1.06,1.06,1.06,1.06,1.06,1.06],
-                        "V_HV2":[1.12,1.12,1.12,1.12,1.12,1.12],
-                        "t_HV1_limit": [3.0,3.0,3.0,3.0,3.0,3.0],
-                        "t_HV2_limit": [0.32,0.32,0.32,0.32,0.32,0.32],
-                        "VRT_INSTANTANEOUS_TRIP": [false,false,false,false,false,false],
-                        "VRT_MOMENTARY_CESSATION": [false,false,false,false,false,false],
-                        "OUTPUT_RESTORE_DELAY": [0.5,0.5,0.5,0.5,0.5,0.5],
-                        "power_rating":[50,50,50,50,50,50],
-                        "SteadyState":[true,true,true,true,true,true]
-                    }
-                },
-				{
-                    "nodenumber": 21,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
+                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
+                                      }
+					}},		
+				  {
+					"nodenumber": 21,
+                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
-                    "solarPenetration":0.1,
+                    "DERFilePath": ".\\examples\\config_der.json",
+                    "initializeWithActual":true,
+                    "DERSetting":"PVPlacement",
                     "DERParameters":{
-                        "PVPlacement":["25", "13", "54", "56", "197", "7"],
-                        "pvderScale": [1,1,1,1,1,1],
-                        "V_LV0": [0.50,0.50,0.50,0.50,0.50,0.50],   
-                        "V_LV1": [0.70,0.70,0.70,0.70,0.70,0.70],
-                        "V_LV2": [0.88,0.88,0.88,0.88,0.88,0.88],
-                        "t_LV0_limit": [0.133,0.133,0.133,0.133,0.133,0.133],
-                        "t_LV1_limit": [10.0,10.0,10.0,10.0,10.0,10.0],
-                        "t_LV2_limit": [20.0,20.0,20.0,20.0,20.0,20.0],
-                        "V_HV1":[1.06,1.06,1.06,1.06,1.06,1.06],
-                        "V_HV2":[1.12,1.12,1.12,1.12,1.12,1.12],
-                        "t_HV1_limit": [3.0,3.0,3.0,3.0,3.0,3.0],
-                        "t_HV2_limit": [0.32,0.32,0.32,0.32,0.32,0.32],
-                        "VRT_INSTANTANEOUS_TRIP": [false,false,false,false,false,false],
-                        "VRT_MOMENTARY_CESSATION": [false,false,false,false,false,false],
-                        "OUTPUT_RESTORE_DELAY": [0.5,0.5,0.5,0.5,0.5,0.5],
-                        "power_rating":[50,50,50,50,50,50],
-                        "SteadyState":[true,true,true,true,true,true]
-                    }
-                },
-				{
-                    "nodenumber": 26,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
+                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
+                                      }
+					}},							
+				  {
+					"nodenumber": 26,
+                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
-                    "solarPenetration":0.1,
+                    "DERFilePath": ".\\examples\\config_der.json",
+                    "initializeWithActual":true,
+                    "DERSetting":"PVPlacement",
                     "DERParameters":{
-                        "PVPlacement":["25", "13", "54", "56", "197", "7"],
-                        "pvderScale": [1,1,1,1,1,1],
-                        "V_LV0": [0.50,0.50,0.50,0.50,0.50,0.50],   
-                        "V_LV1": [0.70,0.70,0.70,0.70,0.70,0.70],
-                        "V_LV2": [0.88,0.88,0.88,0.88,0.88,0.88],
-                        "t_LV0_limit": [0.133,0.133,0.133,0.133,0.133,0.133],
-                        "t_LV1_limit": [10.0,10.0,10.0,10.0,10.0,10.0],
-                        "t_LV2_limit": [20.0,20.0,20.0,20.0,20.0,20.0],
-                        "V_HV1":[1.06,1.06,1.06,1.06,1.06,1.06],
-                        "V_HV2":[1.12,1.12,1.12,1.12,1.12,1.12],
-                        "t_HV1_limit": [3.0,3.0,3.0,3.0,3.0,3.0],
-                        "t_HV2_limit": [0.32,0.32,0.32,0.32,0.32,0.32],
-                        "VRT_INSTANTANEOUS_TRIP": [false,false,false,false,false,false],
-                        "VRT_MOMENTARY_CESSATION": [false,false,false,false,false,false],
-                        "OUTPUT_RESTORE_DELAY": [0.5,0.5,0.5,0.5,0.5,0.5],
-                        "power_rating":[50,50,50,50,50,50],
-                        "SteadyState":[true,true,true,true,true,true]
-                    }
-                },
-				{
-                    "nodenumber": 55,
-                    "filePath": ["D:\\Sam\\memoryerr\\TDcoSim\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
+                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
+                                      }
+					}},
+				  {
+					"nodenumber": 55,
+                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
-                    "solarPenetration":0.1,
+                    "DERFilePath": ".\\examples\\config_der.json",
+                    "initializeWithActual":true,
+                    "DERSetting":"PVPlacement",
                     "DERParameters":{
-                        "PVPlacement":["25", "13", "54", "56", "197", "7"],
-                        "pvderScale": [1,1,1,1,1,1],
-                        "V_LV0": [0.50,0.50,0.50,0.50,0.50,0.50],   
-                        "V_LV1": [0.70,0.70,0.70,0.70,0.70,0.70],
-                        "V_LV2": [0.88,0.88,0.88,0.88,0.88,0.88],
-                        "t_LV0_limit": [0.133,0.133,0.133,0.133,0.133,0.133],
-                        "t_LV1_limit": [10.0,10.0,10.0,10.0,10.0,10.0],
-                        "t_LV2_limit": [20.0,20.0,20.0,20.0,20.0,20.0],
-                        "V_HV1":[1.06,1.06,1.06,1.06,1.06,1.06],
-                        "V_HV2":[1.12,1.12,1.12,1.12,1.12,1.12],
-                        "t_HV1_limit": [3.0,3.0,3.0,3.0,3.0,3.0],
-                        "t_HV2_limit": [0.32,0.32,0.32,0.32,0.32,0.32],
-                        "VRT_INSTANTANEOUS_TRIP": [false,false,false,false,false,false],
-                        "VRT_MOMENTARY_CESSATION": [false,false,false,false,false,false],
-                        "OUTPUT_RESTORE_DELAY": [0.5,0.5,0.5,0.5,0.5,0.5],
-                        "power_rating":[50,50,50,50,50,50],
-                        "SteadyState":[true,true,true,true,true,true]
-                    }
-                }
+                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
+                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
+                                      }
+					}}					
             ]
         }
     },

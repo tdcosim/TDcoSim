@@ -79,7 +79,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
                         try:
                             if stepCount==0:
                                 currentMemUsage=psutil.Process().memory_full_info().uss*1e-6
-                                print("Current Memoery: " + str(currentMemUsage))
+                                print("Current Memory: " + str(currentMemUsage))
                             elif stepCount==1:
                                 memUseRate=psutil.Process().memory_full_info().uss*1e-6-currentMemUsage
                                 stepThreshold=int(memory_threshold/memUseRate)

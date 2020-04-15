@@ -46,6 +46,7 @@
     },
     "simulationConfig":{
         "simType":"dynamic",
+		"memoryThreshold": 100.0,
         "dynamicConfig":{
             "events":{
                 "1":{
