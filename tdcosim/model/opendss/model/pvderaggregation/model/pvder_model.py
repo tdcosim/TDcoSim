@@ -13,7 +13,7 @@ from pvder.grid_components import Grid
 from pvder.dynamic_simulation import DynamicSimulation
 from pvder.simulation_events import SimulationEvents
 from pvder.simulation_utilities import SimulationUtilities,SimulationResults
-from pvder import utility_functions,templates
+from pvder import utility_functions,templates,specifications
 
 class PVDERModel:
     def __init__(self):
@@ -100,7 +100,6 @@ class PVDERModel:
             self.sim = DynamicSimulation(PV_model=PV_model,events = events,LOOP_MODE=True,COLLECT_SOLUTION=True)
             self.sim.jacFlag = True      #Provide analytical Jacobian to ODE solver
             self.sim.DEBUG_SOLVER = False #Check whether solver is failing to converge at any step
-            
             self.results = SimulationResults(simulation = self.sim,PER_UNIT=True)
             
             self.lastSol=copy.deepcopy(self.sim.y0) # mutable,make copy
@@ -123,7 +122,7 @@ class PVDERModel:
         
         DERArguments = {}
         
-        for entry in templates.DER_argument_template:
+        for entry in specifications.DER_argument_spec:
             if entry in DERParameters:               
                DERArguments.update({entry:DERParameters[entry]})
             
