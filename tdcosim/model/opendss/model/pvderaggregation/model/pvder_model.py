@@ -9,6 +9,7 @@ from tdcosim.model.opendss.opendss_data import OpenDSSData
 
 from pvder.DER_components_single_phase import SolarPV_DER_SinglePhase
 from pvder.DER_components_three_phase  import SolarPV_DER_ThreePhase
+from pvder.DER_components_single_phase_Vdc_constant import SolarPVDER_SinglePhaseConstantVdc
 from pvder.grid_components import Grid
 from pvder.dynamic_simulation import DynamicSimulation
 from pvder.simulation_events import SimulationEvents
@@ -31,7 +32,8 @@ class PVDERModel:
                 #pvderConfig = copy.deepcopy(OpenDSSData.config['myconfig']['DERParameters'])
                 
                 DERFilePath = OpenDSSData.config['myconfig']['DERFilePath']
-                DERSetting = OpenDSSData.config['myconfig']['DERSetting']                
+                DERSetting = OpenDSSData.config['myconfig']['DERSetting']     
+                DERModelType = OpenDSSData.config['myconfig']['DERModelType']  
                 
                 DERParameters = OpenDSSData.config['myconfig']['DERParameters']
                 
@@ -89,12 +91,30 @@ class PVDERModel:
             logging.debug('Creating DER instance for {} node.'.format(DERLocation))
             events = SimulationEvents()
             
+            if DERModelType == 'ThreePhaseUnbalanced':
+               self.PV_model = PV_model = SolarPV_DER_ThreePhase(events,DERFilePath,
+                                                                 **DERArguments)
+            elif DERModelType == 'ThreePhaseBalanced':
+               raise NotImplementedError('{} is not implemented'.format(DERModelType)) 
+             
+            elif DERModelType == 'ThreePhaseConstantVdc':
+               raise NotImplementedError('{} is not implemented'.format(DERModelType)) 
+                
+            elif DERModelType == 'SinglePhase':
+                self.PV_model = PV_model = SolarPV_DER_SinglePhase(events,DERFilePath,
+                                                                   **DERArguments)                
+            elif DERModelType == 'SinglePhaseConstantVdc':
+                self.PV_model = PV_model = SolarPVDER_SinglePhaseConstantVdc(events,DERFilePath,
+                                                                             **DERArguments) 
+                
+            """
             if SinglePhase:
                self.PV_model=PV_model = SolarPV_DER_SinglePhase(events,DERFilePath,
                                                                 **DERArguments)
             else:
                self.PV_model=PV_model = SolarPV_DER_ThreePhase(events,DERFilePath,
                                                                **DERArguments)
+            """
             
             self.PV_model.LVRT_ENABLE = True  #Disconnects PV-DER based on ride through settings in case of voltage anomaly
             self.sim = DynamicSimulation(PV_model=PV_model,events = events,LOOP_MODE=True,COLLECT_SOLUTION=True)

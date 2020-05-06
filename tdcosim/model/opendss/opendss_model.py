@@ -72,6 +72,8 @@ class OpenDSSModel:
             entry['solarFlag'] = 0
         if 'DERSetting' not in entry:
             entry['DERSetting'] ='default'
+        if 'DERModelType' not in entry:
+            entry['DERModelType'] ='ThreePhaseUnbalanced'        
         if 'solarPenetration' not in entry:
             entry['solarPenetration'] = 0.0
         if 'DERParameters' not in entry:

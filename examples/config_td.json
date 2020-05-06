@@ -20,6 +20,7 @@
                     "DERFilePath": "..\\examples\\config_der.json",
                     "initializeWithActual":true,
                     "DERSetting":"PVPlacement",
+                    "DERModelType":"ThreePhaseUnbalanced",
                     "DERParameters":{
                         "default":{
                         "solarPenetration":0.01,
@@ -37,7 +38,7 @@
                          },
                         "PVPlacement":{"50":{"derId":"250","powerRating":250,"pvderScale":1,"VrmsRating":230.0},
                                        "51":{"derId":"50","powerRating":50,"pvderScale":1},
-                                       "25":{"derId":"50","powerRating":50,"pvderScale":1}
+                                       "25":{"derId":"50_type1","powerRating":50,"pvderScale":1}
                                       }                            
                     }
                 }
