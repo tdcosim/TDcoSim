@@ -2,13 +2,16 @@ import unittest
 import sys
 import os
 
+import tdcosim
 from tdcosim.global_data import GlobalData
 from tdcosim.model.psse.psse_model import PSSEModel
 
-dirlocation = os.path.abspath(sys.modules['__main__'].__file__)
-dirlocation = dirlocation[0:len(dirlocation)-14]
-configlocation = dirlocation+'\\tests\\testconfig.json'
+dirlocation= os.path.dirname(tdcosim.__file__)
+dirlocation = dirlocation[0:len(dirlocation)-8]
+print('Home directory:{}'.format(dirlocation))
 
+configlocation = os.path.join(dirlocation,'tests\\testconfig.json')
+print('Config location:{}'.format(configlocation))
 GlobalData.set_config(configlocation)
 GlobalData.set_TDdata()
 

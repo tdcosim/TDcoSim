@@ -54,12 +54,7 @@ class PVDERAggregatedModel:
             randomSeed = 2500             
             np.random.seed(randomSeed)            
             
-            feeder_load=0 # rating will be in kVA as Default
-            for entry in S0['P']: #Sum all the loads in the feeder
-                if OpenDSSData.config['myconfig']['DERParameters']['solarPenetrationUnit']=='kva':
-                   feeder_load+=abs(S0['P'][entry]+S0['Q'][entry]*1j)
-                elif OpenDSSData.config['myconfig']['DERParameters']['solarPenetrationUnit']=='kw':
-                   feeder_load+=S0['P'][entry]
+            
             
             if OpenDSSData.config['myconfig']['DERSetting'] == 'PVPlacement':
                PVPlacement = True
@@ -67,6 +62,14 @@ class PVDERAggregatedModel:
                
             elif OpenDSSData.config['myconfig']['DERSetting'] == 'default':
                PVPlacement = False
+               
+               feeder_load=0 # rating will be in kVA as Default
+               for entry in S0['P']: #Sum all the loads in the feeder
+                   if OpenDSSData.config['myconfig']['DERParameters']['default']['solarPenetrationUnit']=='kva':
+                      feeder_load+=abs(S0['P'][entry]+S0['Q'][entry]*1j)
+                   elif OpenDSSData.config['myconfig']['DERParameters']['default']['solarPenetrationUnit']=='kw':
+                      feeder_load+=S0['P'][entry]
+               
                nSolar=int(np.ceil((feeder_load/OpenDSSData.config['myconfig']['DERParameters']['default']['powerRating'])*OpenDSSData.config['myconfig']['DERParameters']['default']['solarPenetration']))  # number of 50 kVA solar installtions required            
                 
             else:

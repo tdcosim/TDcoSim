@@ -2,30 +2,16 @@ import unittest
 import sys
 import os
 
+import tdcosim
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.model.opendss_interface import OpenDSSInterface
+from tdcosim.test import der_test_manual_config
 
-dirlocation = os.path.abspath(sys.modules['__main__'].__file__)
-dirlocation = dirlocation[0:len(dirlocation)-14]
+dirlocation= os.path.dirname(tdcosim.__file__)
+dirlocation = dirlocation[0:len(dirlocation)-8]
+print('Home directory:{}'.format(dirlocation))
 
-
-OpenDSSData.config['myconfig'] = {
-    "nodenumber": 11,
-    "filePath": [dirlocation+"\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-    "solarFlag":1,
-    "solarPenetration":0.1,
-    "DERParameters":{
-        "power_rating": 50,
-        "voltage_rating":174,
-        "SteadyState": True,
-        "V_LV1": 0.70,
-        "V_LV2": 0.88,
-        "t_LV1_limit": 10.0,  
-        "t_LV2_limit": 20.0,
-        "LVRT_INSTANTANEOUS_TRIP": False,
-        "LVRT_MOMENTARY_CESSATION": False
-    }
-}
+OpenDSSData.config['myconfig'] = der_test_manual_config.test_config
 
 class TestOpenDSSInterface(unittest.TestCase):
     
@@ -100,8 +86,13 @@ class TestOpenDSSInterface(unittest.TestCase):
         OpenDSSData.data['DNet']['DER'] = {
             'PVDERData':{}
         }
-        OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'] = 46.0
-        OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'] = 0.0
+        
+        OpenDSSData.data['DNet']['DER']['PVDERData'].update({'lowSideV':{},'PNominal':{},'QNominal':{}})
+        for node in pvdermap:
+            OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'][node] = 46.0
+            OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'][node] = 0.0
+            OpenDSSData.data['DNet']['DER']['PVDERData']['lowSideV'][node] = 174.0
+            
         model.setupDER(pvdermap)
         Vpcc = 0.99      
         targetS = [70.0, 23.0]        

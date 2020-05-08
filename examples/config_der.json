@@ -18,7 +18,7 @@
                         "xDC":0.0,"xQ":0.0,"xPLL":0.0,"wte":6.28}
      },
 "50_type1":{"parent_config":"50",                          
-            "inverter_ratings":{"Ioverload":1.1}
+            "inverter_ratings":{"Ioverload":1.0}
      },
 
     "250":{"parent_config":"",

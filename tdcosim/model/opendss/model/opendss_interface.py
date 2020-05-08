@@ -32,7 +32,7 @@ class OpenDSSInterface:
             self.K=1 # initial scaling is 1
             self.unitConversion=1 # initial unit conversion is 1
         else:
-            print "DSS Failed to Connect"
+            print("DSS Failed to Connect")
             exit(1)         
     def __enumerations(self):
         try:
@@ -222,7 +222,7 @@ class OpenDSSInterface:
                 self.K=targetS[0]/P # scaling
                 self.unitConversion=10**3*10**-6 # convert from kW to watt and then to MW
             else:
-                print "power flow solve diverged. Using base case to find K with mismatch on Q."
+                print("power flow solve diverged. Using base case to find K with mismatch on Q.")
                 self.setup()# reload the case
                 self.K=1
                 P,Q,flg=self.getS()
