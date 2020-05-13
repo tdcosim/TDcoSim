@@ -21,7 +21,7 @@ class PVDERAggregatedModel:
         OpenDSSData.data['DNet']['DER']['PVDERData'].update({'lowSideV':{},'PNominal':{},'QNominal':{}})
         OpenDSSData.data['DNet']['DER']['PVDERMap'] = {}                
         self._pvders = {}
-
+        self._nEqs = {}
     
     def getDERRatedPower(self,powerRating,voltageRating):
         """Return actual real and reactive power rating of DER for given power and voltage rating.
@@ -106,12 +106,11 @@ class PVDERAggregatedModel:
                     OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']=0
                 OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey][OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']]=entry
                 OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']+=1
+                                
+                self._pvders[entry].setup(thisKey)
                 
-                if not PVPlacement:
-                    self._pvders[entry].setup(thisKey)
-                else:
-                    self._pvders[entry].setup(thisKey)
                 
+                                                
                 self.initialize_PQVnominal(thisKey,self._pvders[entry]._pvderModel.PV_model)
                 
                 count+=1
@@ -122,11 +121,14 @@ class PVDERAggregatedModel:
 
             self.pvIDIndex=self._pvders.keys() # index for variables based on ID
             self.pvIDIndex.sort()# sort the index and use this as the order
+            
+           
 
             y0=[]; t0=0.0
             for n in range(len(self.pvIDIndex)):
                 y0.extend(self._pvders[self.pvIDIndex[n]]._pvderModel.lastSol)
-
+                self._nEqs[self.pvIDIndex[n]] = self._pvders[self.pvIDIndex[n]]._pvderModel.PV_model.n_ODE
+            
             self.integrator=ode(self.funcval,self.jac).set_integrator('vode',method='bdf',rtol=1e-4,atol=1e-4)
             self.integrator.set_initial_value(y0,t0)
 
@@ -169,13 +171,17 @@ class PVDERAggregatedModel:
     def funcval(self,t,y,nEqs=23):
         fvalue=[]
         for n in range(len(self.pvIDIndex)):
+            nEqs = self._nEqs[self.pvIDIndex[n]]
+            #fvalue.extend(self._pvders[self.pvIDIndex[n]]._pvderModel.sim.ODE_model(y[n*nEqs:(n+1)*nEqs],t))
             fvalue.extend(self._pvders[self.pvIDIndex[n]]._pvderModel.sim.ODE_model(y[n*nEqs:(n+1)*nEqs],t))
         return fvalue
 
     def jac(self,t,y,nEqs=23):
         nPVDER=len(self.pvIDIndex)
+        nEqs = self._nEqs[0]
         J=np.zeros((nPVDER*nEqs,nPVDER*nEqs))# zero out at every call to avoid stray values
         for n in range(nPVDER):
+            nEqs = self._nEqs[self.pvIDIndex[n]]
             thisJ=self._pvders[self.pvIDIndex[n]]._pvderModel.sim.jac_ODE_model(y,t)
             row,col=np.where(thisJ)
             J[n*nEqs+row,n*nEqs+col]=thisJ[thisJ!=0]
@@ -208,6 +214,7 @@ class PVDERAggregatedModel:
                     if pv!='nSolar_at_this_node':
                         pvID=OpenDSSData.data['DNet']['DER']['PVDERMap'][node][pv]
                         assert pvID in self.pvIDIndex, "pvID not found in self.pvIDIndex"
+                        nEqs = self._nEqs[pvID]
                         thisPV=self._pvders[pvID]
                         n=self.pvIDIndex.index(pvID)
                         sol=np.append(thisPV._pvderModel.lastSol,y[n*nEqs:(n+1)*nEqs])
