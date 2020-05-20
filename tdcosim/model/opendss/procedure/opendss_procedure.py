@@ -1,6 +1,7 @@
 from tdcosim.model.opendss.model.opendss_interface import OpenDSSInterface
 from tdcosim.model.opendss.model.pvderaggregation.procedure.pvder_aggregated_procedure import PVDERAggregatedProcedure
 from tdcosim.model.opendss.opendss_data import OpenDSSData
+
 class OpenDSSProcedure:
     def __init__(self):        
         
