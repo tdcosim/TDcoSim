@@ -9,7 +9,8 @@ import math
 
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.model.pvderaggregation.procedure.pvder_procedure import PVDERProcedure
-from pvder.DER_components_three_phase  import SolarPVDERThreePhase
+from pvder.DER_wrapper import DERModel
+
 from pvder.simulation_events import SimulationEvents
 from pvder import utility_functions
 

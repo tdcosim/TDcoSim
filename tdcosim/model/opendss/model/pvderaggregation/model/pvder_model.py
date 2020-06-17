@@ -7,10 +7,7 @@ import logging
 
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 
-from pvder.DER_components_single_phase import SolarPVDERSinglePhase
-from pvder.DER_components_three_phase  import SolarPVDERThreePhase
 from pvder.DER_wrapper import DERModel
-
 from pvder.grid_components import Grid
 from pvder.dynamic_simulation import DynamicSimulation
 from pvder.simulation_events import SimulationEvents
