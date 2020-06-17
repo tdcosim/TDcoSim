@@ -7,8 +7,10 @@ import logging
 
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 
-from pvder.DER_components_single_phase import SolarPV_DER_SinglePhase
-from pvder.DER_components_three_phase  import SolarPV_DER_ThreePhase
+from pvder.DER_components_single_phase import SolarPVDERSinglePhase
+from pvder.DER_components_three_phase  import SolarPVDERThreePhase
+from pvder.DER_wrapper import DERModel
+
 from pvder.grid_components import Grid
 from pvder.dynamic_simulation import DynamicSimulation
 from pvder.simulation_events import SimulationEvents
@@ -31,8 +33,9 @@ class PVDERModel:
                 #pvderConfig = copy.deepcopy(OpenDSSData.config['myconfig']['DERParameters'])
                 
                 DERFilePath = OpenDSSData.config['myconfig']['DERFilePath']
+                DERModelType = OpenDSSData.config['myconfig']['DERModelType']                
                 DERSetting = OpenDSSData.config['myconfig']['DERSetting']                
-                
+                                
                 DERParameters = OpenDSSData.config['myconfig']['DERParameters']
                 
                 if DERSetting == 'default':                    
@@ -74,13 +77,13 @@ class PVDERModel:
             
             Va = cmath.rect(DERArguments['VrmsRating']*math.sqrt(2),0.0)
             Vb = utility_functions.Ub_calc(Va)
-            Vc = utility_functions.Uc_calc(Va)
+            Vc = utility_functions.Uc_calc(Va)            
             
             DERArguments.update({'identifier':DERLocation})            
             DERArguments.update({'derConfig':pvderConfig})
             DERArguments.update({'standAlone':False})
+            
             DERArguments.update({'gridFrequency':2*math.pi*60.0})
-           
             DERArguments.update({'gridVoltagePhaseA':Va})
             DERArguments.update({'gridVoltagePhaseB':Vb})
             DERArguments.update({'gridVoltagePhaseC':Vc})
@@ -89,15 +92,11 @@ class PVDERModel:
             logging.debug('Creating DER instance for {} node.'.format(DERLocation))
             events = SimulationEvents()
             
-            if SinglePhase:
-               self.PV_model=PV_model = SolarPV_DER_SinglePhase(events,DERFilePath,
-                                                                **DERArguments)
-            else:
-               self.PV_model=PV_model = SolarPV_DER_ThreePhase(events,DERFilePath,
-                                                               **DERArguments)
+            PVDER_model = DERModel(modelType=DERModelType,events=events,configFile=DERFilePath,**DERArguments)     
+            self.PV_model = PVDER_model.DER_model
             
             self.PV_model.LVRT_ENABLE = True  #Disconnects PV-DER based on ride through settings in case of voltage anomaly
-            self.sim = DynamicSimulation(PV_model=PV_model,events = events,LOOP_MODE=True,COLLECT_SOLUTION=True)
+            self.sim = DynamicSimulation(PV_model=self.PV_model,events = events,LOOP_MODE=True,COLLECT_SOLUTION=True)
             self.sim.jacFlag = True      #Provide analytical Jacobian to ODE solver
             self.sim.DEBUG_SOLVER = False #Check whether solver is failing to converge at any step
             self.results = SimulationResults(simulation = self.sim,PER_UNIT=True)

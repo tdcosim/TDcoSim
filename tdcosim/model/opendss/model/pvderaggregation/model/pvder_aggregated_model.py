@@ -9,7 +9,7 @@ import math
 
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.model.pvderaggregation.procedure.pvder_procedure import PVDERProcedure
-from pvder.DER_components_three_phase  import SolarPV_DER_ThreePhase
+from pvder.DER_components_three_phase  import SolarPVDERThreePhase
 from pvder.simulation_events import SimulationEvents
 from pvder import utility_functions
 
@@ -32,20 +32,21 @@ class PVDERAggregatedModel:
         """
 
         DERFilePath = OpenDSSData.config['myconfig']['DERFilePath']
-        
+        DERModelType = OpenDSSData.config['myconfig']['DERModelType']                
+                        
         Va = cmath.rect(voltageRating*math.sqrt(2),0.0)
         Vb = utility_functions.Ub_calc(Va)
         Vc = utility_functions.Uc_calc(Va)
-
-        DER_model = SolarPV_DER_ThreePhase(events=SimulationEvents(),configFile=DERFilePath,
-                                          powerRating = powerRating*1e3,
-                                          VrmsRating = voltageRating,
-                                          gridVoltagePhaseA = Va,
-                                          gridVoltagePhaseB = Vb,
-                                          gridVoltagePhaseC = Vc,
-                                          gridFrequency=2*math.pi*60.0,
-                                          standAlone=False,steadyStateInitialization=True)
-
+        
+        PVDER_model = DERModel(modelType=DERModelType,events=events,configFile=DERFilePath,
+                               powerRating = powerRating*1e3,VrmsRating = voltageRating,
+                               gridVoltagePhaseA = Va,
+                               gridVoltagePhaseB = Vb,
+                               gridVoltagePhaseC = Vc,
+                               gridFrequency=2*math.pi*60.0,
+                               standAlone=False,steadyStateInitialization=True)     
+        self.PV_model = PVDER_model.DER_model
+        
         return DER_model.S_PCC.real*DER_model.Sbase,DER_model.S_PCC.imag*DER_model.Sbase    
     
     def setup(self, S0, V0):
