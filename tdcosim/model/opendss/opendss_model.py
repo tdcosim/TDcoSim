@@ -78,14 +78,16 @@ class OpenDSSModel:
             entry['solarPenetration'] = 0.0
         if 'DERParameters' not in entry:
             entry['DERParameters'] = {}
-        if 'solarPenetrationUnit' not in entry['DERParameters']:
-            entry['DERParameters']['solarPenetrationUnit'] = 'kw'
         if 'avoidNodes' not in entry['DERParameters']:
             entry['DERParameters']['avoidNodes'] = ['sourcebus','rg60']
         if 'dt' not in entry['DERParameters']:
             entry['DERParameters']['dt'] = 1/120.
         if 'default' not in entry['DERParameters']:
             entry['DERParameters']['default'] = {}        
+        if 'solarPenetration' not in entry['DERParameters']['default']:
+            entry['DERParameters']['default']['solarPenetration'] = 0.0
+        if 'solarPenetrationUnit' not in entry['DERParameters']['default']:
+            entry['DERParameters']['default']['solarPenetrationUnit'] = 'kw'        
         if 'powerRating' not in entry['DERParameters']['default']:
             entry['DERParameters']['default']['powerRating'] = 50
         if 'VrmsRating' not in entry['DERParameters']['default']:

@@ -2,28 +2,16 @@ import unittest
 import sys
 import os
 
+import tdcosim
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.model.pvderaggregation.model.pvder_aggregated_model import PVDERAggregatedModel
+from tdcosim.test import der_test_manual_config
 
-dirlocation = os.path.abspath(sys.modules['__main__'].__file__)
-dirlocation = dirlocation[0:len(dirlocation)-14]
+dirlocation= os.path.dirname(tdcosim.__file__)
+dirlocation = dirlocation[0:len(dirlocation)-8]
+print('Home directory:{}'.format(dirlocation))
 
-
-OpenDSSData.config= {'myconfig':{"nodenumber": 11,
-                                 'solarFlag':1,"solarPenetration":0.1,
-                                 "filePath":[dirlocation+"\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                                 'DERParameters':{'power_rating': 50,'voltage_rating':174,'SteadyState':True,
-                                                  'V_LV0':0.5,'V_LV1':0.70,'V_LV2':0.88,
-                                                  't_LV0_limit': 0.1, 't_LV1_limit':1.0,'t_LV2_limit':2.0,
-                                                  'V_HV1':1.06,'V_HV2':1.12,
-                                                  't_HV1_limit':3.0,'t_HV2_limit':0.016,
-                                                 'VRT_INSTANTANEOUS_TRIP':False,'VRT_MOMENTARY_CESSATION':False,'OUTPUT_RESTORE_DELAY':0.5,
-                                                  'pvderScale':1.0,'solarPenetrationUnit':'kw',
-                                                  'avoidNodes': ['sourcebus','rg60'],'dt':1/120.0
-                                                 }
-                                }
-                    }
-
+OpenDSSData.config['myconfig'] = der_test_manual_config.test_config
 
 class TestPVDERAggregatedModel(unittest.TestCase):
     

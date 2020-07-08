@@ -7,24 +7,17 @@ import argparse
 import matplotlib.pyplot as plt
 import unittest
 
+import tdcosim
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.procedure.opendss_procedure import OpenDSSProcedure
+from tdcosim.test import der_test_manual_config
 
-dirlocation = os.path.abspath(sys.modules['__main__'].__file__)
-dirlocation = dirlocation[0:len(dirlocation)-14]
-OpenDSSData.config= {'myconfig':{'solarFlag':1,"solarPenetration":0.02,
-                                 "filePath":[dirlocation+"\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                                 'DERParameters':{'power_rating': 50,'voltage_rating':174,'SteadyState':True,
-                                                  'V_LV0':0.5,'V_LV1':0.70,'V_LV2':0.88,
-                                                  't_LV0_limit': 0.1, 't_LV1_limit':1.0,'t_LV2_limit':2.0,
-                                                  'V_HV1':1.06,'V_HV2':1.12,
-                                                  't_HV1_limit':3.0,'t_HV2_limit':0.016,
-                                                 'VRT_INSTANTANEOUS_TRIP':False,'VRT_MOMENTARY_CESSATION':False,'OUTPUT_RESTORE_DELAY':0.5,
-                                                  'pvderScale':1.0,'solarPenetrationUnit':'kw',
-                                                  'avoidNodes': ['sourcebus','rg60'],'dt':1/120.0
-                                                 }
-                                }
-                    }
+
+dirlocation= os.path.dirname(tdcosim.__file__)
+dirlocation = dirlocation[0:len(dirlocation)-8]
+print('Home directory:{}'.format(dirlocation))
+
+OpenDSSData.config['myconfig'] = der_test_manual_config.test_config
 
 S_load = [70000.0, 23000.0]
 Vpcc0=0.9868730306625366
@@ -44,10 +37,10 @@ def suite():
 
 class TestOpenDSSProcedure(unittest.TestCase):
     
-    test_scenarios = { 'LVRT1':{'LVRT_ENABLE':True,'LVRT_INSTANTANEOUS_TRIP':False,'LVRT_MOMENTARY_CESSATION':False,'tfault_start':4.0,'tfault_duration':0.5},
-                       'LVRT2':{'LVRT_ENABLE':True,'LVRT_INSTANTANEOUS_TRIP':False,'LVRT_MOMENTARY_CESSATION':True,'tfault_start':4.0,'tfault_duration':2.0},
-                       'LVRT3':{'LVRT_ENABLE':True,'LVRT_INSTANTANEOUS_TRIP':True,'LVRT_MOMENTARY_CESSATION':False,'tfault_start':4.0,'tfault_duration':2.0}}                       
-        
+    test_scenarios = { 'LVRT1':{'LVRT_ENABLE':True,'tfault_start':4.0,'tfault_duration':0.5},
+                       'LVRT2':{'LVRT_ENABLE':True,'tfault_start':4.0,'tfault_duration':2.0},
+                       'LVRT3':{'LVRT_ENABLE':True,'tfault_start':4.0,'tfault_duration':2.0}}                       
+       
     
     def test_OpenDSS_LVRT1(self):
         """Test PV-DER + OpenDSS procedure with LVRT."""
@@ -115,8 +108,7 @@ class TestOpenDSSProcedure(unittest.TestCase):
             pvder_object =  self.opendss_model._pvderAggProcedure._pvderAggModel._pvders[pvder]._pvderModel.PV_model
             
             pvder_object.LVRT_ENABLE = self.test_scenarios[scenario]['LVRT_ENABLE']  
-            pvder_object.LVRT_INSTANTANEOUS_TRIP = self.test_scenarios[scenario]['LVRT_INSTANTANEOUS_TRIP'] 
-            pvder_object.LVRT_MOMENTARY_CESSATION = self.test_scenarios[scenario]['LVRT_MOMENTARY_CESSATION'] 
+           
     
     def run_simulation(self,tEnd = 3.0,scenario='LVRT1'):
         """Test PV-DER + OpenDSS procedure with LVRT."""
@@ -170,7 +162,7 @@ class TestOpenDSSProcedure(unittest.TestCase):
             
             self.show_DER_status(pvder_object)
             self.check_DER_state(pvder_object)
-            self.plot_DER_trajectories(results_object)
+            #self.plot_DER_trajectories(results_object)
              
             #self.assertTrue(len(sim_object.t_t) == len(sim_object.Vdc_t) == n_time_steps+1, msg='{}:The number of states collected should be {} but it is actually {}!'.format(sim_object.name,n_time_steps+1,len(sim_object.t_t)))
 
@@ -180,29 +172,33 @@ class TestOpenDSSProcedure(unittest.TestCase):
         """Check whether DER states are nominal."""
         
         #Check if DC link voltage within inverter limits.
-        self.assertTrue(pvder_object.Vdc*pvder_object.Vdcbase >= pvder_object.Vdcmpp_min or pvder_object.Vdc*pvder.PV_model.Vdcbase <= pvder_object.Vdcmpp_max, msg='{}:DC link voltage {:.2f} V exceeded limit!'.format(pvder_object.name,pvder_object.Vdc*pvder_object.Vdcbase))
+        self.assertTrue(pvder_object.Vdc*pvder_object.Vdcbase >= pvder_object.Vdcmpp_min or pvder_object.Vdc*pvder_object.Vdcbase <= pvder_object.Vdcmpp_max, msg='{}:DC link voltage {:.2f} V exceeded limit!'.format(pvder_object.name,pvder_object.Vdc*pvder_object.Vdcbase))
         
-        #Check current reference and power output within inverter limits.
+        #Check current reference output within inverter limits.
         self.assertTrue(abs(pvder_object.ia_ref)<= pvder_object.iref_limit, msg='{}:Inverter current exceeded limit by {:.2f} A!'.format(pvder_object.name,(abs(pvder_object.ia_ref) - pvder_object.iref_limit)*pvder_object.Ibase))
         
+        #Check power output within inverter limits.
         self.assertTrue(abs(pvder_object.S_PCC)<=pvder_object.Sinverter_nominal, msg='{}:Inverter power output exceeded limit by {:.2f}  VA!'.format(pvder_object.name,(abs(pvder_object.S_PCC) -pvder_object.Sinverter_nominal)*pvder_object.Sbase))
     
     def check_LVRT_status(self,pvder_object):
         """Check whether ride through is working."""
-                 
-        if pvder_object.Vrms <= pvder_object.V_LV2:
-                """Check if LVRT trip flag is True"""
-                self.assertTrue(pvder_object.LVRT_TRIP, msg='{}: Inverter trip flag  not set despite low voltage!'.format(pvder_object.name))
-                """Check if Inverter stopped supplying power"""
-                self.assertAlmostEqual(abs(pvder_object.S_PCC), 0.0, places=4, msg='{}:Inverter power output is {:.2f} VA despite trip status!'.format(pvder_object.name,pvder_object.S_PCC*pvder_object.Sbase))
-                """Check if DC link voltage limits are breached."""
-                self.assertTrue(pvder_object.Vdc*pvder_object.Vdcbase >= pvder_object.Vdcmpp_min or pvder_object.Vdc*pvder.PV_model.Vdcbase <= pvder_object.Vdcmpp_max, msg='{}:DC link voltage exceeded limits!'.format(pvder_object.name))
-                
-        elif pvder_object.Vrms > pvder_object.V_LV2 and pvder_object.LVRT_MOMENTARY_CESSATION:
-                """Check if LVRT trip flag is False"""
-                
-                self.assertFalse(pvder_object.LVRT_TRIP, msg='{}: Inverter trip flag set despite nominal voltage!'.format(pvder_object.name))
         
+        if pvder_object.DER_TRIP: #Check if DER trip flag is True
+            #Check if LVRT momentary cessation is True is connected
+            self.assertTrue(pvder_object.LVRT_TRIP, msg='{}: LVRT trip should be true!'.format(pvder_object.name))
+            #Check if DER is connected
+            self.assertFalse(pvder_object.DER_CONNECTED, msg='{}: DER connected despite trip!'.format(pvder_object.name))
+            #Check if DER stopped supplying power
+            self.assertAlmostEqual(abs(pvder_object.S_PCC), 0.0, places=4, msg='{}:Inverter power output is {:.2f} VA despite trip status!'.format(pvder_object.name,pvder_object.S_PCC*pvder_object.Sbase))
+            #Check if DC link voltage limits are breached
+            self.assertTrue(pvder_object.Vdc*pvder_object.Vdcbase >= pvder_object.Vdcmpp_min or pvder_object.Vdc*pvder_object.Vdcbase <= pvder_object.Vdcmpp_max, msg='{}:DC link voltage exceeded limits!'.format(pvder_object.name))
+                
+        elif pvder_object.DER_MOMENTARY_CESSATION:
+            #Check if LVRT momentary cessation is True is connected
+            self.assertTrue(pvder_object.LVRT_MOMENTARY_CESSATION, msg='{}: LVRT momentary cessation should be true!'.format(pvder_object.name))
+            #Check if DER is connected
+            self.assertFalse(pvder_object.DER_CONNECTED, msg='{}: DER connected despite momentary cessation!'.format(pvder_object.name))
+                 
     def show_DER_status(self,pvder_object):
         """Show DER states."""     
         
@@ -226,19 +222,21 @@ class TestOpenDSSProcedure(unittest.TestCase):
         results_object.plot_DER_simulation(plot_type='voltage_LV')
         results_object.plot_DER_simulation(plot_type='duty_cycle')           
     
-    def plot_feeder_loads(self,t_t,Pfeeder_t,Qfeeder_t):
+    def plot_feeder_loads(self,t_t,Pfeeder_t,Qfeeder_t,show_plot=True):
         """Plot feeder loads."""
         
         plt.plot(t_t[1::],Pfeeder_t)
         plt.ylabel('Active load (kW)',weight = "bold", fontsize=12)
         plt.xlabel('Time (s)',weight = "bold", fontsize=12)
-        plt.show()
+        if show_plot:
+           plt.show()
 
         plt.plot(t_t[1::],Qfeeder_t)
         plt.ylabel('Reactive load (kVAR)',weight = "bold", fontsize=12)
         plt.xlabel('Time (s)',weight = "bold", fontsize=12)
-        plt.show()
-        
+        if show_plot:
+           plt.show()
+
 parser = argparse.ArgumentParser(description='Unit tests for LVRT operation in OpenDSS - PVDER simulation.')
 
 test_options = TestOpenDSSProcedure.test_scenarios.keys()

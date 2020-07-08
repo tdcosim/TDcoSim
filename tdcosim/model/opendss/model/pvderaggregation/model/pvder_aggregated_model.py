@@ -9,7 +9,8 @@ import math
 
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.model.pvderaggregation.procedure.pvder_procedure import PVDERProcedure
-from pvder.DER_components_three_phase  import SolarPV_DER_ThreePhase
+from pvder.DER_wrapper import DERModel
+
 from pvder.simulation_events import SimulationEvents
 from pvder import utility_functions
 
@@ -32,20 +33,21 @@ class PVDERAggregatedModel:
         """
 
         DERFilePath = OpenDSSData.config['myconfig']['DERFilePath']
-        
+        DERModelType = OpenDSSData.config['myconfig']['DERModelType']                
+                        
         Va = cmath.rect(voltageRating*math.sqrt(2),0.0)
         Vb = utility_functions.Ub_calc(Va)
         Vc = utility_functions.Uc_calc(Va)
-
-        DER_model = SolarPV_DER_ThreePhase(events=SimulationEvents(),configFile=DERFilePath,
-                                          powerRating = powerRating*1e3,
-                                          VrmsRating = voltageRating,
-                                          gridVoltagePhaseA = Va,
-                                          gridVoltagePhaseB = Vb,
-                                          gridVoltagePhaseC = Vc,
-                                          gridFrequency=2*math.pi*60.0,
-                                          standAlone=False,steadyStateInitialization=True)
-
+        
+        PVDER_model = DERModel(modelType=DERModelType,events=events,configFile=DERFilePath,
+                               powerRating = powerRating*1e3,VrmsRating = voltageRating,
+                               gridVoltagePhaseA = Va,
+                               gridVoltagePhaseB = Vb,
+                               gridVoltagePhaseC = Vc,
+                               gridFrequency=2*math.pi*60.0,
+                               standAlone=False,steadyStateInitialization=True)     
+        self.PV_model = PVDER_model.DER_model
+        
         return DER_model.S_PCC.real*DER_model.Sbase,DER_model.S_PCC.imag*DER_model.Sbase    
     
     def setup(self, S0, V0):
@@ -54,12 +56,7 @@ class PVDERAggregatedModel:
             randomSeed = 2500             
             np.random.seed(randomSeed)            
             
-            feeder_load=0 # rating will be in kVA as Default
-            for entry in S0['P']: #Sum all the loads in the feeder
-                if OpenDSSData.config['myconfig']['DERParameters']['solarPenetrationUnit']=='kva':
-                   feeder_load+=abs(S0['P'][entry]+S0['Q'][entry]*1j)
-                elif OpenDSSData.config['myconfig']['DERParameters']['solarPenetrationUnit']=='kw':
-                   feeder_load+=S0['P'][entry]
+            
             
             if OpenDSSData.config['myconfig']['DERSetting'] == 'PVPlacement':
                PVPlacement = True
@@ -67,6 +64,14 @@ class PVDERAggregatedModel:
                
             elif OpenDSSData.config['myconfig']['DERSetting'] == 'default':
                PVPlacement = False
+               
+               feeder_load=0 # rating will be in kVA as Default
+               for entry in S0['P']: #Sum all the loads in the feeder
+                   if OpenDSSData.config['myconfig']['DERParameters']['default']['solarPenetrationUnit']=='kva':
+                      feeder_load+=abs(S0['P'][entry]+S0['Q'][entry]*1j)
+                   elif OpenDSSData.config['myconfig']['DERParameters']['default']['solarPenetrationUnit']=='kw':
+                      feeder_load+=S0['P'][entry]
+               
                nSolar=int(np.ceil((feeder_load/OpenDSSData.config['myconfig']['DERParameters']['default']['powerRating'])*OpenDSSData.config['myconfig']['DERParameters']['default']['solarPenetration']))  # number of 50 kVA solar installtions required            
                 
             else:
