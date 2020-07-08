@@ -1,18 +1,18 @@
 import os
 os.environ["PATH"] += os.getcwd()
 import time
-
+import argparse
 from tdcosim.report import generateReport
 from tdcosim.global_data import GlobalData
 from tdcosim.procedure.procedure import Procedure
 
 
-def main():
+def main(configfile):
     '''
     Main function to run the T&D Cosimulation    
     '''
     
-    GlobalData.set_config('config.json')
+    GlobalData.set_config(configfile)
     GlobalData.set_TDdata()
     setOutLocation()
     startTime=time.time()        
@@ -43,4 +43,9 @@ def simulate():
     proc.simulate()
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description='Set configuration file for TDcosim')
+    parser.add_argument('--config', default='config.json', type=str, help='The configfile location')    
+
+    args = parser.parse_args()
+    print("input configuration: " + args.config)
+    main(args.config)

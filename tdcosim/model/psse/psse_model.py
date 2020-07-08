@@ -11,8 +11,8 @@ from tdcosim.global_data import GlobalData
 class PSSEModel:
 	def __init__(self):
 		pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
-		if hasattr(GlobalData.config['psseConfig'], 'installLocation'):
-			pssePath = GlobalData.config['psseConfig']['installLocation']
+		if "installLocation" in GlobalData.config['psseConfig']:
+			pssePath = GlobalData.config['psseConfig']['installLocation']		
 		sys.path.append(pssePath)
 		os.environ['PATH']+=';'+pssePath
 		import psspy
