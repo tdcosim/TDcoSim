@@ -2,22 +2,28 @@ import numpy as np
 import sys
 import os
 import re
-pssePath="C:\Program Files (x86)\PTI\PSSE33\PSSBIN"
-sys.path.append(pssePath)
-os.environ['PATH']+=';'+pssePath
-import psspy
 
 from tdcosim.global_data import GlobalData
 
+
+
+
 class PSSEModel:
 	def __init__(self):
+		pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
+		if hasattr(GlobalData.config['psseConfig'], 'installLocation'):
+			pssePath = GlobalData.config['psseConfig']['installLocation']
+		sys.path.append(pssePath)
+		os.environ['PATH']+=';'+pssePath
+		import psspy
+
 		# psse
 		self._psspy=psspy
-		psspy.psseinit(0)
-		psspy.report_output(6,'',[])
-		psspy.progress_output(6,'',[])
-		psspy.alert_output(6,'',[])
-		psspy.prompt_output(6,'',[])
+		self._psspy.psseinit(0)
+		self._psspy.report_output(6,'',[])
+		self._psspy.progress_output(6,'',[])
+		self._psspy.alert_output(6,'',[])
+		self._psspy.prompt_output(6,'',[])
 
 		self.faultmap = {}
 		self.faultindex = 1
@@ -41,7 +47,7 @@ class PSSEModel:
 		self._monitorID['qload'] = 26
 		
 		# load psse case
-		ierr = self._psspy.read(0,GlobalData.config['psseConfig']['rawFilePath'])
+		ierr = self._psspy.read(0,GlobalData.config['psseConfig']['rawFilePath'].encode("ascii", "ignore"))
 		assert ierr==0,"Reading raw file failed with error {}".format(ierr)
 		ierr, nLoads = self._psspy.alodbuscount()
 		assert ierr==0,"load bus count failed with error {}".format(ierr)
@@ -67,7 +73,7 @@ class PSSEModel:
 		if adjustOpPoint:
 			S = self._adjustSystemOperatingPoint()
 		else:
-			self._psspy.dyre_new([1,1,1,1],self.config['psseConfig']['dyrFilePath'])
+			self._psspy.dyre_new([1,1,1,1],self.config['psseConfig']['dyrFilePath'].encode("ascii", "ignore"))
 		self._psspy.cong(1)
 		GlobalData.data['dynamic']['channel'] = {}
 		nMonVars=0
@@ -121,7 +127,7 @@ class PSSEModel:
 			ind['GENTPJU1']=4
 			ind['GENTRA']=1
 
-			dyrPath=GlobalData.config['psseConfig']['dyrFilePath']
+			dyrPath=GlobalData.config['psseConfig']['dyrFilePath'].encode("ascii", "ignore")
 			f=open(dyrPath)
 			dyrData=f.read().splitlines()
 			f.close()
@@ -147,7 +153,7 @@ class PSSEModel:
 			f.close()
 			
 			# now read raw file to get Zr and Zx
-			f=open(GlobalData.config['psseConfig']['rawFilePath'])
+			f=open(GlobalData.config['psseConfig']['rawFilePath'].encode("ascii", "ignore"))
 			rawFileData=f.read().splitlines()
 			f.close()
 			
@@ -176,7 +182,7 @@ class PSSEModel:
 			m['MBASE']=6
 
 			# read dyr file
-			self._psspy.dyre_new([1,1,1,1],GlobalData.config['psseConfig']['dyrFilePath'])
+			self._psspy.dyre_new([1,1,1,1],GlobalData.config['psseConfig']['dyrFilePath'].encode("ascii", "ignore"))
 
 			# get machine data
 			macVarData={}
@@ -211,7 +217,7 @@ class PSSEModel:
 					reductionPercent=GlobalData.data['DNet']['Nodes'][busID]['solarPenetration']
 					loadVal[loadType*2],loadVal[loadType*2+1]=\
 					val.real*(1-reductionPercent),val.imag*(1-reductionPercent)
-					ierr=psspy.load_chng_4(busID,'1',[1,1,1,1,1,0],loadVal)
+					ierr=self._psspy.load_chng_4(busID,'1',[1,1,1,1,1,0],loadVal)
 					assert ierr==0,"load change failed with error {}".format(ierr)
 
 			return S
