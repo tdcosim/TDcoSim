@@ -36,7 +36,7 @@
                                 "1":{"V_threshold":1.06,"t_threshold":3.0,"mode":"momentary_cessation"}},
                         "outputRestoreDelay":0.4                        
                          },
-                        "PVPlacement":{"50":{"derId":"250","powerRating":250,"pvderScale":1},
+                        "PVPlacement":{"50":{"derId":"250","powerRating":250,"pvderScale":1,"VrmsRating":230.0},
                                        "51":{"derId":"50","powerRating":50,"pvderScale":1},
                                        "25":{"derId":"50","powerRating":50,"pvderScale":1}
                                       }                            

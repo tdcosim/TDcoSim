@@ -95,7 +95,7 @@ class PVDERModel:
             
             self.PV_model.LVRT_ENABLE = True  #Disconnects PV-DER based on ride through settings in case of voltage anomaly
             self.sim = DynamicSimulation(PV_model=self.PV_model,events = events,LOOP_MODE=True,COLLECT_SOLUTION=True)
-             if DERModelType in self.sim.jac_list:
+            if DERModelType in self.sim.jac_list:
                 self.sim.jacFlag = True      #Provide analytical Jacobian to ODE solver
             else:
                 self.sim.jacFlag = False
