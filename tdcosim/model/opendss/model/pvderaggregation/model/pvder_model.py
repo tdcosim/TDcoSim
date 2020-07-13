@@ -21,7 +21,7 @@ class PVDERModel:
         self._lastSol = {}
         self._lastT = 0
 
-    def setup(self, nodeid):
+    def setup(self, nodeid, V0):
         try:
             VpuInitial=1.0
             SinglePhase = False
@@ -68,13 +68,13 @@ class PVDERModel:
                 DERArguments.update({'powerRating':powerRating}) 
                 DERArguments.update({'SteadyState':SteadyState}) 
             
-            #Va = (.50+0j)*Grid.Vbase
-            #Vb = (-.25-.43301270j)*Grid.Vbase
-            #Vc = (-.25+.43301270j)*Grid.Vbase
-            
-            Va = cmath.rect(DERArguments['VrmsRating']*math.sqrt(2),0.0)
-            Vb = utility_functions.Ub_calc(Va)
-            Vc = utility_functions.Uc_calc(Va)            
+            #Va = cmath.rect(DERArguments['VrmsRating']*math.sqrt(2),0.0)
+            #Vb = utility_functions.Ub_calc(Va)
+            #Vc = utility_functions.Uc_calc(Va)
+            a = utility_functions.Urms_calc(V0['a'],V0['b'],V0['c'])/DERArguments['VrmsRating'] 
+            Va = (V0['a']/a)  #Convert node voltage at HV side to LV
+            Vb = (V0['b']/a)
+            Vc = (V0['c']/a)            
             
             DERArguments.update({'identifier':DERLocation})            
             DERArguments.update({'derConfig':pvderConfig})
@@ -84,8 +84,7 @@ class PVDERModel:
             DERArguments.update({'gridVoltagePhaseA':Va})
             DERArguments.update({'gridVoltagePhaseB':Vb})
             DERArguments.update({'gridVoltagePhaseC':Vc})
-            #print(DERArguments)
-            
+                        
             logging.debug('Creating DER instance of {} model for {} node.'.format(DERModelType,DERLocation))
             print('Creating DER instance of {} model for {} node.'.format(DERModelType,DERLocation))
             events = SimulationEvents()
@@ -139,8 +138,9 @@ class PVDERModel:
             # as opendss will sync will grid_simulation only once during the run call.
             # opendss will solve power flow and will set gridVoltagePhase value.
             self.PV_model.gridVoltagePhaseA=gridVoltagePhaseA*math.sqrt(2)/Grid.Vbase
-            self.PV_model.gridVoltagePhaseB=gridVoltagePhaseB*math.sqrt(2)/Grid.Vbase
-            self.PV_model.gridVoltagePhaseC=gridVoltagePhaseC*math.sqrt(2)/Grid.Vbase
+            if templates.DER_design_template[self.PV_model.DER_model_type]['basic_specs']['unbalanced']:
+                self.PV_model.gridVoltagePhaseB=gridVoltagePhaseB*math.sqrt(2)/Grid.Vbase
+                self.PV_model.gridVoltagePhaseC=gridVoltagePhaseC*math.sqrt(2)/Grid.Vbase
             self.sim.t = self.lastT + 1/120.0
 
             return None

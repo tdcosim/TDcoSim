@@ -112,7 +112,7 @@ class PVDERAggregatedModel:
                 OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey][OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']]=entry
                 OpenDSSData.data['DNet']['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']+=1
                                 
-                self._pvders[entry].setup(thisKey)
+                self._pvders[entry].setup(thisKey,V0[thisKey])  #Pass both node id and node voltage during DER setup
                 
                 
                                                 
