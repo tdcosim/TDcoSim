@@ -13,12 +13,13 @@
         "manualFeederConfig":{
             "nodes": [
                 {
-					"nodenumber": 59,
+			  "nodenumber": 59,
                     "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":1,
                     "DERFilePath": ".\\examples\\config_der.json",
                     "initializeWithActual":true,
                     "DERSetting":"PVPlacement",
+                    "DERModelType":"ThreePhaseUnbalanced",
                     "DERParameters":{
                         "default":{
                         "solarPenetration":0.1,
@@ -31,8 +32,7 @@
                                 "1":{"V_threshold":0.7,"t_threshold":10.0,"mode":"mandatory_operation"},
                                 "2":{"V_threshold":0.88,"t_threshold":20.0,"mode":"mandatory_operation"}},
                         "HVRT":{"0":{"V_threshold":1.12,"t_threshold":0.016,"mode":"momentary_cessation"},
-                                "1":{"V_threshold":1.06,"t_threshold":3.0,"mode":"momentary_cessation"}},
-                        "outputRestoreDelay":0.4                        
+                                "1":{"V_threshold":1.06,"t_threshold":3.0,"mode":"momentary_cessation"}},                                             
                          },
                         "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
                                        "13":{"derId":"50","powerRating":50,"pvderScale":1},
@@ -49,6 +49,7 @@
                     "DERFilePath": "..\\examples\\config_der.json",
                     "initializeWithActual":true,
                     "DERSetting":"PVPlacement",
+                    "DERModelType":"ThreePhaseUnbalanced",
                     "DERParameters":{
                        "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
                                        "13":{"derId":"50","powerRating":50,"pvderScale":1},
@@ -65,6 +66,7 @@
                     "DERFilePath": ".\\examples\\config_der.json",
                     "initializeWithActual":true,
                     "DERSetting":"PVPlacement",
+                    "DERModelType":"ThreePhaseUnbalanced",
                     "DERParameters":{
                        "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
                                        "13":{"derId":"50","powerRating":50,"pvderScale":1},
@@ -81,6 +83,7 @@
                     "DERFilePath": ".\\examples\\config_der.json",
                     "initializeWithActual":true,
                     "DERSetting":"PVPlacement",
+                    "DERModelType":"ThreePhaseUnbalanced",
                     "DERParameters":{
                        "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
                                        "13":{"derId":"50","powerRating":50,"pvderScale":1},
@@ -97,6 +100,7 @@
                     "DERFilePath": "..\\examples\\config_der.json",
                     "initializeWithActual":true,
                     "DERSetting":"PVPlacement",
+                    "DERModelType":"ThreePhaseUnbalanced",
                     "DERParameters":{
                        "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
                                        "13":{"derId":"50","powerRating":50,"pvderScale":1},
@@ -113,6 +117,7 @@
                     "DERFilePath": ".\\examples\\config_der.json",
                     "initializeWithActual":true,
                     "DERSetting":"PVPlacement",
+                    "DERModelType":"ThreePhaseUnbalanced",
                     "DERParameters":{
                        "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
                                        "13":{"derId":"50","powerRating":50,"pvderScale":1},
@@ -129,6 +134,7 @@
                     "DERFilePath": ".\\examples\\config_der.json",
                     "initializeWithActual":true,
                     "DERSetting":"PVPlacement",
+                    "DERModelType":"ThreePhaseUnbalanced",
                     "DERParameters":{
                        "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
                                        "13":{"derId":"50","powerRating":50,"pvderScale":1},
@@ -145,6 +151,7 @@
                     "DERFilePath": ".\\examples\\config_der.json",
                     "initializeWithActual":true,
                     "DERSetting":"PVPlacement",
+                    "DERModelType":"ThreePhaseUnbalanced",
                     "DERParameters":{
                        "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
                                        "13":{"derId":"50","powerRating":50,"pvderScale":1},
