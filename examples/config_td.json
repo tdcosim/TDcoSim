@@ -23,18 +23,13 @@
                     "DERModelType":"ThreePhaseUnbalanced",
                     "DERParameters":{
                         "default":{
-                        "solarPenetration":0.1,
+                        "solarPenetration":0.02,
                         "derId":"50",
                         "powerRating":50,
                         "VrmsRating":177.0,
                         "steadyStateInitialization":true,
-                        "pvderScale": 1,
-                        "LVRT":{"0":{"V_threshold":0.5,"t_threshold":1.0,"mode":"momentary_cessation"},
-                                "1":{"V_threshold":0.7,"t_threshold":10.0,"mode":"mandatory_operation"},
-                                "2":{"V_threshold":0.88,"t_threshold":20.0,"mode":"mandatory_operation"}},
-                        "HVRT":{"0":{"V_threshold":1.12,"t_threshold":0.016,"mode":"momentary_cessation"},
-                                "1":{"V_threshold":1.06,"t_threshold":3.0,"mode":"momentary_cessation"}},
-                        "outputRestoreDelay":0.4                        
+                        "pvderScale": 1
+                                              
                          },
                         "PVPlacement":{"50":{"derId":"50","powerRating":50,"pvderScale":1},
                                        "51":{"derId":"50","powerRating":50,"pvderScale":1},

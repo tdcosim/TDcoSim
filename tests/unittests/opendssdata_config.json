@@ -14,18 +14,29 @@
                "nodenumber": 11, 
                "filePath": [
                   "..\\..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
-               ], 
-               "DERModelType": "ThreePhaseUnbalanced", 
-               "solarFlag": 1, 
-               "DERSetting": "PVPlacement", 
-               "solarPenetration": 0.0, 
-               "initializeWithActual": true, 
+               ],                
+               "solarFlag": 1,                                 
                "DERFilePath": "..\\..\\examples\\config_der.json", 
+               "initializeWithActual": true,
+               "DERSetting": "PVPlacement",
+               "DERModelType": "ThreePhaseUnbalanced", 
                "DERParameters": {
-                  "pvderScale": 1.0, 
+               "default": {                 
+                  "solarPenetration":0.1,
                   "solarPenetrationUnit": "kw", 
-                  "power_rating": 50, 
-                  "PVPlacement": {
+                  "derId":"50",
+                  "powerRating":50,
+                  "VrmsRating":177.0,
+                  "steadyStateInitialization":true,
+                  "pvderScale": 1.0, 
+                  "LVRT":{"0":{"V_threshold":0.5,"t_threshold":1.0,"mode":"momentary_cessation"},
+                          "1":{"V_threshold":0.7,"t_threshold":10.0,"mode":"mandatory_operation"},
+                          "2":{"V_threshold":0.88,"t_threshold":20.0,"mode":"mandatory_operation"}},
+                  "HVRT":{"0":{"V_threshold":1.12,"t_threshold":0.016,"mode":"momentary_cessation"},
+                          "1":{"V_threshold":1.06,"t_threshold":3.0,"mode":"momentary_cessation"}}
+                          },
+                  
+               "PVPlacement": {
                      "25": {
                         "pvderScale": 1, 
                         "derId": "50_type1", 
@@ -42,24 +53,15 @@
                         "derId": "250", 
                         "VrmsRating": 230.0
                      }
-                  }, 
-                  "V_HV1": 1.06, 
-                  "V_HV2": 1.12, 
-                  "OUTPUT_RESTORE_DELAY": 0.5, 
-                  "SteadyState": true, 
-                  "V_LV0": 0.5, 
-                  "V_LV1": 0.7, 
-                  "V_LV2": 0.88, 
-                  "t_LV0_limit": 1.0, 
-                  "VRT_INSTANTANEOUS_TRIP": false, 
-                  "t_LV1_limit": 10.0, 
+                  }},                  
+                   
                   "avoidNodes": [
                      "sourcebus", 
                      "rg60"
                   ], 
-                  "t_LV2_limit": 20.0, 
+                 
                   "dt": 0.008333333333333333, 
-                  "t_HV1_limit": 3.0, 
+                 
                   "default": {
                      "pvderScale": 1, 
                      "steadyStateInitialization": true, 
@@ -98,14 +100,12 @@
                         }
                      }
                   }, 
-                  "t_HV2_limit": 0.016666666666666666, 
-                  "VRT_MOMENTARY_CESSATION": true, 
-                  "voltage_rating": 174
+
                }
             }
          ]
-      }
-   }, 
+      },
+    
    "psseConfig": {
       "dyrFilePath": "..\\..\\SampleData\\TNetworks\\118bus\\case118.dyr", 
       "rawFilePath": "..\\..\\SampleData\\TNetworks\\118bus\\case118.raw"
@@ -179,7 +179,7 @@
       "DERParameters": {
          "pvderScale": 1.0, 
          "solarPenetrationUnit": "kw", 
-         "power_rating": 50, 
+         "powerRating": 50, 
          "PVPlacement": {
             "25": {
                "pvderScale": 1, 
@@ -198,23 +198,16 @@
                "VrmsRating": 230.0
             }
          }, 
-         "V_HV1": 1.06, 
-         "V_HV2": 1.12, 
-         "OUTPUT_RESTORE_DELAY": 0.5, 
-         "SteadyState": true, 
-         "V_LV0": 0.5, 
-         "V_LV1": 0.7, 
-         "V_LV2": 0.88, 
-         "t_LV0_limit": 1.0, 
-         "VRT_INSTANTANEOUS_TRIP": false, 
-         "t_LV1_limit": 10.0, 
+        
+         "steadyStateInitialization": true, 
+         
          "avoidNodes": [
             "sourcebus", 
             "rg60"
          ], 
-         "t_LV2_limit": 20.0, 
+         
          "dt": 0.008333333333333333, 
-         "t_HV1_limit": 3.0, 
+        
          "default": {
             "pvderScale": 1, 
             "steadyStateInitialization": true, 
@@ -253,9 +246,7 @@
                }
             }
          }, 
-         "t_HV2_limit": 0.016666666666666666, 
-         "VRT_MOMENTARY_CESSATION": true, 
-         "voltage_rating": 174
+        
       }
    }, 
    "outputConfig": {

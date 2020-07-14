@@ -110,10 +110,11 @@ class PVDERModel:
         """DER config."""
         
         derConfig = {}
-        for entry in DERParameters:
-            if entry in templates.RT_config_template.keys():
-               derConfig.update({entry:DERParameters[entry]})
         
+        for entry in DERParameters:            
+            if entry in templates.VRT_config_template.keys():
+               derConfig.update({entry:DERParameters[entry]})
+               
         return derConfig
 
     def get_derarguments(self,DERParameters):

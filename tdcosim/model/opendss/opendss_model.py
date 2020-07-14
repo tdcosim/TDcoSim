@@ -96,11 +96,11 @@ class OpenDSSModel:
             entry['DERParameters']['default']['steadyStateInitialization'] = True
         if 'LVRT' not in entry['DERParameters']['default']:
             entry['DERParameters']['default']['LVRT'] = {"0":{"V_threshold":0.5,"t_threshold":1.0,"mode":"momentary_cessation"},
-                                               "1":{"V_threshold":0.7,"t_threshold ":10.0,"mode":"mandatory_operation"},
-                                               "2":{"V_threshold ":0.88,"t_threshold ":20.0,"mode":"mandatory_operation"}}
+                                                         "1":{"V_threshold":0.7,"t_threshold":10.0,"mode":"mandatory_operation"},
+                                                         "2":{"V_threshold":0.88,"t_threshold":20.0,"mode":"mandatory_operation"}}
         if 'HVRT' not in entry['DERParameters']['default']:
             entry['DERParameters']['default']['HVRT'] = {"0":{"V_threshold":1.12,"t_threshold":0.016,"mode":"momentary_cessation"},
-                                               "1":{"V_threshold":1.06,"t_threshold":3.0,"mode":"momentary_cessation"}}
+                                                         "1":{"V_threshold":1.06,"t_threshold":3.0,"mode":"momentary_cessation"}}
         if 'OUTPUT_RESTORE_DELAY' not in entry['DERParameters']['default']:
             entry['DERParameters']['default']['OUTPUT_RESTORE_DELAY'] = 0.5               
         if 'pvderScale' not in entry['DERParameters']['default']:
