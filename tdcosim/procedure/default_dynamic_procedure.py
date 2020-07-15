@@ -88,13 +88,9 @@ class DefaultDynamicProcedure(DefaultProcedure):
                                 ffullpath = str(GlobalData.config["outputPath"] + "\\report{}.xlsx".format(nPart))
                                 stype = str(GlobalData.config['simulationConfig']['simType'])                                
                                 generateReport(GlobalData,fname=ffullpath,sim=stype)
-                                print("generated report part" + str(nPart))
-                                thisPortion = GlobalData.data['monitorData']                                
-                                for thisT in thisPortion:# empty data
-                                    GlobalData.data['monitorData'][thisT]={}
-                                thisPortion = GlobalData.data['TNet']['Dynamic']                                
-                                for thisT in thisPortion:# empty data
-                                    GlobalData.data['TNet']['Dynamic'][thisT]={}
+                                print("generated report part" + str(nPart))                                
+                                GlobalData.data['monitorData']={}# empty data                                
+                                GlobalData.data['TNet']['Dynamic']={}# empty data                                    
                                 nPart+=1; lastWriteInd=stepCount
                             stepCount+=1
                         except:
