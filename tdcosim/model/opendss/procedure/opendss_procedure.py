@@ -1,6 +1,7 @@
 from tdcosim.model.opendss.model.opendss_interface import OpenDSSInterface
 from tdcosim.model.opendss.model.pvderaggregation.procedure.pvder_aggregated_procedure import PVDERAggregatedProcedure
 from tdcosim.model.opendss.opendss_data import OpenDSSData
+
 class OpenDSSProcedure:
     def __init__(self):        
         
@@ -26,7 +27,7 @@ class OpenDSSProcedure:
             V0 = self._opendssinterface.getVoltage(vtype='actual')
             pvdermap = self._pvderAggProcedure.setup(S0, V0)
             self._opendssinterface.setupDER(pvdermap)            
-            for n in range(50):# 25 cycles to synchronize
+            for n in range(2):# 25 cycles to synchronize
                 V = self._opendssinterface.getVoltage(vtype='actual')
                 derP, derQ = self._pvderAggProcedure.run(V)
                 self._opendssinterface.pvderInjection(derP, derQ)
