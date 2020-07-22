@@ -1,8 +1,9 @@
 {
     "cosimHome": "..\\tdcosim",
     "psseConfig":{
-        "rawFilePath":"..\\SampleData\\TNetworks\\118bus\\case118.raw",
-        "dyrFilePath":"..\\SampleData\\TNetworks\\118bus\\case118.dyr"        
+        "installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27",
+        "rawFilePath":"..\\SampleData\\TNetworks\\68bus\\68_bus.raw",
+        "dyrFilePath":"..\\SampleData\\TNetworks\\68bus\\68_bus.dyr"        
     },
     "openDSSConfig":{        
         "defaultFeederConfig":{
@@ -13,7 +14,7 @@
         "manualFeederConfig":{
             "nodes": [
                 {
-                    "nodenumber": 11,
+                    "nodenumber": 59,
                     "filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
                     "solarFlag":0,
                     "solarPenetration":0,

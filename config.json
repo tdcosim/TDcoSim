@@ -1,204 +1,477 @@
 {
-    "cosimHome": ".\\tdcosim",
-    "psseConfig":{
-        "installLocation":"C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27",
-        "rawFilePath":".\\SampleData\\TNetworks\\68bus\\68_bus.raw",
-        "dyrFilePath":".\\SampleData\\TNetworks\\68bus\\68_bus.dyr"        
+  "cosimHome": ".\\tdcosim",
+  "psseConfig": {
+    "installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27",
+    "rawFilePath": ".\\SampleData\\TNetworks\\68bus\\68_bus.raw",
+    "dyrFilePath": ".\\SampleData\\TNetworks\\68bus\\68_bus.dyr"
+  },
+  "openDSSConfig": {
+    "defaultFeederConfig": {
+      "filePath": [
+        ".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+      ],
+      "solarFlag": 0,
+      "solarPenetration": 0.0
     },
-    "openDSSConfig":{        
-        "defaultFeederConfig":{
-            "filePath":[".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-            "solarFlag":0,
-            "solarPenetration":0.0
-        },
-        "manualFeederConfig":{
-            "nodes": [
-                {
-			  "nodenumber": 59,
-                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "DERFilePath": ".\\examples\\config_der.json",
-                    "initializeWithActual":true,
-                    "DERSetting":"PVPlacement",
-                    "DERModelType":"ThreePhaseUnbalanced",
-                    "DERParameters":{
-                        "default":{
-                        "solarPenetration":0.1,
-                        "derId":"50",
-                        "powerRating":50,
-                        "VrmsRating":177.0,
-                        "steadyStateInitialization":true,
-                        "pvderScale": 1,
-                        "LVRT":{"0":{"V_threshold":0.5,"t_threshold":1.0,"mode":"momentary_cessation"},
-                                "1":{"V_threshold":0.7,"t_threshold":10.0,"mode":"mandatory_operation"},
-                                "2":{"V_threshold":0.88,"t_threshold":20.0,"mode":"mandatory_operation"}},
-                        "HVRT":{"0":{"V_threshold":1.12,"t_threshold":0.016,"mode":"momentary_cessation"},
-                                "1":{"V_threshold":1.06,"t_threshold":3.0,"mode":"momentary_cessation"}},                                             
-                         },
-                        "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
-                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
-                                      }
-					}},				  
-                  {
-					"nodenumber": 23,
-                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "DERFilePath": ".\\examples\\config_der.json",
-                    "initializeWithActual":true,
-                    "DERSetting":"PVPlacement",
-                    "DERModelType":"ThreePhaseUnbalanced",
-                    "DERParameters":{
-                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
-                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
-                                      }
-					}},				  
-                  {
-					"nodenumber": 28,
-                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "DERFilePath": ".\\examples\\config_der.json",
-                    "initializeWithActual":true,
-                    "DERSetting":"PVPlacement",
-                    "DERModelType":"ThreePhaseUnbalanced",
-                    "DERParameters":{
-                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
-                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
-                                      }
-					}},		
-                  {
-					"nodenumber": 64,
-                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "DERFilePath": ".\\examples\\config_der.json",
-                    "initializeWithActual":true,
-                    "DERSetting":"PVPlacement",
-                    "DERModelType":"ThreePhaseUnbalanced",
-                    "DERParameters":{
-                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
-                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
-                                      }
-					}},				
-                  {
-					"nodenumber": 56,
-                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "DERFilePath": ".\\examples\\config_der.json",
-                    "initializeWithActual":true,
-                    "DERSetting":"PVPlacement",
-                    "DERModelType":"ThreePhaseUnbalanced",
-                    "DERParameters":{
-                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
-                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
-                                      }
-					}},		
-				  {
-					"nodenumber": 21,
-                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "DERFilePath": ".\\examples\\config_der.json",
-                    "initializeWithActual":true,
-                    "DERSetting":"PVPlacement",
-                    "DERModelType":"ThreePhaseUnbalanced",
-                    "DERParameters":{
-                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
-                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
-                                      }
-					}},							
-				  {
-					"nodenumber": 26,
-                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "DERFilePath": ".\\examples\\config_der.json",
-                    "initializeWithActual":true,
-                    "DERSetting":"PVPlacement",
-                    "DERModelType":"ThreePhaseUnbalanced",
-                    "DERParameters":{
-                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
-                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
-                                      }
-					}},
-				  {
-					"nodenumber": 55,
-                    "filePath": [".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "DERFilePath": ".\\examples\\config_der.json",
-                    "initializeWithActual":true,
-                    "DERSetting":"PVPlacement",
-                    "DERModelType":"ThreePhaseUnbalanced",
-                    "DERParameters":{
-                       "PVPlacement":{"25":{"derId":"50","powerRating":50,"pvderScale":1},
-                                       "13":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "54":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "56":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "197":{"derId":"50","powerRating":50,"pvderScale":1},
-									   "7":{"derId":"50","powerRating":50,"pvderScale":1}
-                                      }
-					}}					
-            ]
-        }
-    },
-    "simulationConfig":{
-        "simType":"dynamic",
-	"memoryThreshold": 100.0,
-        "dynamicConfig":{
-            "events":{
-                "1":{
-                     "time":1.0,
-                    "type":"faultOn",
-                    "faultBus":37,
-                    "faultImpedance":[0.0,-1E11]
+    "manualFeederConfig": {
+      "nodes": [
+        {
+          "nodenumber": 59,
+          "filePath": [
+            ".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+          ],
+          "solarFlag": 1,
+          "DERFilePath": ".\\examples\\config_der.json",
+          "initializeWithActual": true,
+          "DERSetting": "PVPlacement",
+          "DERModelType": "ThreePhaseUnbalanced",
+          "DERParameters": {
+            "default": {
+              "solarPenetration": 0.1,
+              "derId": "50",
+              "powerRating": 50,
+              "VrmsRating": 177.0,
+              "steadyStateInitialization": true,
+              "pvderScale": 1,
+              "LVRT": {
+                "0": {
+                  "V_threshold": 0.5,
+                  "t_threshold": 1.0,
+                  "mode": "momentary_cessation"
                 },
-                "2":{
-                    "type":"faultOff",
-                    "time":1.167,
-                    "faultBus":37
+                "1": {
+                  "V_threshold": 0.7,
+                  "t_threshold": 10.0,
+                  "mode": "mandatory_operation"
                 },
-                "3":{
-                    "type":"simEnd",
-                    "time":2.0
+                "2": {
+                  "V_threshold": 0.88,
+                  "t_threshold": 20.0,
+                  "mode": "mandatory_operation"
                 }
+              },
+              "HVRT": {
+                "0": {
+                  "V_threshold": 1.12,
+                  "t_threshold": 0.016,
+                  "mode": "momentary_cessation"
+                },
+                "1": {
+                  "V_threshold": 1.06,
+                  "t_threshold": 3.0,
+                  "mode": "momentary_cessation"
+                }
+              }
+            },
+            "PVPlacement": {
+              "25": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "13": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "54": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "56": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "197": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "7": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              }
             }
+          }          
         },
-        "staticConfig":{
-            "loadShape": [0.81518164, 0.77456979, 0.74237094, 0.72439771, 0.71946463,
-            0.72891013, 0.75212237, 0.76833652, 0.783174  , 0.79468451,
-            0.80634799, 0.80370937, 0.8016826 , 0.79288719, 0.79437859,
-             0.79720841, 0.82271511, 0.92470363, 1.0, 0.99021033,
-             0.97101338, 0.94042065, 0.88397706, 0.81097514]
+        {
+          "nodenumber": 23,
+          "filePath": [
+            ".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+          ],
+          "solarFlag": 1,
+          "DERFilePath": ".\\examples\\config_der.json",
+          "initializeWithActual": true,
+          "DERSetting": "PVPlacement",
+          "DERModelType": "ThreePhaseUnbalanced",
+          "DERParameters": {
+            "PVPlacement": {
+              "25": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "13": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "54": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "56": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "197": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "7": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              }
+            }
+          }
         },
-        "protocol":"loose_coupling"
-    },
-    "outputConfig":{
-        "outputfilename": "output.csv",
-        "type": "csv"
+        {
+          "nodenumber": 28,
+          "filePath": [
+            ".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+          ],
+          "solarFlag": 1,
+          "DERFilePath": ".\\examples\\config_der.json",
+          "initializeWithActual": true,
+          "DERSetting": "PVPlacement",
+          "DERModelType": "ThreePhaseUnbalanced",
+          "DERParameters": {
+            "PVPlacement": {
+              "25": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "13": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "54": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "56": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "197": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "7": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              }
+            }
+          }
+        },
+        {
+          "nodenumber": 64,
+          "filePath": [
+            ".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+          ],
+          "solarFlag": 1,
+          "DERFilePath": ".\\examples\\config_der.json",
+          "initializeWithActual": true,
+          "DERSetting": "PVPlacement",
+          "DERModelType": "ThreePhaseUnbalanced",
+          "DERParameters": {
+            "PVPlacement": {
+              "25": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "13": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "54": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "56": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "197": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "7": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              }
+            }
+          }
+        },
+        {
+          "nodenumber": 56,
+          "filePath": [
+            ".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+          ],
+          "solarFlag": 1,
+          "DERFilePath": ".\\examples\\config_der.json",
+          "initializeWithActual": true,
+          "DERSetting": "PVPlacement",
+          "DERModelType": "ThreePhaseUnbalanced",
+          "DERParameters": {
+            "PVPlacement": {
+              "25": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "13": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "54": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "56": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "197": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "7": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              }
+            }
+          }
+        },
+        {
+          "nodenumber": 21,
+          "filePath": [
+            ".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+          ],
+          "solarFlag": 1,
+          "DERFilePath": ".\\examples\\config_der.json",
+          "initializeWithActual": true,
+          "DERSetting": "PVPlacement",
+          "DERModelType": "ThreePhaseUnbalanced",
+          "DERParameters": {
+            "PVPlacement": {
+              "25": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "13": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "54": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "56": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "197": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "7": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              }
+            }
+          }
+        },
+        {
+          "nodenumber": 26,
+          "filePath": [
+            ".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+          ],
+          "solarFlag": 1,
+          "DERFilePath": ".\\examples\\config_der.json",
+          "initializeWithActual": true,
+          "DERSetting": "PVPlacement",
+          "DERModelType": "ThreePhaseUnbalanced",
+          "DERParameters": {
+            "PVPlacement": {
+              "25": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "13": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "54": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "56": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "197": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "7": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              }
+            }
+          }
+        },
+        {
+          "nodenumber": 55,
+          "filePath": [
+            ".\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+          ],
+          "solarFlag": 1,
+          "DERFilePath": ".\\examples\\config_der.json",
+          "initializeWithActual": true,
+          "DERSetting": "PVPlacement",
+          "DERModelType": "ThreePhaseUnbalanced",
+          "DERParameters": {
+            "PVPlacement": {
+              "25": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "13": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "54": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "56": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "197": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              },
+              "7": {
+                "derId": "50",
+                "powerRating": 50,
+                "pvderScale": 1
+              }
+            }
+          }
+        }
+      ]
     }
+  },
+  "simulationConfig": {
+    "simType": "dynamic",
+    "memoryThreshold": 100.0,
+    "dynamicConfig": {
+      "events": {
+        "1": {
+          "time": 1.0,
+          "type": "faultOn",
+          "faultBus": 37,
+          "faultImpedance": [
+            0.0,
+            -1E+11
+          ]
+        },
+        "2": {
+          "type": "faultOff",
+          "time": 1.167,
+          "faultBus": 37
+        },
+        "3": {
+          "type": "simEnd",
+          "time": 2.0
+        }
+      }
+    },
+    "staticConfig": {
+      "loadShape": [
+        0.81518164,
+        0.77456979,
+        0.74237094,
+        0.72439771,
+        0.71946463,
+        0.72891013,
+        0.75212237,
+        0.76833652,
+        0.783174,
+        0.79468451,
+        0.80634799,
+        0.80370937,
+        0.8016826,
+        0.79288719,
+        0.79437859,
+        0.79720841,
+        0.82271511,
+        0.92470363,
+        1.0,
+        0.99021033,
+        0.97101338,
+        0.94042065,
+        0.88397706,
+        0.81097514
+      ]
+    },
+    "protocol": "loose_coupling"
+  },
+  "outputConfig": {
+    "outputfilename": "output.csv",
+    "type": "csv"
+  }
 }
-    

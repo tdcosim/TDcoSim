@@ -3,7 +3,7 @@ import os
 import logging
 import pprint
 class GlobalData():
-    def set_config(self, inputfile):
+    def set_config(self, inputfile):        
         filepath = os.path.abspath(inputfile)
         self.config = json.load(open(filepath))
 
