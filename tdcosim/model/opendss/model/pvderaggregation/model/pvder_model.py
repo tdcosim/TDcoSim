@@ -14,6 +14,7 @@ from pvder.simulation_events import SimulationEvents
 from pvder.simulation_utilities import SimulationUtilities,SimulationResults
 from pvder import utility_functions,templates,specifications
 
+
 class PVDERModel:
     def __init__(self):
         self._pvModel = {}
@@ -108,7 +109,7 @@ class PVDERModel:
         
         derConfig = {}
         for entry in DERParameters:
-            if entry in templates.RT_config_template.keys():
+            if entry in templates.VRT_config_template.keys():
                derConfig.update({entry:DERParameters[entry]})
         
         return derConfig
