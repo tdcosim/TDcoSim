@@ -11,8 +11,9 @@ from tdcosim.global_data import GlobalData
 class PSSEModel:
 	def __init__(self):
 		pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
-		if "installLocation" in GlobalData.config['psseConfig']:
-			pssePath = GlobalData.config['psseConfig']['installLocation']		
+		if "installLocation" in GlobalData.config['psseConfig'] and \
+		os.path.exists(GlobalData.config['psseConfig']['installLocation']+os.path.sep+'psspy.pyc'):
+			pssePath = GlobalData.config['psseConfig']['installLocation']
 		sys.path.append(pssePath)
 		os.environ['PATH']+=';'+pssePath
 		import psspy
@@ -169,7 +170,7 @@ class PSSEModel:
 					readFlg=True
 
 			# modify config to point to the temp dyr file
-			GlobalData.config['psseConfig']['dyrFilePath']=tempDyrPath
+			GlobalData.config['psseConfig']['cleanup']=[tempDyrPath]
 
 			# make changes in machine data through psse internal data structure
 			m=macVarMap={}
