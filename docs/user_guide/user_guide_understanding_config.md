@@ -11,6 +11,7 @@ The config file can be divided into three sections. The purpose of each option i
 1. **cosimHome (string):** directory containing config file, and models for T and D systems (e.g. "C:\\\project_folder).
 
 2. **psseConfig (dict):** configuration for the transmission system.
+   * ***installLocation (string)*** : full path for PSS/E transmission system python library location. If there isn't a specific location, system will look up the default installation path of PSS/E 33 (e.g. "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27")
    * ***rawFilePath (string)*** : full path for the PSS/E transmission system loadflow case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\\\**case118.raw**").
    * ***dyrFilePath (string)***: full path for the PSS/E transmission system dynamic case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\\**case118.dyr**").
 
