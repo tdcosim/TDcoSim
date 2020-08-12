@@ -14,10 +14,10 @@ TDcoSim can be installed from GitHub through command line as shown below.
 The packages listed below must be installed separately:
 
 * [Python, version = 2.7.5](https://www.python.org/)
-* Power system simulator: [PSS®E, version =  33.3.0](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html) 
+* Power system simulator: [PSS®E, version =  33.3.0 or PSS®E, version =  35.0.0](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html)
 * Distribution system simulator: [OpenDSS, version >= 8.6.1.1](https://sourceforge.net/projects/electricdss/) 
 * DER simulator: [**Solar PV-DER simulation utility**](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility)
-* Python packages: SciPy, Numpy, Matlplotlib, Pywin32, XlsxWriter
+* Python packages: SciPy, Numpy, Matlplotlib, Pywin32, XlsxWriter, Psutil
 
 ***
 ***Note:*** Either demo (limited to 50 buses) or full version of PSS/E can be used.  OpenDSS is an open source software and can be installed for free.
