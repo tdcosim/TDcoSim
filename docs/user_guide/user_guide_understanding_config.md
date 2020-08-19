@@ -32,10 +32,10 @@ The default feeder configuration is **defaultFeederConfig**, which automatically
        * *nodenumber (integer)*: Specifies the transmission bus to which the distribution system will be connected.
        * *filePath (string)*: Specifies the path for the OpenDSS File containing the distribution system model. (e.g. "C:\\\project_folder\\\data\\\DNetworks\\\123bus\\\\case123ZIP.dss")
        * *solarFlag (bool):* Specifies presence or absence of PV-DERs in the distribution system.
-       * *solarPenetration (float)*: Specifies the total rated capacity of PV-DERs as a percentage of the total feeder load in dynamic co-simulation (e.g. 0.1). It will be used if *DERSetting* is *default* and ignored if *DERSetting* is *PVPlacement*.
        * *DERFilePath (string)*: Specifies the path for the JSON file containing the parameters and settings defining the DER model. Note that a single file may contain settings for any number of DER models. 
        * *initializeWithActual (bool)*: If ***true***, the actual power output from the DER model instance will be used when setting up T+D co-simulation.  If ***false***, the rated power output given in DER settings will be used.
-     * *DERSetting (string)*: Specifies DER configuration at each node. If ***PVPlacement***, the DER at each node will use a unique set of DER settings. If ***default***, DERs at all nodes will use the same DER settings.
+       * *DERSetting (string)*: Specifies DER configuration at each node. If ***PVPlacement***, the DER at each node will use a unique set of DER settings. If ***default***, DERs at all nodes will use the same DER settings.
+       * *DERModelType (string)*: The type of DER model to be used in each node of the particular feeder. Valid options are: "ThreePhaseUnbalanced","ThreePhaseBalanced","ThreePhaseUnbalancedConstantVdc".
        * *DERParameters* (dict): Specifies the configuration of PV-DERs to be used in the distribution system. If *PVPlacement* **is provided**, the DER at each node will need a separate set of DER settings. If *default* **is provided**, DERs at all nodes will use the same DER settings.
          * *default*: DER settings that will be used if *DERSetting* is *default*. Note that these settings are optional if *DERSetting* is *PVPlacement*.
            * *solarPenetration (float)*: Specifies the total rated capacity of PV-DERs as a percentage of the total feeder load in dynamic co-simulation (e.g. 0.1). It will only be used if *DERSetting* is *default*.
@@ -44,7 +44,8 @@ The default feeder configuration is **defaultFeederConfig**, which automatically
            * *VrmsRating (float):* Specifies the rated RMS voltage (L-G) of the DER in Volts. The tool automatically adds a transformer to connect the DER to the distribution system. Note that value specified here will override the rated voltage given in the DER config file. 
            * *steadyStateInitialization (bool):* Specifies whether the states in PV-DER model is to be initialized with steady state values before simulation is started.
            * *pvderScale (float):* Specifies the scaling factor with which to multiply the DER power output from any given node. A higher value of *pvderScale* for similar *solarPenetration* will result in lower number of DER model instances.
-           * *LVRT (dict):* Low voltage ride through settings.  An arbitrary number of ride through settings may be defined based on voltage thresholds.
+           * *LVRT (dict):* Low voltage ride through settings.  Either a pre-defined configuration available in *config_der.json* may be provided or an arbitrary number of ride through settings may be defined based on voltage thresholds.
+               * *config_id (string):* Specifies the LVRT configuration available in the *config_der.json* that should be used.
                * *V_threshold (float):* Specifies the voltage threshold for low voltage anomaly in p.u. 
                * *t_threshold (float):* Specifies the trip time threshold for low voltage anomaly in seconds. 
                * *mode (string):* Specifies the DER operating behavior during ride through (options: 'momentary_cessation','mandatory_operation'). 
@@ -53,7 +54,9 @@ The default feeder configuration is **defaultFeederConfig**, which automatically
                * *V_threshold (float):* Specifies the voltage threshold for high voltage anomaly in p.u. 
                * *t_threshold (float):* Specifies the trip time threshold for high voltage anomaly in seconds. 
                * *mode (string):* Specifies the DER operating behavior during ride through (options: 'momentary_cessation','mandatory_operation'). 
-           * *OUTPUT_RESTORE_DELAY (float):* Specifies the time delay before DER starts restoring power output after momentary cessation.
+           * *VRT_delays (dict):* Time delay settings for power output cessation and output restoration.
+               * *output_cessation_delay (float):* Specifies the time delay before power output from DER ceases.
+               * *output_restore_delay (float):* Specifies the time delay before DER starts restoring power output after momentary cessation.
          * *PVPlacement (dict):* Specifies the distribution system node and the details of the DER to be connected to that node. Note that these settings are optional if *DERSetting* is *default*.
            * *node (string)*: Any three phase node in the OpenDSS model. Note that the keyword ***node*** must be replaced with the actual node name.
              *  *derId (string)*: The key word corresponding to DER model that is available in DER config file. Note that an exception will be thrown if a matching *derId* is not found in the DER config file.

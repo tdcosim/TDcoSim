@@ -19,6 +19,7 @@ Please install the software per installation instructions as the first step (Ins
         * Solar PV penetration level as a fraction of the distribution system load
    * DER characteristics (optional)
         * DER voltage and power ratings (e.g. 50 kW, 175 V)
+        * DER configuration ID (e.g. '50')
         * DER low voltage ride through settings (e.g. 0.7 p.u., 10 s)
    
 2. Specify whether simulation is static or dynamic.
@@ -80,7 +81,6 @@ Outputs (from both transmission and distribution systems) are saved as an MS Exc
 <p align="center">
   <strong>Fig. 1. </strong>Dynamic T&D co-simuation report in MS Excel format.
 </p>
-
 ***
 ***Note:*** Both the **.xlsx** file and the **.out** file will be found in the same folder as tdcosimapp.py.
 

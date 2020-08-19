@@ -8,20 +8,14 @@ The DER configuration used in this case is as follows, where the "solarPenetarti
             "nodes": [
                 {
                     "nodenumber": 1,
-                    "filePath": ["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "solarPenetration":0.0,  
+                    "filePath": ["\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "solarFlag":1,                
                     "DERParameters":{
-                        "power_rating": 50,
-                        "voltage_rating":174,
-                        "SteadyState": true,
-                        "V_LV1": 0.70,
-                        "V_LV2": 0.88,
-                        "t_LV1_limit": 1.0,  
-                        "t_LV2_limit": 2.0,
-                        "LVRT_INSTANTANEOUS_TRIP": false,
-                        "LVRT_MOMENTARY_CESSATION": false
-                    }
+                    "default":{
+                        "solarPenetration":0.0, 
+                        "powerRating": 50,
+                        "VrmsRating":174                    
+                    }}
                 }
             ]
         }

@@ -2,26 +2,30 @@
 # Example 2: Test Example with Single Distribution System comparing the impact of DER Tripping with DER riding through fault.
 
 In this test, the TDcosim tool is tested for three different scenarios:
-1. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below V_LV2 voltage level. The DER configuration used for this case is shown below:
+1. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below level "0" voltage threshold. The DER configuration used for this case is shown below:
 
-                    "nodenumber": 1,
-                    "filePath: ["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "solarPenetration":0.1,
-                    "DERParameters":{
-                        "power_rating": 50,
-                        "voltage_rating":174,
-                        "SteadyState": true,
-                        "V_LV1": 0.70,
-                        "V_LV2": 0.88,
-                        "t_LV1_limit": 1.0,  
-                        "t_LV2_limit": 2.0,
-                        "LVRT_INSTANTANEOUS_TRIP": true,
-                        "LVRT_MOMENTARY_CESSATION": false,
-                        "pvderScale": 1.0,
-                        "solarPenetrationUnit":"kw",
-                        "avoidNodes":["sourcebus","rg60"],
-                        "dt":0.008333
+                ```json
+                "manualFeederConfig":{
+                        "nodes": [
+                            {
+                                "nodenumber": 1,
+                                "filePath": ["\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                                "solarFlag":1,                
+                                "DERParameters":{
+                                "default":{
+                                    "solarPenetration":0.0, 
+                                    "powerRating": 50,
+                                    "VrmsRating":174,
+                                 "LVRT":"1":{"V_threshold":0.88,
+                                             "t_threshold":0.016,
+                                             "mode":"momentary_cessation"
+                                             }
+                                            }
+                                }}
+                            }
+                        ]
+                    }
+                ```
                 
 
 The DER trip settimg used for this case is shown in Figure A below.
@@ -30,27 +34,31 @@ The DER trip settimg used for this case is shown in Figure A below.
 Figure A: DER operational settings curve for the instantaneous trip settings.
 
 
-2. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system Ride Through the fault causing voltage sag below V_LV2 voltage level. The DER configuration used for this case is shown below:
+2. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system Ride Through the fault causing voltage sag below level "0" voltage threshold. The DER configuration used for this case is shown below:
 
 
-                    "nodenumber": 1,
-                    "filePath: ["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "solarPenetration":0.1,
-                    "DERParameters":{
-                        "power_rating": 50,
-                        "voltage_rating":174,
-                        "SteadyState": true,
-                        "V_LV1": 0.70,
-                        "V_LV2": 0.88,
-                        "t_LV1_limit": 1.0,  
-                        "t_LV2_limit": 2.0,
-                        "LVRT_INSTANTANEOUS_TRIP": false,
-                        "LVRT_MOMENTARY_CESSATION": false,
-                        "pvderScale": 1.0,
-                        "solarPenetrationUnit":"kw",
-                        "avoidNodes":["sourcebus","rg60"],
-                        "dt":0.008333
+```json
+"manualFeederConfig":{
+        "nodes": [
+            {
+                "nodenumber": 1,
+                "filePath": ["\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                "solarFlag":1,                
+                "DERParameters":{
+                "default":{
+                    "solarPenetration":0.1, 
+                    "powerRating": 50,
+                    "VrmsRating":174,
+                 "LVRT":"1":{"V_threshold":0.88,
+                             "t_threshold":2.0,
+                             "mode":"mandatory_operation"
+                             }
+                            }
+                }}
+            }
+        ]
+    }
+```
 
  The DER trip settimg used for this case is shown in Figure B below.
 
@@ -60,24 +68,20 @@ Figure A: DER operational settings curve for the instantaneous trip settings.
 3. With distribution system connected to Bus 1 of 118 bus system without any DERs on the distribution system. The DER configuration used for this case is shown below:
 
 
-        "nodenumber": 1,
-                    "filePath: ["C:\\Rojan\\NERC_TnD_Project\\pvder_refac\\NERC_PSSE_OpenDSS\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":0,
-                    "solarPenetration":0.0,
+    "manualFeederConfig":{
+            "nodes": [
+                {
+                    "nodenumber": 1,
+                    "filePath": ["\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "solarFlag":1,                
                     "DERParameters":{
-                        "power_rating": 50,
-                        "voltage_rating":174,
-                        "SteadyState": true,
-                        "V_LV1": 0.70,
-                        "V_LV2": 0.88,
-                        "t_LV1_limit": 10.0,  
-                        "t_LV2_limit": 20.0,
-                        "LVRT_INSTANTANEOUS_TRIP": false,
-                        "LVRT_MOMENTARY_CESSATION": false,
-                        "pvderScale": 1.0,
-                        "solarPenetrationUnit":"kw",
-                        "avoidNodes":["sourcebus","rg60"],
-                        "dt":0.008333
+                    "default":{
+                        "solarPenetration":0.0
+                              }
+                    }}
+                }
+            ]
+        }
 
 
 
