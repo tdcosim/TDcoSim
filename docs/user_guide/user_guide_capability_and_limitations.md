@@ -30,7 +30,4 @@
 * Reduce generation of each unit by solar penetration value. For example, if solar penetration is 10 percent then reduce each generator output by 10 percent.
 * Reduce the inertia constant of each generator the same way
 
-
-
-
-
+\pagebreak
