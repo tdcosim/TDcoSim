@@ -8,7 +8,7 @@ The T&D co-simulation tool is a Python module that can be used to perform co-sim
 
 ## Links
 * Source code repository: https://github.com/tdcosim/TDcoSim
-* User guide: [Markdown](docs/user_guide/user_guide_TOC.md), [PDF](docs/user_guide/tdcosim_user_guide.pdf)
+* User guide: [Markdown](docs/user_guide/user_guide_TOC.md), [PDF](docs/user_guide/TDcoSim_user_guide_version_1_1.pdf.pdf), [DOCX](docs/user_guide/TDcoSim_user_guide_version_1_1.docx)
 * API Documentation: [API doc](docs/api-html/index.html)
 
 ## Installation
@@ -46,16 +46,19 @@ Please feel free to raise an issue for bugs or feature requests.
 **Project PI:**
 
 - Karthikeyan Balasubramaniam kbalasubramaniam@anl.gov (September 2019 to present)
-- Ning Kang ning.kang@inl.gov (January 2018 to August 2019)
 
 **Core developers:**
 
 - Karthikeyan Balasubramaniam kbalasubramaniam@anl.gov
 - Sang-il Yim yim@anl.gov
 
-**Support:**
+**Co-developers:**
 
 - Siby Jose Plathottam splathottam@anl.gov
+
+**Previous contributors:**
+
+- Ning Kang ning.kang@inl.gov (January 2018 to August 2019)
 - Rojan Bhattarai rbhattarai@anl.gov
 
 ## Acknowledgement
