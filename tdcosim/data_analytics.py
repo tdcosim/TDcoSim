@@ -4,6 +4,7 @@ import logging
 import pdb
 import os
 import sys
+import inspect
 
 pssePath="C:\Program Files (x86)\PTI\PSSE33\PSSBIN"
 sys.path.append(pssePath)
@@ -65,11 +66,23 @@ class DataAnalytics(object):
 			logging.error(e)
 
 #===================================================================================================
-	def _dict2df_outfile(self,data,scenarioid='1'):
+	def _dict2df_outfile(self,data,scenarioid='1',simType='tonly'):
 		try:
 			outfile = data # path to file
-			chnfobj = dyntools.CHNF(outfile,0)
-			_, ch_id, ch_data = chnfobj.get_data()
+			if simType=='tonly':
+				stride=1
+			elif simType=='cosim':
+				stride=2
+
+			PSSE_VERSION=self.psse_version()
+			if not PSSE_VERSION:
+				PSSE_VERSION='33'
+			if PSSE_VERSION=='33':
+				chnfobj = dyntools.CHNF(outfile,0)
+				_, ch_id, ch_data = chnfobj.get_data()
+			elif PSSE_VERSION=='35':
+				chnfobj = dyntools.CHNF(outfile,outvrsn=0)
+				_, ch_id, ch_data = chnfobj.get_data()
 
 			symbols=[ch_id[entry] for entry in ch_id]
 			properties=list(set([ch_id[entry].split(' ')[0] for entry in ch_id]))
@@ -83,12 +96,11 @@ class DataAnalytics(object):
 					prop,node=prop_node[0],prop_node[1]
 					if prop!='VOLT':
 						node=node[0:node.find('[')].replace(' ','')
-					value.extend(ch_data[entry][0::2])
-					props.extend([prop]*len(ch_data[entry][0::2]))
-					tnodeid.extend([node]*len(ch_data[entry][0::2]))
+					value.extend(ch_data[entry][0::stride])
+					props.extend([prop]*len(ch_data[entry][0::stride]))
+					tnodeid.extend([node]*len(ch_data[entry][0::stride]))
 					count+=1
-				else:
-					t.extend(ch_data[entry][0::2]*count)
+			t.extend(ch_data['time'][0::stride]*count)
 
 			df=pd.DataFrame(columns=['scenario','t','tnodeid','dfeederid','dnodeid','property',
 			'value'])
@@ -199,4 +211,15 @@ class DataAnalytics(object):
 		except Exception as e:
 			logging.error(e)
 
-
+#==================================================================================
+	def psse_version(self):
+		try:
+			psseDir=os.path.dirname(inspect.getfile(dyntools))
+			psseVersion=''
+			for version in ['33','34','35']:
+				if os.path.exists(psseDir+os.path.sep+'psse{}.py'.format(version)):
+					psseVersion=version
+					break
+			return psseVersion
+		except Exception as e:
+			logging.error(e)
