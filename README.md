@@ -8,7 +8,7 @@ The T&D co-simulation tool is a Python module that can be used to perform co-sim
 
 ## Links
 * Source code repository: https://github.com/tdcosim/TDcoSim
-* User guide: [Markdown](docs/user_guide/user_guide_TOC.md), [PDF](docs/user_guide/TDcoSim_user_guide_version_1_1.pdf.pdf), [DOCX](docs/user_guide/TDcoSim_user_guide_version_1_1.docx)
+* User guide: [Markdown](docs/user_guide/user_guide_TOC.md), [PDF](docs/user_guide/TDcoSim_user_guide_version_1_1.pdf), [DOCX](docs/user_guide/TDcoSim_user_guide_version_1_1.docx)
 * API Documentation: [API doc](docs/api-html/index.html)
 
 ## Installation
