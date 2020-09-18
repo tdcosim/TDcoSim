@@ -90,7 +90,7 @@ class PostProcess(DataAnalytics):
 				if not thisDF.empty:
 					dirPath=self.outDir+os.path.sep+'{}_{}'.format(thisScenario,thisTag)
 					if not os.path.exists(dirPath):
-						os.system('mkdir {}'.format(dirPath))
+						os.mkdir(dirPath)
 					thisDF.to_pickle(open(dirPath+os.path.sep+'{}_{}_df.pkl'.format(thisScenario,thisTag),'wb'),
 					compression=None)
 					json.dump(self.metadata['config'],open(dirPath+os.path.sep+'{}_{}_config.json'.format(\
