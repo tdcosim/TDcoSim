@@ -20,12 +20,14 @@ class DataAnalytics(object):
 		return None
 
 #===================================================================================================
-	def dict2df(self,data,scenarioid='1',inputType='tdcosim'):
+	def dict2df(self,data,scenarioid='1',inputType='outfile'):
 		try:
 			if inputType.lower()=='tdcosim':
 				df=self._dict2df_tdcosim(data=data,scenarioid=scenarioid)
 			elif inputType.lower()=='outfile':
 				df=self._dict2df_outfile(data=data,scenarioid=scenarioid)
+			elif inputType.lower()=='tdcosim-excel':
+				df=self._excel2df_tdcosim(data=data,scenarioid=scenarioid)
 
 			return df
 		except Exception as e:
@@ -65,6 +67,46 @@ class DataAnalytics(object):
 		except Exception as e:
 			logging.error(e)
 
+#===================================================================================================
+	def _excel2df_tdcosim(self,data,scenarioid='1',tag='test'):
+		try:
+			df=pd.DataFrame(columns=['scenarioid','tag','time','busid','dnodeid','property','phase','value'])
+			t_all= list(data.keys())
+			t_all.remove('TNet_results')
+            
+			t_all.sort()
+			print(t_all)
+			t=[]; tnodeid=[]; dfeederid=[]; dnodeid=[]; prop=[]; val=[]; phase =[]
+            
+			for tnode in t_all:                
+				vmag = data[tnode].filter(regex='tfr',axis=1).filter(regex='vmag',axis=1) 
+				vang = data[tnode].filter(regex='tfr',axis=1).filter(regex='vang',axis=1)
+				vmag_list = list(vmag.columns)
+				vang_list = list(vang.columns)
+                
+				v_dict = {node:{'node':node.strip('vmagang_tfr_bc'),'phase':node[-1],'property':node[0:4]} for node in vmag_list+vang_list}
+
+				for node_id in list(vmag.columns):
+					i = 0
+					for thisT in data[tnode]['time']:
+						t.append(thisT)
+						val.append(vmag[node_id][i])
+						prop.append(v_dict[node_id]['property'])
+						phase.append(v_dict[node_id]['phase'])
+						dnodeid.append(v_dict[node_id]['node'])
+						tnodeid.append(tnode)
+						i = i+1
+            
+			df.loc[:,'time']=t; df.loc[:,'busid']=tnodeid; df.loc[:,'dnodeid']=dnodeid
+			df.loc[:,'property']=prop; df.loc[:,'value']=val;df.loc[:,'phase']=phase
+			df.loc[:,'scenarioid']=scenarioid
+			df.loc[:,'tag']=['test']*len(df.time)
+			df.time=df.time.map(lambda x:float(x))
+            
+			return df
+		except Exception as e:
+			logging.error(e)
+            
 #===================================================================================================
 	def _dict2df_outfile(self,data,scenarioid='1',simType='tonly'):
 		try:
