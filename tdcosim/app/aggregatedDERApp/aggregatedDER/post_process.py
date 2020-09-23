@@ -173,6 +173,16 @@ class PostProcess(DataAnalytics):
 			PrintException()
 
 #===================================================================================================
+	def filter_violations(self,lowerLimit,upperLimit,df=None):
+		try:
+			if not isinstance(df,pd.DataFrame):
+				df=self.get_df()
+			df=df[(df.value<=lowerLimit)|(df.value>=upperLimit)]
+			return df
+		except:
+			PrintException()
+            
+#===================================================================================================
 	def get_df(self):
 		try:
 			df=pd.DataFrame(columns=['time','scenarioid','tag','busid','property','value'])
@@ -210,10 +220,14 @@ class PostProcess(DataAnalytics):
 		try:
 			if not isinstance(df,pd.DataFrame):
 				df=self.get_df()
-			print('Minimum voltage:{},Maximum voltage:{}'.format(df[df.property=='vmag'].value.min(),df[df.property=='vmag'].value.max()))
-			VFilt=self.filter_value(vmin,vmax,df[(df.property=='vmag')& (df.phase=='a')])
+			print('Minimum voltage:{:.2f},Maximum voltage:{:.2f}'.format(df[df.property=='vmag'].value.min(),df[df.property=='vmag'].value.max()))
+			#VFilt=self.filter_value(vmin,vmax,df[(df.property=='vmag')& (df.phase=='a')])
+			VFilt=self.filter_violations(vmin,vmax,df[(df.property=='vmag')& (df.phase=='a')])
+
+			print('Original distribution nodes:{},Filtered distribution nodes:{}'.format(list(set(df.dnodeid)),list(set(VFilt.dnodeid))))
 			print('Original samples:{},Filtered samples:{}'.format(len(df),len(VFilt)))
-			legend=[]
+			legend=[];thisDf_list=[]
+			plt.figure(figsize=(10,10))
 			for thisBusId in set(VFilt.busid):
 				for thisScenario in set(VFilt.scenarioid):
 					for thisTag in set(VFilt.tag):
@@ -221,12 +235,14 @@ class PostProcess(DataAnalytics):
 							thisDf=VFilt[(VFilt.busid==thisBusId)&(VFilt.property=='vmag')&\
 							(VFilt.scenarioid==thisScenario)&(VFilt.tag==thisTag)&(VFilt.dnodeid==thisDnodeId)]
 							if not thisDf.empty:
-								plt.plot(thisDf.time,thisDf.value)
+								thisDf_list.append(thisDf)
+								plt.scatter(thisDf.time,thisDf.value,s=10.0)
+								#thisDf.plot.scatter('time','value')
 								legend.append('{}-{}-a:{}:{}'.format(thisBusId,thisDnodeId,thisScenario,thisTag,thisTag))
 			plt.legend(legend)
-			plt.title('Voltage Violations\nViolation:Vmag >={} and <={} pu'.format(vmin,vmax))
+			plt.title('Voltage Violations\nViolation:Vmag <={} and >={} pu'.format(vmin,vmax))
 			plt.show()
-			return thisDf
+			return thisDf_list
             
 		except:
 			PrintException()
