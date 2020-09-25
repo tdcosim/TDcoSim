@@ -239,6 +239,8 @@ class PostProcess(DataAnalytics):
 								plt.scatter(thisDf.time,thisDf.value,s=10.0)
 								#thisDf.plot.scatter('time','value')
 								legend.append('{}-{}-a:{}:{}'.format(thisBusId,thisDnodeId,thisScenario,thisTag,thisTag))
+			plt.ylabel('Voltage (p.u.)',weight = "bold", fontsize=10)
+			plt.xlabel('Time (s)',weight = "bold", fontsize=10)
 			plt.legend(legend)
 			plt.title('Voltage Violations\nViolation:Vmag <={} and >={} pu'.format(vmin,vmax))
 			plt.show()
@@ -286,5 +288,63 @@ class PostProcess(DataAnalytics):
 		except:
 			PrintException()
 
+#===================================================================================================
+	def show_voltage_recovery_der(self,vmin,vmax,maxRecoveryTime,df=None):
+		try:
+			if not isinstance(df,pd.DataFrame):
+				df=self.get_df()
+
+			VFilt=self.filter_value(vmin,vmax,df[df.property=='vmag'])
+
+			legend=[]
+			violation_nodes = []
+			for thisBusId in set(VFilt.busid):
+				for thisDnodeId in set(VFilt.dnodeid):
+					for thisScenario in set(VFilt.scenarioid):
+						for thisTag in set(VFilt.tag):
+							thisDf=df[(df.busid==thisBusId)&(df.dnodeid==thisDnodeId)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+							thisDf=thisDf.sort_values(by='time')
+							#print(thisBusId,thisDnodeId,thisScenario,thisDf.shape)
+							startFlag=False; startTime=0
+							for thisTime,thisVal in zip(thisDf.time,thisDf.value):
+								if (thisVal<=vmin or thisVal>=vmax) and not startFlag:
+									startFlag=True
+									startTime=thisTime
+									#print('Timer started at {} s for node {} at {} V'.format(thisTime,thisDnodeId,thisVal))
+								if thisVal>vmin and thisVal<vmax and startFlag:
+									startFlag=False
+									startTime=thisTime
+									#print('Timer reset at {} s for node {} at {} V'.format(thisTime,thisDnodeId,thisVal))
+								if (thisVal<=vmin or thisVal>=vmax) and startFlag:
+									if thisTime-startTime>=maxRecoveryTime:
+										#startFlag=False
+										print('Timer breached at {:.2f} s after {:.2f} s for node {} at {:.2f} V'.format(thisTime,thisTime-startTime,thisDnodeId,thisVal))
+										legend.append('{}:{}:{}:{}'.format(thisBusId,thisDnodeId,thisScenario,thisTag))
+										violation_nodes.append(thisDnodeId)
+										break
+			thisDf_list = []
+			print('{} nodes had recovery time > {} s:{}'.format(len(violation_nodes),maxRecoveryTime,violation_nodes))
+			if legend:
+				plt.figure(figsize=(10,10))
+				for entry in legend:
+					thisBusId=entry.split(':')[0]
+					thisDnodeId=entry.split(':')[1]
+					thisScenario=entry.split(':')[2]
+					thisTag=entry.split(':')[3]
+					
+					thisDf=df[(df.busid==thisBusId)&(df.dnodeid==thisDnodeId)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+					
+					if not thisDf.empty:
+						thisDf_list.append(thisDf)
+						plt.plot(thisDf.time,thisDf.value)
+				
+				plt.ylabel('Voltage (p.u.)',weight = "bold", fontsize=10)
+				plt.xlabel('Time (s)',weight = "bold", fontsize=10)
+				plt.legend(legend)
+				plt.title('Voltage Violations\nViolation:Vmag <={} or >={} pu for time>={}'.format(vmin,vmax,maxRecoveryTime))
+				plt.show()
+			return thisDf_list
+		except:
+			PrintException()
 
 
