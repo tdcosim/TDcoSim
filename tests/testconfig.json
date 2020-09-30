@@ -19,6 +19,7 @@
                     "DERFilePath": "..\\examples\\config_der.json",
                     "initializeWithActual":true,
                     "DERSetting":"PVPlacement",
+                    "DERModelType":"ThreePhaseUnbalanced",
                     "DERParameters":{
                         "default":{
                         "solarPenetration":0.01,
