@@ -13,7 +13,9 @@ def main():
     '''
     GlobalData.set_config('config_td.json')
     GlobalData.set_TDdata()
+    startTime=time.time() 
     simulate()  
+    print ('Simulation time: ' + str(time.time()-startTime) + "sec")
     generateReport(GlobalData,fname='report.xlsx',sim=GlobalData.config['simulationConfig']['simType'])
     return 0
 
