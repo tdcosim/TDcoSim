@@ -18,6 +18,7 @@ test_config = {
     "DERFilePath": os.path.join(dirlocation,"examples\\config_der.json"),
     "initializeWithActual":True,
     "DERSetting":"default",
+    "DERModelType":"ThreePhaseUnbalanced",
     "DERParameters":{
        "default":{
                   "solarPenetration":0.01,
@@ -32,7 +33,7 @@ test_config = {
                           "2":{"V_threshold":0.88,"t_threshold":2.0,"mode":"mandatory_operation"}},
                   "HVRT":{"0":{"V_threshold":1.12,"t_threshold":0.016,"mode":"momentary_cessation"},
                           "1":{"V_threshold":1.06,"t_threshold":3.0,"mode":"momentary_cessation"}},
-                  "outputRestoreDelay":0.4                        
+                  "output_restore_delay":0.4
                          },
        "PVPlacement":{"50":{"derId":"250","powerRating":250,"pvderScale":1,"VrmsRating":230.0},
                       "25":{"derId":"50","powerRating":50,"pvderScale":1}

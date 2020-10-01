@@ -5,7 +5,7 @@ import os
 import tdcosim
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.model.pvderaggregation.model.pvder_model import PVDERModel
-from pvder.DER_components_three_phase  import SolarPV_DER_ThreePhase
+from pvder.DER_components_three_phase  import SolarPVDERThreePhase
 from tdcosim.test import der_test_manual_config
 
 dirlocation= os.path.dirname(tdcosim.__file__)
