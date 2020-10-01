@@ -16,8 +16,8 @@ GlobalData.set_config(configlocation)
 GlobalData.set_TDdata()
 
 GlobalData.config["cosimHome"] = dirlocation + '\\tdcoim'
-GlobalData.config["psseConfig"]["rawFilePath"] = dirlocation + '\\SampleData\\TNetworks\\118bus\\case118.raw'
-GlobalData.config["psseConfig"]["dyrFilePath"] = dirlocation + '\\SampleData\\TNetworks\\118bus\\case118.dyr'
+GlobalData.config["psseConfig"]["rawFilePath"] = dirlocation + '\\SampleData\\TNetworks\\68bus\\68_bus.raw'
+GlobalData.config["psseConfig"]["dyrFilePath"] = dirlocation + '\\SampleData\\TNetworks\\68bus\\68_bus.dyr'
 GlobalData.config["openDSSConfig"]["defaultFeederConfig"]["filePath"] = [dirlocation + '\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss']
 GlobalData.config["openDSSConfig"]["manualFeederConfig"]["nodes"][0]["filePath"] = [dirlocation + '\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss']
 
@@ -40,8 +40,8 @@ class TestPSSEModel(unittest.TestCase):
             11: {}
         }
         targetS, Vpcc = model.staticInitialize()        
-        self.assertIsNotNone(Vpcc[11])
-        self.assertIsNotNone(targetS[11])
+        self.assertIsNotNone(Vpcc)
+        self.assertIsNotNone(targetS)
 
     def test_dynamicInitalize(self):  
         GlobalData.data['dynamic'] = {}
@@ -54,8 +54,8 @@ class TestPSSEModel(unittest.TestCase):
         }        
         GlobalData.data['DNet']['ReductionPercent'] = 0.1
         targetS, Vpcc = model.dynamicInitialize()
-        self.assertIsNotNone(Vpcc[11])
-        self.assertIsNotNone(targetS[11])
+        self.assertIsNotNone(Vpcc)
+        self.assertIsNotNone(targetS)
     
     def test_getVoltage(self):
         model = PSSEModel()
