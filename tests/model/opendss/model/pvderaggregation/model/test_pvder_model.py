@@ -22,8 +22,8 @@ class TestPVDERModel(unittest.TestCase):
 
     def test_setup(self):
         model = PVDERModel()
-        model.setup('150r')
-        self.assertIsInstance(model.PV_model, SolarPV_DER_ThreePhase)
+        model.setup('150r',{'a': (2370.2490676972598+7.948851747145637e-07j), 'c': (-1185.1245340341793+2052.695905722238j), 'b': (-1185.1245332166936-2052.695905884739j)})
+        self.assertIsInstance(model.PV_model, SolarPVDERThreePhase)
 
     ## TODO: Update the run test
     # def test_run(self):
