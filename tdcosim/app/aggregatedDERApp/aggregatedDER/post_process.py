@@ -220,6 +220,7 @@ class PostProcess(DataAnalytics):
 		try:
 			if not isinstance(df,pd.DataFrame):
 				df=self.get_df()
+			time_values = self.get_time_values(df)
 			print('Minimum voltage:{:.2f},Maximum voltage:{:.2f}'.format(df[df.property=='vmag'].value.min(),df[df.property=='vmag'].value.max()))
 			#VFilt=self.filter_value(vmin,vmax,df[(df.property=='vmag')& (df.phase=='a')])
 			VFilt=self.filter_violations(vmin,vmax,df[(df.property=='vmag')& (df.phase=='a')])
@@ -236,9 +237,15 @@ class PostProcess(DataAnalytics):
 							(VFilt.scenarioid==thisScenario)&(VFilt.tag==thisTag)&(VFilt.dnodeid==thisDnodeId)]
 							if not thisDf.empty:
 								thisDf_list.append(thisDf)
-								plt.scatter(thisDf.time,thisDf.value,s=10.0)
-								#thisDf.plot.scatter('time','value')
+								plt.scatter(thisDf.time,thisDf.value,s=10.0)								
 								legend.append('{}-{}-a:{}:{}'.format(thisBusId,thisDnodeId,thisScenario,thisTag,thisTag))
+			
+			
+			plt.scatter(time_values,[vmin]*len(time_values),s=10.0,marker=".")
+			plt.scatter(time_values,[vmax]*len(time_values),s=10.0,marker=".")
+			legend.append('Vmin--{}'.format(vmin))
+			legend.append('Vmax--{}'.format(vmax))
+			
 			plt.ylabel('Voltage (p.u.)',weight = "bold", fontsize=10)
 			plt.xlabel('Time (s)',weight = "bold", fontsize=10)
 			plt.legend(legend)
@@ -293,7 +300,8 @@ class PostProcess(DataAnalytics):
 		try:
 			if not isinstance(df,pd.DataFrame):
 				df=self.get_df()
-
+			
+			time_values = self.get_time_values(df)
 			VFilt=self.filter_value(vmin,vmax,df[df.property=='vmag'])
 
 			legend=[]
@@ -338,6 +346,10 @@ class PostProcess(DataAnalytics):
 						thisDf_list.append(thisDf)
 						plt.plot(thisDf.time,thisDf.value)
 				
+				plt.scatter(time_values,[vmin]*len(time_values),s=10.0,marker=".")
+				plt.scatter(time_values,[vmax]*len(time_values),s=10.0,marker=".")
+				legend.append('Vmin--{}'.format(vmin))
+				legend.append('Vmax--{}'.format(vmax))
 				plt.ylabel('Voltage (p.u.)',weight = "bold", fontsize=10)
 				plt.xlabel('Time (s)',weight = "bold", fontsize=10)
 				plt.legend(legend)

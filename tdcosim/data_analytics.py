@@ -75,7 +75,7 @@ class DataAnalytics(object):
 			t_all.remove('TNet_results')
             
 			t_all.sort()
-			print(t_all)
+			print('List of DER feeders:{}'.format(t_all))
 			t=[]; tnodeid=[]; dfeederid=[]; dnodeid=[]; prop=[]; val=[]; phase =[]
             
 			for tnode in t_all:                
@@ -150,6 +150,69 @@ class DataAnalytics(object):
 			df['scenario']=[scenarioid]*len(t)
 
 			return df
+		except Exception as e:
+			logging.error(e)
+
+#===================================================================================================
+	def get_min_max_voltage_der(self,df):
+		"""Returns dictionary containing information of minimum and maximum dnode voltage magnitudes."""
+		try:
+			voltage_dict ={'min':{},'max':{}}
+			busids = self.get_busids(df)
+
+			voltage_dict ={'min':{busid:{} for busid in busids},'max':{busid:{} for busid in busids}}
+			for busid in busids:
+				
+				min_index = df[(df.property=='vmag')&(df.busid==busid)]['value'].idxmin()
+				max_index = df[(df.property=='vmag')&(df.busid==busid)]['value'].idxmax()
+				
+				voltage_dict['min'][busid].update({'voltage':df.iloc[min_index].value})
+				voltage_dict['min'][busid].update({'time':df.iloc[min_index].time})
+				voltage_dict['min'][busid].update({'busid':df.iloc[min_index].busid})
+				voltage_dict['min'][busid].update({'dnodeid':df.iloc[min_index].dnodeid})
+				
+				voltage_dict['max'][busid].update({'voltage':df.iloc[max_index].value})
+				voltage_dict['max'][busid].update({'time':df.iloc[max_index].time})
+				voltage_dict['max'][busid].update({'busid':df.iloc[max_index].busid})
+				voltage_dict['max'][busid].update({'dnodeid':df.iloc[max_index].dnodeid})
+				
+				voltage_dict['min'][busid].update({'df':df[(df.busid==busid) & (df.dnodeid ==df.iloc[min_index].dnodeid)]})
+				voltage_dict['max'][busid].update({'df':df[(df.busid==busid) & (df.dnodeid ==df.iloc[max_index].dnodeid)]})
+				
+			return voltage_dict
+		except Exception as e:
+			logging.error(e)
+
+#===================================================================================================
+	def get_busids(self,df):
+		"""Returns dictionary with bus names and distribution nodes"""
+		try:
+			busids = list(df.groupby('busid').nunique().index)
+			print('Number of buses:{}'.format(len(busids)))
+			return busids
+		except Exception as e:
+			logging.error(e)
+
+#===================================================================================================
+	def get_dnodeids_der(self,df):
+		"""Returns dictionary with bus names and distribution nodes"""
+		try:
+			busids = self.get_busids(df)
+			dnodeid_dict ={}
+			for busid in busids:
+				dnodeid_dict.update({busid:list(df[df.busid==busid].groupby('dnodeid').nunique().index)})
+			return dnodeid_dict
+		except Exception as e:
+			logging.error(e)
+
+#===================================================================================================
+	def get_time_values(self,df):
+		"""Returns list of time"""
+		try:
+			dnodeid_dict = self.get_dnodeids_der(df)
+			
+			time_values = df[df.dnodeid==dnodeid_dict[dnodeid_dict.keys()[0]][0]].time
+			return time_values
 		except Exception as e:
 			logging.error(e)
 
