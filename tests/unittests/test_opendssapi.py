@@ -128,7 +128,7 @@ if __name__=="__main__":
 		orderedTests=[suite.__dict__['_tests'][thisInd] for thisInd in reqOrderInd]
 		suite.__dict__['_tests']=orderedTests
 
-		unittest.TextTestRunner(verbosity=2).run(suite)
+		unittest.TextTestRunner().run(suite)
 	except:
 		PrintException()
 
