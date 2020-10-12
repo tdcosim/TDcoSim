@@ -37,7 +37,7 @@ class TestPSSEModel(unittest.TestCase):
         model = PSSEModel()
         model.setup()
         GlobalData.data['DNet']['Nodes'] = {
-            11: {}
+            59: {}
         }
         targetS, Vpcc = model.staticInitialize()        
         self.assertIsNotNone(Vpcc)
@@ -48,7 +48,7 @@ class TestPSSEModel(unittest.TestCase):
         model = PSSEModel()
         model.setup()
         GlobalData.data['DNet']['Nodes'] = {
-            11: {
+            59: {
                 'solarPenetration':0.1
             }
         }        
@@ -61,7 +61,7 @@ class TestPSSEModel(unittest.TestCase):
         model = PSSEModel()
         model.setup()
         GlobalData.data['DNet']['Nodes'] = {
-            11: {}
+            59: {}
         }
         targetS, Vpcc = model.staticInitialize()
         Vpcc2 = model.getVoltage()
@@ -72,10 +72,10 @@ class TestPSSEModel(unittest.TestCase):
         model = PSSEModel()
         model.setup()
         GlobalData.data['DNet']['Nodes'] = {
-            11: {}
+            59: {}
         }
         S = {
-            11: {
+            59: {
                 'P': 0.0,
                 'Q': 0.0
             }
@@ -92,14 +92,15 @@ class TestPSSEModel(unittest.TestCase):
         model = PSSEModel()
         model.setup()
         GlobalData.data['DNet']['Nodes'] = {
-            11: {
+            59: {
                 'solarPenetration':0.1
             }
         }        
         GlobalData.data['DNet']['ReductionPercent'] = 0.1
         targetS, Vpcc = model.dynamicInitialize()
+        
         power = {
-            11: {
+            59: {
                 'P': 10.0,
                 'Q': 10.0
             }
