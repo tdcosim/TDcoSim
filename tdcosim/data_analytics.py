@@ -4,6 +4,7 @@ import logging
 import pdb
 import os
 import sys
+import inspect
 
 pssePath="C:\Program Files (x86)\PTI\PSSE33\PSSBIN"
 sys.path.append(pssePath)
@@ -19,12 +20,14 @@ class DataAnalytics(object):
 		return None
 
 #===================================================================================================
-	def dict2df(self,data,scenarioid='1',inputType='tdcosim'):
+	def dict2df(self,data,scenarioid='1',inputType='outfile'):
 		try:
 			if inputType.lower()=='tdcosim':
 				df=self._dict2df_tdcosim(data=data,scenarioid=scenarioid)
 			elif inputType.lower()=='outfile':
 				df=self._dict2df_outfile(data=data,scenarioid=scenarioid)
+			elif inputType.lower()=='tdcosim-excel':
+				df=self._excel2df_tdcosim(data=data,scenarioid=scenarioid)
 
 			return df
 		except Exception as e:
@@ -65,11 +68,63 @@ class DataAnalytics(object):
 			logging.error(e)
 
 #===================================================================================================
-	def _dict2df_outfile(self,data,scenarioid='1'):
+	def _excel2df_tdcosim(self,data,scenarioid='1',tag='test'):
+		try:
+			df=pd.DataFrame(columns=['scenarioid','tag','time','busid','dnodeid','property','phase','value'])
+			t_all= list(data.keys())
+			t_all.remove('TNet_results')
+            
+			t_all.sort()
+			print('List of DER feeders:{}'.format(t_all))
+			t=[]; tnodeid=[]; dfeederid=[]; dnodeid=[]; prop=[]; val=[]; phase =[]
+            
+			for tnode in t_all:                
+				vmag = data[tnode].filter(regex='tfr',axis=1).filter(regex='vmag',axis=1) 
+				vang = data[tnode].filter(regex='tfr',axis=1).filter(regex='vang',axis=1)
+				vmag_list = list(vmag.columns)
+				vang_list = list(vang.columns)
+                
+				v_dict = {node:{'node':node.strip('vmagang_tfr_bc'),'phase':node[-1],'property':node[0:4]} for node in vmag_list+vang_list}
+
+				for node_id in list(vmag.columns):
+					i = 0
+					for thisT in data[tnode]['time']:
+						t.append(thisT)
+						val.append(vmag[node_id][i])
+						prop.append(v_dict[node_id]['property'])
+						phase.append(v_dict[node_id]['phase'])
+						dnodeid.append(v_dict[node_id]['node'])
+						tnodeid.append(tnode)
+						i = i+1
+            
+			df.loc[:,'time']=t; df.loc[:,'busid']=tnodeid; df.loc[:,'dnodeid']=dnodeid
+			df.loc[:,'property']=prop; df.loc[:,'value']=val;df.loc[:,'phase']=phase
+			df.loc[:,'scenarioid']=scenarioid
+			df.loc[:,'tag']=['test']*len(df.time)
+			df.time=df.time.map(lambda x:float(x))
+            
+			return df
+		except Exception as e:
+			logging.error(e)
+            
+#===================================================================================================
+	def _dict2df_outfile(self,data,scenarioid='1',simType='tonly'):
 		try:
 			outfile = data # path to file
-			chnfobj = dyntools.CHNF(outfile,0)
-			_, ch_id, ch_data = chnfobj.get_data()
+			if simType=='tonly':
+				stride=1
+			elif simType=='cosim':
+				stride=2
+
+			PSSE_VERSION=self.psse_version()
+			if not PSSE_VERSION:
+				PSSE_VERSION='33'
+			if PSSE_VERSION=='33':
+				chnfobj = dyntools.CHNF(outfile,0)
+				_, ch_id, ch_data = chnfobj.get_data()
+			elif PSSE_VERSION=='35':
+				chnfobj = dyntools.CHNF(outfile,outvrsn=0)
+				_, ch_id, ch_data = chnfobj.get_data()
 
 			symbols=[ch_id[entry] for entry in ch_id]
 			properties=list(set([ch_id[entry].split(' ')[0] for entry in ch_id]))
@@ -83,12 +138,11 @@ class DataAnalytics(object):
 					prop,node=prop_node[0],prop_node[1]
 					if prop!='VOLT':
 						node=node[0:node.find('[')].replace(' ','')
-					value.extend(ch_data[entry][0::2])
-					props.extend([prop]*len(ch_data[entry][0::2]))
-					tnodeid.extend([node]*len(ch_data[entry][0::2]))
+					value.extend(ch_data[entry][0::stride])
+					props.extend([prop]*len(ch_data[entry][0::stride]))
+					tnodeid.extend([node]*len(ch_data[entry][0::stride]))
 					count+=1
-				else:
-					t.extend(ch_data[entry][0::2]*count)
+			t.extend(ch_data['time'][0::stride]*count)
 
 			df=pd.DataFrame(columns=['scenario','t','tnodeid','dfeederid','dnodeid','property',
 			'value'])
@@ -96,6 +150,69 @@ class DataAnalytics(object):
 			df['scenario']=[scenarioid]*len(t)
 
 			return df
+		except Exception as e:
+			logging.error(e)
+
+#===================================================================================================
+	def get_min_max_voltage_der(self,df):
+		"""Returns dictionary containing information of minimum and maximum dnode voltage magnitudes."""
+		try:
+			voltage_dict ={'min':{},'max':{}}
+			busids = self.get_busids(df)
+
+			voltage_dict ={'min':{busid:{} for busid in busids},'max':{busid:{} for busid in busids}}
+			for busid in busids:
+				
+				min_index = df[(df.property=='vmag')&(df.busid==busid)]['value'].idxmin()
+				max_index = df[(df.property=='vmag')&(df.busid==busid)]['value'].idxmax()
+				
+				voltage_dict['min'][busid].update({'voltage':df.iloc[min_index].value})
+				voltage_dict['min'][busid].update({'time':df.iloc[min_index].time})
+				voltage_dict['min'][busid].update({'busid':df.iloc[min_index].busid})
+				voltage_dict['min'][busid].update({'dnodeid':df.iloc[min_index].dnodeid})
+				
+				voltage_dict['max'][busid].update({'voltage':df.iloc[max_index].value})
+				voltage_dict['max'][busid].update({'time':df.iloc[max_index].time})
+				voltage_dict['max'][busid].update({'busid':df.iloc[max_index].busid})
+				voltage_dict['max'][busid].update({'dnodeid':df.iloc[max_index].dnodeid})
+				
+				voltage_dict['min'][busid].update({'df':df[(df.busid==busid) & (df.dnodeid ==df.iloc[min_index].dnodeid)]})
+				voltage_dict['max'][busid].update({'df':df[(df.busid==busid) & (df.dnodeid ==df.iloc[max_index].dnodeid)]})
+				
+			return voltage_dict
+		except Exception as e:
+			logging.error(e)
+
+#===================================================================================================
+	def get_busids(self,df):
+		"""Returns dictionary with bus names and distribution nodes"""
+		try:
+			busids = list(df.groupby('busid').nunique().index)
+			print('Number of buses:{}'.format(len(busids)))
+			return busids
+		except Exception as e:
+			logging.error(e)
+
+#===================================================================================================
+	def get_dnodeids_der(self,df):
+		"""Returns dictionary with bus names and distribution nodes"""
+		try:
+			busids = self.get_busids(df)
+			dnodeid_dict ={}
+			for busid in busids:
+				dnodeid_dict.update({busid:list(df[df.busid==busid].groupby('dnodeid').nunique().index)})
+			return dnodeid_dict
+		except Exception as e:
+			logging.error(e)
+
+#===================================================================================================
+	def get_time_values(self,df):
+		"""Returns list of time"""
+		try:
+			dnodeid_dict = self.get_dnodeids_der(df)
+			
+			time_values = df[df.dnodeid==dnodeid_dict[dnodeid_dict.keys()[0]][0]].time
+			return time_values
 		except Exception as e:
 			logging.error(e)
 
@@ -199,4 +316,15 @@ class DataAnalytics(object):
 		except Exception as e:
 			logging.error(e)
 
-
+#==================================================================================
+	def psse_version(self):
+		try:
+			psseDir=os.path.dirname(inspect.getfile(dyntools))
+			psseVersion=''
+			for version in ['33','34','35']:
+				if os.path.exists(psseDir+os.path.sep+'psse{}.py'.format(version)):
+					psseVersion=version
+					break
+			return psseVersion
+		except Exception as e:
+			logging.error(e)

@@ -10,7 +10,7 @@ if platform.architecture()[0]=='64bit':
       author_email='yim@anl.gov',
       license= 'LICENSE.txt',
       install_requires=['pywin32==228','matplotlib==2.0.2','numpy==1.16.2','scipy==1.2.1',
-      'xlsxwriter==1.1.8','psutil==5.7.0'],
+      'xlsxwriter==1.1.8','psutil==5.7.0','pandas==0.24.2'],
       )
 else:
 	setup(name='tdcosim',
@@ -21,6 +21,6 @@ else:
       author_email='yim@anl.gov',
       license= 'LICENSE.txt',
       install_requires=['pywin32==224','matplotlib==2.0.2','numpy==1.16.2','scipy==1.2.1',
-      'xlsxwriter==1.1.8','psutil==5.7.0'],
+      'xlsxwriter==1.1.8','psutil==5.7.0','pandas==0.24.2'],
       )
 
