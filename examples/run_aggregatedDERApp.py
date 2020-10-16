@@ -1,5 +1,13 @@
 import os
 import copy
+import sys
+pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
+sys.path.append(pssePath)
+os.environ['PATH']+=';'+pssePath
+pssePath="C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27" # Default PSSEPY path is PSSE33
+sys.path.append(pssePath)
+os.environ['PATH']+=';'+pssePath
+
 
 from tdcosim.app.aggregatedDERApp import App, PrintException
 
