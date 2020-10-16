@@ -1,6 +1,12 @@
 import os
 import copy
-
+import sys
+pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
+sys.path.append(pssePath)
+os.environ['PATH']+=';'+pssePath
+pssePath="C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27" # Default PSSEPY path is PSSE33
+sys.path.append(pssePath)
+os.environ['PATH']+=';'+pssePath
 from tdcosim.app.aggregatedDERApp import App, PrintException
 
 
@@ -19,7 +25,7 @@ if __name__=='__main__':
 		# correct set of keyworded input args must be provided. In addition, 'id' and 'time'
 		# key,value pair must be present.
 		events={'dist_bus_fault':{'id':'fault_on','time':.4,'ibus':80,'values':[0,-1e10]},
-		'dist_clear_fault':{'id':'fault_off','time':.5,'fault':1}}
+		'dist_clear_fault':{'id':'fault_off','time':.5}}
 
 		# setup
 		scenarioid=[]; tag=[]
