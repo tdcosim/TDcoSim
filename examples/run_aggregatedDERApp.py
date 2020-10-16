@@ -20,7 +20,7 @@ if __name__=='__main__':
 		# correct set of keyworded input args must be provided. In addition, 'id' and 'time'
 		# key,value pair must be present.
 		events={'dist_bus_fault':{'id':'fault_on','time':.4,'ibus':80,'values':[0,-1e10]},
-		'dist_clear_fault':{'id':'fault_off','time':.5,'fault':1}}
+		'dist_clear_fault':{'id':'fault_off','time':.5}}
 
 		# setup
 		scenarioid=[]; tag=[]
