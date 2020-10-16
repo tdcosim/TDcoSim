@@ -359,4 +359,59 @@ class PostProcess(DataAnalytics):
 		except:
 			PrintException()
 
+	def voltage_stability_time(self,vmin,vmax,maxRecoveryTime,df=None,error_threshold):
+		try:
+			if not isinstance(df,pd.DataFrame):
+				df=self.get_df()
+			time_values = self.get_time_values(df)
+			VFilt=self.filter_value(vmin,vmax,df[df.property=='vmax'])
+			legend=[]
+			for thisBusId in set(VFilt.busid):
+				for thisScenario in set(VFilt.scenarioid):
+					for thisTag in set(VFilt.tag):
+						thisDf=df[(df.busid==thisBusId)&(df.property=='vmag')&\
+						(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+						thisDf=thisDf.sort_values(by='time')
+						startFlag=False; startTime=0
+						for thisTime,thisVal in zip(thisDf.time,thisDf.value):
+							if thisVal>=vmin and thisVal<=vmax and not startFlag:
+								startFlag=True
+								startTime=thisTime
+							elif thisVal>=vmin and thisVal<=vmax and startFlag and thisTime-startTime>=maxRecoveryTime:
+								startFlag=False
+								legend.append('{}:{}:{}'.format(thisBusId,thisScenario,thisTag))
+								break
+			if legend:
+				for entry in legend:
+					thisBusId=entry.split(':')[0]
+					thisDf=df[(df.busid==thisBusId)&(df.property=='vmag')&\
+					(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+					if not thisDf.empty:
+						plt.plot(thisDf.time,thisDf.value)
 
+						V =thisDf.value
+						T = thisDf.time
+			
+						dV = rotate(V,1) - V
+						del dV[-1]
+						t0 = 0
+						t2 = 0
+						for i in len(dV)
+							if dV[i] >= error_threshold*V[0] and t0 == 0:
+								t0 = T[i]
+							if t0 != 0 and dV[i] <= error_threshold*V[0] and dV[i-1] <= error_threshold*V[0] and dV[i-2] <= error_threshold*V[0]:
+								t2 = T[i-2]
+			
+						Stability_time = t2 - t0
+						return Stability_time
+						if (V[t2] >=vmin and V[t2] <=vmax) and ((V[t2+1]-V[t0-1])/[t0-1])<=error_threshold:
+							print("System voltage is stable and recovered to its original values")
+						elif V[t2] >=vmin and V[t2] <=vmax:
+							print("System voltage is recovered, stable and within [%f , %f] volt" %(vmin, vmax))
+						else
+							print("System voltage is stable and outside [%f , %f] volt range" %(vmin, vmax))
+
+		except:
+			PrintException()
+
+	
