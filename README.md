@@ -2,7 +2,7 @@
 
 # Utilitiy to perform Co-Simulation of Transmission, and Distribution systems with DER's
 
-The T&D co-simulation tool is a Python module that can be used to perform co-simulations containing a transmission system simulator (TSS), multiple distribution system simulator (DSS) instances, and multiple solar PV-DER instances. It is capable of performaing both both static and dynamic co-simulations for power systems models containing hundreds of transmission buses, distribution feeder nodes, and DER's.
+TDcoSim (T & D co-simulation tool) is a Python package that can be used to perform co-simulations containing a transmission system simulator (TSS), multiple distribution system simulator (DSS) instances, and multiple solar PV-DER instances. It is capable of both static and dynamic co-simulations for power systems models containing hundreds of transmission buses, distribution feeder nodes, and DER's.
 
 ![schematic of TDcoSim](docs/user_guide/images/software_simple_block_diagram.png)
 
