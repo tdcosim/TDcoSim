@@ -1,12 +1,18 @@
 import os
 import copy
+import sys
 
+pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
+sys.path.append(pssePath)
+os.environ['PATH']+=';'+pssePath
+		
 from tdcosim.app.aggregatedDERApp import App, PrintException
 
 
 #=======================================================================================================================
 if __name__=='__main__':
 	try:
+				
 		thisApp=App()
 
 		# define data
@@ -19,7 +25,7 @@ if __name__=='__main__':
 		# correct set of keyworded input args must be provided. In addition, 'id' and 'time'
 		# key,value pair must be present.
 		events={'dist_bus_fault':{'id':'fault_on','time':.4,'ibus':80,'values':[0,-1e10]},
-		'dist_clear_fault':{'id':'fault_off','time':.5,'fault':1}}
+		'dist_clear_fault':{'id':'fault_off','time':.5}}
 
 		# setup
 		scenarioid=[]; tag=[]
@@ -42,10 +48,14 @@ if __name__=='__main__':
 		print('properties available for bus 80 :',set(df[df.busid=='80'].property))
 
 		# plot all buses voltages such that vmin<=vmag<=vmax is true for any time t
-		thisApp.PostProcess.show_voltage_violations(vmin=.4,vmax=.6)
-
+		#thisApp.PostProcess.show_voltage_violations(vmin=.4,vmax=.6)
+		
+		
+		
 		# vmin<=vmag<=vmax for duration>=maxRecoveryTime
 		thisApp.PostProcess.show_voltage_recovery(vmin=.4,vmax=.6,maxRecoveryTime=.03)
+		ST = thisApp.PostProcess.get_voltage_stability_time(vmin=.4,vmax=0.6,maxRecoveryTime=0.03,error_threshold=0.001)
+
 	except:
 		PrintException()
 
