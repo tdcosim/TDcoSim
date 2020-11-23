@@ -361,7 +361,55 @@ class PostProcess(DataAnalytics):
 		except:
 			PrintException()
 
+#===================================================================================================
 
+	def get_voltage_stability_time_der(self,vmin,vmax,maxRecoveryTime,error_threshold,df=None):
+		try:
+			if not isinstance(df,pd.DataFrame):
+				df=self.get_df()
+				
+			VFilt=self.filter_value(vmin,vmax,df[df.property=='vmag'])
+			
+			legend=[]
+			
+			for thisBusId in set(VFilt.busid):
+				for thisDnodeId in set(VFilt.dnodeid):
+					for thisScenario in set(VFilt.scenarioid):
+						for thisTag in set(VFilt.tag):
+							thisDf=df[(df.busid==thisBusId)&(df.dnodeid==thisDnodeId)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+							thisDf=thisDf.sort_values(by='time')
+							startFlag=False; startTime=0
+							for thisTime,thisVal in zip(thisDf.time,thisDf.value):
+								if thisVal>=vmin and thisVal<=vmax and not startFlag:
+									startFlag=True
+									startTime=thisTime
+								elif thisVal>=vmin and thisVal<=vmax and startFlag and thisTime-startTime>=maxRecoveryTime:
+									startFlag=False
+									legend.append('{}:{}:{}:{}'.format(thisBusId,thisDnodeId,thisScenario,thisTag))
+									break
+			
+			if legend:
+				ST=pd.DataFrame(columns=['Label','T0','T1','Stability time','Stability State'])
+				plt.figure(figsize=(10,10))
+				for entry in legend:
+					thisBusId=entry.split(':')[0]
+					thisDnodeId=entry.split(':')[1]
+					thisScenario=entry.split(':')[2]
+					thisTag=entry.split(':')[3]
+					
+					thisDf=df[(df.busid==thisBusId)&(df.dnodeid==thisDnodeId)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+					
+					if not thisDf.empty:
+						ST_temp = self.compute_stability_time(entry,thisDf,error_threshold,ST)
+						ST = ST.append(ST_temp, ignore_index=True)
+			
+			print(ST)
+			plt.grid(True)
+			plt.show()
+			return ST
+			
+		except:
+			PrintException()
 #===================================================================================================
 	
 	def get_voltage_stability_time(self,vmin,vmax,maxRecoveryTime,error_threshold,df=None):
