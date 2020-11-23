@@ -8,7 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import psspy
 import dyntools
-
+from scipy import signal
 from tdcosim.data_analytics import DataAnalytics
 from utils import PrintException
 
@@ -388,44 +388,13 @@ class PostProcess(DataAnalytics):
 								legend.append('{}:{}:{}'.format(thisBusId,thisScenario,thisTag))
 								break
 			if legend:
-				ST=pd.DataFrame(columns=['Label','T0','T1','Stability time','Stability State'])
+				ST=pd.DataFrame(columns=['Label','T0','T1','Stability time','Stability State','Comment'])
 				for entry in legend:
 					thisBusId=entry.split(':')[0]
 					thisDf=df[(df.busid==thisBusId)&(df.property=='vmag')&\
 					(df.scenarioid==thisScenario)&(df.tag==thisTag)]
 					if not thisDf.empty:
-						ST_temp = self.compute_stability_time(entry,thisDf,error_threshold,ST)
-						#plt.plot(thisDf.time,thisDf.value)
-						#V =np.array(thisDf.value)
-						#T = np.array(thisDf.time)
-						#dV = []
-						#for t in range(len(V)-1):
-					#		dV.append(V[t+1]-V[t])
-					#	plt.plot(T,V)
-					#	plt.plot(T[0:len(T)-1],dV)
-					#	t0 = 0
-					#	t2 = 0
-					#	exit_token = 0
-					#	Stability_time = []
-					#	for i in range(len(dV)):
-					#		if abs(dV[i]) >= error_threshold*V[0] and t0 == 0 and exit_token == 0:
-					#			t0 = i
-					#			T0 = T[i]
-					#		if t0 != 0 and max([abs(ele) for ele in dV[i:len(dV)]] ) <= error_threshold*V[0] and exit_token == 0:
-					#			exit_token = 1
-					#			T1 = T[i-2]
-					#			t2 = i-2
-					#	Stability_time = T1 - T0
-					#	if (abs(V[t2+1] -V[t0-1]))<=0.01:
-					#		print("System voltage is stable and recovered to its original values")
-					#		Stability_State = 0
-					#	elif V[t2] >=0.95 and V[t2] <=1.05:
-					#		print("System voltage is recovered, stable and within [%f , %f] volt" %(0.95, 1.05))
-					#		Stability_State = 1
-					#	else:
-					#		print("System voltage is stable and outside [%f , %f] volt range" %(0.95, 1.05))
-					#		Stability_State = 2
-					#	ST_temp = pd.DataFrame([[entry,T0,T1,Stability_time,Stability_State]],columns=['Label','T0','T1','Stability time','Stability State'])
+						ST_temp = self.compute_stability_time(entry,thisDf,error_threshold,0.95,1.05)
 						ST = ST.append(ST_temp, ignore_index=True)
 			print(ST)
 			plt.grid(True)
@@ -434,7 +403,8 @@ class PostProcess(DataAnalytics):
 			
 		except:
 			PrintException()
-	def compute_stability_time(self,entry,thisDf,error_threshold,ST):
+#-------------------------------------------------------------------------------------------			
+	def compute_stability_time(self,entry,thisDf,error_threshold,minValue,maxValue):
 		try:
 			plt.plot(thisDf.time,thisDf.value)
 			V =np.array(thisDf.value)
@@ -455,25 +425,249 @@ class PostProcess(DataAnalytics):
 					T0 = T[i]
 				if t0 != 0 and max([abs(ele) for ele in dV[i:len(dV)]] ) <= error_threshold*V[0] and exit_token == 0:
 					exit_token = 1
-					T1 = T[i-2]
-					t2 = i-2 
+					T1 = T[i]
+					t2 = i 
 					Stability_time = T1 - T0
-			if T1 == -1:
-				print('System does not Stabilize')
-				Stability_State = 4
-			elif t0 == 0:
-				print('System is always stable')
+			if t0 == 0:
+				Comment = 'System is always stable'
 				Stability_State = 0
+			elif T1 == -1:
+				Comment = 'System does not Stabilize'
+				Stability_State = 4
 			elif (abs(V[t2+1] -V[t0-1]))<=0.01:
-				print("System voltage is stable and recovered to its original value")
 				Stability_State = 1
-			elif V[t2] >=0.95 and V[t2] <=1.05:
-				print("System voltage is recovered, stable and within [%f , %f] volt" %(0.95, 1.05))
+				Comment = "System voltage is stable and recovered to its original value"
+			elif V[t2] >=minValue and V[t2] <=maxValue:
+				#Comment = ("System voltage is recovered, stable and within" +  [%f , %f] volt" %(minValue, maxValue))
+				Comment = "System voltage is recovered, stable and within [" + str(minValue) + "," + str(maxValue) + "] volt range"
 				Stability_State = 2
 			else:
-				print("System voltage is stable and outside [%f , %f] volt range" %(0.95, 1.05))
+				Comment = "System voltage is stable and outside [" + str(minValue) + "," + str(maxValue) + "] volt range"
 				Stability_State = 3
-			ST_temp = pd.DataFrame([[entry,T0,T1,Stability_time,Stability_State]],columns=['Label','T0','T1','Stability time','Stability State'])
+			print(Comment)
+			ST_temp = pd.DataFrame([[entry,T0,T1,Stability_time,Stability_State,Comment]],columns=['Label','T0','T1','Stability time','Stability State','Comment'])
 			return ST_temp
+		except:
+			PrintException()
+#===================================================================================================
+	
+	def Compare_voltages(self,vmin,vmax,maxRecoveryTime,error_threshold,df=None):
+		try:
+			if not isinstance(df,pd.DataFrame):
+				df=self.get_df()
+				
+			VFilt=self.filter_value(vmin,vmax,df[df.property=='vmag'])
+			
+			legend=[]
+			for thisBusId in set(VFilt.busid):
+				for thisScenario in set(VFilt.scenarioid):
+					for thisTag in set(VFilt.tag):
+						thisDf=df[(df.busid==thisBusId)&(df.property=='vmag')&\
+						(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+						thisDf=thisDf.sort_values(by='time')
+						startFlag=False; startTime=0
+						for thisTime,thisVal in zip(thisDf.time,thisDf.value):
+							if thisVal>=vmin and thisVal<=vmax and not startFlag:
+								startFlag=True
+								startTime=thisTime
+							elif thisVal>=vmin and thisVal<=vmax and startFlag and thisTime-startTime>=maxRecoveryTime:
+								startFlag=False
+								legend.append('{}:{}:{}'.format(thisBusId,thisScenario,thisTag))
+								break
+			if legend:
+				
+				x = 0
+				for entry in legend:
+					if x == 0:
+						thisBusId=entry.split(':')[0]
+						thisDf1=df[(df.busid==thisBusId)&(df.property=='vmag')&\
+						(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+						x = x+1
+					elif x == 1:
+						thisBusId=entry.split(':')[0]
+						thisDf2=df[(df.busid==thisBusId)&(df.property=='vmag')&\
+						(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+						break
+				ST, Status = self.compare_signals(entry,thisDf1,thisDf2,0.0001,0.95,1.05)
+				
+			return ST					
+			
+			
+			
+		except:
+			PrintException()			
+#-------------------------------------------------------------------------------------------			
+	def compare_signals(self,entry,thisDf1,thisDf2,error_threshold,minValue,maxValue):
+		try:
+			
+			V1 =np.array(thisDf1.value)
+			T1 = np.array(thisDf1.time)
+			V2 =np.array(thisDf2.value)
+			T2 = np.array(thisDf2.time)
+			
+			# Scale and Rotate vector... Delete next 5 lines after testing phase
+			V2 = 0.9*self.shift_array(V2, -10)									
+			thisDf2.value = V2
+			
+			fig, axs = plt.subplots(2)
+			axs[0].plot(T1,V1)
+			axs[0].plot(T2,V2)
+			axs[0].set_title('Original Signals without Bias and Lag Corrections')
+			axs[0].grid(True)
+			
+			status = 0
+			
+			# Check if signals are essentially the same
+			MSE = (((V1-V2)/V1)**2).mean(axis=None)
+			print('Original MSE = ' + str(MSE))
+			if MSE <= error_threshold**2:
+				print('Both Signals are essentially the same')
+				status = 1
+				lag = 0
+				M1 = 0
+				M2 = 0
+			else:
+			
+			# If signals are not same and if there is a time shift, detect it and correct it
+			
+				lag = self.lag_finder(V1, V2)			# Lag detection
+				V2 = self.shift_array(V2, -lag)			# Leg correction
+				MSE = (((V1-V2)/V1)**2).mean(axis=None)	# Compute Mean Square Error after lag correction
+				print('MSE after Lag Correction = ' + str(MSE))
+				
+				if MSE <= error_threshold**2:
+					print('Both Signals are essentially the same after correcting the lag of ' + str(lag) +'.')
+					status = 2
+				
+			# If signals are not same after bias corrections. Correct for measurement bias...
+				elif lag ==0:
+					V2 =np.array(thisDf2.value)
+					M1 = np.mean(V1)
+					M2 = np.mean(V2)
+					V2 = V2 - (M2-M1)
+					MSE = (((V1-V2)/V1)**2).mean(axis=None)	
+					print('MSE after Bias Correction = ' + str(MSE))
+					if MSE <= error_threshold**2 and status == 0:
+						print('Both Signals are essentially the same after correcting the Bias of ' + str(M2-M1) + '.')
+						status = 3
+				else:
+			# If signals are not same after bias and lag corrections. try both...
+					V2 =np.array(thisDf2.value)
+					lag = self.lag_finder(V1, V2)			# Lag detection
+					V2 = self.shift_array(V2, -lag)			# Leg correction
+					M1 = np.mean(V1)
+					M2 = np.mean(V2)
+					V2 = V2 - (M2-M1)
+					MSE = (((V1-V2)/V1)**2).mean(axis=None)	
+					print('MSE after Bias and Lag Correction = ' + str(MSE))
+					if MSE <= error_threshold**2:
+						print('Both Signals are essentially the same after correcting the lag of ' + str(lag)+' and the Bias of ' + str(M2-M1) + '.')
+						status = 4
+					else:
+			# Both signals are not same
+						print('Both Signals are not same')
+						status = 5
+					
+			print('Status = ' + str(status))	
+			axs[1].plot(T1,V1)
+			axs[1].plot(T2,V2)
+			axs[1].set_title('Signals After Correcting lag of ' + str(lag)+' and Bias of ' + str(M2-M1))
+			axs[1].grid(True)
+			plt.show()			
+			
+			
+			V1 =np.array(thisDf1.value)
+			T1 = np.array(thisDf1.time)
+			V2 =np.array(thisDf2.value)
+			T2 = np.array(thisDf2.time)
+			
+			P1_min = np.min(V1)
+			P1_max = np.max(V1)
+			P2_min = np.min(V2)
+			P2_max = np.max(V2)
+			
+			dV1 = []
+			dV2 = []
+			for t in range(len(V1)-1):
+				dV1.append(V1[t+1]-V1[t])
+				dV2.append(V2[t+1]-V2[t])
+			
+			t01= 0
+			exit_token1 = 0
+			Stability_time1 = []
+			T11 = -1
+			for i in range(len(dV1)):
+				if abs(dV1[i]) >= error_threshold*V1[0] and t01 == 0 and exit_token1 == 0:
+					t01 = i
+					T01 = T1[i]
+				if t01 != 0 and max([abs(ele) for ele in dV1[i:len(dV1)]] ) <= error_threshold*V1[0] and exit_token1 == 0:
+					exit_token1 = 1
+					T11 = T1[i]
+					Stability_time1 = T11 - T01
+				
+			t02= 0
+			exit_token2 = 0
+			Stability_time2 = []
+			T12 = -1
+			for i in range(len(dV2)):
+				if abs(dV2[i]) >= error_threshold*V2[0] and t02 == 0 and exit_token2 == 0:
+					t02 = i
+					T02 = T2[i]
+				if t02 != 0 and max([abs(ele) for ele in dV2[i:len(dV2)]] ) <= error_threshold*V2[0] and exit_token2 == 0:
+					exit_token2 = 1
+					T12 = T2[i]
+					Stability_time2 = T12 - T02
+			
+			ST=pd.DataFrame(columns=['Label','T0','T1','Stability time','P_min','P_max'])
+			ST_temp1=pd.DataFrame(columns=['Label','T0','T1','Stability time','P_min','P_max'])
+			ST_temp2=pd.DataFrame(columns=['Label','T0','T1','Stability time','P_min','P_max'])
+			ST_temp1 = pd.DataFrame([['Signal 1',T01,T11,Stability_time1,P1_min,P1_max]],columns=['Label','T0','T1','Stability time','P_min','P_max'])
+			ST = ST.append(ST_temp1, ignore_index=True)
+			ST_temp2 = pd.DataFrame([['Signal 2',T02,T12,Stability_time2,P2_min,P2_max]],columns=['Label','T0','T1','Stability time','P_min','P_max'])
+			ST = ST.append(ST_temp2, ignore_index=True)
+			
+			print(ST)
+			return ST, status
+			
+		except:
+			PrintException()
+	
+#--------------------------------------------------------------	
+	def lag_finder(self,y1, y2):
+		try:
+			n = len(y1)
+			corr = []
+			delay_arr = range(-(n-1)/2, (n-1)/2)
+			for i in delay_arr:
+				y_temp = np.roll(y1,i)
+				corr.append(sum(y_temp*y2))
+			
+			delay = delay_arr[np.argmax(corr)]
+			print('y2 is ' + str(delay) + ' behind y1')
+			#plt.figure()
+			#plt.plot(delay_arr, corr)
+			#plt.title('Lag: ' + str(np.round(delay, 3)) + ' s')
+			#plt.xlabel('Lag')
+			#plt.ylabel('Correlation coeff')
+			#plt.grid(True)
+			#plt.show()
+			return delay
+		except:
+			PrintException()
+	
+#-------------------------------------------------------------------	
+	def shift_array(self,y, n):
+		try:
+			Y = np.roll(y,n)
+			if n<0:
+				n = -n
+				for i in range(n):
+					Y[len(y) - i-1] = y[len(y)-1]
+			elif n>0:
+				for i in range(n):
+					Y[i] = y[0]
+			else:
+				Y = y
+			return Y
 		except:
 			PrintException()
