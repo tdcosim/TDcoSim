@@ -536,7 +536,7 @@ class PostProcess(DataAnalytics):
 						thisDf2=df[(df.busid==thisBusId)&(df.property=='vmag')&\
 						(df.scenarioid==thisScenario)&(df.tag==thisTag)]
 						break
-				ST, Status = self.compare_signals(entry,thisDf1,thisDf2,error_threshold,0.95,1.05)
+				ST, Status = self.compare_signals(entry,thisDf1,thisDf2,error_threshold)
 				
 			return ST					
 			
@@ -545,7 +545,7 @@ class PostProcess(DataAnalytics):
 		except:
 			PrintException()			
 #-------------------------------------------------------------------------------------------			
-	def compare_signals(self,entry,thisDf1,thisDf2,error_threshold,minValue,maxValue):
+	def compare_signals(self,entry,thisDf1,thisDf2,error_threshold):
 		try:
 			
 			V1 =np.array(thisDf1.value)
