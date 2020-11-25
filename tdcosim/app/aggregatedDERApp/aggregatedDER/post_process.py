@@ -538,14 +538,70 @@ class PostProcess(DataAnalytics):
 						break
 				ST, Status = self.compare_signals(thisDf1,thisDf2,error_threshold)
 				
-			return ST					
+			return ST
 			
 			
 			
 		except:
-			PrintException()			
-#-------------------------------------------------------------------------------------------			
-	def compare_signals(self,thisDf1,thisDf2,error_threshold):
+			PrintException()	
+#-------------------------------------------------------------------------------------------
+
+#===================================================================================================
+	
+	def compare_voltages_der(self,vmin,vmax,maxRecoveryTime,error_threshold,df=None):
+		try:
+			if not isinstance(df,pd.DataFrame):
+				df=self.get_df()
+				
+			VFilt=self.filter_value(vmin,vmax,df[df.property=='vmag'])
+			
+			legend=[]
+			for thisBusId in set(VFilt.busid):
+				for thisDnodeId in set(VFilt.dnodeid):
+					for thisScenario in set(VFilt.scenarioid):
+						for thisTag in set(VFilt.tag):
+							thisDf=df[(df.busid==thisBusId)&(df.dnodeid==thisDnodeId)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+							thisDf=thisDf.sort_values(by='time')
+							startFlag=False; startTime=0
+							for thisTime,thisVal in zip(thisDf.time,thisDf.value):
+								if thisVal>=vmin and thisVal<=vmax and not startFlag:
+									startFlag=True
+									startTime=thisTime
+								elif thisVal>=vmin and thisVal<=vmax and startFlag and thisTime-startTime>=maxRecoveryTime:
+									startFlag=False
+									legend.append('{}:{}:{}:{}'.format(thisBusId,thisDnodeId,thisScenario,thisTag))
+									break
+			
+			if legend:
+				
+				x = 0
+				for entry in legend:
+					if x == 0:
+						thisBusId=entry.split(':')[0]
+						thisDnodeId=entry.split(':')[1]
+						thisScenario=entry.split(':')[2]
+						thisTag=entry.split(':')[3]
+						thisDf1=df[(df.busid==thisBusId)&(df.dnodeid==thisDnodeId)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+						thisId1= thisDnodeId
+						x = x+1
+					elif x == 1:
+						thisBusId=entry.split(':')[0]
+						thisDnodeId=entry.split(':')[1]
+						thisScenario=entry.split(':')[2]
+						thisTag=entry.split(':')[3]
+						thisDf2=df[(df.busid==thisBusId)&(df.dnodeid==thisDnodeId)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+						thisId2= thisDnodeId
+						break
+				ST, Status = self.compare_signals(thisDf1,thisDf2,error_threshold,thisId1,thisId2)
+				
+			return ST
+			
+			
+		except:
+			PrintException()
+#-------------------------------------------------------------------------------------------
+
+	def compare_signals(self,thisDf1,thisDf2,error_threshold,thisId1,thisId2):
 		try:
 			
 			V1 =np.array(thisDf1.value)
@@ -554,14 +610,15 @@ class PostProcess(DataAnalytics):
 			T2 = np.array(thisDf2.time)
 			
 			# Scale and Rotate vector... Delete next 5 lines after testing phase
-			V2 = 0.9*self.shift_array(V2, -10)									
+			#V2 = 0.9*self.shift_array(V2, -10)
 			thisDf2.value = V2
 			
 			fig, axs = plt.subplots(2)
-			axs[0].plot(T1,V1)
-			axs[0].plot(T2,V2)
+			axs[0].plot(T1,V1,label=str(thisId1))
+			axs[0].plot(T2,V2,label=str(thisId2))
 			axs[0].set_title('Original Signals without Bias and Lag Corrections')
 			axs[0].grid(True)
+			plt.legend()
 			
 			status = 0
 			
@@ -617,12 +674,12 @@ class PostProcess(DataAnalytics):
 						status = 5
 					
 			print('Status = ' + str(status))	
-			axs[1].plot(T1,V1)
-			axs[1].plot(T2,V2)
+			axs[1].plot(T1,V1,label=str(thisId1))
+			axs[1].plot(T2,V2,label=str(thisId2))
 			axs[1].set_title('Signals After Correcting lag of ' + str(lag)+' and Bias of ' + str(M2-M1))
 			axs[1].grid(True)
-			plt.show()			
-			
+			plt.legend()
+			plt.show()
 			
 			V1 =np.array(thisDf1.value)
 			T1 = np.array(thisDf1.time)
