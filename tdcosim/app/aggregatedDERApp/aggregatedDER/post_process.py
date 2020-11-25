@@ -499,7 +499,7 @@ class PostProcess(DataAnalytics):
 			PrintException()
 #===================================================================================================
 	
-	def Compare_voltages(self,vmin,vmax,maxRecoveryTime,error_threshold,df=None):
+	def compare_voltages(self,vmin,vmax,maxRecoveryTime,error_threshold,df=None):
 		try:
 			if not isinstance(df,pd.DataFrame):
 				df=self.get_df()
