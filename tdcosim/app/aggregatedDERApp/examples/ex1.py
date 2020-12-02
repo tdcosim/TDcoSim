@@ -53,9 +53,9 @@ if __name__=='__main__':
 		
 		
 		# vmin<=vmag<=vmax for duration>=maxRecoveryTime
-		thisApp.PostProcess.show_voltage_recovery(vmin=.4,vmax=.6,maxRecoveryTime=.03)
-		ST = thisApp.PostProcess.get_voltage_stability_time(vmin=.4,vmax=0.6,maxRecoveryTime=0.03,error_threshold=0.001)
-		ST = thisApp.PostProcess.compare_voltages(vmin=0.4,vmax=0.6,maxRecoveryTime=0.03,error_threshold=0.001)
+		#thisApp.PostProcess.show_voltage_recovery(vmin=.4,vmax=.6,maxRecoveryTime=.03)
+		#ST = thisApp.PostProcess.get_voltage_stability_time(vmin=.4,vmax=0.6,maxRecoveryTime=0.03,error_threshold=0.001)
+		ST = thisApp.PostProcess.compare_voltages(vmin=0.0,vmax=0.5,maxRecoveryTime=0.03,error_threshold=0.001,df=None,bus_number = '80')
 
 	except:
 		PrintException()

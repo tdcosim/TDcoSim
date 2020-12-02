@@ -499,7 +499,7 @@ class PostProcess(DataAnalytics):
 			PrintException()
 #===================================================================================================
 	
-	def compare_voltages(self,vmin,vmax,maxRecoveryTime,error_threshold,df=None):
+	def compare_voltages(self,vmin,vmax,maxRecoveryTime,error_threshold,df,bus_number):
 		try:
 			if not isinstance(df,pd.DataFrame):
 				df=self.get_df()
@@ -522,22 +522,33 @@ class PostProcess(DataAnalytics):
 								startFlag=False
 								legend.append('{}:{}:{}'.format(thisBusId,thisScenario,thisTag))
 								break
+			ST=pd.DataFrame(columns=['BusID','T0','T1','Stability time','P_min','P_max','Status'])
 			if legend:
-				
 				x = 0
 				for entry in legend:
-					if x == 0:
-						thisBusId=entry.split(':')[0]
-						thisDf1=df[(df.busid==thisBusId)&(df.property=='vmag')&\
-						(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+					if x ==0:
+						if bus_number == None:
+							thisBusId1=entry.split(':')[0]
+							thisDf1=df[(df.busid==thisBusId1)&(df.property=='vmag')&\
+							(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+						else:
+							thisBusId1=str(bus_number)
+							thisDf1=df[(df.busid==thisBusId1)&(df.property=='vmag')&\
+							(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+							if thisDf1.empty:
+								print('Invalid Bus ID')
+								break
 						x = x+1
-					elif x == 1:
-						thisBusId=entry.split(':')[0]
-						thisDf2=df[(df.busid==thisBusId)&(df.property=='vmag')&\
+					
+					else:
+						thisBusId2=entry.split(':')[0]
+						thisDf2=df[(df.busid==thisBusId2)&(df.property=='vmag')&\
 						(df.scenarioid==thisScenario)&(df.tag==thisTag)]
-						break
-				ST, Status = self.compare_signals(thisDf1,thisDf2,error_threshold)
+						ST_temp, Status = self.compare_signals(thisBusId1,thisBusId2,thisDf1,thisDf2,error_threshold,show_results=0)
+						ST = ST.append(ST_temp, ignore_index=True)
 				
+				
+			print(ST)
 			return ST					
 			
 			
@@ -545,7 +556,7 @@ class PostProcess(DataAnalytics):
 		except:
 			PrintException()			
 #-------------------------------------------------------------------------------------------			
-	def compare_signals(self,thisDf1,thisDf2,error_threshold):
+	def compare_signals(self,thisBusId1,thisBusId2,thisDf1,thisDf2,error_threshold,show_results):
 		try:
 			
 			V1 =np.array(thisDf1.value)
@@ -554,74 +565,97 @@ class PostProcess(DataAnalytics):
 			T2 = np.array(thisDf2.time)
 			
 			# Scale and Rotate vector... Delete next 5 lines after testing phase
-			V2 = 0.9*self.shift_array(V2, -10)									
-			thisDf2.value = V2
+			#V2 = 0.9*self.shift_array(V2, -10)									
+			#thisDf2.value = V2
 			
-			fig, axs = plt.subplots(2)
-			axs[0].plot(T1,V1)
-			axs[0].plot(T2,V2)
-			axs[0].set_title('Original Signals without Bias and Lag Corrections')
-			axs[0].grid(True)
+			if show_results ==1:
+				fig, axs = plt.subplots(2)
+				axs[0].plot(T1,V1)
+				axs[0].plot(T2,V2)
+				axs[0].set_title('Original Signals without Bias and Lag Corrections')
+				axs[0].grid(True)
 			
 			status = 0
 			
 			# Check if signals are essentially the same
 			MSE = (((V1-V2)/V1)**2).mean(axis=None)
-			print('Original MSE = ' + str(MSE))
+			
+			
+			if show_results ==1:
+				print('Original MSE = ' + str(MSE))
+			
+			
 			if MSE <= error_threshold**2:
-				print('Both Signals are essentially the same')
 				status = 1
 				lag = 0
 				M1 = 0
 				M2 = 0
+				if show_results ==1:
+					print('Both Signals are essentially the same')
+				
+				
 			else:
 			
 			# If signals are not same and if there is a time shift, detect it and correct it
 			
-				lag = self.lag_finder(V1, V2)			# Lag detection
-				V2 = self.shift_array(V2, -lag)			# Leg correction
-				MSE = (((V1-V2)/V1)**2).mean(axis=None)	# Compute Mean Square Error after lag correction
-				print('MSE after Lag Correction = ' + str(MSE))
+				lag = self.lag_finder(V1, V2,print_message = 0)			# Lag detection
+				V2 = self.shift_array(V2, -lag)							# Leg correction
+				MSE = (((V1-V2)/V1)**2).mean(axis=None)					# Compute Mean Square Error after lag correction
+				
+				if show_results ==1:
+					print('MSE after Lag Correction = ' + str(MSE))
 				
 				if MSE <= error_threshold**2:
-					print('Both Signals are essentially the same after correcting the lag of ' + str(lag) +'.')
 					status = 2
 				
+					if show_results ==1:
+						print('Both Signals are essentially the same after correcting the lag of ' + str(lag) +'.')
+					
 			# If signals are not same after bias corrections. Correct for measurement bias...
-				elif lag ==0:
+				if status == 0:
+					
 					V2 =np.array(thisDf2.value)
 					M1 = np.mean(V1)
 					M2 = np.mean(V2)
 					V2 = V2 - (M2-M1)
 					MSE = (((V1-V2)/V1)**2).mean(axis=None)	
-					print('MSE after Bias Correction = ' + str(MSE))
+					if show_results ==1:
+						print('MSE after Bias Correction = ' + str(MSE))
+					
 					if MSE <= error_threshold**2 and status == 0:
-						print('Both Signals are essentially the same after correcting the Bias of ' + str(M2-M1) + '.')
+						if show_results ==1:
+							print('Both Signals are essentially the same after correcting the Bias of ' + str(M2-M1) + '.')
 						status = 3
-				else:
+				
+				if status == 0:
 			# If signals are not same after bias and lag corrections. try both...
 					V2 =np.array(thisDf2.value)
-					lag = self.lag_finder(V1, V2)			# Lag detection
+					lag = self.lag_finder(V1, V2,print_message = 0)			# Lag detection
 					V2 = self.shift_array(V2, -lag)			# Leg correction
 					M1 = np.mean(V1)
 					M2 = np.mean(V2)
 					V2 = V2 - (M2-M1)
 					MSE = (((V1-V2)/V1)**2).mean(axis=None)	
-					print('MSE after Bias and Lag Correction = ' + str(MSE))
+					if show_results ==1:
+						print('MSE after Bias and Lag Correction = ' + str(MSE))
 					if MSE <= error_threshold**2:
-						print('Both Signals are essentially the same after correcting the lag of ' + str(lag)+' and the Bias of ' + str(M2-M1) + '.')
+						if show_results ==1:
+							print('Both Signals are essentially the same after correcting the lag of ' + str(lag)+' and the Bias of ' + str(M2-M1) + '.')
 						status = 4
 					else:
 			# Both signals are not same
-						print('Both Signals are not same')
+						if show_results ==1:
+							print('Both Signals are not same')
 						status = 5
 					
-			print('Status = ' + str(status))	
-			axs[1].plot(T1,V1)
-			axs[1].plot(T2,V2)
-			axs[1].set_title('Signals After Correcting lag of ' + str(lag)+' and Bias of ' + str(M2-M1))
-			axs[1].grid(True)
-			plt.show()			
+			
+			if show_results ==1:
+				print('Status = ' + str(status))	
+				axs[1].plot(T1,V1)
+				axs[1].plot(T2,V2)
+				axs[1].set_title('Signals After Correcting lag of ' + str(lag)+' and Bias of ' + str(M2-M1))
+				axs[1].grid(True)
+				plt.show()			
 			
 			
 			V1 =np.array(thisDf1.value)
@@ -666,22 +700,22 @@ class PostProcess(DataAnalytics):
 					T12 = T2[i]
 					Stability_time2 = T12 - T02
 			
-			ST=pd.DataFrame(columns=['Label','T0','T1','Stability time','P_min','P_max'])
-			ST_temp1=pd.DataFrame(columns=['Label','T0','T1','Stability time','P_min','P_max'])
-			ST_temp2=pd.DataFrame(columns=['Label','T0','T1','Stability time','P_min','P_max'])
-			ST_temp1 = pd.DataFrame([['Signal 1',T01,T11,Stability_time1,P1_min,P1_max]],columns=['Label','T0','T1','Stability time','P_min','P_max'])
-			ST = ST.append(ST_temp1, ignore_index=True)
-			ST_temp2 = pd.DataFrame([['Signal 2',T02,T12,Stability_time2,P2_min,P2_max]],columns=['Label','T0','T1','Stability time','P_min','P_max'])
+			ST=pd.DataFrame(columns=['BusID','T0','T1','Stability time','P_min','P_max','Status'])
+			ST_temp1=pd.DataFrame(columns=['BusID','T0','T1','Stability time','P_min','P_max','Status'])
+			ST_temp2=pd.DataFrame(columns=['BusID','T0','T1','Stability time','P_min','P_max','Status'])
+			ST_temp1 = pd.DataFrame([[thisBusId1,T01,T11,Stability_time1,P1_min,P1_max,status]],columns=['BusID','T0','T1','Stability time','P_min','P_max','Status'])
+			#ST = ST.append(ST_temp1, ignore_index=True)
+			ST_temp2 = pd.DataFrame([[thisBusId2,T02,T12,Stability_time2,P2_min,P2_max,status]],columns=['BusID','T0','T1','Stability time','P_min','P_max','Status'])
 			ST = ST.append(ST_temp2, ignore_index=True)
 			
-			print(ST)
+			#print(ST)
 			return ST, status
 			
 		except:
 			PrintException()
 	
 #--------------------------------------------------------------	
-	def lag_finder(self,y1, y2):
+	def lag_finder(self,y1, y2,print_message):
 		try:
 			n = len(y1)
 			corr = []
@@ -691,7 +725,8 @@ class PostProcess(DataAnalytics):
 				corr.append(sum(y_temp*y2))
 			
 			delay = delay_arr[np.argmax(corr)]
-			print('y2 is ' + str(delay) + ' behind y1')
+			if print_message ==1:
+				print('y2 is ' + str(delay) + ' behind y1')
 			#plt.figure()
 			#plt.plot(delay_arr, corr)
 			#plt.title('Lag: ' + str(np.round(delay, 3)) + ' s')
