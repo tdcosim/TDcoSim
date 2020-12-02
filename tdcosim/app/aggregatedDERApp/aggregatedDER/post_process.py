@@ -522,7 +522,7 @@ class PostProcess(DataAnalytics):
 								startFlag=False
 								legend.append('{}:{}:{}'.format(thisBusId,thisScenario,thisTag))
 								break
-			ST=pd.DataFrame(columns=['BusID','T0','T1','Stability time','P_min','P_max','Status'])
+			ST=pd.DataFrame(columns=['BusID','T0','T1','Stability time','Lag','X_min','X_max','Status'])
 			if legend:
 				x = 0
 				for entry in legend:
@@ -753,12 +753,12 @@ class PostProcess(DataAnalytics):
 					T12 = T2[i]
 					Stability_time2 = T12 - T02
 			
-			ST=pd.DataFrame(columns=['BusID','T0','T1','Stability time','P_min','P_max','Status'])
-			ST_temp1=pd.DataFrame(columns=['BusID','T0','T1','Stability time','P_min','P_max','Status'])
-			ST_temp2=pd.DataFrame(columns=['BusID','T0','T1','Stability time','P_min','P_max','Status'])
-			ST_temp1 = pd.DataFrame([[thisBusId1,T01,T11,Stability_time1,P1_min,P1_max,status]],columns=['BusID','T0','T1','Stability time','P_min','P_max','Status'])
+			ST=pd.DataFrame(columns=['BusID','T0','T1','Stability time','Lag','X_min','X_max','Status'])
+			ST_temp1=pd.DataFrame(columns=['BusID','T0','T1','Stability time','Lag','X_min','X_max','Status'])
+			ST_temp2=pd.DataFrame(columns=['BusID','T0','T1','Stability time','Lag','X_min','X_max','Status'])
+			ST_temp1 = pd.DataFrame([[thisBusId1,T01,T11,Stability_time1,lag,P1_min,P1_max,status]],columns=['BusID','T0','T1','Stability time','Lag','X_min','X_max','Status'])
 			#ST = ST.append(ST_temp1, ignore_index=True)
-			ST_temp2 = pd.DataFrame([[thisBusId2,T02,T12,Stability_time2,P2_min,P2_max,status]],columns=['BusID','T0','T1','Stability time','P_min','P_max','Status'])
+			ST_temp2 = pd.DataFrame([[thisBusId2,T02,T12,Stability_time2,lag,P2_min,P2_max,status]],columns=['BusID','T0','T1','Stability time','Lag','X_min','X_max','Status'])
 			ST = ST.append(ST_temp2, ignore_index=True)
 			
 			#print(ST)
