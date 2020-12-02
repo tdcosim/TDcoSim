@@ -546,15 +546,66 @@ class PostProcess(DataAnalytics):
 						(df.scenarioid==thisScenario)&(df.tag==thisTag)]
 						ST_temp, Status = self.compare_signals(thisBusId1,thisBusId2,thisDf1,thisDf2,error_threshold,show_results=0)
 						ST = ST.append(ST_temp, ignore_index=True)
-				
-				
 			print(ST)
 			return ST					
+		
+		except:
+			PrintException()			
+
+
+#===================================================================================================
+	
+	def compare_voltages_der(self,vmin,vmax,maxRecoveryTime,error_threshold,df=None):
+		try:
+			if not isinstance(df,pd.DataFrame):
+				df=self.get_df()
+				
+			VFilt=self.filter_value(vmin,vmax,df[df.property=='vmag'])
 			
+			legend=[]
+			for thisBusId in set(VFilt.busid):
+				for thisDnodeId in set(VFilt.dnodeid):
+					for thisScenario in set(VFilt.scenarioid):
+						for thisTag in set(VFilt.tag):
+							thisDf=df[(df.busid==thisBusId)&(df.dnodeid==thisDnodeId)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+							thisDf=thisDf.sort_values(by='time')
+							startFlag=False; startTime=0
+							for thisTime,thisVal in zip(thisDf.time,thisDf.value):
+								if thisVal>=vmin and thisVal<=vmax and not startFlag:
+									startFlag=True
+									startTime=thisTime
+								elif thisVal>=vmin and thisVal<=vmax and startFlag and thisTime-startTime>=maxRecoveryTime:
+									startFlag=False
+									legend.append('{}:{}:{}:{}'.format(thisBusId,thisDnodeId,thisScenario,thisTag))
+									break
+			
+			if legend:
+				
+				x = 0
+				for entry in legend:
+					if x == 0:
+						thisBusId=entry.split(':')[0]
+						thisDnodeId=entry.split(':')[1]
+						thisScenario=entry.split(':')[2]
+						thisTag=entry.split(':')[3]
+						thisDf1=df[(df.busid==thisBusId)&(df.dnodeid==thisDnodeId)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+						thisId1= thisDnodeId
+						x = x+1
+					elif x == 1:
+						thisBusId=entry.split(':')[0]
+						thisDnodeId=entry.split(':')[1]
+						thisScenario=entry.split(':')[2]
+						thisTag=entry.split(':')[3]
+						thisDf2=df[(df.busid==thisBusId)&(df.dnodeid==thisDnodeId)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+						thisId2= thisDnodeId
+						break
+				ST, Status = self.compare_signals(thisDf1,thisDf2,error_threshold,thisId1,thisId2)
+				
+			return ST
 			
 			
 		except:
-			PrintException()			
+			PrintException()
 #-------------------------------------------------------------------------------------------			
 
 
