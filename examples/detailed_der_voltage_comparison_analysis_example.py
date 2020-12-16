@@ -15,4 +15,5 @@ PostProcess=PostProcess()
 excel_data = pd.read_excel(open(r'reportfin.xlsx', 'rb'), sheet_name=None)
 der_df = PostProcess.dict2df(data=excel_data,scenarioid='1',inputType='tdcosim-excel')
 
-ST = PostProcess.compare_voltages_der(vmin=0.4,vmax=0.6,maxRecoveryTime=0.03,error_threshold=0.001,df=der_df)
+ST = PostProcess.compare_voltages_der(vmin=0.4,vmax=0.6,maxRecoveryTime=0.03,error_threshold=0.001,
+									df=der_df,bus_number=59,node_id=54,show_results=1)

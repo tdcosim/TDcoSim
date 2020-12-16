@@ -555,11 +555,11 @@ class PostProcess(DataAnalytics):
 
 #===================================================================================================
 	
-	def compare_voltages_der(self,vmin,vmax,maxRecoveryTime,error_threshold,df=None):
+	def compare_voltages_der(self,vmin,vmax,maxRecoveryTime,error_threshold,df,bus_number=None,node_id=None,show_results=0):
 		try:
 			if not isinstance(df,pd.DataFrame):
 				df=self.get_df()
-				
+			print('Comparing all dnodes containing DERs with dnode {}'.format(node_id))
 			VFilt=self.filter_value(vmin,vmax,df[df.property=='vmag'])
 			
 			legend=[]
@@ -579,37 +579,45 @@ class PostProcess(DataAnalytics):
 									legend.append('{}:{}:{}:{}'.format(thisBusId,thisDnodeId,thisScenario,thisTag))
 									break
 			
+			ST=pd.DataFrame(columns=['BusID','NodeID','T0','T1','Stability time','Lag','X_min','X_max','Status'])
 			if legend:
-				
 				x = 0
 				for entry in legend:
-					if x == 0:
-						thisBusId=entry.split(':')[0]
-						thisDnodeId=entry.split(':')[1]
-						thisScenario=entry.split(':')[2]
-						thisTag=entry.split(':')[3]
-						thisDf1=df[(df.busid==thisBusId)&(df.dnodeid==thisDnodeId)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
-						thisId1= thisDnodeId
+					if x ==0:
+						if bus_number == None:
+							thisBusId1=entry.split(':')[0]
+							thisDnodeId1=entry.split(':')[1]
+							thisScenario=entry.split(':')[2]
+							thisTag=entry.split(':')[3]
+							thisDf1=df[(df.busid==thisBusId1)&(df.dnodeid==thisDnodeId1)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+						else:
+							thisBusId1='feeder_' + str(bus_number)
+							thisDnodeId1=str(node_id)
+							thisScenario=entry.split(':')[2]
+							thisTag=entry.split(':')[3]
+							thisDf1=df[(df.busid==thisBusId1)&(df.dnodeid==thisDnodeId1)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+							if thisDf1.empty:
+								print('{} is an invalid Bus ID'.format(thisBusId1))
+								break
 						x = x+1
-					elif x == 1:
-						thisBusId=entry.split(':')[0]
-						thisDnodeId=entry.split(':')[1]
+					
+					else:
+						thisBusId2=entry.split(':')[0]
+						thisDnodeId2=entry.split(':')[1]
 						thisScenario=entry.split(':')[2]
 						thisTag=entry.split(':')[3]
-						thisDf2=df[(df.busid==thisBusId)&(df.dnodeid==thisDnodeId)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
-						thisId2= thisDnodeId
-						break
-				ST, Status = self.compare_signals(thisDf1,thisDf2,error_threshold,thisId1,thisId2)
-				
+						thisDf2=df[(df.busid==thisBusId2)&(df.dnodeid==thisDnodeId2)&(df.phase=='a')&(df.property=='vmag')&(df.scenarioid==thisScenario)&(df.tag==thisTag)]
+						print('Comparing voltage at {}-{} with {}-{}...'.format(thisBusId2,thisDnodeId2,thisBusId1,thisDnodeId1))
+						ST_temp, Status = self.compare_signals(thisBusId1,thisBusId2,thisDf1,thisDf2,error_threshold,show_results,thisDnodeId1,thisDnodeId2)
+						ST = ST.append(ST_temp, ignore_index=True)
+			print(ST)
 			return ST
-			
-			
 		except:
 			PrintException()
 #-------------------------------------------------------------------------------------------			
 
 
-	def compare_signals(self,thisBusId1,thisBusId2,thisDf1,thisDf2,error_threshold,show_results):
+	def compare_signals(self,thisBusId2,thisBusId1,thisDf1,thisDf2,error_threshold,show_results,thisDnodeId1=None,thisDnodeId2=None):
 		try:
 			
 			V1 =np.array(thisDf1.value)
@@ -753,15 +761,22 @@ class PostProcess(DataAnalytics):
 					T12 = T2[i]
 					Stability_time2 = T12 - T02
 			
-			ST=pd.DataFrame(columns=['BusID','T0','T1','Stability time','Lag','X_min','X_max','Status'])
-			ST_temp1=pd.DataFrame(columns=['BusID','T0','T1','Stability time','Lag','X_min','X_max','Status'])
-			ST_temp2=pd.DataFrame(columns=['BusID','T0','T1','Stability time','Lag','X_min','X_max','Status'])
-			ST_temp1 = pd.DataFrame([[thisBusId1,T01,T11,Stability_time1,lag,P1_min,P1_max,status]],columns=['BusID','T0','T1','Stability time','Lag','X_min','X_max','Status'])
-			#ST = ST.append(ST_temp1, ignore_index=True)
-			ST_temp2 = pd.DataFrame([[thisBusId2,T02,T12,Stability_time2,lag,P2_min,P2_max,status]],columns=['BusID','T0','T1','Stability time','Lag','X_min','X_max','Status'])
-			ST = ST.append(ST_temp2, ignore_index=True)
+			ST_columns = ['BusID','T0','T1','Stability time','Lag','X_min','X_max','Status']
+			ST1_objects = [thisBusId1,T01,T11,Stability_time1,lag,P1_min,P1_max,status]
+			ST2_objects = [thisBusId2,T02,T12,Stability_time2,lag,P2_min,P2_max,status]
 			
-			#print(ST)
+			if thisDnodeId1 is not None:
+				ST_columns.insert(1,'NodeID')
+				ST1_objects.insert(1,thisDnodeId1)
+				ST2_objects.insert(1,thisDnodeId2)
+				
+			ST=pd.DataFrame(columns = ST_columns)
+			
+			ST_temp1 = pd.DataFrame([ST1_objects],columns=ST_columns)
+			#ST = ST.append(ST_temp1, ignore_index=True)
+			ST_temp2 = pd.DataFrame([ST2_objects],columns=ST_columns)
+			ST = ST_temp2 #ST.append(ST_temp2, ignore_index=True)
+			
 			return ST, status
 			
 		except:
