@@ -181,7 +181,7 @@ class PostProcess(DataAnalytics):
 			return df
 		except:
 			PrintException()
-            
+			
 #===================================================================================================
 	def get_df(self):
 		try:
@@ -252,7 +252,7 @@ class PostProcess(DataAnalytics):
 			plt.title('Voltage Violations\nViolation:Vmag <={} and >={} pu'.format(vmin,vmax))
 			plt.show()
 			return thisDf_list
-            
+			
 		except:
 			PrintException()
 
@@ -359,4 +359,42 @@ class PostProcess(DataAnalytics):
 		except:
 			PrintException()
 
+#===================================================================================================
+	def outfile2df(self,outfile,scenarioid='1'):
+		try:
+			stride=1
 
+			psseVersion=psspy.psseversion()[1]
+			if psseVersion==33:
+				chnfobj = dyntools.CHNF(outfile,0)
+				_, ch_id, ch_data = chnfobj.get_data()
+			elif psseVersion==35:
+				chnfobj = dyntools.CHNF(outfile,outvrsn=0)
+				_, ch_id, ch_data = chnfobj.get_data()
+
+			symbols=[ch_id[entry] for entry in ch_id]
+			properties=list(set([ch_id[entry].split(' ')[0] for entry in ch_id]))
+			nodes=list(set([ch_id[entry].split(' ')[1][0:ch_id[entry].split(' ')[1].find(
+			'[')].replace(' ','') for entry in ch_id if 'Time' not in ch_id[entry]]))
+
+			tnodeid=[]; props=[]; value=[]; t=[]; count=0
+			for entry in ch_id:
+				if 'Time' not in ch_id[entry]:
+					prop_node=ch_id[entry].split()
+					prop,node=prop_node[0],prop_node[1]
+					if prop!='VOLT':
+						node=node[0:node.find('[')].replace(' ','')
+					value.extend(ch_data[entry][0::stride])
+					props.extend([prop]*len(ch_data[entry][0::stride]))
+					tnodeid.extend([node]*len(ch_data[entry][0::stride]))
+					count+=1
+			t.extend(ch_data['time'][0::stride]*count)
+
+			df=pd.DataFrame(columns=['scenario','t','tnodeid','dfeederid','dnodeid','property',
+			'value'])
+			df['t'],df['tnodeid'],df['property'],df['value']=t,tnodeid,props,value
+			df['scenario']=[scenarioid]*len(t)
+
+			return df
+		except:
+			PrintException()

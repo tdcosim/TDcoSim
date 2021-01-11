@@ -1,35 +1,34 @@
 import os
 import copy
-import sys
-pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
-sys.path.append(pssePath)
-os.environ['PATH']+=';'+pssePath
-pssePath="C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27" # Default PSSEPY path is PSSE33
-sys.path.append(pssePath)
-os.environ['PATH']+=';'+pssePath
-from tdcosim.app.aggregatedDERApp import App, PrintException
+
+import psspy
+
+from tdcosim.app.aggregatedDERApp import App, PostProcess, LogUtil
 
 
 #=======================================================================================================================
 if __name__=='__main__':
 	try:
 		thisApp=App()
+		pp=PostProcess()
 
 		# define data
-		dataDir=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+os.path.sep+'data'
-		rawFilePath=dataDir+os.path.sep+'118bus'+os.path.sep+'case118_psse_v35.raw'
-		dyrFilePath=dataDir+os.path.sep+'118bus'+os.path.sep+'case118_base.dyr'
+		dataDir=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'data')
+		rawFilePath=os.path.join(dataDir,'118bus','case118_psse_v35.raw')
+		dyrFilePath=os.path.join(dataDir,'118bus','case118_base.dyr')
 		additionalDyrFilePath=None
 
 		# define events. Any dist_* API from psspy can be used. For the given dist_* API the
 		# correct set of keyworded input args must be provided. In addition, 'id' and 'time'
 		# key,value pair must be present.
 		events={'dist_bus_fault':{'id':'fault_on','time':.4,'ibus':80,'values':[0,-1e10]},
-		'dist_clear_fault':{'id':'fault_off','time':.5}}
+		'dist_clear_fault':{'id':'fault_off','time':.5,'ifault':1}}
+		if psspy.psseversion()[1]==35:
+			events['dist_clear_fault']['fault']=events['dist_clear_fault'].pop('ifault')
 
 		# setup
 		scenarioid=[]; tag=[]
-		for n in range(2):# define the scenarios
+		for n in range(1):# define the scenarios
 			scenarioid.append('{}'.format(n))
 			tag.append('no_solar')
 			tend=1
@@ -41,18 +40,16 @@ if __name__=='__main__':
 		# run
 		thisApp.run_batch()
 
-		# post process
-		# first define search scope. This is the list of scenarios that you want in the database
-		thisApp.PostProcess.search_scope(scenarioid,tag)# we use all the scenarios we generated above
-		df=thisApp.PostProcess.filter_node(busid=['80','81'])# get all information for bus 80 across all runs
-		print('properties available for bus 80 :',set(df[df.busid=='80'].property))
+		#df
+		for n in range(1):
+			if n==0:
+				df=pp.outfile2df(os.path.join(dataDir,'out','result_{}.out'.format(n)),scenarioid=n)
+			else:
+				df=df.append(pp.outfile2df(os.path.join(dataDir,'out','result_{}.out'.format(n)),\
+				scenarioid=n),ignore_index=True)
 
-		# plot all buses voltages such that vmin<=vmag<=vmax is true for any time t
-		thisApp.PostProcess.show_voltage_violations(vmin=.4,vmax=.6)
-
-		# vmin<=vmag<=vmax for duration>=maxRecoveryTime
-		thisApp.PostProcess.show_voltage_recovery(vmin=.4,vmax=.6,maxRecoveryTime=.03)
+		df.to_pickle(os.path.join(dataDir,'out','result_no_dera.p'))
 	except:
-		PrintException()
+		LogUtil.exception_handler()
 
 

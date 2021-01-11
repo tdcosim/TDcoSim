@@ -15,25 +15,25 @@ print('Home directory:{}'.format(dirlocation))
 OpenDSSData.config['myconfig'] = der_test_manual_config.test_config
 
 class TestPVDERModel(unittest.TestCase):
-    
-    def test_init(self):
-        model = PVDERModel()
-        self.assertIsInstance(model, PVDERModel)
+	
+	def test_init(self):
+		model = PVDERModel()
+		self.assertIsInstance(model, PVDERModel)
 
-    def test_setup(self):
-        model = PVDERModel()
-        model.setup('150r',{'a': (2370.2490676972598+7.948851747145637e-07j), 'c': (-1185.1245340341793+2052.695905722238j), 'b': (-1185.1245332166936-2052.695905884739j)})
-        self.assertIsInstance(model.PV_model, SolarPVDERThreePhase)
+	def test_setup(self):
+		model = PVDERModel()
+		model.setup('150r')
+		self.assertIsInstance(model.PV_model, SolarPV_DER_ThreePhase)
 
-    ## TODO: Update the run test
-    # def test_run(self):
-    #     model = PVDERModel()
-    #     model.setup('150r')
-    #     v = {'a': (2370.2490676972598+7.948851747145637e-07j), 'c': (-1185.1245340341793+2052.695905722238j), 'b': (-1185.1245332166936-2052.695905884739j)}
-    #     S = model.run(v['a'], v['b'],v['c'])
-    #     print(S)
-    #     self.assertNotEqual(S, 0)
+	## TODO: Update the run test
+	# def test_run(self):
+	#	 model = PVDERModel()
+	#	 model.setup('150r')
+	#	 v = {'a': (2370.2490676972598+7.948851747145637e-07j), 'c': (-1185.1245340341793+2052.695905722238j), 'b': (-1185.1245332166936-2052.695905884739j)}
+	#	 S = model.run(v['a'], v['b'],v['c'])
+	#	 print(S)
+	#	 self.assertNotEqual(S, 0)
 
 if __name__ == '__main__':
-    unittest.main()
+	unittest.main()
 

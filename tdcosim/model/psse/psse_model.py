@@ -1,121 +1,156 @@
-import numpy as np
 import sys
 import os
 import re
+import pdb
+
+import numpy as np
 
 from tdcosim.global_data import GlobalData
 
 
-
-
-class PSSEModel:
+class PSSEModel(object):
 	def __init__(self):
-		pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
-		if "installLocation" in GlobalData.config['psseConfig'] and \
-		os.path.exists(GlobalData.config['psseConfig']['installLocation']+os.path.sep+'psspy.pyc'):
-			pssePath = GlobalData.config['psseConfig']['installLocation']
-		sys.path.append(pssePath)
-		os.environ['PATH']+=';'+pssePath
-		import psspy
+		try:
+			pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
+			if "installLocation" in GlobalData.config['psseConfig'] and \
+			os.path.exists(GlobalData.config['psseConfig']['installLocation']+os.path.sep+'psspy.pyc'):
+				pssePath = GlobalData.config['psseConfig']['installLocation']
+			sys.path.append(pssePath)
+			os.environ['PATH']+=';'+pssePath
+			import psspy
 
-		# psse
-		self._psspy=psspy
-		self._psspy.psseinit(0)
-		self._psspy.report_output(6,'',[])
-		self._psspy.progress_output(6,'',[])
-		self._psspy.alert_output(6,'',[])
-		self._psspy.prompt_output(6,'',[])
+			# psse
+			self._psspy=psspy
+			ierr=self._psspy.psseinit(0); assert ierr==0
+			ierr=self._psspy.report_output(6,'',[]); assert ierr==0
+			ierr=self._psspy.progress_output(6,'',[]); assert ierr==0
+			ierr=self._psspy.alert_output(6,'',[]); assert ierr==0
+			ierr=self._psspy.prompt_output(6,'',[]); assert ierr==0
 
-		self.faultmap = {}
-		self.faultindex = 1
-		
-		return None
+			self.faultmap = {}
+			self.faultindex = 1
 
+			return None
+		except:
+			GlobalData.log()
+
+#===================================================================================================
 	def setup(self, adjustOpPoint=True):
-		# psspy info
-		self._monitorID={}
-		self._monitorID['angle'] = 1
-		self._monitorID['pelec'] = 2
-		self._monitorID['qelec'] = 3
-		self._monitorID['eterm'] = 4
-		self._monitorID['efd'] = 5
-		self._monitorID['pmech'] = 6
-		self._monitorID['speed'] = 7
-		self._monitorID['xadifd'] = 8
-		self._monitorID['ecomp'] = 9
-		self._monitorID['volt'] = 13
-		self._monitorID['pload'] = 25
-		self._monitorID['qload'] = 26
+		try:
+			# psspy info
+			self._monitorID={}
+			self._monitorID['angle'] = 1
+			self._monitorID['pelec'] = 2
+			self._monitorID['qelec'] = 3
+			self._monitorID['eterm'] = 4
+			self._monitorID['efd'] = 5
+			self._monitorID['pmech'] = 6
+			self._monitorID['speed'] = 7
+			self._monitorID['xadifd'] = 8
+			self._monitorID['ecomp'] = 9
+			self._monitorID['volt'] = 13
+			self._monitorID['pload'] = 25
+			self._monitorID['qload'] = 26
 		
-		# load psse case
-		ierr = self._psspy.read(0,GlobalData.config['psseConfig']['rawFilePath'].encode("ascii", "ignore"))
-		assert ierr==0,"Reading raw file failed with error {}".format(ierr)
-		ierr, nLoads = self._psspy.alodbuscount()
-		assert ierr==0,"load bus count failed with error {}".format(ierr)
-		GlobalData.data['TNet']['LoadBusCount'] = nLoads	
-		# default. Will connect dist syst feeder to all load buses
-		ierr, loadBusNumber = self._psspy.alodbusint(string='NUMBER')
-		assert ierr==0,"load bus number failed with error {}".format(ierr)		
-		GlobalData.data['TNet']['LoadBusNumber'] = loadBusNumber[0]	
+			# load psse case
+			ierr = self._psspy.read(0,GlobalData.config['psseConfig']['rawFilePath'].encode("ascii",
+			"ignore"))
+			assert ierr==0,"Reading raw file failed with error {}".format(ierr)
+			ierr, nLoads = self._psspy.alodbuscount()
+			assert ierr==0,"load bus count failed with error {}".format(ierr)
+			GlobalData.data['TNet']['LoadBusCount'] = nLoads
+			# default. Will connect dist syst feeder to all load buses
+			ierr, loadBusNumber = self._psspy.alodbusint(string='NUMBER')
+			assert ierr==0,"load bus number failed with error {}".format(ierr)
+			GlobalData.data['TNet']['LoadBusNumber'] = loadBusNumber[0]
 
-		if adjustOpPoint:# need to adjust operation point
-			# find total load
-			GlobalData.data['TNet']['TotalRealPowerLoad'] = 0
-			GlobalData.data['TNet']['BusRealPowerLoad'] = {}
+			if adjustOpPoint:# need to adjust operation point
+				# find total load
+				GlobalData.data['TNet']['TotalRealPowerLoad'] = 0
+				GlobalData.data['TNet']['BusRealPowerLoad'] = {}
 			
-			ierr,S = self._psspy.alodbuscplx(string='MVAACT')
-			assert ierr==0,"Reading bus complex load failed with error {}".format(ierr)
+				ierr,S = self._psspy.alodbuscplx(string='MVAACT')
+				assert ierr==0,"Reading bus complex load failed with error {}".format(ierr)
 
-			for entry,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S[0]):
-				GlobalData.data['TNet']['TotalRealPowerLoad'] += val.real
-				GlobalData.data['TNet']['BusRealPowerLoad'][entry]=val.real
+				for entry,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S[0]):
+					GlobalData.data['TNet']['TotalRealPowerLoad'] += val.real
+					GlobalData.data['TNet']['BusRealPowerLoad'][entry]=val.real
+		except:
+			GlobalData.log()
 
+#===================================================================================================
 	def dynamicInitialize(self, adjustOpPoint=True):
-		if adjustOpPoint:
-			S = self._adjustSystemOperatingPoint()
-		else:
-			self._psspy.dyre_new([1,1,1,1],self.config['psseConfig']['dyrFilePath'].encode("ascii", "ignore"))
-		self._psspy.cong(1)
-		GlobalData.data['dynamic']['channel'] = {}
-		nMonVars=0
-		nGenBus=self._psspy.agenbuscount(-1,1)[1]
-		nBus=self._psspy.abuscount(-1,1)[1]
-		nLoad=self._psspy.aloadcount(-1,1)[1]
-		genBusNumber=self._psspy.agenbusint(-1,1,'NUMBER')[1][0]
-		busNumber=self._psspy.abusint(string='NUMBER')[1][0]
-		loadBusNumber=self._psspy.aloadint(-1,1,'NUMBER')[1][0]
-		for item in ['angle','speed','pelec','qelec','pmech']:
-			self._psspy.chsb(sid=0,all=1,status=[-1,-1,-1,1,self._monitorID[item],0])
-			GlobalData.data['dynamic']['channel'][item]={}
-			for channelID,node in zip(range(nMonVars+1,nMonVars+1+nGenBus),genBusNumber):# psse uses 1 ind
-				GlobalData.data['dynamic']['channel'][item][channelID]=node
-			nMonVars+=nGenBus
+		try:
+			if adjustOpPoint:
+				S = self._adjustSystemOperatingPoint()
+			else:
+				ierr=self._psspy.dyre_new([1,1,1,1],self.config['psseConfig']['dyrFilePath'].encode("ascii",
+				"ignore"))
+				assert ierr==0
 
-		self._psspy.chsb(sid=0,all=1,status=[-1,-1,-1,1,self._monitorID['volt'],0])
-		GlobalData.data['dynamic']['channel']['volt']={}
-		for channelID,node in zip(range(nMonVars+1,nMonVars+1+nBus),busNumber):# psse uses 1 ind
-			GlobalData.data['dynamic']['channel']['volt'][channelID]=node
-		nMonVars+=nBus
+			ierr=self._psspy.cong(1); assert ierr==0
+			GlobalData.data['dynamic']['channel'] = {}
+			nMonVars=0
+			ierr,nGenBus=self._psspy.agenbuscount(-1,1); assert ierr==0
+			ierr,nBus=self._psspy.abuscount(-1,1); assert ierr==0
+			ierr,nLoad=self._psspy.aloadcount(-1,1); assert ierr==0
+			ierr,genBusNumber=self._psspy.agenbusint(-1,1,'NUMBER'); assert ierr==0
+			genBusNumber=genBusNumber[0]
+			ierr,busNumber=self._psspy.abusint(string='NUMBER'); assert ierr==0
+			busNumber=busNumber[0]
+			ierr,loadBusNumber=self._psspy.aloadint(-1,1,'NUMBER'); assert ierr==0
+			loadBusNumber=loadBusNumber[0]
+			for item in ['angle','speed','pelec','qelec','pmech']:
+				ierr=self._psspy.chsb(sid=0,all=1,status=[-1,-1,-1,1,self._monitorID[item],0])
+				assert ierr==0
+				GlobalData.data['dynamic']['channel'][item]={}
+				for channelID,node in zip(range(nMonVars+1,nMonVars+1+nGenBus),genBusNumber):# psse uses 1 ind
+					GlobalData.data['dynamic']['channel'][item][channelID]=node
+				nMonVars+=nGenBus
 
-		for item in ['pload','qload']:
-			self._psspy.chsb(sid=0,all=1,status=[-1,-1,-1,1,self._monitorID[item],0])
-			GlobalData.data['dynamic']['channel'][item]={}
-			for channelID,node in zip(range(nMonVars+1,nMonVars+1+nLoad),loadBusNumber):# psse uses 1 ind
-				GlobalData.data['dynamic']['channel'][item][channelID]=node
-			nMonVars+=nLoad
+			ierr=self._psspy.chsb(sid=0,all=1,status=[-1,-1,-1,1,self._monitorID['volt'],0])
+			assert ierr==0
+			GlobalData.data['dynamic']['channel']['volt']={}
+			for channelID,node in zip(range(nMonVars+1,nMonVars+1+nBus),busNumber):# psse uses 1 ind
+				GlobalData.data['dynamic']['channel']['volt'][channelID]=node
+			nMonVars+=nBus
 
-		self._psspy.strt(outfile=r'result.out')# compute initial conditions
+			for item in ['pload','qload']:
+				ierr=self._psspy.chsb(sid=0,all=1,status=[-1,-1,-1,1,self._monitorID[item],0])
+				assert ierr==0
+				GlobalData.data['dynamic']['channel'][item]={}
+				for channelID,node in zip(range(nMonVars+1,nMonVars+1+nLoad),loadBusNumber):# psse uses 1 ind
+					GlobalData.data['dynamic']['channel'][item][channelID]=node
+				nMonVars+=nLoad
 
-		Vpcc=self.getVoltage()
-		targetS={}
-		for entry,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S[0]):
-			if entry in GlobalData.data['DNet']['Nodes']:
-				targetS[entry]=[val.real*10**3,val.imag*10**3] # convert to kw and kvar from mw and mvar
-		return targetS,Vpcc
+			# compute initial conditions
+			outputConfig=GlobalData.config['outputConfig']
+			if not 'outputDir' in outputConfig:
+				outputConfig['outputDir']=os.getcwd()
+			if '.' in outputConfig['outputfilename']:# remove file extension
+				outputConfig['outputfilename']=outputConfig['outputfilename'].split('.')[0]
 
+			if '.out' not in outputConfig['outputfilename']:
+				outputConfig['outputfilename']+='.out'
+			GlobalData.logger.log(10,'outfile:'+os.path.join(outputConfig['outputDir'],\
+			outputConfig['outputfilename']))
+			ierr=self._psspy.strt(outfile=os.path.join(outputConfig['outputDir'],\
+			outputConfig['outputfilename']))
+			assert ierr==0
+
+			Vpcc=self.getVoltage()
+			targetS={}
+			for entry,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S[0]):
+				if entry in GlobalData.data['DNet']['Nodes']:
+					targetS[entry]=[val.real*10**3,val.imag*10**3] # convert to kw/kvar from mw/mvar
+			return targetS,Vpcc
+		except:
+			GlobalData.log()
+
+#===================================================================================================
 	def _adjustSystemOperatingPoint(self):
 		loadType = 0
-		try:			
+		try:
 			offset=3
 			reductionPercent=GlobalData.data['DNet']['ReductionPercent']
 			ind={}
@@ -169,9 +204,6 @@ class PSSEModel:
 				if "BEGIN GENERATOR DATA" in line:
 					readFlg=True
 
-			# modify config to point to the temp dyr file
-			GlobalData.config['psseConfig']['cleanup']=[tempDyrPath]
-
 			# make changes in machine data through psse internal data structure
 			m=macVarMap={}
 			m['PGEN']=0
@@ -183,7 +215,9 @@ class PSSEModel:
 			m['MBASE']=6
 
 			# read dyr file
-			self._psspy.dyre_new([1,1,1,1],GlobalData.config['psseConfig']['dyrFilePath'].encode("ascii", "ignore"))
+			ierr=self._psspy.dyre_new([1,1,1,1],tempDyrPath.encode("ascii", "ignore"))
+			assert ierr==0
+			os.system('del {}'.format(tempDyrPath))
 
 			# get machine data
 			macVarData={}
@@ -192,7 +226,9 @@ class PSSEModel:
 				assert ierr==0,"reading machine data failed with error {}".format(ierr)
 
 
-			genBusNumber=self._psspy.agenbusint(-1,1,'NUMBER')[1][0] # get gen bus number
+			ierr,genBusNumber=self._psspy.agenbusint(-1,1,'NUMBER') # get gen bus number
+			assert ierr==0
+			genBusNumber=genBusNumber[0]
 
 			# change machine data
 			for n in range(len(genBusNumber)):# make changes at each gen
@@ -205,7 +241,8 @@ class PSSEModel:
 					*(1-reductionPercent),5)
 				macVarDataNew[7]=np.round(Zr[genBusNumber[n]],5)
 				macVarDataNew[8]=np.round(Zx[genBusNumber[n]],5)
-				self._psspy.machine_chng_2(i=genBusNumber[n], realar=macVarDataNew) # change machine data
+				ierr=self._psspy.machine_chng_2(i=genBusNumber[n], realar=macVarDataNew)# change machine data
+				assert ierr==0
 
 			# adjust load data
 			ierr,S=self._psspy.alodbuscplx(string='MVAACT')
@@ -225,10 +262,10 @@ class PSSEModel:
 		except:
 			GlobalData.log('Failed to adjustSystemOperatingPoint from PSSEModel')
 
+#===================================================================================================
 	def staticInitialize(self):
 		try:
 			Vpcc=self.getVoltage()
-			
 
 			# scale feeder
 			targetS={}
@@ -237,49 +274,54 @@ class PSSEModel:
 
 			for entry,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S[0]):
 				if entry in GlobalData.data['DNet']['Nodes']:
-					targetS[entry]=[val.real*10**3,val.imag*10**3] # convert to kw and kvar from mw and mvar
-			
-			return targetS, Vpcc
-		except Exception as e:
-			GlobalData.log('Failed to initialize from PSSEModel')
-			
+					targetS[entry]=[val.real*10**3,val.imag*10**3]# convert to kw/kvar from mw/mvar
 
-	#===================GET VOLTAGE FROM PSSSE========================
+			return targetS, Vpcc
+		except:
+			GlobalData.log('Failed to initialize from PSSEModel')
+
+#===================================================================================================
 	def getVoltage(self):
 		try:
 			"""Get PCC voltage from psse."""
 			Vpcc={}
-			if GlobalData.data['TNet']['LoadBusCount']==len(GlobalData.data['TNet']['LoadBusNumber']): # dist syst interfaced at all load buses
-				loadBusVPU=self._psspy.alodbusreal(string='PU')
-				loadBusVPU = loadBusVPU[1][0]
+			# dist syst interfaced at all load buses
+			if GlobalData.data['TNet']['LoadBusCount']==len(GlobalData.data['TNet']['LoadBusNumber']):
+				ierr,loadBusVPU=self._psspy.alodbusreal(string='PU'); assert ierr==0
+				loadBusVPU = loadBusVPU[0]
 				for entry,val in zip(GlobalData.data['TNet']['LoadBusNumber'],loadBusVPU):# efficient
 					if entry in GlobalData.data['DNet']['Nodes']:
 						Vpcc[entry]=val
 			else:# subset of loadbuses interfaced as dist syst
-				for entry in GlobalData.data['TNet']['LoadBusNumber']: # not as efficient for large cases
-					Vpcc[entry]=self._psspy.busdat(entry,'PU')[1]
+				for entry in GlobalData.data['TNet']['LoadBusNumber']:# not as efficient for large cases
+					ierr,Vpcc[entry]=self._psspy.busdat(entry,'PU'); assert ierr==0
 			return Vpcc
-		except Exception as e:
+		except:
 			GlobalData.log('Failed to getVoltage from PSSEModel')
 
+#===================================================================================================
 	def setLoad(self, S,loadType=0):
 		"""set PCC Pinj,Qinj for psse.
 		Input: S -- dictionary containing Pinj and Qinj.
-		loadType -- 0- constant power, 1-constant current, 2-constant admittance."""		
-		for busID in GlobalData.data['TNet']['LoadBusNumber']:
-			if busID in GlobalData.data['DNet']['Nodes']:
-				# constP,Q,IP,IQ,YP,YQ
-				loadVal=[0]*6
-				loadVal[loadType*2],loadVal[loadType*2+1]=S[busID]['P'],S[busID]['Q']
-				ierr=self._psspy.load_chng_4(busID,'1',[1,1,1,1,1,0],realar=loadVal)
-				assert ierr==0,"load change failed with error {}".format(ierr)
+		loadType -- 0- constant power, 1-constant current, 2-constant admittance."""
+		try:
+			for busID in GlobalData.data['TNet']['LoadBusNumber']:
+				if busID in GlobalData.data['DNet']['Nodes']:
+					# constP,Q,IP,IQ,YP,YQ
+					loadVal=[0]*6
+					loadVal[loadType*2],loadVal[loadType*2+1]=S[busID]['P'],S[busID]['Q']
+					ierr=self._psspy.load_chng_4(busID,'1',[1,1,1,1,1,0],realar=loadVal)
+					assert ierr==0,"load change failed with error {}".format(ierr)
+		except:
+			GlobalData.log()
 
-	
+#===================================================================================================
 	def shunt(self, targetS, Vpcc, power):
 		try:
 			mismatchTolerance=0.1
 			for node in power:
-				if abs(power[node]['P']-targetS[node][0])>mismatchTolerance or abs(power[node]['Q']-targetS[node][1])>mismatchTolerance:# add shunt if needed
+				if abs(power[node]['P']-targetS[node][0])>mismatchTolerance or abs(
+				power[node]['Q']-targetS[node][1])>mismatchTolerance:# add shunt if needed
 					Pshunt = targetS[node][0]*1e-3 - power[node]['P']
 					Qshunt = targetS[node][1]*1e-3 - power[node]['Q']
 					# The remaining power is incorporated as compensating shunt
@@ -293,19 +335,44 @@ class PSSEModel:
 					# Add the remaining as fixed compensating shunt
 					ierr = self._psspy.shunt_data(node,'1 ',1,[YPshunt,YQshunt])
 					assert ierr==0,"Adding shunt failed with error {}".format(ierr)
-		except Exception as e:
-			GlobalData.log('Failed to shunt from PSSEModel')
-	
+		except:
+			GlobalData.log(msg='Failed to shunt from PSSEModel')
+
+#===================================================================================================
 	def runPFLOW(self):
-		self._psspy.fnsl()
+		try:
+			ierr=self._psspy.fnsl()
+			assert ierr==0,"psspy.fnsl failed with error: {}".format(ierr)
+		except:
+			GlobalData.log()
+
+#===================================================================================================
 	def runDynamic(self, tpause):
-		self._psspy.run(tpause=tpause)
+		try:
+			ierr=self._psspy.run(tpause=tpause)
+			assert ierr==0,"psspy.run failed with error: {}".format(ierr)
+		except:
+			GlobalData.log()
+
+#===================================================================================================
 	def faultOn(self, faultBus, faultImpedance):
-		self._psspy.dist_bus_fault(faultBus, 1,0.0,faultImpedance)
-		self.faultmap[faultBus] = self.faultindex
-		self.faultindex = self.faultindex + 1
+		try:
+			ierr=self._psspy.dist_bus_fault(faultBus, 1,0.0,faultImpedance)
+			assert ierr==0
+			self.faultmap[faultBus] = self.faultindex
+			self.faultindex = self.faultindex + 1
+		except:
+			GlobalData.log()
+
+#===================================================================================================
 	def faultOff(self, faultBus):
-		if faultBus in self.faultmap:
-			self._psspy.dist_clear_fault(self.faultmap[faultBus])
-		else:
-			print("Failed Fault Off, Fault was not applied to the Bus Number: ", faultBus)
+		try:
+			if faultBus in self.faultmap:
+				ierr=self._psspy.dist_clear_fault(self.faultmap[faultBus])
+				assert ierr==0
+			else:
+				GlobalData.log(level=30,
+				msg="Failed Fault Off, Fault was not applied to the Bus Number: {}".format(faultBus))
+		except:
+			GlobalData.log()
+

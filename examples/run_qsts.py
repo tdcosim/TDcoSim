@@ -8,23 +8,21 @@ from tdcosim.procedure.procedure import Procedure
 
 
 def main():
-    '''
-    Main function to run the T&D Cosimulation    
-    '''
-    GlobalData.set_config('config_qsts.json')
-    GlobalData.set_TDdata()
-    startTime=time.time() 
-    simulate()  
-    print ('Simulation time: ' + str(time.time()-startTime) + "sec")
-    generateReport(GlobalData,fname='report.xlsx',sim=GlobalData.config['simulationConfig']['simType'])
-    return 0
+	'''
+	Main function to run the T&D Cosimulation	
+	'''
+	GlobalData.set_config('config_qsts.json')
+	GlobalData.set_TDdata()
+	simulate()  
+	generateReport(GlobalData,fname='report.xlsx',sim=GlobalData.config['simulationConfig']['simType'])
+	return 0
 
 def simulate():
-    '''
-    Run the simulation
-    '''
-    proc = Procedure()
-    proc.simulate()
+	'''
+	Run the simulation
+	'''
+	proc = Procedure()
+	proc.simulate()
 
 if __name__ == "__main__":
-    main()
+	main()

@@ -8,6 +8,7 @@ import inspect
 
 pssePath="C:\Program Files (x86)\PTI\PSSE33\PSSBIN"
 sys.path.append(pssePath)
+import psspy
 import dyntools
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -18,6 +19,19 @@ class DataAnalytics(object):
 	def __init__(self):
 		self.__legend=[]
 		return None
+
+#===================================================================================================
+	def get_simulation_result(self,folderPath):
+		"""Will load T&D co-simulation results.
+		folderPath -- path to folder where the generated output results are stored."""
+		try:
+			folderPath=os.path.abspath(folderPath)
+			assert os.path.exists(folderPath),"{} does not exist".format(folderPath)
+			df=pd.read_pickle(os.path.join(folderPath,'df_pickle.pkl'))
+
+			return df
+		except:
+			raise
 
 #===================================================================================================
 	def dict2df(self,data,scenarioid='1',inputType='outfile'):
@@ -73,17 +87,17 @@ class DataAnalytics(object):
 			df=pd.DataFrame(columns=['scenarioid','tag','time','busid','dnodeid','property','phase','value'])
 			t_all= list(data.keys())
 			t_all.remove('TNet_results')
-            
+			
 			t_all.sort()
 			print('List of DER feeders:{}'.format(t_all))
 			t=[]; tnodeid=[]; dfeederid=[]; dnodeid=[]; prop=[]; val=[]; phase =[]
-            
-			for tnode in t_all:                
+			
+			for tnode in t_all:				
 				vmag = data[tnode].filter(regex='tfr',axis=1).filter(regex='vmag',axis=1) 
 				vang = data[tnode].filter(regex='tfr',axis=1).filter(regex='vang',axis=1)
 				vmag_list = list(vmag.columns)
 				vang_list = list(vang.columns)
-                
+				
 				v_dict = {node:{'node':node.strip('vmagang_tfr_bc'),'phase':node[-1],'property':node[0:4]} for node in vmag_list+vang_list}
 
 				for node_id in list(vmag.columns):
@@ -96,33 +110,34 @@ class DataAnalytics(object):
 						dnodeid.append(v_dict[node_id]['node'])
 						tnodeid.append(tnode)
 						i = i+1
-            
+			
 			df.loc[:,'time']=t; df.loc[:,'busid']=tnodeid; df.loc[:,'dnodeid']=dnodeid
 			df.loc[:,'property']=prop; df.loc[:,'value']=val;df.loc[:,'phase']=phase
 			df.loc[:,'scenarioid']=scenarioid
 			df.loc[:,'tag']=['test']*len(df.time)
 			df.time=df.time.map(lambda x:float(x))
-            
+			
 			return df
 		except Exception as e:
 			logging.error(e)
-            
+			
 #===================================================================================================
 	def _dict2df_outfile(self,data,scenarioid='1',simType='tonly'):
 		try:
 			outfile = data # path to file
+			outfile=outfile.encode('ascii')
+			assert os.path.exists(outfile),"{} does not exist".format(outfile)
+
 			if simType=='tonly':
 				stride=1
 			elif simType=='cosim':
 				stride=2
 
-			PSSE_VERSION=self.psse_version()
-			if not PSSE_VERSION:
-				PSSE_VERSION='33'
-			if PSSE_VERSION=='33':
+			psseVersion=psspy.psseversion()[1]
+			if psseVersion==33:
 				chnfobj = dyntools.CHNF(outfile,0)
 				_, ch_id, ch_data = chnfobj.get_data()
-			elif PSSE_VERSION=='35':
+			elif psseVersion==35:
 				chnfobj = dyntools.CHNF(outfile,outvrsn=0)
 				_, ch_id, ch_data = chnfobj.get_data()
 
@@ -150,8 +165,8 @@ class DataAnalytics(object):
 			df['scenario']=[scenarioid]*len(t)
 
 			return df
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def get_min_max_voltage_der(self,df):
@@ -313,18 +328,5 @@ class DataAnalytics(object):
 			plt.legend(self.__legend)
 			plt.show()
 			self.__legend=[]
-		except Exception as e:
-			logging.error(e)
-
-#==================================================================================
-	def psse_version(self):
-		try:
-			psseDir=os.path.dirname(inspect.getfile(dyntools))
-			psseVersion=''
-			for version in ['33','34','35']:
-				if os.path.exists(psseDir+os.path.sep+'psse{}.py'.format(version)):
-					psseVersion=version
-					break
-			return psseVersion
 		except Exception as e:
 			logging.error(e)

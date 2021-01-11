@@ -1,73 +1,77 @@
 {
-    "cosimHome": "..\\tdcosim",
-    "psseConfig":{
-        "installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27",
-        "rawFilePath":"..\\SampleData\\TNetworks\\68bus\\68_bus.raw",
-        "dyrFilePath":"..\\SampleData\\TNetworks\\68bus\\68_bus.dyr"        
-    },
-    "openDSSConfig":{        
-        "defaultFeederConfig":{
-            "filePath":["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-            "solarFlag":0,
-            "solarPenetration":0.0
-           
-        },
-        "manualFeederConfig":{
-            "nodes": [
-                {
-                    "nodenumber": 59,
-                    "filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "DERFilePath": "..\\examples\\config_der.json",
-                    "initializeWithActual":true,
-                    "DERSetting":"PVPlacement",
-                    "DERModelType":"ThreePhaseUnbalanced",
-                    "DERParameters":{
-                        "default":{
-                        "solarPenetration":0.02,
-                        "derId":"50",
-                        "powerRating":50,
-                        "VrmsRating":177.0,
-                        "steadyStateInitialization":true,
-                        "pvderScale": 1
-                                              
-                         },
-                        "PVPlacement":{"50":{"derId":"50","powerRating":50,"pvderScale":1},
-                                       "51":{"derId":"50","powerRating":50,"pvderScale":1},
-                                       "25":{"derId":"50","powerRating":50,"pvderScale":1}
-                                      }                            
-                    }
-                }
-            ]
-        }
-    },
-    "simulationConfig":{
-        "simType":"dynamic",
-		"memoryThreshold": 100.0,
-        "dynamicConfig":{
-            "events":{
-                "1":{
-                     "time":0.5,
-                    "type":"faultOn",
-                    "faultBus":10,
-                    "faultImpedance":[0.0,-10000]
-                },
-                "2":{
-                    "type":"faultOff",
-                    "time":0.667,
-                    "faultBus":10
-                },
-                "3":{
-                    "type":"simEnd",
-                    "time":1.0
-                }
-            }
-        },
-        "protocol":"loose_coupling"
-    },
-    "outputConfig":{
-        "outputfilename": "output.csv",
-        "type": "csv"
-    }
+	"cosimHome": "..\\tdcosim",
+	"psseConfig":{
+		"installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27",
+		"rawFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.raw",
+		"dyrFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.dyr"		
+	},
+	"openDSSConfig":{		
+		"defaultFeederConfig":{
+			"filePath":["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+			"solarFlag":0,
+			"solarPenetration":0.0
+		   
+		},
+		"manualFeederConfig":{
+			"nodes": [
+				{
+					"nodenumber": 59,
+					"filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+					"solarFlag":1,
+					"DERFilePath": "..\\examples\\config_der.json",
+					"initializeWithActual":true,
+					"DERSetting":"PVPlacement",
+					"DERModelType":"ThreePhaseUnbalanced",
+					"DERParameters":{
+						"default":{
+						"solarPenetration":0.02,
+						"derId":"50",
+						"powerRating":50,
+						"VrmsRating":177.0,
+						"steadyStateInitialization":true,
+						"pvderScale": 1
+											  
+						 },
+						"PVPlacement":{"50":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "51":{"derId":"50","powerRating":50,"pvderScale":1},
+									   "25":{"derId":"50","powerRating":50,"pvderScale":1}
+									  }							
+					}
+				}
+			]
+		}
+	},
+	"simulationConfig":{
+		"simType":"dynamic",
+		"memoryThreshold": 1024.0,
+		"dynamicConfig":{
+			"events":{
+				"1":{
+					 "time":0.1,
+					"type":"faultOn",
+					"faultBus":10,
+					"faultImpedance":[0.0,-10000]
+				},
+				"2":{
+					"type":"faultOff",
+					"time":0.267,
+					"faultBus":10
+				},
+				"3":{
+					"type":"simEnd",
+					"time":0.3
+				}
+			}
+		},
+		"protocol":"loose_coupling"
+	},
+   "outputConfig": {
+      "simID": "", 
+      "type": "xlsx", 
+      "outputDir": "..\\output", 
+	  "outputfilename": "test",
+	  "scenarioID":"1"
+	},
+   "logging":{"level":20}
 }
-    
+	
