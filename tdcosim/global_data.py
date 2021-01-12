@@ -34,6 +34,24 @@ class GlobalData(ExceptionUtil):
 			not self.config['outputConfig']['scenarioID']:
 				self.config['outputConfig']['scenarioID']=uuid.uuid4().hex
 
+			# check encoding
+			if 'openDSSConfig' in self.config:
+				for entry in self.config['openDSSConfig']:
+					if isinstance(self.config['openDSSConfig'][entry],unicode):
+						self.config['openDSSConfig'][entry]=\
+						self.config['openDSSConfig'][entry].encode('ascii')
+				if 'manualFeederConfig' in self.config['openDSSConfig'] and \
+				'nodes' in self.config['openDSSConfig']['manualFeederConfig']:
+					for entry in self.config['openDSSConfig']['manualFeederConfig']['nodes']:
+						if 'filePath' in entry:
+							for item in entry['filePath']:
+								if isinstance(item,unicode):
+									item=item.encode('ascii')
+			for entry in self.config['outputConfig']:
+				if isinstance(self.config['outputConfig'][entry],unicode):
+					self.config['outputConfig'][entry]=\
+					self.config['outputConfig'][entry].encode('ascii')
+
 			# setup logging
 			if 'logging' in self.config and 'level' in self.config['logging']:
 				logLevel=self.config['logging']['level']

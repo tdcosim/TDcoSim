@@ -136,7 +136,7 @@ class PostProcess(object):
 			wb.close()
 		except:
 			print("Unexpected error:", sys.exc_info()[0])
-			GlobalData.log('Failed to generate report')
+			GlobalData.log(msg='Failed to generate report')
 
 #===================================================================================================
 	def generate_dataframe(self,simData,scenarioid='1'):

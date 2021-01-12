@@ -132,6 +132,7 @@ class PSSEModel(object):
 
 			if '.out' not in outputConfig['outputfilename']:
 				outputConfig['outputfilename']+='.out'
+
 			GlobalData.logger.log(10,'outfile:'+os.path.join(outputConfig['outputDir'],\
 			outputConfig['outputfilename']))
 			ierr=self._psspy.strt(outfile=os.path.join(outputConfig['outputDir'],\
@@ -184,6 +185,9 @@ class PSSEModel(object):
 				dyrDataStr+=','.join(entry+['\n'])
 
 			tempDyrPath=dyrPath.split('.dyr')[0]+'_temp.dyr'
+			tempDyrPath=os.path.abspath(tempDyrPath)
+			if isinstance(tempDyrPath,unicode):
+				tempDyrPath=tempDyrPath.encode('ascii','ignore')
 			f=open(tempDyrPath,'w')
 			f.write(dyrDataStr)
 			f.close()
@@ -215,8 +219,9 @@ class PSSEModel(object):
 			m['MBASE']=6
 
 			# read dyr file
-			ierr=self._psspy.dyre_new([1,1,1,1],tempDyrPath.encode("ascii", "ignore"))
+			ierr=self._psspy.dyre_new([1,1,1,1],tempDyrPath)
 			assert ierr==0
+			GlobalData.log(level=20,msg='read modified dyr file {}'.format(tempDyrPath))
 			os.system('del {}'.format(tempDyrPath))
 
 			# get machine data
@@ -241,8 +246,8 @@ class PSSEModel(object):
 					*(1-reductionPercent),5)
 				macVarDataNew[7]=np.round(Zr[genBusNumber[n]],5)
 				macVarDataNew[8]=np.round(Zx[genBusNumber[n]],5)
-				ierr=self._psspy.machine_chng_2(i=genBusNumber[n], realar=macVarDataNew)# change machine data
-				assert ierr==0
+				ierr=self._psspy.machine_chng_2(genBusNumber[n], realar=macVarDataNew)# change machine data
+				assert ierr==0,"machine_chng_2 failed with error {}".format(ierr)
 
 			# adjust load data
 			ierr,S=self._psspy.alodbuscplx(string='MVAACT')
@@ -260,7 +265,7 @@ class PSSEModel(object):
 
 			return S
 		except:
-			GlobalData.log('Failed to adjustSystemOperatingPoint from PSSEModel')
+			GlobalData.log(msg='Failed to adjustSystemOperatingPoint from PSSEModel')
 
 #===================================================================================================
 	def staticInitialize(self):
@@ -278,7 +283,7 @@ class PSSEModel(object):
 
 			return targetS, Vpcc
 		except:
-			GlobalData.log('Failed to initialize from PSSEModel')
+			GlobalData.log(msg='Failed to initialize from PSSEModel')
 
 #===================================================================================================
 	def getVoltage(self):
@@ -297,7 +302,7 @@ class PSSEModel(object):
 					ierr,Vpcc[entry]=self._psspy.busdat(entry,'PU'); assert ierr==0
 			return Vpcc
 		except:
-			GlobalData.log('Failed to getVoltage from PSSEModel')
+			GlobalData.log(msg='Failed to getVoltage from PSSEModel')
 
 #===================================================================================================
 	def setLoad(self, S,loadType=0):
