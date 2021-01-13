@@ -1,10 +1,10 @@
 import os
 os.environ["PATH"] += os.getcwd()
-import time
 import argparse
 from tdcosim.global_data import GlobalData
 from tdcosim.procedure.procedure import Procedure
-
+from tdcosim.data_analytics import DataAnalytics
+import time
 
 def main(configfile):
 	'''
@@ -12,24 +12,14 @@ def main(configfile):
 	'''
 	
 	GlobalData.set_config(configfile)
-	GlobalData.set_TDdata()
-	setOutLocation()
+	GlobalData.set_TDdata()	
 	startTime=time.time()		
 	simulate()
 	print('Solution time:',time.time()-startTime)
+	da=DataAnalytics()
+	df=da.get_simulation_result(GlobalData.config['outputConfig']['outputDir'])# output folder path\
+	df.to_csv(GlobalData.config['outputConfig']['outputDir']+'//dataframe.csv', index=False)
 
-def setOutLocation():
-	t = time.localtime()
-	current_time = time.strftime("%m-%d-%y-%H-%M-%S", t)
-	print("output folder name: " + current_time)
-	outputfoldername = os.getcwd() + "\\output\\" + str(current_time)
-
-	try:
-		os.mkdir(outputfoldername)
-	except:
-		print("Filead create output folder")
-
-	GlobalData.config["outputPath"] = outputfoldername
 
 def simulate():
 	'''

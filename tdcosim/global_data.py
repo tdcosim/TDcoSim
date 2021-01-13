@@ -4,6 +4,7 @@ import logging
 import pprint
 import uuid
 import pdb
+import time
 
 from tdcosim.exceptionutil import ExceptionUtil
 
@@ -26,8 +27,12 @@ class GlobalData(ExceptionUtil):
 			self.config = json.load(open(filepath))
 			if not 'simID' in self.config['outputConfig'] or not self.config['outputConfig']['simID']:
 				self.config['outputConfig']['simID']=uuid.uuid4().hex
-			self.config['outputConfig']['outputDir']=os.path.join(os.path.abspath(\
-			self.config['outputConfig']['outputDir']),self.config['outputConfig']['simID'])
+			if not 'outputDir' in self.config['outputConfig']:
+				GlobalData.setOutLocation()
+				self.config['outputConfig']['outputDir'] = GlobalData.config["outputPath"]
+			self.config['outputConfig']['outputDir']=os.path.join(
+				os.path.abspath(self.config['outputConfig']['outputDir']),
+				self.config['outputConfig']['simID'])
 			if not os.path.exists(self.config['outputConfig']['outputDir']):
 				os.system('mkdir {}'.format(self.config['outputConfig']['outputDir']))
 			if 'scenarioID' not in self.config['outputConfig'] or \
@@ -96,6 +101,18 @@ class GlobalData(ExceptionUtil):
 				self.logger.log(level,msg)
 		except:
 			raise
+	def setOutLocation(self):
+		t = time.localtime()
+		current_time = time.strftime("%m-%d-%y-%H-%M-%S", t)
+		print("output folder name: " + current_time)
+		outputfoldername = os.getcwd() + "\\output\\" + str(current_time)
+
+		try:
+			os.mkdir(outputfoldername)
+		except:
+			print("Filead create output folder")
+
+		GlobalData.config["outputPath"] = outputfoldername
 
 
 GlobalData = GlobalData()
