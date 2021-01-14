@@ -133,11 +133,12 @@ class PSSEModel(object):
 			if '.out' not in outputConfig['outputfilename']:
 				outputConfig['outputfilename']+='.out'
 
-			GlobalData.logger.log(10,'outfile:'+os.path.join(outputConfig['outputDir'],\
-			outputConfig['outputfilename']))
-			ierr=self._psspy.strt(outfile=os.path.join(outputConfig['outputDir'],\
-			outputConfig['outputfilename']))
-			assert ierr==0
+			outfile=os.path.join(outputConfig['outputDir'],outputConfig['outputfilename'])
+			if isinstance(outfile,unicode):
+				outfile=outfile.encode('ascii','ignore')
+			GlobalData.logger.log(10,'outfile:{}'.format(outfile))
+			ierr=self._psspy.strt(outfile=outfile)
+			assert ierr==0,"psspy.strt failed with error {}".format(ierr)
 
 			Vpcc=self.getVoltage()
 			targetS={}
