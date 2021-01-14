@@ -25,16 +25,20 @@ class GlobalData(ExceptionUtil):
 			filepath = os.path.abspath(inputfile)
 			assert os.path.exists(filepath),"config file {} does not exist".format(filepath)
 			self.config = json.load(open(filepath))
+
 			if not 'simID' in self.config['outputConfig'] or not self.config['outputConfig']['simID']:
 				self.config['outputConfig']['simID']=uuid.uuid4().hex
+
 			if not 'outputDir' in self.config['outputConfig']:
 				GlobalData.setOutLocation()
 				self.config['outputConfig']['outputDir'] = GlobalData.config["outputPath"]
 			self.config['outputConfig']['outputDir']=os.path.join(
 				os.path.abspath(self.config['outputConfig']['outputDir']),
 				self.config['outputConfig']['simID'])
+
 			if not os.path.exists(self.config['outputConfig']['outputDir']):
 				os.system('mkdir {}'.format(self.config['outputConfig']['outputDir']))
+
 			if 'scenarioID' not in self.config['outputConfig'] or \
 			not self.config['outputConfig']['scenarioID']:
 				self.config['outputConfig']['scenarioID']=uuid.uuid4().hex
@@ -101,20 +105,19 @@ class GlobalData(ExceptionUtil):
 				self.logger.log(level,msg)
 		except:
 			raise
+
+#===================================================================================================
 	def setOutLocation(self):
-		t = time.localtime()
-		current_time = time.strftime("%m-%d-%y-%H-%M-%S", t)
-		print("output folder name: " + current_time)
-		outputfoldername = os.getcwd() + "\\output\\" + str(current_time)
-
 		try:
+			t = time.localtime()
+			current_time = time.strftime("%m-%d-%y-%H-%M-%S", t)
+			print("output folder name: " + current_time)
+			outputfoldername = os.getcwd() + "\\output\\" + str(current_time)
 			os.mkdir(outputfoldername)
+			GlobalData.config["outputPath"] = outputfoldername
 		except:
-			print("Filead create output folder")
-
-		GlobalData.config["outputPath"] = outputfoldername
+			raise
 
 
 GlobalData = GlobalData()
-
 

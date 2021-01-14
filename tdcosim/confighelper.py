@@ -1,6 +1,7 @@
 import json
 import uuid
 import pdb
+import os
 
 from tdcosim.global_data import GlobalData
 
@@ -493,6 +494,8 @@ class ConfigHelper(object):
 	def write(self,fpath):
 		"""Will write the configuration data in self.data to the given filename."""
 		try:
+			if not os.path.exists(os.path.dirname(fpath)):
+				os.system('mkdir {}'.format(os.path.dirname(fpath)))
 			json.dump(self.data,open(fpath,'w'),indent=3)
 		except:
 			GlobalData.log()
