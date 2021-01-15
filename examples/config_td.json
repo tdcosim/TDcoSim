@@ -41,6 +41,7 @@
 		}
 	},
 	"simulationConfig":{
+		"defaultLoadType":"zip",
 		"simType":"dynamic",
 		"memoryThreshold": 1024.0,
 		"dynamicConfig":{

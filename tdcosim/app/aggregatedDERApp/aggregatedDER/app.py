@@ -26,6 +26,7 @@ class App(Dera):
 			'composite_load_model_rating.json')))
 			self._events={}
 			self.conf=[]
+			self.modelChanges={}
 		except:
 			LogUtil.exception_handler()
 
@@ -63,7 +64,7 @@ class App(Dera):
 			LogUtil.exception_handler()
 
 #=======================================================================================================================
-	def init_dynamic(self,conf=None,outType='.out'):
+	def init_dynamic(self,conf=None,outType='.out',ZIPLoadConversion=True):
 		try:
 			if psspy.psseversion()[1]>=35:
 				outType2Vrn={'.out':0,'outx':1}
@@ -72,20 +73,22 @@ class App(Dera):
 
 			if not conf:
 				baseDir=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-				conf={'cong':{},'conl':{'all':1,'apiopt':1,'status':[0,0],'loadin':[0,1,0,1]},
+				conf={'cong':{},'conl':{'all':1,'apiopt':1,'status':[0,0],'loadin':[.3,.4,.3,.4]},
 				'strt':{'outfile':os.path.join(baseDir,'data','out','result.out')}}
-			assert 'cong' in conf and 'conl' in conf and 'strt' in conf
+			assert 'cong' in conf and 'strt' in conf
 
-			ierr,_=psspy.conl(**conf['conl'])# initialize
-			assert ierr==0,"psspy.conl failed with error {}".format(ierr)
+			if ZIPLoadConversion:
+				assert 'conl' in conf 
+				ierr,_=psspy.conl(**conf['conl'])# initialize
+				assert ierr==0,"psspy.conl failed with error {}".format(ierr)
 
-			conf['conl'].update({'apiopt':2})
-			ierr,_=psspy.conl(**conf['conl'])# convert
-			assert ierr==0,"psspy.conl failed with error {}".format(ierr)
+				conf['conl'].update({'apiopt':2})
+				ierr,_=psspy.conl(**conf['conl'])# convert
+				assert ierr==0,"psspy.conl failed with error {}".format(ierr)
 
-			conf['conl'].update({'apiopt':3})
-			ierr,_=psspy.conl(**conf['conl'])# convert
-			assert ierr==0,"psspy.conl failed with error {}".format(ierr)
+				conf['conl'].update({'apiopt':3})
+				ierr,_=psspy.conl(**conf['conl'])# convert
+				assert ierr==0,"psspy.conl failed with error {}".format(ierr)
 
 			ierr=psspy.cong(**conf['cong'])
 			assert ierr==0,"psspy.cong failed with error {}".format(ierr)
@@ -163,6 +166,10 @@ class App(Dera):
 		follows IEEE 1547 2003 standard at buses 1,2 and 3. Also adds plant data at the said buses
 		and changes WMOD to 1."""
 		try:
+			if 'dera' not in self.modelChanges:
+				self.modelChanges['dera']={}
+			mc=self.modelChanges['dera']
+
 			if solarPercentage>0:# update conf to have all busIDs
 				LogUtil.logger.info(\
 				'Updating conf to use {} for all load buses as solarPercentage>0'.format(conf.keys()[0]))
@@ -212,6 +219,7 @@ class App(Dera):
 
 			ind2name=self.__dera_rating_default['ind2name']
 			for thisBusID,thisRealarData in zip(busID,realarData):
+				mc[thisBusID]=thisRealarData
 				ierr=psspy.bus_data_2(thisBusID,[2,1,1,1])# convert to a gen bus
 				assert ierr==0, 'error code {}'.format(ierr)
 				ierr=psspy.plant_data(thisBusID)
@@ -251,7 +259,7 @@ class App(Dera):
 					assert thisRequirement in thisRun,'{} not found'.format(thisRequirement)
 				self.load_case(thisRun['rawFilePath'],thisRun['dyrFilePath'],thisRun['additionalDyrFilePath'])
 				self.add_monitor()
-				config={'cong':{},'conl':{'all':1,'apiopt':1,'status':[0,0],'loadin':[0,1,0,1]},
+				config={'cong':{},'conl':{'all':1,'apiopt':1,'status':[0,0],'loadin':[.3,.4,.3,.4]},
 				'strt':{'outfile':os.path.join(baseDir,'data','out','result_{}.out'.format(runID))}}
 				self.init_dynamic(config)
 				self.add_events(thisRun['events'])
@@ -344,14 +352,23 @@ class App(Dera):
 				loadVal=[0]*6
 				loadVal[loadType*2],loadVal[loadType*2+1]=\
 				val.real*(1-reductionPercent),val.imag*(1-reductionPercent)
-				ierr=psspy.load_chng_4(busID,'1',[1,1,1,1,1,0],loadVal)
+				if psspy.psseversion()[1]<=35:
+					ierr=psspy.load_chng_4(busID,realar=loadVal)
+				elif psspy.psseversion()[1]>=35:
+					ierr=psspy.load_chng_6(busID,realar=loadVal)
 				assert ierr==0,"load change failed with error {}".format(ierr)
 		except:
 			LogUtil.exception_handler()
 
 #=======================================================================================================================
-	def convert_load_to_cmld(self,conf=None,cleanup=True):
+	def convert_load_to_cmld(self,conf=None,cleanup=True,avoidBus=None):
 		try:
+			if not avoidBus:
+				avoidBus=[]
+			
+			if 'cmld' not in self.modelChanges:
+				self.modelChanges['cmld']={}
+
 			if not conf:# use defaults for all loads
 				# get load info
 				ierr,loadBusNumber=psspy.aloadint(-1,1,'NUMBER')
@@ -364,8 +381,53 @@ class App(Dera):
 				tempCMLDDyrFile='tempCMLDDyrFile.dyr'
 				f=open(tempCMLDDyrFile,'w')
 
-				for thisBus in loadBusNumber:
+				mc=self.modelChanges['cmld']
+				for thisBus in set(loadBusNumber).difference(avoidBus):
 					thisData=[thisBus]+prefix+defaultVal
+					mc[thisBus]=thisData
+					thisStr=''; thisLineLen=0
+					for thisItem in thisData:
+						thisStr+='{}'.format(thisItem)+','
+						thisLineLen+=len('{}'.format(thisItem)+',')
+						if thisLineLen>180:# break long lines so that PSSE can read without error
+							thisStr+='\n'
+							thisLineLen=0
+					f.write(thisStr[0:-1]+' /\n')
+				f.close()
+
+				# load cmld file
+				ierr=psspy.dyre_add(dyrefile=tempCMLDDyrFile.encode("ascii", "ignore"))
+				assert ierr==0,"Adding dyr file failed with error {}".format(ierr)
+
+				# clean up
+				if cleanup:
+					os.system('del {}'.format(tempCMLDDyrFile))
+		except:
+			LogUtil.exception_handler()
+
+#=======================================================================================================================
+	def convert_load_to_complex_load(self,conf=None,cleanup=True,avoidBus=None):
+		try:
+			if not avoidBus:
+				avoidBus=[]
+			
+			if 'complex_load' not in self.modelChanges:
+				self.modelChanges['complex_load']={}
+
+			if not conf:# use defaults for all loads
+				# get load info
+				ierr,loadBusNumber=psspy.aloadint(-1,1,'NUMBER')
+				assert ierr==0,'psspy.aloadint failed with error {}'.format(ierr)
+				loadBusNumber=loadBusNumber[0]
+				defaultVal=[.2,.2,.2,.2,.1,2,.04,.08]
+				prefix=["'CLODBL'",1]
+				tempCMLDDyrFile='tempCMLDDyrFile.dyr'
+				f=open(tempCMLDDyrFile,'w')
+
+				mc=self.modelChanges['complex_load']
+				for thisBus in set(loadBusNumber).difference(avoidBus):
+					thisData=[thisBus]+prefix+defaultVal
+					mc[thisBus]=thisData
 					thisStr=''; thisLineLen=0
 					for thisItem in thisData:
 						thisStr+='{}'.format(thisItem)+','

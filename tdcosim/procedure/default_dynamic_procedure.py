@@ -21,10 +21,10 @@ class DefaultDynamicProcedure(DefaultProcedure):
 			GlobalData.log()
 
 #===================================================================================================
-	def setup(self):
+	def setup(self,logging=False):
 		try:
 			self._tnet_model.setup()
-			self._dnet_model.setup(logging=True)
+			self._dnet_model.setup(logging=False)
 		except:
 			GlobalData.log()
 

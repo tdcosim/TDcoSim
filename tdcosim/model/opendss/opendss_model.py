@@ -29,6 +29,8 @@ class OpenDSSModel(object):
 			openDSSConfig['manualFeederConfig']['nodes']:
 				totalSolarGen=0; reductionPercent=0
 				for entry in openDSSConfig['manualFeederConfig']['nodes']:
+					DNet['Nodes'][entry['nodenumber']]={}
+					DNet['Nodes'][entry['nodenumber']]['filepath'] = entry['filePath'][0]
 					if 'solarFlag' in entry and entry['solarFlag']==1:
 						self.setDERParameter(entry, entry['nodenumber'])
 					if adjustOpPoint:
@@ -41,6 +43,7 @@ class OpenDSSModel(object):
 				solarPenetration=openDSSConfig["defaultFeederConfig"]["solarPenetration"]
 				for entry in TNet['LoadBusNumber']:
 					DNet['Nodes'][entry]={}
+					DNet['Nodes'][entry]['filepath']=openDSSConfig["defaultFeederConfig"]['filePath'][0]
 					if solarFlag:
 						self.setDERParameter(openDSSConfig['defaultFeederConfig'], entry)
 				reductionPercent=solarPenetration # the amount of syn gen reduction
@@ -110,12 +113,9 @@ class OpenDSSModel(object):
 #===================================================================================================
 	def setDERParameter(self, entry, nodenumber):
 		try:
-			DNet=GlobalData.data['DNet']
-			DNet['Nodes'][nodenumber]={}
-			DNet['Nodes'][nodenumber]['filepath'] = entry['filePath'][0]
-
 			baseDir=os.path.dirname(os.path.abspath(__file__))
 			defaults=json.load(open(os.path.join(baseDir,'defaults.json')))
+			DNet=GlobalData.data['DNet']
 
 			for item in defaults:
 				if item not in entry:

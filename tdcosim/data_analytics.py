@@ -249,7 +249,7 @@ class DataAnalytics(object):
 		condition."""
 		try:
 			if not isinstance(tnodeid,list):
-				tnodeid=list(tnodeid)
+				tnodeid=[tnodeid]
 
 			filteredDF=df[df.tnodeid==tnodeid[0]]
 

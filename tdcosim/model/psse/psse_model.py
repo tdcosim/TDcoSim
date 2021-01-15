@@ -29,8 +29,6 @@ class PSSEModel(object):
 
 			self.faultmap = {}
 			self.faultindex = 1
-
-			return None
 		except:
 			GlobalData.log()
 
@@ -79,14 +77,69 @@ class PSSEModel(object):
 			GlobalData.log()
 
 #===================================================================================================
-	def dynamicInitialize(self, adjustOpPoint=True):
+	def convert_loads(self,conf=None,loadType='zip'):
+		try:
+			if loadType.lower()=='zip':
+				if not conf:
+					conf={'conl':{'all':1,'apiopt':1,'status':[0,0],'loadin':[.3,.4,.3,.4]}}
+				assert 'conl' in conf
+				ierr,_=self._psspy.conl(**conf['conl'])# initialize
+				assert ierr==0,"psspy.conl failed with error {}".format(ierr)
+
+				conf['conl'].update({'apiopt':2})
+				ierr,_=self._psspy.conl(**conf['conl'])# convert
+				assert ierr==0,"psspy.conl failed with error {}".format(ierr)
+
+				conf['conl'].update({'apiopt':3})
+				ierr,_=self._psspy.conl(**conf['conl'])# convert
+				assert ierr==0,"psspy.conl failed with error {}".format(ierr)
+
+			elif loadType.lower()=='complex_load' or loadType.lower()=='complexload':
+				# get load info
+				ierr,loadBusNumber=self._psspy.aloadint(-1,1,'NUMBER')
+				assert ierr==0,'psspy.aloadint failed with error {}'.format(ierr)
+				loadBusNumber=loadBusNumber[0]
+				defaultVal=[.2,.2,.2,.2,.1,2,.04,.08]
+			
+				# write
+				prefix=["'CLODBL'",1]
+				tempCMLDDyrFile='tempCMLDDyrFile.dyr'
+				f=open(tempCMLDDyrFile,'w')
+
+				for thisBus in loadBusNumber:
+					thisData=[thisBus]+prefix+defaultVal
+					thisStr=''; thisLineLen=0
+					for thisItem in thisData:
+						thisStr+='{}'.format(thisItem)+','
+						thisLineLen+=len('{}'.format(thisItem)+',')
+						if thisLineLen>180:# break long lines so that PSSE can read without error
+							thisStr+='\n'
+							thisLineLen=0
+					f.write(thisStr[0:-1]+' /\n')
+				f.close()
+
+				# load cmld file
+				ierr=self._psspy.dyre_add(dyrefile=tempCMLDDyrFile.encode("ascii", "ignore"))
+				assert ierr==0,"Adding dyr file failed with error {}".format(ierr)
+				os.system('del {}'.format(tempCMLDDyrFile))
+		except:
+			GlobalData.log()
+
+
+#===================================================================================================
+	def dynamicInitialize(self,adjustOpPoint=True):
 		try:
 			if adjustOpPoint:
-				S = self._adjustSystemOperatingPoint()
+				if 'defaultLoadType' in GlobalData.config['simulationConfig']:
+					defaultLoadType=GlobalData.config['simulationConfig']['defaultLoadType']
+				else:
+					defaultLoadType='complex_load'
+				S = self._adjustSystemOperatingPoint(defaultLoadType=defaultLoadType)
 			else:
 				ierr=self._psspy.dyre_new([1,1,1,1],self.config['psseConfig']['dyrFilePath'].encode("ascii",
 				"ignore"))
-				assert ierr==0
+				assert ierr==0,"psspy.dyre_new failed with error {}".format(ierr)
+				self.convert_loads(loadType='zip')
 
 			ierr=self._psspy.cong(1); assert ierr==0
 			GlobalData.data['dynamic']['channel'] = {}
@@ -150,8 +203,7 @@ class PSSEModel(object):
 			GlobalData.log()
 
 #===================================================================================================
-	def _adjustSystemOperatingPoint(self):
-		loadType = 0
+	def _adjustSystemOperatingPoint(self,defaultLoadType='complex_load'):
 		try:
 			GlobalData.logger.debug('GlobalData.data["DNet"]={}'.format(GlobalData.data['DNet']))
 			offset=3
@@ -255,6 +307,11 @@ class PSSEModel(object):
 			ierr,S=self._psspy.alodbuscplx(string='MVAACT')
 			assert ierr==0,"reading complex load failed with error {}".format(ierr)
 
+			# convert all loads to given load type
+			self.convert_loads(loadType=defaultLoadType)
+
+			# update
+			loadType=0
 			for busID,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S[0]):
 				if busID in GlobalData.data['DNet']['Nodes']:
 					# constP,Q,IP,IQ,YP,YQ
@@ -389,4 +446,3 @@ class PSSEModel(object):
 				msg="Failed Fault Off, Fault was not applied to the Bus Number: {}".format(faultBus))
 		except:
 			GlobalData.log()
-
