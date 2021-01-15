@@ -24,7 +24,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
 	def setup(self):
 		try:
 			self._tnet_model.setup()
-			self._dnet_model.setup()
+			self._dnet_model.setup(logging=True)
 		except:
 			GlobalData.log()
 
@@ -81,6 +81,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
 						Vpcc = self._tnet_model.getVoltage()
 						self._dnet_model.setVoltage(Vpcc)
 						S = self._dnet_model.getLoad()
+						GlobalData.logger.debug('time:{},S:{},Vpcc:{}'.format(t,S,Vpcc))
 						self._tnet_model.setLoad(S)
 
 						# collect data and store

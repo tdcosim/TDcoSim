@@ -153,6 +153,7 @@ class PSSEModel(object):
 	def _adjustSystemOperatingPoint(self):
 		loadType = 0
 		try:
+			GlobalData.logger.debug('GlobalData.data["DNet"]={}'.format(GlobalData.data['DNet']))
 			offset=3
 			reductionPercent=GlobalData.data['DNet']['ReductionPercent']
 			ind={}
@@ -258,11 +259,16 @@ class PSSEModel(object):
 				if busID in GlobalData.data['DNet']['Nodes']:
 					# constP,Q,IP,IQ,YP,YQ
 					loadVal=[0]*6
+					if 'solarPenetration' not in GlobalData.data['DNet']['Nodes'][busID]:
+						GlobalData.data['DNet']['Nodes'][busID]['solarPenetration']=0.0
 					reductionPercent=GlobalData.data['DNet']['Nodes'][busID]['solarPenetration']
 					loadVal[loadType*2],loadVal[loadType*2+1]=\
 					val.real*(1-reductionPercent),val.imag*(1-reductionPercent)
 					ierr=self._psspy.load_chng_4(busID,'1',[1,1,1,1,1,0],loadVal)
 					assert ierr==0,"load change failed with error {}".format(ierr)
+
+			ierr,S=self._psspy.alodbuscplx(string='MVAACT')
+			assert ierr==0,"reading complex load failed with error {}".format(ierr)
 
 			return S
 		except:
@@ -325,6 +331,8 @@ class PSSEModel(object):
 	def shunt(self, targetS, Vpcc, power):
 		try:
 			mismatchTolerance=0.1
+			GlobalData.logger.debug('Input: targetS={}; Vpcc={}; power={};'.format(\
+			targetS, Vpcc, power))
 			for node in power:
 				if abs(power[node]['P']-targetS[node][0])>mismatchTolerance or abs(
 				power[node]['Q']-targetS[node][1])>mismatchTolerance:# add shunt if needed

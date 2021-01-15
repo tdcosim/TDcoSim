@@ -12,7 +12,8 @@ from tdcosim.model.opendss.procedure.opendss_procedure import OpenDSSProcedure
 #===================================================================================================
 def findConfig(nodeid):
 	try:
-		if nodeid > 0:
+		if nodeid > 0 and 'manualFeederConfig' in OpenDSSData.config['openDSSConfig'] and \
+		'nodes' in OpenDSSData.config['openDSSConfig']['manualFeederConfig']:
 			for x in OpenDSSData.config['openDSSConfig']['manualFeederConfig']['nodes']:
 				if x['nodenumber'] == int(nodeid):
 					dssconfig = x
@@ -20,7 +21,7 @@ def findConfig(nodeid):
 			dssconfig = OpenDSSData.config['openDSSConfig']['defaultFeederConfig']
 		return dssconfig
 	except:
-		OpenDSSData.log()
+		OpenDSSData.log(msg='findConfig failed!!!!')
 
 
 #===================================================================================================

@@ -10,7 +10,6 @@
 			"filePath":["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
 			"solarFlag":0,
 			"solarPenetration":0.0
-		   
 		},
 		"manualFeederConfig":{
 			"nodes": [

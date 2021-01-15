@@ -33,9 +33,13 @@ class OpenDSSServer(object):
 	def connect_opendssclient(self, nodeid):
 		try:
 			# start a subprocess asynchronously, one at a time
+			baseDir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(\
+			os.path.abspath(__file__)))))
+			fout=open(os.path.join(baseDir,'logs','opendss_{}.out'.format(nodeid)),'w')
+			ferr=open(os.path.join(baseDir,'logs','opendss_{}.err'.format(nodeid)),'w')
 			openDSSClientPath = GlobalData.config['cosimHome'] + '\\model\\opendss\\opendss_client.py'
 			GlobalData.data['DNet']['Nodes'][nodeid]['proc']=subprocess.Popen(shlex.split("python "
-			+ '"'+openDSSClientPath+'"'+" {} ".format(nodeid)), shell=True)
+			+ '"'+openDSSClientPath+'"'+" {} ".format(nodeid)), shell=True,stdout=fout,stderr=ferr)
 
 			#accept connection from worker
 			# process is connecting.

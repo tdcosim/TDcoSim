@@ -24,10 +24,13 @@ class OpenDSSModel(object):
 			TNet=GlobalData.data['TNet']
 			openDSSConfig=GlobalData.config['openDSSConfig']
 
-			if openDSSConfig['manualFeederConfig']['nodes']:
+			if 'manualFeederConfig' in openDSSConfig and \
+			'nodes' in openDSSConfig['manualFeederConfig'] and \
+			openDSSConfig['manualFeederConfig']['nodes']:
 				totalSolarGen=0; reductionPercent=0
 				for entry in openDSSConfig['manualFeederConfig']['nodes']:
-					self.setDERParameter(entry, entry['nodenumber'])
+					if 'solarFlag' in entry and entry['solarFlag']==1:
+						self.setDERParameter(entry, entry['nodenumber'])
 					if adjustOpPoint:
 						totalSolarGen+=TNet['BusRealPowerLoad'][entry['nodenumber']]*\
 						entry['solarPenetration']
@@ -38,15 +41,20 @@ class OpenDSSModel(object):
 				solarPenetration=openDSSConfig["defaultFeederConfig"]["solarPenetration"]
 				for entry in TNet['LoadBusNumber']:
 					DNet['Nodes'][entry]={}
-					self.setDERParameter(openDSSConfig['defaultFeederConfig'], entry)
+					if solarFlag:
+						self.setDERParameter(openDSSConfig['defaultFeederConfig'], entry)
 				reductionPercent=solarPenetration # the amount of syn gen reduction
 
 			DNet['ReductionPercent'] = reductionPercent
 
 			for entry in DNet['Nodes'].keys():
 				if logging:
-					DNet['Nodes'][entry]['f_out']=open('dss_out_{}.txt'.format(entry),'w')
-					DNet['Nodes'][entry]['f_err']=open('dss_err_{}.txt'.format(entry),'w')
+					baseDir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(\
+					os.path.abspath(__file__)))))
+					DNet['Nodes'][entry]['f_out']=open(os.path.join(baseDir,'logs',\
+					'dss_out_{}.txt'.format(entry)),'w')
+					DNet['Nodes'][entry]['f_err']=open(os.path.join(baseDir,'logs',\
+					'dss_err_{}.txt'.format(entry)),'w')
 				else:
 					DNet['Nodes'][entry]['f_out']=DNet['Nodes'][entry]['f_err']=open(os.devnull,'w')
 				self._opendss_server.connect_opendssclient(entry)
@@ -121,7 +129,7 @@ class OpenDSSModel(object):
 				if item not in entry['DERParameters']['default']:
 					entry['DERParameters']['default'][item]=defaults['DERParameters']['default'][item]
 
-			if entry['DERSetting'] == 'PVPlacement':
+			if entry['DERSetting'] == 'PVPlacement' and 'PVPlacement' in entry['DERParameters']:
 				for node in entry['DERParameters']['PVPlacement']:
 					if 'VrmsRating' not in entry['DERParameters']['PVPlacement'][node]:
 						entry['DERParameters']['PVPlacement'][node]['VrmsRating']=\
