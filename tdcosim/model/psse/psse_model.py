@@ -7,11 +7,13 @@ import json
 import numpy as np
 
 from tdcosim.global_data import GlobalData
+from tdcosim.model.psse.dera import Dera
 
 
-class PSSEModel(object):
+class PSSEModel(Dera):
 	def __init__(self):
 		try:
+			super(PSSEModel,self).__init__()
 			pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
 			if "installLocation" in GlobalData.config['psseConfig'] and \
 			os.path.exists(GlobalData.config['psseConfig']['installLocation']+os.path.sep+'psspy.pyc'):
@@ -24,7 +26,7 @@ class PSSEModel(object):
 			self._psspy=psspy
 			ierr=self._psspy.psseinit(0); assert ierr==0
 			ierr=self._psspy.report_output(6,'',[]); assert ierr==0
-			####ierr=self._psspy.progress_output(6,'',[]); assert ierr==0
+			ierr=self._psspy.progress_output(6,'',[]); assert ierr==0
 			ierr=self._psspy.alert_output(6,'',[]); assert ierr==0
 			ierr=self._psspy.prompt_output(6,'',[]); assert ierr==0
 
@@ -34,6 +36,8 @@ class PSSEModel(object):
 			os.path.dirname(os.path.abspath(__file__)))))
 			self.__cmld_rating_default=json.load(open(os.path.join(baseDir,'config',\
 			'composite_load_model_rating.json')))
+			self.__dera_rating_default=json.load(open(os.path.join(baseDir,'config',\
+			'dera_rating.json')))
 		except:
 			GlobalData.log()
 
@@ -358,6 +362,16 @@ class PSSEModel(object):
 			# convert all loads to given load type
 			self.convert_loads(loadType=defaultLoadType)
 
+			# add der_a, if configured
+			conf=None
+			if 'dera' in GlobalData.config['simulationConfig']:
+				conf=GlobalData.config['simulationConfig']['dera']
+			if conf and self._psspy.psseversion()[1]>=35:
+				self.add_dera_to_case(conf=conf)
+			elif conf and self._psspy.psseversion()[1]<35:
+				GlobalData.logger.warning(\
+				"This version of psse ({}) does not support der_a".format(self._psspy.psseversion()))
+
 			# update
 			loadType=0
 			for busID,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S[0]):
@@ -492,5 +506,87 @@ class PSSEModel(object):
 			else:
 				GlobalData.log(level=30,
 				msg="Failed Fault Off, Fault was not applied to the Bus Number: {}".format(faultBus))
+		except:
+			GlobalData.log()
+
+#=======================================================================================================================
+	def add_dera_to_case(self,conf,rating=None,additionalDyrFilePath='dera.dya',
+	solarPercentage=0,cleanup=True):
+		"""Given conf and additionalDyrFilePath, this method adds dera model as an additional
+		dyr/dya file that can then be read using psspy.dyre_add method. conf should be of the form
+		conf={'standard':[busID]} for example conf={'1547_2003':[1,2,3]} will add dera model which
+		follows IEEE 1547 2003 standard at buses 1,2 and 3. Also adds plant data at the said buses
+		and changes WMOD to 1."""
+		try:
+			if solarPercentage>0:# update conf to have all busIDs
+				LogUtil.logger.info(\
+				'Updating conf to use {} for all load buses as solarPercentage>0'.format(conf.keys()[0]))
+				# get load info
+				ierr,loadBusNumberAll=self._psspy.aloadint(-1,1,'NUMBER')
+				assert ierr==0,'psspy.aloadint failed with error {}'.format(ierr)
+				loadBusNumberAll=loadBusNumberAll[0]
+				ierr,genBusNumber=self._psspy.agenbusint(-1,1,'NUMBER')
+				assert ierr==0,'psspy.agenbusint failed with error {}'.format(ierr)
+				genBusNumber=genBusNumber[0]
+				ierr,SAll=self._psspy.alodbuscplx(string='MVAACT')
+				assert ierr==0,"reading complex load failed with error {}".format(ierr)
+				SAll=SAll[0]
+
+				# only non-gen buses
+				loadBusNumber=[];S=[]
+				for thisBus,thisS in zip(loadBusNumberAll,SAll):
+					if thisBus not in genBusNumber:
+						loadBusNumber.append(thisBus)
+						S.append(thisS)
+
+				# update
+				thisStandard=conf.keys()[0]
+				conf={thisStandard:loadBusNumber}
+
+			deraBuses=[]
+			for thisStandard in conf:
+				deraBuses.extend(conf[thisStandard])
+
+			if not rating:
+				rating=[self.__dera_rating_default['default']]*len(deraBuses)
+
+			# generate dera params and write .dya file
+			thisConf={}; busID=[]
+			for entry in conf:
+				thisConf.update(self.generate_config(conf[entry],entry))
+				busID.extend(conf[entry])
+			self.dera2dyr(thisConf,additionalDyrFilePath)
+
+			# rating
+			realarData=rating
+			if rating and solarPercentage==0:
+				assert isinstance(rating,list) and len(rating)==len(busID)
+				for thisRating,thisRealarData in zip(rating,realarData):
+					if isinstance(thisRating,dict):
+						thisRealarData.update(thisRating)
+			elif solarPercentage>0:
+				realarData=[self.__dera_rating_default['default']]*len(loadBusNumber)
+				for thisBus,thisS,thisRealarData in zip(loadBusNumber,S,realarData):
+					thisRating={'pg':thisS.real*solarPercentage,'qg':0.0,
+					'pt':thisS.real*solarPercentage,'pb':0.0,
+					'qt':thisS.imag*solarPercentage,'qb':-thisS.imag*solarPercentage}
+					thisRealarData.update(thisRating)
+
+			ind2name=self.__dera_rating_default['ind2name']
+			for thisBusID,thisRealarData in zip(busID,realarData):
+				ierr=self._psspy.bus_data_2(thisBusID,[2,1,1,1])# convert to a gen bus
+				assert ierr==0, 'error code {}'.format(ierr)
+				ierr=self._psspy.plant_data(thisBusID)
+				assert ierr==0, 'error code {}'.format(ierr)
+				realar=[thisRealarData[ind2name[str(n)]] for n in range(len(thisRealarData))]
+				ierr=self._psspy.machine_data_2(i=thisBusID,intgar=[1,1,0,0,0,1],realar=realar)
+				assert ierr==0
+
+			# add dera to base case
+			ierr=self._psspy.dyre_add(dyrefile=additionalDyrFilePath); assert ierr==0
+
+			# cleanup
+			if cleanup:
+				os.system('del {}'.format(additionalDyrFilePath))
 		except:
 			GlobalData.log()

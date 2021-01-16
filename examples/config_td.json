@@ -41,7 +41,8 @@
 		}
 	},
 	"simulationConfig":{
-		"defaultLoadType":"zip",
+		"defaultLoadType":"complex_load",
+		"dera":{"1547_2003":[60]},
 		"simType":"dynamic",
 		"memoryThreshold": 1024.0,
 		"dynamicConfig":{
