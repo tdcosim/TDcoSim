@@ -15,6 +15,10 @@ import matplotlib.pyplot as plt
 
 
 class DataAnalytics(object):
+	
+	voltage_mag_ph_a_property = 'Vmag_a'
+	voltage_mag_ph_b_property = 'Vmag_b'
+	voltage_mag_ph_c_property = 'Vmag_c'
 
 	def __init__(self):
 		self.__legend=[]
@@ -84,7 +88,7 @@ class DataAnalytics(object):
 #===================================================================================================
 	def _excel2df_tdcosim(self,data,scenarioid='1',tag='test'):
 		try:
-			df=pd.DataFrame(columns=['scenarioid','tag','time','busid','dnodeid','property','phase','value'])
+			df=pd.DataFrame(columns=['scenario','tag','t','tnodeid','dfeederid','dnodeid','property','phase','value'])
 			t_all= list(data.keys())
 			t_all.remove('TNet_results')
 			
@@ -111,7 +115,7 @@ class DataAnalytics(object):
 						tnodeid.append(tnode)
 						i = i+1
 			
-			df.loc[:,'time']=t; df.loc[:,'busid']=tnodeid; df.loc[:,'dnodeid']=dnodeid
+			df.loc[:,'time']=t; df.loc[:,'tnodeid']=tnodeid; df.loc[:,'dnodeid']=dnodeid
 			df.loc[:,'property']=prop; df.loc[:,'value']=val;df.loc[:,'phase']=phase
 			df.loc[:,'scenarioid']=scenarioid
 			df.loc[:,'tag']=['test']*len(df.time)
@@ -172,39 +176,47 @@ class DataAnalytics(object):
 	def get_min_max_voltage_der(self,df):
 		"""Returns dictionary containing information of minimum and maximum dnode voltage magnitudes."""
 		try:
-			voltage_dict ={'min':{},'max':{}}
-			busids = self.get_busids(df)
+			voltage_dict_der ={'min':{},'max':{}}
+			tnodeids = self.get_tnodeids(df)
 
-			voltage_dict ={'min':{busid:{} for busid in busids},'max':{busid:{} for busid in busids}}
-			for busid in busids:
+			for tnodeid in tnodeids:
+				dnodeids = df[df.tnodeid==tnodeid]['dnodeid'].dropna().unique() #Get dnodeids corresponding to tnodeid if they exist
 				
-				min_index = df[(df.property=='vmag')&(df.busid==busid)]['value'].idxmin()
-				max_index = df[(df.property=='vmag')&(df.busid==busid)]['value'].idxmax()
-				
-				voltage_dict['min'][busid].update({'voltage':df.iloc[min_index].value})
-				voltage_dict['min'][busid].update({'time':df.iloc[min_index].time})
-				voltage_dict['min'][busid].update({'busid':df.iloc[min_index].busid})
-				voltage_dict['min'][busid].update({'dnodeid':df.iloc[min_index].dnodeid})
-				
-				voltage_dict['max'][busid].update({'voltage':df.iloc[max_index].value})
-				voltage_dict['max'][busid].update({'time':df.iloc[max_index].time})
-				voltage_dict['max'][busid].update({'busid':df.iloc[max_index].busid})
-				voltage_dict['max'][busid].update({'dnodeid':df.iloc[max_index].dnodeid})
-				
-				voltage_dict['min'][busid].update({'df':df[(df.busid==busid) & (df.dnodeid ==df.iloc[min_index].dnodeid)]})
-				voltage_dict['max'][busid].update({'df':df[(df.busid==busid) & (df.dnodeid ==df.iloc[max_index].dnodeid)]})
-				
-			return voltage_dict
+				if  len(dnodeids)>=1: #Check if  of dnodes are available
+					print('Distribution system with {} D nodes detected for T node:{}'.format(len(dnodeids),tnodeid))
+					voltage_dict_der['min'].update({tnodeid:{}})
+					voltage_dict_der['max'].update({tnodeid:{}})
+					min_index = df[(df.property==self.voltage_mag_ph_a_property)&(df.tnodeid==tnodeid)]['value'].idxmin() #Get index of minimum dnode voltage value
+					print('Minimum voltage {:.2f} V pu found at dnode {} at time {} s'.format(df.loc[min_index].value,df.loc[min_index].dnodeid,df.loc[min_index].t))
+					
+					max_index = df[(df.property==self.voltage_mag_ph_a_property)&(df.tnodeid==tnodeid)]['value'].idxmax() #Get index of maximum dnode voltage value
+					print('Maximum voltage {:.2f} V pu found at dnode {} at time {} s'.format(df.loc[max_index].value,df.loc[max_index].dnodeid,df.loc[max_index].t))
+					
+					voltage_dict_der['min'][tnodeid].update({'voltage':df.loc[min_index].value})
+					voltage_dict_der['min'][tnodeid].update({'property':df.loc[min_index].property})
+					voltage_dict_der['min'][tnodeid].update({'time':df.loc[min_index].t})
+					voltage_dict_der['min'][tnodeid].update({'tnodeid':df.loc[min_index].tnodeid})
+					voltage_dict_der['min'][tnodeid].update({'dnodeid':df.loc[min_index].dnodeid})
+					
+					voltage_dict_der['max'][tnodeid].update({'voltage':df.loc[max_index].value})
+					voltage_dict_der['max'][tnodeid].update({'time':df.loc[max_index].t})
+					voltage_dict_der['max'][tnodeid].update({'tnodeid':df.loc[max_index].tnodeid})
+					voltage_dict_der['max'][tnodeid].update({'dnodeid':df.loc[max_index].dnodeid})
+					
+					voltage_dict_der['min'][tnodeid].update({'df':df[(df.tnodeid==tnodeid) & (df.dnodeid ==df.loc[min_index].dnodeid)]})
+					voltage_dict_der['max'][tnodeid].update({'df':df[(df.tnodeid==tnodeid) & (df.dnodeid ==df.loc[max_index].dnodeid)]})
+					
+			return voltage_dict_der
 		except Exception as e:
 			logging.error(e)
 
 #===================================================================================================
-	def get_busids(self,df):
+	def get_tnodeids(self,df):
 		"""Returns dictionary with bus names and distribution nodes"""
 		try:
-			busids = list(df.groupby('busid').nunique().index)
-			print('Number of buses:{}'.format(len(busids)))
-			return busids
+			tnodeids = list(df.groupby('tnodeid').nunique().index)
+			print('Number of buses detected in dataframe:{}'.format(len(tnodeids)))
+			return tnodeids
 		except Exception as e:
 			logging.error(e)
 
@@ -212,10 +224,10 @@ class DataAnalytics(object):
 	def get_dnodeids_der(self,df):
 		"""Returns dictionary with bus names and distribution nodes"""
 		try:
-			busids = self.get_busids(df)
+			tnodeids = self.get_tnodeids(df)
 			dnodeid_dict ={}
-			for busid in busids:
-				dnodeid_dict.update({busid:list(df[df.busid==busid].groupby('dnodeid').nunique().index)})
+			for tnodeid in tnodeids:
+				dnodeid_dict.update({tnodeid:list(df[df.tnodeid==tnodeid].groupby('dnodeid').nunique().index)})
 			return dnodeid_dict
 		except Exception as e:
 			logging.error(e)
