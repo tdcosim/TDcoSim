@@ -38,7 +38,7 @@ class OpenDSSModel(object):
 						entry['solarPenetration']
 				if adjustOpPoint:
 					reductionPercent=totalSolarGen/TNet['TotalRealPowerLoad']
-			else:
+			elif 'defaultFeederConfig' in openDSSConfig:
 				solarFlag=bool(openDSSConfig["defaultFeederConfig"]["solarFlag"])
 				solarPenetration=openDSSConfig["defaultFeederConfig"]["solarPenetration"]
 				for entry in TNet['LoadBusNumber']:
@@ -47,6 +47,8 @@ class OpenDSSModel(object):
 					if solarFlag:
 						self.setDERParameter(openDSSConfig['defaultFeederConfig'], entry)
 				reductionPercent=solarPenetration # the amount of syn gen reduction
+			else:
+				reductionPercent=0
 
 			DNet['ReductionPercent'] = reductionPercent
 

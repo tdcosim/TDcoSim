@@ -2,6 +2,7 @@ import sys
 import os
 import re
 import pdb
+import json
 
 import numpy as np
 
@@ -23,12 +24,16 @@ class PSSEModel(object):
 			self._psspy=psspy
 			ierr=self._psspy.psseinit(0); assert ierr==0
 			ierr=self._psspy.report_output(6,'',[]); assert ierr==0
-			ierr=self._psspy.progress_output(6,'',[]); assert ierr==0
+			####ierr=self._psspy.progress_output(6,'',[]); assert ierr==0
 			ierr=self._psspy.alert_output(6,'',[]); assert ierr==0
 			ierr=self._psspy.prompt_output(6,'',[]); assert ierr==0
 
 			self.faultmap = {}
 			self.faultindex = 1
+			baseDir=os.path.dirname(os.path.dirname(os.path.dirname(\
+			os.path.dirname(os.path.abspath(__file__)))))
+			self.__cmld_rating_default=json.load(open(os.path.join(baseDir,'config',\
+			'composite_load_model_rating.json')))
 		except:
 			GlobalData.log()
 
@@ -80,6 +85,7 @@ class PSSEModel(object):
 	def convert_loads(self,conf=None,loadType='zip'):
 		try:
 			if loadType.lower()=='zip':
+				GlobalData.logger.info('converting all loads at to ZIP load')
 				if not conf:
 					conf={'conl':{'all':1,'apiopt':1,'status':[0,0],'loadin':[.3,.4,.3,.4]}}
 				assert 'conl' in conf
@@ -107,6 +113,44 @@ class PSSEModel(object):
 				f=open(tempCMLDDyrFile,'w')
 
 				for thisBus in loadBusNumber:
+					if thisBus not in GlobalData.data['DNet']['Nodes']:
+						GlobalData.logger.info('converting load at {} to complex load (CLODBL)'.format(thisBus))
+						thisData=[thisBus]+prefix+defaultVal
+						thisStr=''; thisLineLen=0
+						for thisItem in thisData:
+							thisStr+='{}'.format(thisItem)+','
+							thisLineLen+=len('{}'.format(thisItem)+',')
+							if thisLineLen>180:# break long lines so that PSSE can read without error
+								thisStr+='\n'
+								thisLineLen=0
+						f.write(thisStr[0:-1]+' /\n')
+				f.close()
+
+				# load cmld file
+				ierr=self._psspy.dyre_add(dyrefile=tempCMLDDyrFile.encode("ascii", "ignore"))
+				assert ierr==0,"Adding dyr file failed with error {}".format(ierr)
+				os.system('del {}'.format(tempCMLDDyrFile))
+
+			elif loadType.lower()=='composite_load' or loadType.lower()=='compositeload' \
+			or loadType.lower()=='cmld':
+				# get load info
+				ierr,loadBusNumber=self._psspy.aloadint(-1,1,'NUMBER')
+				assert ierr==0,'psspy.aloadint failed with error {}'.format(ierr)
+				loadBusNumber=loadBusNumber[0]
+				default=self.__cmld_rating_default['default']
+				ind2name=self.__cmld_rating_default['ind2name']
+				defaultVal=[default[ind2name[str(n)]] for n in range(len(default))]
+				if self._psspy.psseversion()[1]>=35:
+					prefix=["'USRLOD'",1,"'CMLDBLU2'",12,1,2,133,27,146,48,0,0]
+				elif self._psspy.psseversion()[1]<35:
+					prefix=["'USRLOD'",1,"'CMLDBLU1'",12,1,0,132,27,146,48]
+					defaultVal=defaultVal[1:-1]
+
+				tempCMLDDyrFile='tempCMLDDyrFile.dyr'
+				f=open(tempCMLDDyrFile,'w')
+				avoidBus=GlobalData.data['DNet']['Nodes'].keys()
+
+				for thisBus in set(loadBusNumber).difference(avoidBus):
 					thisData=[thisBus]+prefix+defaultVal
 					thisStr=''; thisLineLen=0
 					for thisItem in thisData:
@@ -129,17 +173,22 @@ class PSSEModel(object):
 #===================================================================================================
 	def dynamicInitialize(self,adjustOpPoint=True):
 		try:
+			if 'defaultLoadType' in GlobalData.config['simulationConfig']:
+				defaultLoadType=GlobalData.config['simulationConfig']['defaultLoadType']
+			else:
+				defaultLoadType='zip'
 			if adjustOpPoint:
-				if 'defaultLoadType' in GlobalData.config['simulationConfig']:
-					defaultLoadType=GlobalData.config['simulationConfig']['defaultLoadType']
-				else:
-					defaultLoadType='complex_load'
 				S = self._adjustSystemOperatingPoint(defaultLoadType=defaultLoadType)
 			else:
 				ierr=self._psspy.dyre_new([1,1,1,1],self.config['psseConfig']['dyrFilePath'].encode("ascii",
 				"ignore"))
 				assert ierr==0,"psspy.dyre_new failed with error {}".format(ierr)
-				self.convert_loads(loadType='zip')
+				self.convert_loads(loadType=defaultLoadType)
+
+			# run power flow
+			ierr=self._psspy.fnsl()
+			assert ierr==0,"fnsl with error {}".format(ierr)
+			Vpcc=self.getVoltage()
 
 			ierr=self._psspy.cong(1); assert ierr==0
 			GlobalData.data['dynamic']['channel'] = {}
@@ -193,7 +242,6 @@ class PSSEModel(object):
 			ierr=self._psspy.strt(outfile=outfile)
 			assert ierr==0,"psspy.strt failed with error {}".format(ierr)
 
-			Vpcc=self.getVoltage()
 			targetS={}
 			for entry,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S[0]):
 				if entry in GlobalData.data['DNet']['Nodes']:
