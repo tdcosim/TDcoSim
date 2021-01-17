@@ -150,22 +150,25 @@ class DataAnalytics(object):
 			nodes=list(set([ch_id[entry].split(' ')[1][0:ch_id[entry].split(' ')[1].find(
 			'[')].replace(' ','') for entry in ch_id if 'Time' not in ch_id[entry]]))
 
-			tnodeid=[]; props=[]; value=[]; t=[]; count=0
+			tnodeid=[]; tnodesubid=[]; props=[]; value=[]; t=[]; count=0
 			for entry in ch_id:
 				if 'Time' not in ch_id[entry]:
 					prop_node=ch_id[entry].split()
 					prop,node=prop_node[0],prop_node[1]
 					if prop!='VOLT':
+						tnodesubid.append(node[node.find(']')+1::].strip())
 						node=node[0:node.find('[')].replace(' ','')
+					else:
+						tnodesubid.append('')
 					value.extend(ch_data[entry][0::stride])
 					props.extend([prop]*len(ch_data[entry][0::stride]))
 					tnodeid.extend([node]*len(ch_data[entry][0::stride]))
 					count+=1
 			t.extend(ch_data['time'][0::stride]*count)
 
-			df=pd.DataFrame(columns=['scenario','t','tnodeid','dfeederid','dnodeid','property',
+			df=pd.DataFrame(columns=['scenario','t','tnodeid','tnodesubid','dfeederid','dnodeid','property',
 			'value'])
-			df['t'],df['tnodeid'],df['property'],df['value']=t,tnodeid,props,value
+			df['t'],df['tnodeid'],df['tnodesubid'],df['property'],df['value']=t,tnodeid,tnodesubid,props,value
 			df['scenario']=[scenarioid]*len(t)
 
 			return df

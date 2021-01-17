@@ -14,6 +14,7 @@
 		"manualFeederConfig":{
 			"nodes": [
 				{
+					"fractionAggregatedLoad":{"complexLoad":0.6},
 					"nodenumber": 59,
 					"filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
 					"solarFlag":1,

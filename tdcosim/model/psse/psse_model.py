@@ -86,8 +86,11 @@ class PSSEModel(Dera):
 			GlobalData.log()
 
 #===================================================================================================
-	def convert_loads(self,conf=None,loadType='zip'):
+	def convert_loads(self,conf=None,loadType='zip',avoidBus=None,prefix=None):
 		try:
+			if not avoidBus:
+				avoidBus=GlobalData.data['DNet']['Nodes'].keys()
+
 			if loadType.lower()=='zip':
 				GlobalData.logger.info('converting all loads at to ZIP load')
 				if not conf:
@@ -112,12 +115,13 @@ class PSSEModel(Dera):
 				defaultVal=[.2,.2,.2,.2,.1,2,.04,.08]
 			
 				# write
-				prefix=["'CLODBL'",1]
+				if not prefix:
+					prefix=["'CLODBL'",1]
 				tempCMLDDyrFile='tempCMLDDyrFile.dyr'
 				f=open(tempCMLDDyrFile,'w')
 
 				for thisBus in loadBusNumber:
-					if thisBus not in GlobalData.data['DNet']['Nodes']:
+					if thisBus not in avoidBus:
 						GlobalData.logger.info('converting load at {} to complex load (CLODBL)'.format(thisBus))
 						thisData=[thisBus]+prefix+defaultVal
 						thisStr=''; thisLineLen=0
@@ -144,15 +148,15 @@ class PSSEModel(Dera):
 				default=self.__cmld_rating_default['default']
 				ind2name=self.__cmld_rating_default['ind2name']
 				defaultVal=[default[ind2name[str(n)]] for n in range(len(default))]
-				if self._psspy.psseversion()[1]>=35:
+				if not prefix and self._psspy.psseversion()[1]>=35:
 					prefix=["'USRLOD'",1,"'CMLDBLU2'",12,1,2,133,27,146,48,0,0]
-				elif self._psspy.psseversion()[1]<35:
+				elif not prefix and self._psspy.psseversion()[1]<35:
 					prefix=["'USRLOD'",1,"'CMLDBLU1'",12,1,0,132,27,146,48]
+				if self._psspy.psseversion()[1]<35:
 					defaultVal=defaultVal[1:-1]
 
 				tempCMLDDyrFile='tempCMLDDyrFile.dyr'
 				f=open(tempCMLDDyrFile,'w')
-				avoidBus=GlobalData.data['DNet']['Nodes'].keys()
 
 				for thisBus in set(loadBusNumber).difference(avoidBus):
 					thisData=[thisBus]+prefix+defaultVal
@@ -243,6 +247,7 @@ class PSSEModel(Dera):
 			if isinstance(outfile,unicode):
 				outfile=outfile.encode('ascii','ignore')
 			GlobalData.logger.log(10,'outfile:{}'.format(outfile))
+
 			ierr=self._psspy.strt(outfile=outfile)
 			assert ierr==0,"psspy.strt failed with error {}".format(ierr)
 
@@ -250,6 +255,20 @@ class PSSEModel(Dera):
 			for entry,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S[0]):
 				if entry in GlobalData.data['DNet']['Nodes']:
 					targetS[entry]=[val.real*10**3,val.imag*10**3] # convert to kw/kvar from mw/mvar
+
+			# update targetS, if "fractionAggregatedLoad" is set for T-D interface nodes
+			# "fractionAggregatedLoad":{"complexLoad":0.6}
+			openDSSConfig=GlobalData.config['openDSSConfig']
+			if 'manualFeederConfig' in openDSSConfig:
+				if 'nodes' in openDSSConfig['manualFeederConfig']:
+					for entry in openDSSConfig['manualFeederConfig']['nodes']:
+						if 'fractionAggregatedLoad' in entry:
+							# if more than one load identifier is present, then feeder will
+							# be interfaced by default to load identifier "1"
+							ierr,val=self._psspy.loddt2(entry['nodenumber'],'1','TOTAL','ACT')
+							assert ierr==0,"loddt2 failed with error {}".format(ierr)
+							targetS[entry['nodenumber']]=[val.real*10**3,val.imag*10**3]
+
 			return targetS,Vpcc
 		except:
 			GlobalData.log()
@@ -336,7 +355,6 @@ class PSSEModel(Dera):
 				ierr,macVarData[entry]=self._psspy.amachreal(sid=-1, flag=1, string=entry)# get data
 				assert ierr==0,"reading machine data failed with error {}".format(ierr)
 
-
 			ierr,genBusNumber=self._psspy.agenbusint(-1,1,'NUMBER') # get gen bus number
 			assert ierr==0
 			genBusNumber=genBusNumber[0]
@@ -358,9 +376,50 @@ class PSSEModel(Dera):
 			# adjust load data
 			ierr,S=self._psspy.alodbuscplx(string='MVAACT')
 			assert ierr==0,"reading complex load failed with error {}".format(ierr)
+			S=S[0]
 
 			# convert all loads to given load type
 			self.convert_loads(loadType=defaultLoadType)
+
+			# add new loads, if configured
+			ierr, systemBuses = self._psspy.abusint(sid=-1, flag=2, string='NUMBER')
+			assert ierr==0,"abusint failed with error {}".format(ierr)
+			systemBuses=systemBuses[0]
+
+			busIDToAddComplexLoad={}; busIDToAddCompositeLoad={}
+			if 'manualFeederConfig' in GlobalData.config['openDSSConfig'] and \
+			'nodes' in GlobalData.config['openDSSConfig']['manualFeederConfig']:
+				for entry in GlobalData.config['openDSSConfig']['manualFeederConfig']['nodes']:
+					if 'fractionAggregatedLoad' in entry:
+						for item in entry['fractionAggregatedLoad']:
+							if item.lower()=='complexload' or item.lower()=='complex_load':
+								busIDToAddComplexLoad[entry['nodenumber']]=\
+								entry['fractionAggregatedLoad'][item]
+							elif item.lower()=='compositeload' or \
+							item.lower()=='composite_load' or item.lower()=='cmld':
+								busIDToAddCompositeLoad[entry['nodenumber']]=\
+								entry['fractionAggregatedLoad'][item]
+
+			if busIDToAddComplexLoad or busIDToAddCompositeLoad:
+				ierr,S=self._psspy.aloadcplx(sid=-1, flag=4, string='MVAACT')
+				assert ierr==0,"aloadcplx failed with error {}".format(ierr)
+				S=S[0]
+				ierr,loadBusID=self._psspy.aloadint(sid=-1, flag=4, string='NUMBER')
+				assert ierr==0,"aloadcplx failed with error {}".format(ierr)
+				loadBusID=loadBusID[0]
+				bus2SMapping={thisLoadBusID:thisS for thisLoadBusID,thisS in zip(loadBusID,S)}
+
+			if busIDToAddComplexLoad:
+				realar=[]
+				for entry in busIDToAddComplexLoad:
+					realar.append([bus2SMapping[entry].real*busIDToAddComplexLoad[entry],\
+					bus2SMapping[entry].imag*busIDToAddComplexLoad[entry],0,0,0,0])
+				loadID='2'# use load identifier as 2
+				self.add_load_with_new_load_id(busID=busIDToAddComplexLoad.keys(),realar=realar,\
+				loadID=[loadID]*len(busIDToAddComplexLoad.keys()))
+				self.convert_loads(loadType='complex_load',\
+				avoidBus=set(systemBuses).difference(busIDToAddComplexLoad.keys()),\
+				prefix=["'CLODBL'",loadID])# use load identifier as 2
 
 			# add der_a, if configured
 			conf=None
@@ -374,7 +433,7 @@ class PSSEModel(Dera):
 
 			# update
 			loadType=0
-			for busID,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S[0]):
+			for busID,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S):
 				if busID in GlobalData.data['DNet']['Nodes']:
 					# constP,Q,IP,IQ,YP,YQ
 					loadVal=[0]*6
@@ -392,6 +451,22 @@ class PSSEModel(Dera):
 			return S
 		except:
 			GlobalData.log(msg='Failed to adjustSystemOperatingPoint from PSSEModel')
+
+#===================================================================================================
+	def add_load_with_new_load_id(self,busID,realar,loadID=None):
+		try:
+			if not isinstance(busID,list) and (isinstance(busID,int) or isinstance(busID,str)):
+				busID=[busID]
+			if not loadID:
+				loadID=['2']*len(busID)
+
+			assert len(busID)==len(realar)==len(loadID),"Input dimension mismatch"
+
+			for thisBusID,thisRealar,thisLoadID in zip(busID,realar,loadID):
+				ierr=self._psspy.load_data_4(thisBusID,thisLoadID,realar=thisRealar)
+				assert ierr==0,"load_data_4 failed with error {}".format(ierr)
+		except:
+			GlobalData.log()
 
 #===================================================================================================
 	def staticInitialize(self):

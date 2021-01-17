@@ -172,7 +172,7 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			if six.PY3:
 				t=list(t)
 			t.sort()
-			data={'t':[],'tnodeid':[],'dfeederid':[],'dnodeid':[],'property':[],'value':[]}
+			data={'t':[],'tnodeid':[],'tnodesubid':[],'dfeederid':[],'dnodeid':[],'property':[],'value':[]}
 			for thisTime in t:
 				for thisTDInterface in monData[thisTime]:
 					for thisProp in monData[thisTime][thisTDInterface]:
@@ -182,10 +182,11 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 								data['tnodeid'].append(thisTDInterface)
 								data['dnodeid'].append(thisNodeID)
 								data['property'].append(thisProp+'_'+thisSubProp)
-								data['value']=monData[thisTime][thisTDInterface][thisProp][thisNodeID][thisSubProp]
+								data['value'].append(monData[thisTime][thisTDInterface][thisProp][thisNodeID][thisSubProp])
 
 			data['scenario']=[scenario]*len(data['t'])
 			data['dfeederid']=['1']*len(data['t'])
+			data['tnodesubid']=['']*len(data['t'])
 			df_monitorData=pd.DataFrame(data)
 
 			stride=2
@@ -206,13 +207,17 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			nodes=list(set([ch_id[entry].split(' ')[1][0:ch_id[entry].split(' ')[1].find(
 			'[')].replace(' ','') for entry in ch_id if 'Time' not in ch_id[entry]]))
 
-			tnodeid=[]; props=[]; value=[]; t=[]; count=0
+			tnodeid=[]; tnodesubid=[]; props=[]; value=[]; t=[]; count=0
 			for entry in ch_id:
 				if 'Time' not in ch_id[entry]:
 					prop_node=ch_id[entry].split()
 					prop,node=prop_node[0],prop_node[1]
 					if prop!='VOLT':
-						node=node[0:node.find('[')].replace(' ','')
+						tnodesubid.extend([prop_node[-1][prop_node[-1].find(']')+1::].strip()]*\
+						len(ch_data[entry][0::stride]))
+						node=node[0:node.find('[')].strip()
+					else:
+						tnodesubid.extend(['']*len(ch_data[entry][0::stride]))
 					value.extend(ch_data[entry][0::stride])
 					props.extend([prop]*len(ch_data[entry][0::stride]))
 					tnodeid.extend([node]*len(ch_data[entry][0::stride]))
@@ -220,9 +225,9 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 
 			t.extend(ch_data['time'][0::stride]*count)
 
-			df=pd.DataFrame(columns=['scenario','t','tnodeid','dfeederid','dnodeid','property',
+			df=pd.DataFrame(columns=['scenario','t','tnodeid','tnodesubid','dfeederid','dnodeid','property',
 			'value'])
-			df['t'],df['tnodeid'],df['property'],df['value']=t,tnodeid,props,value
+			df['t'],df['tnodeid'],df['tnodesubid'],df['property'],df['value']=t,tnodeid,tnodesubid,props,value
 			df['scenario']=[scenario]*len(t)
 			df=df.append(df_monitorData,ignore_index=True,sort=True)
 
