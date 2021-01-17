@@ -147,7 +147,7 @@ def generate_excel_report(GlobalData,fpath=None,sim=None):
 		wb.close()
 	except:
 		print("Failed generate report")							
-		print("Unexpected error:", sys.exc_info()[0])
+		raise
 
 def save_config(GlobalData):
 	try:

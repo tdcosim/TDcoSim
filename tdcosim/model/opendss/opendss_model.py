@@ -16,7 +16,7 @@ class OpenDSSModel(object):
 			OpenDSSData.log()
 
 #===================================================================================================
-	def setup(self, logging=False, adjustOpPoint=True):
+	def setup(self,adjustOpPoint=True):
 		try:
 			# Either map based on manual feeder config, if false, then do auto feeder map
 			DNet=GlobalData.data['DNet']
@@ -53,7 +53,9 @@ class OpenDSSModel(object):
 			DNet['ReductionPercent'] = reductionPercent
 
 			for entry in DNet['Nodes'].keys():
-				if logging:
+				if 'logging' in GlobalData.config and \
+				'saveSubprocessOutErr' in GlobalData.config['logging'] and \
+				GlobalData.config['logging']['saveSubprocessOutErr']:
 					baseDir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(\
 					os.path.abspath(__file__)))))
 					DNet['Nodes'][entry]['f_out']=open(os.path.join(baseDir,'logs',\

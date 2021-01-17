@@ -74,6 +74,9 @@
 	  "outputfilename": "test",
 	  "scenarioID":"1"
 	},
-   "logging":{"level":20}
+   "logging":{
+		"level":20,
+		"saveSubprocessOutErr":false
+	}
 }
 	

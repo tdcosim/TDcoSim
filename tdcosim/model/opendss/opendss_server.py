@@ -35,8 +35,14 @@ class OpenDSSServer(object):
 			# start a subprocess asynchronously, one at a time
 			baseDir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(\
 			os.path.abspath(__file__)))))
-			fout=open(os.path.join(baseDir,'logs','opendss_{}.out'.format(nodeid)),'w')
-			ferr=open(os.path.join(baseDir,'logs','opendss_{}.err'.format(nodeid)),'w')
+			if 'logging' in GlobalData.config and \
+			'saveSubprocessOutErr' in GlobalData.config['logging'] and \
+			GlobalData.config['logging']['saveSubprocessOutErr']:
+				fout=open(os.path.join(baseDir,'logs','opendss_{}.out'.format(nodeid)),'w')
+				ferr=open(os.path.join(baseDir,'logs','opendss_{}.err'.format(nodeid)),'w')
+			else:
+				fout=open(os.devnull,'w')
+				ferr=open(os.devnull,'w')
 			openDSSClientPath = GlobalData.config['cosimHome'] + '\\model\\opendss\\opendss_client.py'
 			GlobalData.data['DNet']['Nodes'][nodeid]['proc']=subprocess.Popen(shlex.split("python "
 			+ '"'+openDSSClientPath+'"'+" {} ".format(nodeid)), shell=True,stdout=fout,stderr=ferr)

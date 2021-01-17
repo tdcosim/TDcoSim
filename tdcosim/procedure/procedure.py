@@ -25,7 +25,7 @@ class Procedure(DefaultProcedure):
 #===================================================================================================
 	def simulate(self):
 		try:
-			self._procedure.setup(logging=True)
+			self._procedure.setup()
 			self._procedure.initialize()
 			self._procedure.run()
 			generate_output(GlobalData)
