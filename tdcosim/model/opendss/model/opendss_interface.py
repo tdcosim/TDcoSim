@@ -114,7 +114,7 @@ class OpenDSSInterface(object):
 			self.Text.Command="MakeBusList"
 			self.Text.Command="CalcVoltageBases"
 		except:
-			OpenDSSData.log ("Failed setupDER in OpenDSS Interface")
+			OpenDSSData.log("Failed setupDER in OpenDSS Interface")
 
 #===================================================================================================
 	def getLoads(self):

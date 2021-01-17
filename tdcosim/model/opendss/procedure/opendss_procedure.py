@@ -24,7 +24,6 @@ class OpenDSSProcedure(object):
 			derP = {}
 			derQ = {}
 
-			P, Q, convergedFlg = self._opendssinterface.initialize(Vpcc, targetS, tol)
 			if OpenDSSData.config['myconfig']['solarFlag']:
 				# Re-setup DER after reload the OpenDSS
 				S0 = self._opendssinterface.getLoads()
@@ -36,6 +35,8 @@ class OpenDSSProcedure(object):
 					derP, derQ = self._pvderAggProcedure.run(V)
 					self._opendssinterface.pvderInjection(derP, derQ)
 					P,Q,Converged = self._opendssinterface.getS(pccName='Vsource.source')
+
+			P, Q, convergedFlg = self._opendssinterface.initialize(Vpcc, targetS, tol)
 		
 			return P, Q
 		except:
