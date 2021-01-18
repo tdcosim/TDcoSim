@@ -14,7 +14,7 @@ class OpenDSSServer(object):
 	def __init__(self):
 		try:
 			self.__startServer()
-			self._BUFFER_SIZE=1024*1024
+			self._BUFFER_SIZE=1024*1024*16
 		except:
 			OpenDSSData.log()
 
@@ -123,8 +123,8 @@ class OpenDSSServer(object):
 		
 			replyMsg = {}
 			for entry in GlobalData.data['DNet']['Nodes'].keys():
-				replyMsg[entry]=json.loads(GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(
-				self._BUFFER_SIZE))
+				replyMsg[entry]=json.loads(\
+				GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(self._BUFFER_SIZE))
 
 			return replyMsg
 		except:

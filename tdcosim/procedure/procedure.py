@@ -28,7 +28,7 @@ class Procedure(DefaultProcedure):
 			self._procedure.setup()
 			self._procedure.initialize()
 			self._procedure.run()
-			generate_output(GlobalData)
+			generate_output(GlobalData,excel=False)
 		except:
 			GlobalData.log()
 

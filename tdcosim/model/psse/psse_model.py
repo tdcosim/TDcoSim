@@ -399,6 +399,20 @@ class PSSEModel(Dera):
 							item.lower()=='composite_load' or item.lower()=='cmld':
 								busIDToAddCompositeLoad[entry['nodenumber']]=\
 								entry['fractionAggregatedLoad'][item]
+			elif 'defaultFeederConfig' in GlobalData.config['openDSSConfig'] and \
+			'fractionAggregatedLoad' in GlobalData.config['openDSSConfig']['defaultFeederConfig']:
+				defaultFeederConfig=GlobalData.config['openDSSConfig']['defaultFeederConfig']
+				fractionAggregatedLoad=defaultFeederConfig['fractionAggregatedLoad']
+				for item in fractionAggregatedLoad:
+					if item.lower()=='complexload' or item.lower()=='complex_load':
+						# find all T-D interface buses
+						for busID in GlobalData.data['DNet']['Nodes']:
+							busIDToAddComplexLoad[busID]=fractionAggregatedLoad[item]
+					elif item.lower()=='compositeload' or \
+					item.lower()=='composite_load' or item.lower()=='cmld':
+						# find all T-D interface buses
+						for busID in GlobalData.data['DNet']['Nodes']:
+							busIDToAddCompositeLoad[busID]=fractionAggregatedLoad[item]
 
 			if busIDToAddComplexLoad or busIDToAddCompositeLoad:
 				ierr,S=self._psspy.aloadcplx(sid=-1, flag=4, string='MVAACT')

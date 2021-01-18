@@ -5,59 +5,841 @@
 		"rawFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.raw",
 		"dyrFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.dyr"		
 	},
-	"openDSSConfig":{	
+	"openDSSConfig":{
 		"defaultFeederConfig":{
 			"filePath":["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-			"solarFlag":0,
-			"solarPenetration":0.0
+			"solarFlag":1,
+			"solarPenetration":0.01
 		},
 		"manualFeederConfig":{
-			"nodes": [
+			"nodes":[
 				{
-					"nodenumber": 59,
-					"filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-					"solarFlag":1,
-					"solarPenetration":0.01,
-					"DERFilePath": "..\\examples\\config_der.json",
-					"initializeWithActual":true,
-					"DERSetting":"default",
-					"DERModelType":"ThreePhaseUnbalanced",
-					"DERParameters":{
-						"default":{
-							"solarPenetration":0.01,
-							"derId":"50",
-							"steadyStateInitialization":true,
-							"pvderScale":1,
-							"LVRT":{"0":{"V_threshold":0.5,
-								"t_threshold":0.25,
-								"mode":"mandatory_operation",
-								"t_start":0.0,
-								"threshold_breach":true},
-							"1":{"V_threshold":0.7,
-								 "t_threshold":3.5,
-								 "mode":"mandatory_operation", 
-								 "t_start":0.0,
-								 "threshold_breach":true},
-							"2":{"V_threshold":0.88,
-								 "t_threshold":5.0,
-								 "mode":"mandatory_operation",
-								 "t_start":0.0,
-								 "threshold_breach":true}
-								  }					  
-						 }						
-					}
+				   "nodenumber": 28, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 36, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 60, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 61, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 49, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 67, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 68, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 24, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 25, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 26, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 27, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 20, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 21, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 48, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 23, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 46, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 47, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 44, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 45, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 42, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 29, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 40, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 41, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 39, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 59, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 17, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 33, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 18, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 56, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 51, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 50, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 53, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 52, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}, 
+				{
+				   "nodenumber": 55, 
+				   "filePath": [
+					  "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
 				}
-			]
+			 ]
 		}
 	},
 	"simulationConfig":{
-		"defaultLoadType":"complexload",
+		"defaultLoadType":"cmld",
 		"simType":"dynamic",
-		"memoryThreshold": 2048.0,
+		"memoryThreshold": 20480.0,
 		"dynamicConfig":{
 			"events":{
 				"1":{
-					"time":0.1,
+					"time":0.2,
 				   "type":"faultOn",
 				   "faultBus":59,
 				   "faultImpedance":[0.0,-10000]
@@ -69,7 +851,7 @@
 			   },
 			   "3":{
 				   "type":"simEnd",
-				   "time":0.7
+				   "time":1.0
 			   }
 			}
 		},
@@ -80,11 +862,11 @@
       "type": "xlsx", 
       "outputDir": "..\\output", 
 	  "outputfilename": "test",
-	  "scenarioID":"complex_load"
+	  "scenarioID":"cmld"
 	},
    "logging":{
-		"level":10,
-		"saveSubprocessOutErr":true
+		"level":20,
+		"saveSubprocessOutErr":false
 	}
 }
 	
