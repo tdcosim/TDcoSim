@@ -25,7 +25,7 @@
 	 },
 	 
 "LVRT_1547cat3":{"config":{"0":{"V_threshold":0.5,
-								"t_threshold":1.0,
+								"t_threshold":0.25,
 								"mode":"mandatory_operation",
 								"t_start":0.0,
 								"threshold_breach":false},

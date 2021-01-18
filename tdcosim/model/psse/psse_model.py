@@ -565,7 +565,7 @@ class PSSEModel(Dera):
 #===================================================================================================
 	def faultOn(self, faultBus, faultImpedance):
 		try:
-			ierr=self._psspy.dist_bus_fault(faultBus, 1,0.0,faultImpedance)
+			ierr=self._psspy.dist_bus_fault(faultBus,1,0.0,faultImpedance)
 			assert ierr==0
 			self.faultmap[faultBus] = self.faultindex
 			self.faultindex = self.faultindex + 1

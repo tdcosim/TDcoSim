@@ -1,0 +1,90 @@
+{
+	"cosimHome": "..\\tdcosim",
+	"psseConfig":{
+		"installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27",
+		"rawFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.raw",
+		"dyrFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.dyr"		
+	},
+	"openDSSConfig":{	
+		"defaultFeederConfig":{
+			"filePath":["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+			"solarFlag":0,
+			"solarPenetration":0.0
+		},
+		"manualFeederConfig":{
+			"nodes": [
+				{
+					"nodenumber": 59,
+					"filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+					"solarFlag":1,
+					"solarPenetration":0.01,
+					"DERFilePath": "..\\examples\\config_der.json",
+					"initializeWithActual":true,
+					"DERSetting":"default",
+					"DERModelType":"ThreePhaseUnbalanced",
+					"DERParameters":{
+						"default":{
+							"solarPenetration":0.01,
+							"derId":"50",
+							"steadyStateInitialization":true,
+							"pvderScale":1,
+							"LVRT":{"0":{"V_threshold":0.5,
+								"t_threshold":0.25,
+								"mode":"mandatory_operation",
+								"t_start":0.0,
+								"threshold_breach":true},
+							"1":{"V_threshold":0.7,
+								 "t_threshold":3.5,
+								 "mode":"mandatory_operation", 
+								 "t_start":0.0,
+								 "threshold_breach":true},
+							"2":{"V_threshold":0.88,
+								 "t_threshold":5.0,
+								 "mode":"mandatory_operation",
+								 "t_start":0.0,
+								 "threshold_breach":true}
+								  }					  
+						 }						
+					}
+				}
+			]
+		}
+	},
+	"simulationConfig":{
+		"defaultLoadType":"complexload",
+		"simType":"dynamic",
+		"memoryThreshold": 2048.0,
+		"dynamicConfig":{
+			"events":{
+				"1":{
+					"time":0.1,
+				   "type":"faultOn",
+				   "faultBus":59,
+				   "faultImpedance":[0.0,-10000]
+			   },
+			   "2":{
+				   "type":"faultOff",
+				   "time":0.4,
+				   "faultBus":59
+			   },
+			   "3":{
+				   "type":"simEnd",
+				   "time":0.7
+			   }
+			}
+		},
+		"protocol":"loose_coupling"
+	},
+   "outputConfig": {
+      "simID": "debug", 
+      "type": "xlsx", 
+      "outputDir": "..\\output", 
+	  "outputfilename": "test",
+	  "scenarioID":"complex_load"
+	},
+   "logging":{
+		"level":10,
+		"saveSubprocessOutErr":true
+	}
+}
+	
