@@ -45,7 +45,7 @@ class OpenDSSServer(object):
 				ferr=open(os.devnull,'w')
 			openDSSClientPath = GlobalData.config['cosimHome'] + '\\model\\opendss\\opendss_client.py'
 			GlobalData.data['DNet']['Nodes'][nodeid]['proc']=subprocess.Popen(shlex.split("python "
-			+ '"'+openDSSClientPath+'"'+" {} ".format(nodeid)), shell=True,stdout=fout,stderr=ferr)
+			+ '"'+openDSSClientPath+'"'+" {}".format(nodeid)),shell=True,stdout=fout,stderr=ferr)
 
 			#accept connection from worker
 			# process is connecting.

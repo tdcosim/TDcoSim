@@ -1,6 +1,5 @@
 from tdcosim.model.opendss.model.pvderaggregation.model.pvder_aggregated_model import PVDERAggregatedModel
 from tdcosim.model.opendss.opendss_data import OpenDSSData
-from tdcosim.global_data import GlobalData
 
 
 class PVDERAggregatedProcedure(object):
@@ -9,7 +8,7 @@ class PVDERAggregatedProcedure(object):
 		try:
 			self._pvderAggModel = PVDERAggregatedModel()
 		except:
-			GlobalData.log()
+			OpenDSSData.log()
 
 #===================================================================================================
 	def setup(self,S0,V0):
@@ -17,7 +16,7 @@ class PVDERAggregatedProcedure(object):
 			pvdermap = self._pvderAggModel.setup(S0, V0)
 			return pvdermap
 		except:
-			GlobalData.log()
+			OpenDSSData.log()
 
 #===================================================================================================
 	def run(self,V):
@@ -25,4 +24,4 @@ class PVDERAggregatedProcedure(object):
 			P, Q = self._pvderAggModel.run(V)
 			return P, Q
 		except:
-			GlobalData.log()
+			OpenDSSData.log()

@@ -13,6 +13,10 @@ class Procedure(DefaultProcedure):
 #===================================================================================================
 	def __init__(self):
 		try:
+			# empty opendss log file from previous run
+			baseDir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+			f=open(os.path.join(baseDir,'logs','opendssdata.log'),'w')
+			f.close()
 			if GlobalData.config['simulationConfig']['simType'].lower() == 'static':
 				self._procedure = DefaultStaticProcedure()
 			elif GlobalData.config['simulationConfig']['simType'].lower() == 'dynamic':

@@ -8,7 +8,6 @@ import json
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.procedure.opendss_procedure import OpenDSSProcedure
 
-
 #===================================================================================================
 def findConfig(nodeid):
 	try:
@@ -21,7 +20,7 @@ def findConfig(nodeid):
 			dssconfig = OpenDSSData.config['openDSSConfig']['defaultFeederConfig']
 		return dssconfig
 	except:
-		OpenDSSData.log(msg='findConfig failed!!!!')
+		OpenDSSData.log()
 
 
 #===================================================================================================
@@ -68,6 +67,5 @@ if __name__=="__main__":
 				replyMsg=dssProcedure.monitor(msg=msg['varName'])
 			c.send(json.dumps(replyMsg))# reply back to handler
 	except:
-		OpenDSSData.log(msg="Error in OpenDSS Client {}".format(nodeid))
-
+		OpenDSSData.log("Error in OpenDSS Client {}".format(nodeid))
 

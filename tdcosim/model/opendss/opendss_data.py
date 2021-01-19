@@ -20,12 +20,12 @@ class OpenDSSData(ExceptionUtil):
 			if 'logging' in GlobalData.config and 'level' in GlobalData.config['logging']:
 				logLevel=GlobalData.config['logging']['level']
 			else:
-				logLevel=logging.WARNING
+				logLevel=logging.DEBUG
 
 			basedir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
 			os.path.abspath(__file__)))))
 			self.create_logger("OpenDSSData_logger",logFilePath=os.path.join(basedir,'logs',
-			'opendssdata.log'),logLevel=logLevel,mode='w')
+			'opendssdata.log'),logLevel=logLevel,mode='a')
 		except:
 			raise
 

@@ -30,7 +30,7 @@ class OpenDSSProcedure(object):
 				V0 = self._opendssinterface.getVoltage(vtype='actual')
 				pvdermap = self._pvderAggProcedure.setup(S0, V0)
 				self._opendssinterface.setupDER(pvdermap)			
-				for n in range(200):# 25 cycles to synchronize
+				for n in range(200):# synchronize
 					V = self._opendssinterface.getVoltage(vtype='actual')
 					derP, derQ = self._pvderAggProcedure.run(V)
 					self._opendssinterface.pvderInjection(derP, derQ)
@@ -38,6 +38,8 @@ class OpenDSSProcedure(object):
 
 			P, Q, convergedFlg = self._opendssinterface.initialize(Vpcc, targetS, tol)
 		
+			OpenDSSData.log(level=20,msg="completed initialize with P:{},Q:{},convergedFlg:{}".format(\
+			P,Q,convergedFlg))
 			return P, Q
 		except:
 			OpenDSSData.log()
