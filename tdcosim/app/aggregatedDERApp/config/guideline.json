@@ -55,8 +55,8 @@
 			   "value": 0.44
 			}, 
 			"dbd2": {
-			   "default": -99, 
-			   "value": -99
+			   "default": 99, 
+			   "value": 99
 			}, 
 			"dbd1": {
 			   "default": -99, 
@@ -264,8 +264,8 @@
 			   "value": 0.44
 			}, 
 			"dbd2": {
-			   "default": -99, 
-			   "value": -99
+			   "default": 99, 
+			   "value": 99
 			}, 
 			"dbd1": {
 			   "default": -99, 
@@ -475,8 +475,8 @@
 			   "value": 0.44
 			}, 
 			"dbd2": {
-			   "default": -99, 
-			   "value": -99
+			   "default": 99, 
+			   "value": 99
 			}, 
 			"dbd1": {
 			   "default": -99, 
@@ -684,8 +684,8 @@
 			   "value": 0.44
 			}, 
 			"dbd2": {
-			   "default": -99, 
-			   "value": -99
+			   "default": 99, 
+			   "value": 99
 			}, 
 			"dbd1": {
 			   "default": -99, 
@@ -1083,8 +1083,8 @@
 			   "value": 0.44
 			}, 
 			"dbd2": {
-			   "default": -99, 
-			   "value": -99
+			   "default": 99, 
+			   "value": 99
 			}, 
 			"dbd1": {
 			   "default": -99, 
@@ -1296,8 +1296,8 @@
 			   "value": 0.44
 			}, 
 			"dbd2": {
-			   "default": -99, 
-			   "value": -99
+			   "default": 99, 
+			   "value": 99
 			}, 
 			"dbd1": {
 			   "default": -99, 
@@ -1509,8 +1509,8 @@
 			   "value": 0.44
 			}, 
 			"dbd2": {
-			   "default": -99, 
-			   "value": -99
+			   "default": 99, 
+			   "value": 99
 			}, 
 			"dbd1": {
 			   "default": -99, 
@@ -1718,8 +1718,8 @@
 			   "value": 0.44
 			}, 
 			"dbd2": {
-			   "default": -99, 
-			   "value": -99
+			   "default": 99, 
+			   "value": 99
 			}, 
 			"dbd1": {
 			   "default": -99, 
