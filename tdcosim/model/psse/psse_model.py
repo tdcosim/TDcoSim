@@ -440,7 +440,11 @@ class PSSEModel(Dera):
 			if 'dera' in GlobalData.config['simulationConfig']:
 				conf=GlobalData.config['simulationConfig']['dera']
 			if conf and self._psspy.psseversion()[1]>=35:
-				self.add_dera_to_case(conf=conf)
+				if 'solarPenetration' in GlobalData.config['simulationConfig']:
+					solarPercentage=GlobalData.config['simulationConfig']['solarPenetration']
+				else:
+					solarPercentage=0.0
+				self.add_dera_to_case(conf=conf,solarPercentage=solarPercentage)
 			elif conf and self._psspy.psseversion()[1]<35:
 				GlobalData.logger.warning(\
 				"This version of psse ({}) does not support der_a".format(self._psspy.psseversion()))
@@ -607,7 +611,7 @@ class PSSEModel(Dera):
 		follows IEEE 1547 2003 standard at buses 1,2 and 3. Also adds plant data at the said buses
 		and changes WMOD to 1."""
 		try:
-			if solarPercentage>0:# update conf to have all busIDs
+			if solarPercentage>0 and not conf:# update conf to have all busIDs
 				LogUtil.logger.info(\
 				'Updating conf to use {} for all load buses as solarPercentage>0'.format(conf.keys()[0]))
 				# get load info
@@ -631,13 +635,20 @@ class PSSEModel(Dera):
 				# update
 				thisStandard=conf.keys()[0]
 				conf={thisStandard:loadBusNumber}
+			else:
+				deraBuses=[]
+				for thisStandard in conf:
+					deraBuses.extend(conf[thisStandard])
 
-			deraBuses=[]
-			for thisStandard in conf:
-				deraBuses.extend(conf[thisStandard])
+				if not rating:
+					rating=[self.__dera_rating_default['default']]*len(deraBuses)
 
-			if not rating:
-				rating=[self.__dera_rating_default['default']]*len(deraBuses)
+				thisStandard=conf.keys()[0]
+				loadBusNumber=conf[thisStandard]
+				S=[]
+				for thisBus in loadBusNumber:
+					ierr,val=self._psspy.loddt2(thisBus,'1','TOTAL','ACT')
+					S.append(val)
 
 			# generate dera params and write .dya file
 			thisConf={}; busID=[]
