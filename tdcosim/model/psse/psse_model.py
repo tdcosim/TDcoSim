@@ -258,7 +258,6 @@ class PSSEModel(Dera):
 					targetS[entry]=[val.real*10**3,val.imag*10**3] # convert to kw/kvar from mw/mvar
 
 			# update targetS, if "fractionAggregatedLoad" is set for T-D interface nodes
-			# "fractionAggregatedLoad":{"complexLoad":0.6}
 			openDSSConfig=GlobalData.config['openDSSConfig']
 			if 'manualFeederConfig' in openDSSConfig:
 				if 'nodes' in openDSSConfig['manualFeederConfig']:
@@ -268,6 +267,7 @@ class PSSEModel(Dera):
 							# be interfaced by default to load identifier "1"
 							ierr,val=self._psspy.loddt2(entry['nodenumber'],'1','TOTAL','ACT')
 							assert ierr==0,"loddt2 failed with error {}".format(ierr)
+							thisAggregatedLoadType=entry['fractionAggregatedLoad'].keys()[0]
 							targetS[entry['nodenumber']]=[val.real*10**3,val.imag*10**3]
 
 			return targetS,Vpcc
@@ -420,7 +420,7 @@ class PSSEModel(Dera):
 				assert ierr==0,"aloadcplx failed with error {}".format(ierr)
 				S=S[0]
 				ierr,loadBusID=self._psspy.aloadint(sid=-1, flag=4, string='NUMBER')
-				assert ierr==0,"aloadcplx failed with error {}".format(ierr)
+				assert ierr==0,"aloadint failed with error {}".format(ierr)
 				loadBusID=loadBusID[0]
 				bus2SMapping={thisLoadBusID:thisS for thisLoadBusID,thisS in zip(loadBusID,S)}
 
@@ -435,6 +435,24 @@ class PSSEModel(Dera):
 				self.convert_loads(loadType='complex_load',\
 				avoidBus=set(systemBuses).difference(busIDToAddComplexLoad.keys()),\
 				prefix=["'CLODBL'",loadID])# use load identifier as 2
+
+			if busIDToAddCompositeLoad:
+				realar=[]
+				for entry in busIDToAddCompositeLoad:
+					realar.append([bus2SMapping[entry].real*busIDToAddCompositeLoad[entry],\
+					bus2SMapping[entry].imag*busIDToAddCompositeLoad[entry],0,0,0,0])
+				loadID='2'# use load identifier as 2
+				self.add_load_with_new_load_id(busID=busIDToAddCompositeLoad.keys(),realar=realar,\
+				loadID=[loadID]*len(busIDToAddCompositeLoad.keys()))
+
+				if self._psspy.psseversion()[1]==35:
+					prefix=["'USRLOD'",2,"'CMLDBLU2'",12,1,2,133,27,146,48,0,0]
+				elif self._psspy.psseversion()[1]<35:
+					prefix=["'USRLOD'",2,"'CMLDBLU1'",12,1,0,132,27,146,48]
+
+				self.convert_loads(loadType='complex_load',\
+				avoidBus=set(systemBuses).difference(busIDToAddCompositeLoad.keys()),\
+				prefix=prefix)# use load identifier as 2
 
 			# add der_a, if configured
 			conf=None
@@ -459,6 +477,17 @@ class PSSEModel(Dera):
 					if 'solarPenetration' not in GlobalData.data['DNet']['Nodes'][busID]:
 						GlobalData.data['DNet']['Nodes'][busID]['solarPenetration']=0.0
 					reductionPercent=GlobalData.data['DNet']['Nodes'][busID]['solarPenetration']
+
+					if 'fractionAggregatedLoad' in GlobalData.data['DNet']['Nodes'][busID]:
+						fractionAggregatedLoadData=\
+						GlobalData.data['DNet']['Nodes'][busID]['fractionAggregatedLoad']
+						thisAggregatedLoadType=fractionAggregatedLoadData.keys()[0]
+						# percentage of solar based on percentage of fractionFeederLoad
+						fractionFeederLoad=1-fractionAggregatedLoadData[thisAggregatedLoadType]
+						reductionPercent=reductionPercent*fractionFeederLoad
+						# add fractionFeederLoad to reductionPercent
+						reductionPercent+=fractionAggregatedLoadData[thisAggregatedLoadType]
+
 					loadVal[loadType*2],loadVal[loadType*2+1]=\
 					val.real*(1-reductionPercent),val.imag*(1-reductionPercent)
 					ierr=self._psspy.load_chng_4(busID,'1',[1,1,1,1,1,0],loadVal)
