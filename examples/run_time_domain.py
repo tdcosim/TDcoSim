@@ -12,7 +12,7 @@ def main():
 	Main function to run the T&D Cosimulation	
 	'''
 	try:
-		GlobalData.set_config('config_td.json')
+		GlobalData.set_config('config_td_mod_debug.json')
 		GlobalData.set_TDdata()
 		simulate()
 	except:

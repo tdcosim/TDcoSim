@@ -150,9 +150,9 @@ class PSSEModel(Dera):
 				ind2name=self.__cmld_rating_default['ind2name']
 				defaultVal=[default[ind2name[str(n)]] for n in range(len(default))]
 				if not prefix and self._psspy.psseversion()[1]>=35:
-					prefix=["'USRLOD'",1,"'CMLDBLU2'",12,1,2,133,27,146,48,0,0]
+					prefix=["'USRLOD'",'1',"'CMLDBLU2'",12,1,2,133,27,146,48,0,0]
 				elif not prefix and self._psspy.psseversion()[1]<35:
-					prefix=["'USRLOD'",1,"'CMLDBLU1'",12,1,0,132,27,146,48]
+					prefix=["'USRLOD'",'1',"'CMLDBLU1'",12,1,0,132,27,146,48]
 				if self._psspy.psseversion()[1]<35:
 					defaultVal=defaultVal[1:-1]
 
@@ -446,11 +446,11 @@ class PSSEModel(Dera):
 				loadID=[loadID]*len(busIDToAddCompositeLoad.keys()))
 
 				if self._psspy.psseversion()[1]==35:
-					prefix=["'USRLOD'",2,"'CMLDBLU2'",12,1,2,133,27,146,48,0,0]
+					prefix=["'USRLOD'",'2',"'CMLDBLU2'",12,1,2,133,27,146,48,0,0]
 				elif self._psspy.psseversion()[1]<35:
-					prefix=["'USRLOD'",2,"'CMLDBLU1'",12,1,0,132,27,146,48]
+					prefix=["'USRLOD'",'2',"'CMLDBLU1'",12,1,0,132,27,146,48]
 
-				self.convert_loads(loadType='complex_load',\
+				self.convert_loads(loadType='cmld',\
 				avoidBus=set(systemBuses).difference(busIDToAddCompositeLoad.keys()),\
 				prefix=prefix)# use load identifier as 2
 
