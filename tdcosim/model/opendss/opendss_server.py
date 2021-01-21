@@ -61,7 +61,7 @@ class OpenDSSServer(object):
 			OpenDSSData.log()
 
 #===================================================================================================
-	def initialize(self, targetS, Vpcc=1.0,tol=10**-5):
+	def initialize(self, targetS, Vpcc=1.0,tol=.5*1e-4):
 		try:
 			# assume default values if not provided
 			if not isinstance(Vpcc,dict):

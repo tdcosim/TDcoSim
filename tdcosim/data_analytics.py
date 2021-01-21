@@ -48,8 +48,8 @@ class DataAnalytics(object):
 				df=self._excel2df_tdcosim(data=data,scenarioid=scenarioid)
 
 			return df
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def _dict2df_tdcosim(self,data,scenarioid='1'):
@@ -82,8 +82,8 @@ class DataAnalytics(object):
 			df.t=df.t.map(lambda x:float(x))
 
 			return df
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def _excel2df_tdcosim(self,data,scenarioid='1',tag='test'):
@@ -122,8 +122,8 @@ class DataAnalytics(object):
 			df.time=df.time.map(lambda x:float(x))
 			
 			return df
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 			
 #===================================================================================================
 	def _dict2df_outfile(self,data,scenarioid='1',simType='tonly'):
@@ -210,8 +210,8 @@ class DataAnalytics(object):
 					voltage_dict_der['max'][tnodeid].update({'df':df[(df.tnodeid==tnodeid) & (df.dnodeid ==df.loc[max_index].dnodeid)]})
 					
 			return voltage_dict_der
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def get_tnodeids(self,df):
@@ -220,8 +220,8 @@ class DataAnalytics(object):
 			tnodeids = list(df.groupby('tnodeid').nunique().index)
 			print('Number of buses detected in dataframe:{}'.format(len(tnodeids)))
 			return tnodeids
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def get_dnodeids_der(self,df):
@@ -232,8 +232,8 @@ class DataAnalytics(object):
 			for tnodeid in tnodeids:
 				dnodeid_dict.update({tnodeid:list(df[df.tnodeid==tnodeid].groupby('dnodeid').nunique().index)})
 			return dnodeid_dict
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def get_time_values(self,df):
@@ -243,8 +243,8 @@ class DataAnalytics(object):
 			
 			time_values = df[df.dnodeid==dnodeid_dict[dnodeid_dict.keys()[0]][0]].time
 			return time_values
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def filter_time(self,df,fromTime,toTime=None):
@@ -252,8 +252,8 @@ class DataAnalytics(object):
 			filteredDF=df[(df.t>=fromTime)&(df.t<=toTime)]
 
 			return filteredDF
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def filter_node(self,df,tnodeid,dfeederid=None,dnodeid=None):
@@ -282,8 +282,8 @@ class DataAnalytics(object):
 			filteredDF.index=range(len(filteredDF))
 
 			return filteredDF
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def filter_property(self,df,propertyid):
@@ -294,8 +294,8 @@ class DataAnalytics(object):
 				filteredDF=df[df.property==thisproperty]
 
 			return filteredDF
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def filter_value(self,df,fromValue,toValue):
@@ -305,8 +305,8 @@ class DataAnalytics(object):
 			filteredDF=df[(df.value>=fromValue)&(df.value<=toValue)]
 
 			return filteredDF
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def filter_scenario(self,df,scenarioid):
@@ -314,8 +314,8 @@ class DataAnalytics(object):
 			filteredDF=df[df.scenario==scenarioid]
 
 			return filteredDF
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def add_plot(self,df,propertyid,labelType='tnodeid'):
@@ -324,15 +324,15 @@ class DataAnalytics(object):
 			thisDF=thisDF.sort_values(by='t',ascending=True)
 			plt.plot(thisDF.t,thisDF.value)
 			self.__legend.extend(list(set(thisDF[labelType])))
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def clear_plot(self):
 		try:
 			plt.clf()
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
 
 #===================================================================================================
 	def show_plot(self,ylabel,title):
@@ -343,5 +343,21 @@ class DataAnalytics(object):
 			plt.legend(self.__legend)
 			plt.show()
 			self.__legend=[]
-		except Exception as e:
-			logging.error(e)
+		except:
+			raise
+
+#===================================================================================================
+	def get_net_load(self,df,tnodeid,prop):
+		try:
+			res={'value':0,'t':0}
+			filteredDF=df[df.tnodeid==tnodeid]
+			if not filteredDF.empty:
+				for thisSubID in set(filteredDF.tnodesubid):
+					thisDF=filteredDF[(filteredDF.tnodesubid==thisSubID)&(filteredDF.property==prop)]
+					if not thisDF.empty:
+						res['value']+=thisDF.value.values
+				res['t']=thisDF.t.values
+
+			return res
+		except:
+			raise

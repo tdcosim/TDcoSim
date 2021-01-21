@@ -179,7 +179,7 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 						for thisNodeID in monData[thisTime][thisTDInterface][thisProp]:
 							for thisSubProp in monData[thisTime][thisTDInterface][thisProp][thisNodeID]:
 								data['t'].append(thisTime)
-								data['tnodeid'].append(thisTDInterface)
+								data['tnodeid'].append(str(thisTDInterface))
 								data['dnodeid'].append(thisNodeID)
 								data['property'].append(thisProp+'_'+thisSubProp)
 								data['value'].append(monData[thisTime][thisTDInterface][thisProp][thisNodeID][thisSubProp])

@@ -36,11 +36,11 @@ class OpenDSSModel(object):
 					if adjustOpPoint:
 						totalSolarGen+=TNet['BusRealPowerLoad'][entry['nodenumber']]*\
 						entry['solarPenetration']
-				if adjustOpPoint:
-					reductionPercent=totalSolarGen/TNet['TotalRealPowerLoad']
 					if 'fractionAggregatedLoad' in entry:
 						DNet['Nodes'][entry['nodenumber']]['fractionAggregatedLoad']=\
 						entry['fractionAggregatedLoad']
+				if adjustOpPoint:
+					reductionPercent=totalSolarGen/TNet['TotalRealPowerLoad']
 
 			elif 'defaultFeederConfig' in openDSSConfig:
 				solarFlag=bool(openDSSConfig["defaultFeederConfig"]["solarFlag"])

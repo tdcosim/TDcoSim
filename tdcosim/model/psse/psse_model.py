@@ -458,6 +458,7 @@ class PSSEModel(Dera):
 			conf=None
 			if 'dera' in GlobalData.config['simulationConfig']:
 				conf=GlobalData.config['simulationConfig']['dera']
+
 			if conf and self._psspy.psseversion()[1]>=35:
 				if 'solarPenetration' in GlobalData.config['simulationConfig']:
 					solarPercentage=GlobalData.config['simulationConfig']['solarPenetration']
