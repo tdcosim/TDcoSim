@@ -5,6 +5,7 @@ import pdb
 import json
 import copy
 
+import six
 import numpy as np
 
 from tdcosim.global_data import GlobalData
@@ -16,11 +17,15 @@ class PSSEModel(Dera):
 		try:
 			super(PSSEModel,self).__init__()
 			pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
+			####
+			pdb.set_trace()
 			if "installLocation" in GlobalData.config['psseConfig'] and \
-			os.path.exists(GlobalData.config['psseConfig']['installLocation']+os.path.sep+'psspy.pyc'):
+			os.path.exists(os.path.join(GlobalData.config['psseConfig']['installLocation'],'psspy.pyc')):
 				pssePath = GlobalData.config['psseConfig']['installLocation']
-			sys.path.append(pssePath)
+			sys.path.insert(0,pssePath)
 			os.environ['PATH']+=';'+pssePath
+			####
+			pdb.set_trace()
 			import psspy
 
 			# psse
@@ -245,7 +250,7 @@ class PSSEModel(Dera):
 				outputConfig['outputfilename']+='.out'
 
 			outfile=os.path.join(outputConfig['outputDir'],outputConfig['outputfilename'])
-			if isinstance(outfile,unicode):
+			if six.PY2 and isinstance(outfile,unicode):
 				outfile=outfile.encode('ascii','ignore')
 			GlobalData.logger.log(10,'outfile:{}'.format(outfile))
 
@@ -310,9 +315,10 @@ class PSSEModel(Dera):
 						break
 				dyrDataStr+=','.join(entry+['\n'])
 
+			dyrPath=dyrPath.decode() if isinstance(dyrPath,bytes) else dyrPath
 			tempDyrPath=dyrPath.split('.dyr')[0]+'_temp.dyr'
 			tempDyrPath=os.path.abspath(tempDyrPath)
-			if isinstance(tempDyrPath,unicode):
+			if six.PY2 and isinstance(tempDyrPath,unicode):
 				tempDyrPath=tempDyrPath.encode('ascii','ignore')
 			f=open(tempDyrPath,'w')
 			f.write(dyrDataStr)

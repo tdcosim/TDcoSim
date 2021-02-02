@@ -6,6 +6,8 @@ import uuid
 import pdb
 import time
 
+import six
+
 from tdcosim.exceptionutil import ExceptionUtil
 
 
@@ -46,7 +48,7 @@ class GlobalData(ExceptionUtil):
 			# check encoding
 			if 'openDSSConfig' in self.config:
 				for entry in self.config['openDSSConfig']:
-					if isinstance(self.config['openDSSConfig'][entry],unicode):
+					if six.PY2 and isinstance(self.config['openDSSConfig'][entry],unicode):
 						self.config['openDSSConfig'][entry]=\
 						self.config['openDSSConfig'][entry].encode('ascii')
 				if 'manualFeederConfig' in self.config['openDSSConfig'] and \
@@ -54,10 +56,10 @@ class GlobalData(ExceptionUtil):
 					for entry in self.config['openDSSConfig']['manualFeederConfig']['nodes']:
 						if 'filePath' in entry:
 							for item in entry['filePath']:
-								if isinstance(item,unicode):
+								if six.PY2 and isinstance(item,unicode):
 									item=item.encode('ascii')
 			for entry in self.config['outputConfig']:
-				if isinstance(self.config['outputConfig'][entry],unicode):
+				if six.PY2 and isinstance(self.config['outputConfig'][entry],unicode):
 					self.config['outputConfig'][entry]=\
 					self.config['outputConfig'][entry].encode('ascii')
 

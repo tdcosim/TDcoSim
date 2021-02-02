@@ -4,8 +4,10 @@ import psutil
 import json
 import pdb
 
+import six
+
 from tdcosim.global_data import GlobalData
-from default_procedure import DefaultProcedure
+from tdcosim.procedure.default_procedure import DefaultProcedure
 from tdcosim.model.psse.psse_model import PSSEModel
 from tdcosim.model.opendss.opendss_model import OpenDSSModel
 from tdcosim.report import generate_excel_report
@@ -50,6 +52,8 @@ class DefaultDynamicProcedure(DefaultProcedure):
 				maxIter = GlobalData.config['simulationConfig']['protocol']['maxiteration']
 			eventData=GlobalData.config['simulationConfig']['dynamicConfig']['events']
 			events=eventData.keys()
+			if six.PY3:
+				events=list(events)
 			events.sort()
 
 			memory_threshold = GlobalData.config['simulationConfig']['memoryThreshold']
