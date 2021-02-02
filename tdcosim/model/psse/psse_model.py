@@ -17,15 +17,11 @@ class PSSEModel(Dera):
 		try:
 			super(PSSEModel,self).__init__()
 			pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
-			####
-			pdb.set_trace()
 			if "installLocation" in GlobalData.config['psseConfig'] and \
 			os.path.exists(os.path.join(GlobalData.config['psseConfig']['installLocation'],'psspy.pyc')):
 				pssePath = GlobalData.config['psseConfig']['installLocation']
 			sys.path.insert(0,pssePath)
 			os.environ['PATH']+=';'+pssePath
-			####
-			pdb.set_trace()
 			import psspy
 
 			# psse

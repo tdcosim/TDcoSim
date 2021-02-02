@@ -8,8 +8,6 @@ import pdb
 import six
 import xlsxwriter
 import pandas as pd
-####import psspy
-####import dyntools
 
 
 def generate_output(GlobalData,excel=True,dataframe=True,config=True):
@@ -164,6 +162,14 @@ def save_config(GlobalData):
 
 def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 		try:
+			####TODO: This is a temp fix for psspy import issue.
+			# psseConfig->installLocation is set in psse_model, if tdcosim.report, which uses psspy and dyntools,
+			# is imported when this module is loaded it could result in a) import error, b) wrong version
+			# imported or c) everything works fine because psse path is already set and the user is still
+			# pointing to the same path using psseConfig->installLocation. As a temp workaround lazy load  
+			import psspy
+			import dyntools
+
 			if not scenario:
 				scenario=uuid.uuid4().hex
 
