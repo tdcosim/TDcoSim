@@ -4,6 +4,7 @@ import json
 import pdb
 
 import psspy
+import six
 
 from .model import Dera
 from .post_process import PostProcess
@@ -171,8 +172,12 @@ class App(Dera):
 			mc=self.modelChanges['dera']
 
 			if solarPercentage>0:# update conf to have all busIDs
-				LogUtil.logger.info(\
-				'Updating conf to use {} for all load buses as solarPercentage>0'.format(conf.keys()[0]))
+				if six.PY2:
+					LogUtil.logger.info(\
+					'Updating conf to use {} for all load buses as solarPercentage>0'.format(conf.keys()[0]))
+				elif six.PY3:
+					LogUtil.logger.info(\
+					'Updating conf to use {} for all load buses as solarPercentage>0'.format(list(conf.keys())[0]))
 				# get load info
 				ierr,loadBusNumberAll=psspy.aloadint(-1,1,'NUMBER')
 				assert ierr==0,'psspy.aloadint failed with error {}'.format(ierr)
@@ -192,7 +197,10 @@ class App(Dera):
 						S.append(thisS)
 
 				# update
-				thisStandard=conf.keys()[0]
+				if six.PY2:
+					thisStandard=conf.keys()[0]
+				elif six.PY3:
+					thisStandard=list(conf.keys())[0]
 				conf={thisStandard:loadBusNumber}
 
 			# generate dera params and write .dya file

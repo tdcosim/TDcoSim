@@ -5,6 +5,8 @@ import socket
 import os
 import subprocess
 
+import six
+
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.global_data import GlobalData
 
@@ -54,9 +56,14 @@ class OpenDSSServer(object):
 			msg={}
 			msg['method']='setup'
 			msg['config'] = GlobalData.config
-			GlobalData.data['DNet']['Nodes'][nodeid]['conn'][0].send(json.dumps(msg))# send msg
-			reply=json.loads(GlobalData.data['DNet']['Nodes'][nodeid]['conn'][0].recv(
-			self._BUFFER_SIZE))
+			if six.PY2:
+				GlobalData.data['DNet']['Nodes'][nodeid]['conn'][0].send(json.dumps(msg))# send msg
+				reply=json.loads(GlobalData.data['DNet']['Nodes'][nodeid]['conn'][0].recv(
+				self._BUFFER_SIZE))
+			elif six.PY3:
+				GlobalData.data['DNet']['Nodes'][nodeid]['conn'][0].send(json.dumps(msg).encode())# send msg
+				reply=json.loads(GlobalData.data['DNet']['Nodes'][nodeid]['conn'][0].recv(
+				self._BUFFER_SIZE).decode('ascii'))
 		except:
 			OpenDSSData.log()
 
@@ -81,12 +88,18 @@ class OpenDSSServer(object):
 				msg['targetS']=targetS[entry]
 				msg['Vpcc']=Vpcc[entry]
 				msg['tol']=tol[entry]
-				GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg))# send msg
+				if six.PY2:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg))# send msg
+				elif six.PY3:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg).encode())# send msg
 
 			power={}
 			for entry in targetS.keys():# now receive replies
 				try:
-					msg = GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(self._BUFFER_SIZE)
+					if six.PY2:
+						msg = GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(self._BUFFER_SIZE)
+					elif six.PY3:
+						msg = GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(self._BUFFER_SIZE).decode('ascii')
 					power[entry]=json.loads(msg)
 				except ValueError:
 					power[entry]={"faied":1}
@@ -104,11 +117,17 @@ class OpenDSSServer(object):
 				msg['Vpu']=Vpu[entry]
 				msg['Vang']=0
 				msg['pccName']='Vsource.source'
-				GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg))# send msg
+				if six.PY2:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg))# send msg
+				elif six.PY3:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg).encode())# send msg
 		
 			replyMsg = {}
 			for entry in Vpu.keys():
-				ack = GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(self._BUFFER_SIZE)
+				if six.PY2:
+					ack = GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(self._BUFFER_SIZE)
+				elif six.PY3:
+					ack = GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(self._BUFFER_SIZE).decode('ascii')
 				replyMsg[entry]=json.loads(ack)
 		except:
 			OpenDSSData.log()
@@ -119,12 +138,19 @@ class OpenDSSServer(object):
 			# first send to all to allow computation to be run concurrently
 			for entry in GlobalData.data['DNet']['Nodes'].keys():
 				msg={'method':'getLoad','pccName':'Vsource.source'}
-				GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg))# send msg
-		
+				if six.PY2:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg))# send msg
+				elif six.PY3:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg).encode())# send msg
+
 			replyMsg = {}
 			for entry in GlobalData.data['DNet']['Nodes'].keys():
-				replyMsg[entry]=json.loads(\
-				GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(self._BUFFER_SIZE))
+				if six.PY2:
+					replyMsg[entry]=json.loads(\
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(self._BUFFER_SIZE))
+				elif six.PY3:
+					replyMsg[entry]=json.loads(\
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(self._BUFFER_SIZE).decode('ascii'))
 
 			return replyMsg
 		except:
@@ -136,12 +162,19 @@ class OpenDSSServer(object):
 			for entry in GlobalData.data['DNet']['Nodes'].keys():
 				msg={'method':'scaleLoad'}
 				msg['scale']=scale[entry]
-				GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg))# send msg
+				if six.PY2:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg))# send msg
+				elif six.PY3:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg).encode())# send msg
 
 			replyMsg={}
 			for entry in GlobalData.data['DNet']['Nodes'].keys():# now receive replies
-				replyMsg[entry]=json.loads(GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(
-				self._BUFFER_SIZE))
+				if six.PY2:
+					replyMsg[entry]=json.loads(GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(
+					self._BUFFER_SIZE))
+				elif six.PY3:
+					replyMsg[entry]=json.loads(GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(
+					self._BUFFER_SIZE).decode('ascii'))
 
 			return replyMsg
 		except:
@@ -156,12 +189,19 @@ class OpenDSSServer(object):
 				thisMsg={}
 				thisMsg['method']='monitor'
 				thisMsg['varName']=msg['varName'][entry]
-				GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(thisMsg))# send msg
+				if six.PY2:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(thisMsg))# send msg
+				elif six.PY3:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(thisMsg).encode())# send msg
 
 			replyMsg={}
 			for entry in GlobalData.data['DNet']['Nodes'].keys():# now receive replies
-				replyMsg[entry]=json.loads(GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(
-				self._BUFFER_SIZE))
+				if six.PY2:
+					replyMsg[entry]=json.loads(GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(
+					self._BUFFER_SIZE))
+				elif six.PY3:
+					replyMsg[entry]=json.loads(GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(
+					self._BUFFER_SIZE).decode('ascii'))
 
 			return replyMsg
 		except:
@@ -173,12 +213,19 @@ class OpenDSSServer(object):
 			# first send to all to allow computation to be run concurrently
 			for entry in GlobalData.data['DNet']['Nodes'].keys():
 				msg={'COMM_END':1}
-				GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg))# send msg
-		
+				if six.PY2:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg))# send msg
+				elif six.PY3:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg).encode())# send msg
+
 			replyMsg = {}
 			for entry in GlobalData.data['DNet']['Nodes'].keys():
-				replyMsg[entry]=json.loads(GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(
-				self._BUFFER_SIZE))
+				if six.PY2:
+					replyMsg[entry]=json.loads(GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(
+					self._BUFFER_SIZE))
+				elif six.PY3:
+					replyMsg[entry]=json.loads(GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(
+					self._BUFFER_SIZE).decode('ascii'))
 
 			return replyMsg
 		except:

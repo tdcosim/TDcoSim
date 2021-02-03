@@ -268,7 +268,10 @@ class PSSEModel(Dera):
 							# be interfaced by default to load identifier "1"
 							ierr,val=self._psspy.loddt2(entry['nodenumber'],'1','TOTAL','ACT')
 							assert ierr==0,"loddt2 failed with error {}".format(ierr)
-							thisAggregatedLoadType=entry['fractionAggregatedLoad'].keys()[0]
+							if six.PY2:
+								thisAggregatedLoadType=entry['fractionAggregatedLoad'].keys()[0]
+							elif six.PY3:
+								thisAggregatedLoadType=list(entry['fractionAggregatedLoad'].keys())[0]
 							targetS[entry['nodenumber']]=[val.real*10**3,val.imag*10**3]
 
 			return targetS,Vpcc
@@ -484,7 +487,10 @@ class PSSEModel(Dera):
 					if 'fractionAggregatedLoad' in GlobalData.data['DNet']['Nodes'][busID]:
 						fractionAggregatedLoadData=\
 						GlobalData.data['DNet']['Nodes'][busID]['fractionAggregatedLoad']
-						thisAggregatedLoadType=fractionAggregatedLoadData.keys()[0]
+						if six.PY2:
+							thisAggregatedLoadType=fractionAggregatedLoadData.keys()[0]
+						elif six.PY3:
+							thisAggregatedLoadType=list(fractionAggregatedLoadData.keys())[0]
 						# percentage of solar based on percentage of fractionFeederLoad
 						fractionFeederLoad=1-fractionAggregatedLoadData[thisAggregatedLoadType]
 						reductionPercent=reductionPercent*fractionFeederLoad
@@ -645,8 +651,12 @@ class PSSEModel(Dera):
 		and changes WMOD to 1."""
 		try:
 			if solarPercentage>0 and not conf:# update conf to have all busIDs
-				LogUtil.logger.info(\
-				'Updating conf to use {} for all load buses as solarPercentage>0'.format(conf.keys()[0]))
+				if six.PY2:
+					LogUtil.logger.info(\
+					'Updating conf to use {} for all load buses as solarPercentage>0'.format(conf.keys()[0]))
+				elif six.PY3:
+					LogUtil.logger.info(\
+					'Updating conf to use {} for all load buses as solarPercentage>0'.format(list(conf.keys())[0]))
 				# get load info
 				ierr,loadBusNumberAll=self._psspy.aloadint(-1,1,'NUMBER')
 				assert ierr==0,'psspy.aloadint failed with error {}'.format(ierr)
@@ -666,7 +676,10 @@ class PSSEModel(Dera):
 						S.append(thisS)
 
 				# update
-				thisStandard=conf.keys()[0]
+				if six.PY2:
+					thisStandard=conf.keys()[0]
+				elif six.PY3:
+					thisStandard=list(conf.keys())[0]
 				conf={thisStandard:loadBusNumber}
 			else:
 				deraBuses=[]
@@ -676,7 +689,10 @@ class PSSEModel(Dera):
 				if not rating:
 					rating=[self.__dera_rating_default['default']]*len(deraBuses)
 
-				thisStandard=conf.keys()[0]
+				if six.PY2:
+					thisStandard=conf.keys()[0]
+				elif six.PY3:
+					thisStandard=list(conf.keys())[0]
 				loadBusNumber=conf[thisStandard]
 				S=[]
 				for thisBus in loadBusNumber:

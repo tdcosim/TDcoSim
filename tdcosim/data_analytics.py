@@ -12,6 +12,7 @@ import psspy
 import dyntools
 import pandas as pd
 import matplotlib.pyplot as plt
+import six
 
 
 class DataAnalytics(object):
@@ -240,8 +241,10 @@ class DataAnalytics(object):
 		"""Returns list of time"""
 		try:
 			dnodeid_dict = self.get_dnodeids_der(df)
-			
-			time_values = df[df.dnodeid==dnodeid_dict[dnodeid_dict.keys()[0]][0]].time
+			if six.PY2:
+				time_values = df[df.dnodeid==dnodeid_dict[dnodeid_dict.keys()[0]][0]].time
+			elif six.PY3:
+				time_values = df[df.dnodeid==dnodeid_dict[list(dnodeid_dict.keys())[0]][0]].time
 			return time_values
 		except:
 			raise

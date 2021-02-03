@@ -5,12 +5,16 @@ import socket
 import pdb
 import json
 
+import six
+
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.procedure.opendss_procedure import OpenDSSProcedure
 
 #===================================================================================================
 def findConfig(nodeid):
 	try:
+		if isinstance(nodeid,str):
+			nodeid=int(nodeid)
 		if nodeid > 0 and 'manualFeederConfig' in OpenDSSData.config['openDSSConfig'] and \
 		'nodes' in OpenDSSData.config['openDSSConfig']['manualFeederConfig']:
 			for x in OpenDSSData.config['openDSSConfig']['manualFeederConfig']['nodes']:
@@ -40,11 +44,16 @@ if __name__=="__main__":
 		while comm_end==0:
 			replyMsg = {}
 			raw = c.recv(BUFFER_SIZE)
+			if six.PY3:
+				raw=raw.decode('ascii')
 			
 			msg=json.loads(raw)# expect the msg to be of json format
-			if msg.has_key('COMM_END'):
+			if 'COMM_END' in msg:
 				comm_end=1
-				c.send(json.dumps({"shutdown":1}))# reply back to handler
+				if six.PY2:
+					c.send(json.dumps({"shutdown":1}))# reply back to handler
+				elif six.PY3:
+					c.send(json.dumps({"shutdown":1}).encode())# reply back to handler
 				c.shutdown(0)
 				c.close() # close comm with server
 				OpenDSSData.log(level=20,msg="Open DSS Client {} is ended".format(nodeid))
@@ -65,7 +74,11 @@ if __name__=="__main__":
 				dssProcedure.scaleLoad(scale=msg['scale'])
 			elif msg['method'].lower()=='monitor':
 				replyMsg=dssProcedure.monitor(msg=msg['varName'])
-			c.send(json.dumps(replyMsg))# reply back to handler
+			
+			if six.PY2:
+				c.send(json.dumps(replyMsg))# reply back to handler
+			elif six.PY3:
+				c.send(json.dumps(replyMsg).encode())# reply back to handler
 	except:
 		OpenDSSData.log("Error in OpenDSS Client {}".format(nodeid))
 
