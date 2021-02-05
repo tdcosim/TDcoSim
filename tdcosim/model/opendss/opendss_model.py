@@ -148,7 +148,7 @@ class OpenDSSModel(object):
 
 			for key in entry['DERParameters']:
 				#PYTHON3: isinstance(entry['DERParameters'][key], str)
-				if isinstance(entry['DERParameters'][key], basestring):
+				if isinstance(entry['DERParameters'][key], str):
 					if entry['DERParameters'][key].lower() == 'true':
 						DNet['Nodes'][nodenumber][key] = True
 					elif entry['DERParameters'][key].lower() == 'false':

@@ -2,6 +2,7 @@ import cmath
 import math
 import pdb
 
+import six
 import numpy as np
 from scipy.integrate import ode
 from pvder.DER_wrapper import DERModel
@@ -124,6 +125,8 @@ class PVDERAggregatedModel(object):
 				thisNode['Vmag']={}
 
 			self.pvIDIndex=self._pvders.keys() # index for variables based on ID
+			if six.PY3:
+				self.pvIDIndex=list(self.pvIDIndex)
 			self.pvIDIndex.sort()# sort the index and use this as the order
 
 			y0=[]; t0=0.0

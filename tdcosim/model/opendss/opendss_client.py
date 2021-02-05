@@ -48,6 +48,7 @@ if __name__=="__main__":
 				raw=raw.decode('ascii')
 			
 			msg=json.loads(raw)# expect the msg to be of json format
+			OpenDSSData.logger.debug('recvmsg={}'.format(msg))
 			if 'COMM_END' in msg:
 				comm_end=1
 				if six.PY2:
@@ -75,10 +76,12 @@ if __name__=="__main__":
 			elif msg['method'].lower()=='monitor':
 				replyMsg=dssProcedure.monitor(msg=msg['varName'])
 			
+			OpenDSSData.logger.debug('replyMsg={}'.format(msg))
 			if six.PY2:
 				c.send(json.dumps(replyMsg))# reply back to handler
 			elif six.PY3:
 				c.send(json.dumps(replyMsg).encode())# reply back to handler
+			OpenDSSData.logger.debug('sent reply to server')
 	except:
-		OpenDSSData.log("Error in OpenDSS Client {}".format(nodeid))
+		OpenDSSData.log(40,"Error in OpenDSS Client {}".format(nodeid))
 
