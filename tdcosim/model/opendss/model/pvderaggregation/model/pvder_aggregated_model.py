@@ -92,7 +92,7 @@ class PVDERAggregatedModel(object):
 				invalid_nodes = set(myconfig['DERParameters']['PVPlacement'].keys()).difference(
 				threePhaseNode)
 				if not invalid_nodes:
-					threePhaseNode=myconfig['DERParameters']['PVPlacement'].keys()
+					threePhaseNode=list(myconfig['DERParameters']['PVPlacement']) #Get list of D nodes
 				else:
 					raise ValueError('Config file contains following invalid nodes:{}'.format(
 					invalid_nodes))
