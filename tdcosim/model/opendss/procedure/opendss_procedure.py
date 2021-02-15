@@ -1,7 +1,7 @@
 from tdcosim.model.opendss.model.opendss_interface import OpenDSSInterface
 from tdcosim.model.opendss.model.pvderaggregation.procedure.pvder_aggregated_procedure import PVDERAggregatedProcedure
 from tdcosim.model.opendss.opendss_data import OpenDSSData
-
+import time
 
 class OpenDSSProcedure(object):
 	def __init__(self):
@@ -23,23 +23,26 @@ class OpenDSSProcedure(object):
 		try:
 			derP = {}
 			derQ = {}
-
+			n_pre_run_steps = 200
+			
 			if OpenDSSData.config['myconfig']['solarFlag']:
 				# Re-setup DER after reload the OpenDSS
 				S0 = self._opendssinterface.getLoads()
 				V0 = self._opendssinterface.getVoltage(vtype='actual')
 				pvdermap = self._pvderAggProcedure.setup(S0, V0)
-				self._opendssinterface.setupDER(pvdermap)			
-				for n in range(200):# synchronize
+				self._opendssinterface.setupDER(pvdermap)
+				tic = time.perf_counter()
+				for n in range(n_pre_run_steps):# synchronize
 					V = self._opendssinterface.getVoltage(vtype='actual')
 					derP, derQ = self._pvderAggProcedure.run(V)
 					self._opendssinterface.pvderInjection(derP, derQ)
 					P,Q,Converged = self._opendssinterface.getS(pccName='Vsource.source')
-
+				toc = time.perf_counter()
+				OpenDSSData.log(level=20,msg="Completed {} steps pre-run at {:.3f} seconds in {:.3f} seconds".format(\
+								n_pre_run_steps,toc,toc - tic))
+			
 			P, Q, convergedFlg = self._opendssinterface.initialize(Vpcc, targetS, tol)
-		
-			OpenDSSData.log(level=20,msg="completed initialize with P:{},Q:{},convergedFlg:{}".format(\
-			P,Q,convergedFlg))
+			OpenDSSData.log(level=20,msg="Completed initialize with P:{},Q:{},convergedFlg:{}".format(P,Q,convergedFlg))
 			return P, Q
 		except:
 			OpenDSSData.log()

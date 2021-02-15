@@ -39,7 +39,7 @@ class PVDERModel(object):
 				DERParameters = OpenDSSData.config['myconfig']['DERParameters']
 
 				if DERSetting == 'default':
-					pvderConfig = self.get_derconfig(DERParameters['default'])
+					pvderConfig = {}#self.get_derconfig(DERParameters['default'])
 					DERArguments = self.get_derarguments(DERParameters['default'])
 					
 				elif DERSetting == 'PVPlacement': # for manual feeder config based on PVPlacement
