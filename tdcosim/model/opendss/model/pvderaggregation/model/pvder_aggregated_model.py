@@ -24,7 +24,7 @@ class PVDERAggregatedModel(object):
 		OpenDSSData.data['DNet']['DER']['PVDERMap'] = {}
 		self._pvders = {}
 		self._nEqs = {}
-		self.der_solver_type = "scipy"#GlobalData.config['openDSSConfig']['odeSolver'].lower()
+		self.der_solver_type = "diffeqpy"#"scipy"#GlobalData.config['openDSSConfig']['odeSolver'].lower()
 
 
 #===================================================================================================
@@ -37,11 +37,12 @@ class PVDERAggregatedModel(object):
 			if self.der_solver_type == "diffeqpy":
 				#OpenDSSData.log(level=10,msg='Importing diffeqpy')
 				tic = time.perf_counter()
-				from diffeqpy import de
+				from diffeqpy import ode
+				#from diffeqpy import de
 				#from julia import Main
 				#from julia import LinearAlgebra
 				toc = time.perf_counter()
-				self.de = de
+				self.de = ode
 				OpenDSSData.log(level=10,msg="Time taken to import 'diffeqpy':{:.3f}".format(toc - tic))
 				
 				#LinearAlgebra.BLAS.set_num_threads(18) #Set number of threads to be used by DiffEqPy if required
