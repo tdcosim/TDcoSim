@@ -11,30 +11,30 @@ from pvder import utility_functions
 
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.model.pvderaggregation.procedure.pvder_procedure import PVDERProcedure
+from tdcosim.global_data import GlobalData
 import time
 
-USE_DIFFEQPY = False
 
 class PVDERAggregatedModel(object):
 #===================================================================================================
 	def __init__(self):
 		OpenDSSData.data['DNet']['DER'] = {}
 		OpenDSSData.data['DNet']['DER']['PVDERData'] = {}
-		OpenDSSData.data['DNet']['DER']['PVDERData'].update({'lowSideV':{},'PNominal':{},
-		'QNominal':{}})
+		OpenDSSData.data['DNet']['DER']['PVDERData'].update({'lowSideV':{},'PNominal':{},'QNominal':{}})
 		OpenDSSData.data['DNet']['DER']['PVDERMap'] = {}
 		self._pvders = {}
 		self._nEqs = {}
-		#self.use_diffeqpy(useDiffeqpy=USE_DIFFEQPY) #Don't import diffeqpy here
+		self.der_solver_type = "scipy"#GlobalData.config['openDSSConfig']['odeSolver'].lower()
+
 
 #===================================================================================================
-	def use_diffeqpy(self,useDiffeqpy=False):
+	def import_diffeqpy(self):
 		"""Import diffeqpy using lazy loading so that loading happens only if required and loads in parallel.
 		Args:
 			 useDiffeqpy (boolean): Whether to use diffeqpy 
 		"""
 		try:
-			if useDiffeqpy:
+			if self.der_solver_type == "diffeqpy":
 				#OpenDSSData.log(level=10,msg='Importing diffeqpy')
 				tic = time.perf_counter()
 				from diffeqpy import de
@@ -84,7 +84,7 @@ class PVDERAggregatedModel(object):
 			# set the random number seed
 			randomSeed = 2500
 			np.random.seed(randomSeed)
-			self.use_diffeqpy(useDiffeqpy=USE_DIFFEQPY) #Load diffeqpy if required as an attribute
+			self.import_diffeqpy() #Import diffeqpy if required as an attribute
 			DNet=OpenDSSData.data['DNet']
 			myconfig=OpenDSSData.config['myconfig']
 			if myconfig['DERSetting'] == 'PVPlacement':
@@ -161,24 +161,26 @@ class PVDERAggregatedModel(object):
 				self._nEqs[self.pvIDIndex[n]]=self._pvders[self.pvIDIndex[n]]._pvderModel.PV_model.n_ODE
 			
 			tic = time.perf_counter()
-			if not USE_DIFFEQPY:
+			if self.der_solver_type == "scipy":
 				self.integrator=ode(self.funcval,self.jac).set_integrator('vode',method='bdf',rtol=1e-4,atol=1e-4)
 				self.integrator.set_initial_value(y0,t0)
-			else:
-				solver_type = self.de.TRBDF2()#KenCarp4()#de.TRBDF2()
+			elif self.der_solver_type == "diffeqpy":
+				solver_type = self.de.TRBDF2()#KenCarp4()#TRBDF2()
 				julia_f = self.de.ODEFunction(self.funcval_diffeqpy, jac=self.jac_diffeqpy)
 				diffeqpy_ode = self.de.ODEProblem(julia_f, y0, (t0, 1/120.),[])
 				self.integrator = self.de.init(diffeqpy_ode,solver_type,saveat=1/120.,abstol=1e-4,reltol=1e-4)#
+			else:
+				raise ValueError("{} is not a valid DER model solver type - valid solvers are:scipy,diffeqpy".format(self.der_solver_type))
 			toc = time.perf_counter()
-			OpenDSSData.log(level=10,msg="Integrator initialized  at {:.3f} seconds in {:.3f} seconds with DiffEqPy = {}".format(toc,toc - tic,USE_DIFFEQPY))
+			OpenDSSData.log(level=10,msg="{} integrator initialized  at {:.3f} seconds in {:.3f} seconds".format(self.der_solver_type,toc,toc - tic))
 			
 			tic = time.perf_counter()
-			if not USE_DIFFEQPY:
+			if self.der_solver_type == "scipy":
 				y=self.integrator.integrate(self.integrator.t+1/120.)
-			else:
+			elif self.der_solver_type == "diffeqpy":
 				self.de.step_b(self.integrator,1/120.,True)
 			toc = time.perf_counter()
-			OpenDSSData.log(level=20,msg="Test integration completed at {:.3f} seconds in {:.3f} seconds with DiffEqPy = {}".format(toc,toc - tic,USE_DIFFEQPY))
+			OpenDSSData.log(level=10,msg="{} test integration completed at {:.3f} seconds in {:.3f} seconds".format(self.der_solver_type,toc,toc - tic))
 			return DNet['DER']['PVDERMap']
 		except:
 			OpenDSSData.log(msg="Failed Setup PVDERAGG")
@@ -291,9 +293,9 @@ class PVDERAggregatedModel(object):
 						thisPV.prerun(Va,Vb,Vc)
 
 			# single large integrator for all pvder instances
-			if not USE_DIFFEQPY:
+			if self.der_solver_type == "scipy":
 				y=self.integrator.integrate(self.integrator.t+dt)
-			else:
+			elif self.der_solver_type == "diffeqpy":
 				self.de.step_b(self.integrator,dt,True)
 				y = self.integrator.u
 			# postrun for all pvder instances
