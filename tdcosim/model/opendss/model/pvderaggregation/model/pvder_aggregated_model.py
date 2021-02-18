@@ -11,7 +11,6 @@ from pvder import utility_functions
 
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.model.pvderaggregation.procedure.pvder_procedure import PVDERProcedure
-from tdcosim.global_data import GlobalData
 import time
 
 
@@ -24,14 +23,10 @@ class PVDERAggregatedModel(object):
 		OpenDSSData.data['DNet']['DER']['PVDERMap'] = {}
 		self._pvders = {}
 		self._nEqs = {}
-		self.der_solver_type = "diffeqpy"#"scipy"#GlobalData.config['openDSSConfig']['odeSolver'].lower()
-
 
 #===================================================================================================
 	def import_diffeqpy(self):
-		"""Import diffeqpy using lazy loading so that loading happens only if required and loads in parallel.
-		Args:
-			 useDiffeqpy (boolean): Whether to use diffeqpy 
+		"""Import diffeqpy using lazy loading and creates an attribute so that loading happens only if required and loads in parallel.
 		"""
 		try:
 			if self.der_solver_type == "diffeqpy":
@@ -75,7 +70,7 @@ class PVDERAggregatedModel(object):
 									standAlone=False,steadyStateInitialization=True)
 			self.PV_model = PVDER_model.DER_model
 
-			return DER_model.S_PCC.real*DER_model.Sbase,DER_model.S_PCC.imag*DER_model.Sbase	
+			return DER_model.S_PCC.real*DER_model.Sbase,DER_model.S_PCC.imag*DER_model.Sbase
 		except:
 			OpenDSSData.log()
 
@@ -85,6 +80,7 @@ class PVDERAggregatedModel(object):
 			# set the random number seed
 			randomSeed = 2500
 			np.random.seed(randomSeed)
+			self.der_solver_type = OpenDSSData.config['myconfig']['DEROdeSolver']#"scipy"#"diffeqpy"
 			self.import_diffeqpy() #Import diffeqpy if required as an attribute
 			DNet=OpenDSSData.data['DNet']
 			myconfig=OpenDSSData.config['myconfig']
