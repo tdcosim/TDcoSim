@@ -5,7 +5,7 @@
 		"rawFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.raw",
 		"dyrFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.dyr"		
 	},
-	"openDSSConfig":{		
+	"openDSSConfig":{"DEROdeSolver":"scipy",
 		"defaultFeederConfig":{
 			"filePath":["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
 			"solarFlag":0,
