@@ -32,6 +32,8 @@ class OpenDSSModel(object):
 					DNet['Nodes'][entry['nodenumber']]={}
 					DNet['Nodes'][entry['nodenumber']]['filepath'] = entry['filePath'][0]
 					if 'solarFlag' in entry and entry['solarFlag']==1:
+						if 'DEROdeSolver' in openDSSConfig:
+							entry['DEROdeSolver'] = openDSSConfig['DEROdeSolver']
 						self.setDERParameter(entry, entry['nodenumber'])
 					if adjustOpPoint:
 						totalSolarGen+=TNet['BusRealPowerLoad'][entry['nodenumber']]*\
@@ -124,7 +126,7 @@ class OpenDSSModel(object):
 			baseDir=os.path.dirname(os.path.abspath(__file__))
 			defaults=json.load(open(os.path.join(baseDir,'defaults.json')))
 			DNet=GlobalData.data['DNet']
-
+			
 			for item in defaults:
 				if item not in entry:
 					entry[item]=defaults[item]

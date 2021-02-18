@@ -11,6 +11,7 @@ from pvder import utility_functions
 
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.model.pvderaggregation.procedure.pvder_procedure import PVDERProcedure
+import time
 
 
 class PVDERAggregatedModel(object):
@@ -18,11 +19,32 @@ class PVDERAggregatedModel(object):
 	def __init__(self):
 		OpenDSSData.data['DNet']['DER'] = {}
 		OpenDSSData.data['DNet']['DER']['PVDERData'] = {}
-		OpenDSSData.data['DNet']['DER']['PVDERData'].update({'lowSideV':{},'PNominal':{},
-		'QNominal':{}})
+		OpenDSSData.data['DNet']['DER']['PVDERData'].update({'lowSideV':{},'PNominal':{},'QNominal':{}})
 		OpenDSSData.data['DNet']['DER']['PVDERMap'] = {}
 		self._pvders = {}
 		self._nEqs = {}
+
+#===================================================================================================
+	def import_diffeqpy(self):
+		"""Import diffeqpy using lazy loading and creates an attribute so that loading happens only if required and loads in parallel.
+		"""
+		try:
+			if self.der_solver_type == "diffeqpy":
+				#OpenDSSData.log(level=10,msg='Importing diffeqpy')
+				tic = time.perf_counter()
+				from diffeqpy import ode
+				#from diffeqpy import de
+				#from julia import Main
+				#from julia import LinearAlgebra
+				toc = time.perf_counter()
+				self.de = ode
+				OpenDSSData.log(level=10,msg="Time taken to import 'diffeqpy':{:.3f}".format(toc - tic))
+				
+				#LinearAlgebra.BLAS.set_num_threads(18) #Set number of threads to be used by DiffEqPy if required
+				#OpenDSSData.log(level=20,msg=Main.eval("ccall((:openblas_get_num_threads64_, Base.libblas_name), Cint, ())")) #Show number of threads being used by DiffEqPy
+		
+		except:
+			OpenDSSData.log()
 
 #===================================================================================================
 	def getDERRatedPower(self,powerRating,voltageRating):
@@ -48,7 +70,7 @@ class PVDERAggregatedModel(object):
 									standAlone=False,steadyStateInitialization=True)
 			self.PV_model = PVDER_model.DER_model
 
-			return DER_model.S_PCC.real*DER_model.Sbase,DER_model.S_PCC.imag*DER_model.Sbase	
+			return DER_model.S_PCC.real*DER_model.Sbase,DER_model.S_PCC.imag*DER_model.Sbase
 		except:
 			OpenDSSData.log()
 
@@ -58,7 +80,8 @@ class PVDERAggregatedModel(object):
 			# set the random number seed
 			randomSeed = 2500
 			np.random.seed(randomSeed)
-
+			self.der_solver_type = OpenDSSData.config['myconfig']['DEROdeSolver']#"scipy"#"diffeqpy"
+			self.import_diffeqpy() #Import diffeqpy if required as an attribute
 			DNet=OpenDSSData.data['DNet']
 			myconfig=OpenDSSData.config['myconfig']
 			if myconfig['DERSetting'] == 'PVPlacement':
@@ -133,11 +156,28 @@ class PVDERAggregatedModel(object):
 			for n in range(len(self.pvIDIndex)):
 				y0.extend(self._pvders[self.pvIDIndex[n]]._pvderModel.lastSol)
 				self._nEqs[self.pvIDIndex[n]]=self._pvders[self.pvIDIndex[n]]._pvderModel.PV_model.n_ODE
-
-			self.integrator=ode(self.funcval,self.jac).set_integrator('vode',method='bdf',
-			rtol=1e-4,atol=1e-4)
-			self.integrator.set_initial_value(y0,t0)
-
+			
+			tic = time.perf_counter()
+			if self.der_solver_type == "scipy":
+				self.integrator=ode(self.funcval,self.jac).set_integrator('vode',method='bdf',rtol=1e-4,atol=1e-4)
+				self.integrator.set_initial_value(y0,t0)
+			elif self.der_solver_type == "diffeqpy":
+				solver_type = self.de.TRBDF2()#KenCarp4()#TRBDF2()
+				julia_f = self.de.ODEFunction(self.funcval_diffeqpy, jac=self.jac_diffeqpy)
+				diffeqpy_ode = self.de.ODEProblem(julia_f, y0, (t0, 1/120.),[])
+				self.integrator = self.de.init(diffeqpy_ode,solver_type,saveat=1/120.,abstol=1e-4,reltol=1e-4)#
+			else:
+				raise ValueError("{} is not a valid DER model solver type - valid solvers are:scipy,diffeqpy".format(self.der_solver_type))
+			toc = time.perf_counter()
+			OpenDSSData.log(level=10,msg="{} integrator initialized  at {:.3f} seconds in {:.3f} seconds".format(self.der_solver_type,toc,toc - tic))
+			
+			tic = time.perf_counter()
+			if self.der_solver_type == "scipy":
+				y=self.integrator.integrate(self.integrator.t+1/120.)
+			elif self.der_solver_type == "diffeqpy":
+				self.de.step_b(self.integrator,1/120.,True)
+			toc = time.perf_counter()
+			OpenDSSData.log(level=10,msg="{} test integration completed at {:.3f} seconds in {:.3f} seconds".format(self.der_solver_type,toc,toc - tic))
 			return DNet['DER']['PVDERMap']
 		except:
 			OpenDSSData.log(msg="Failed Setup PVDERAGG")
@@ -212,6 +252,26 @@ class PVDERAggregatedModel(object):
 			OpenDSSData.log()
 
 #===================================================================================================
+	def funcval_diffeqpy(self,dy,y,p,t):
+		try:
+			for n in range(len(self.pvIDIndex)):
+				dy[n*self._nEqs[n]:(n+1)*self._nEqs[n]] = self._pvders[self.pvIDIndex[n]]._pvderModel.sim.ODE_model(y[n*self._nEqs[n]:(n+1)*self._nEqs[n]],t)
+			return dy
+		except:
+			OpenDSSData.log()
+
+#===================================================================================================
+	def jac_diffeqpy(self,J,y,p,t):
+		try:
+			for n in range(len(self.pvIDIndex)):
+				thisJ=self._pvders[self.pvIDIndex[n]]._pvderModel.sim.jac_ODE_model(y[n*self._nEqs[n]:(n+1)*self._nEqs[n]],t)
+				row,col=np.where(thisJ)
+				J[n*self._nEqs[n]+row,n*self._nEqs[n]+col]=thisJ[thisJ!=0]
+			return J
+		except:
+			OpenDSSData.log()
+
+#===================================================================================================
 	def run(self, V,nEqs=23,dt=1/120.):
 		try:
 			P = {}
@@ -230,8 +290,11 @@ class PVDERAggregatedModel(object):
 						thisPV.prerun(Va,Vb,Vc)
 
 			# single large integrator for all pvder instances
-			y=self.integrator.integrate(self.integrator.t+dt)
-
+			if self.der_solver_type == "scipy":
+				y=self.integrator.integrate(self.integrator.t+dt)
+			elif self.der_solver_type == "diffeqpy":
+				self.de.step_b(self.integrator,dt,True)
+				y = self.integrator.u
 			# postrun for all pvder instances
 			for node in OpenDSSData.data['DNet']['DER']['PVDERMap']:# compute solar inj at each node
 				sP=0; sQ=0

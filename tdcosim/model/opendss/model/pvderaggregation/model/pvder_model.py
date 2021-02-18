@@ -32,19 +32,16 @@ class PVDERModel(object):
 			SinglePhase = False
 			
 			if 'myconfig' in OpenDSSData.config and 'DERParameters' in OpenDSSData.config['myconfig']:
-				#pvderConfig = copy.deepcopy(OpenDSSData.config['myconfig']['DERParameters'])
 				DERFilePath = OpenDSSData.config['myconfig']['DERFilePath']
 				DERModelType = OpenDSSData.config['myconfig']['DERModelType']
 				DERSetting = OpenDSSData.config['myconfig']['DERSetting']
 				DERParameters = OpenDSSData.config['myconfig']['DERParameters']
 
 				if DERSetting == 'default':
-					pvderConfig = self.get_derconfig(DERParameters['default'])
 					DERArguments = self.get_derarguments(DERParameters['default'])
 					
 				elif DERSetting == 'PVPlacement': # for manual feeder config based on PVPlacement
 					if nodeid in DERParameters['PVPlacement']:
-						pvderConfig = self.get_derconfig(DERParameters['PVPlacement'][nodeid])
 						DERArguments = self.get_derarguments(DERParameters['PVPlacement'][nodeid])
 					else:
 						raise ValueError('Distribution node {} not found in config file!'.format(nodeid))
@@ -60,7 +57,6 @@ class PVDERModel(object):
 				OpenDSSData.logger.info('DERParameters not found in "OpenDSSData" object - '+\
 				'using default ratings and parameters!')
 				DERArguments = {}
-				pvderConfig = {}
 				SteadyState = True
 				if SinglePhase:
 					powerRating = 10.0e3
@@ -68,7 +64,6 @@ class PVDERModel(object):
 					powerRating = 50.0e3
 				DERLocation = 'node_' + nodeid 
 
-				DERArguments.update({'pvderConfig':pvderConfig})
 				DERArguments.update({'powerRating':powerRating}) 
 				DERArguments.update({'SteadyState':SteadyState}) 
 
@@ -81,7 +76,6 @@ class PVDERModel(object):
 			Vc = (V0['c']/a)
 			
 			DERArguments.update({'identifier':DERLocation})
-			DERArguments.update({'derConfig':pvderConfig})
 			DERArguments.update({'standAlone':False})
 			
 			DERArguments.update({'gridFrequency':2*math.pi*60.0})
@@ -108,18 +102,6 @@ class PVDERModel(object):
 			self.lastT=0
 		except:
 			OpenDSSData.log(msg="Failed Setup PVDER at node:{}!".format(nodeid))
-
-#===================================================================================================
-	def get_derconfig(self,DERParameters):
-		"""DER config."""
-		try:
-			derConfig = {}
-			for entry in DERParameters:
-				if entry in templates.VRT_config_template.keys():
-					derConfig.update({entry:DERParameters[entry]})
-			return derConfig
-		except:
-			OpenDSSData.log()
 
 #===================================================================================================
 	def get_derarguments(self,DERParameters):
