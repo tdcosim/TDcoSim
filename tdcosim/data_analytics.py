@@ -6,10 +6,6 @@ import os
 import sys
 import inspect
 
-pssePath="C:\Program Files (x86)\PTI\PSSE33\PSSBIN"
-sys.path.append(pssePath)
-import psspy
-import dyntools
 import pandas as pd
 import matplotlib.pyplot as plt
 import six
@@ -129,6 +125,16 @@ class DataAnalytics(object):
 #===================================================================================================
 	def _dict2df_outfile(self,data,scenarioid='1',simType='tonly'):
 		try:
+
+			pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
+			if "installLocation" in GlobalData.config['psseConfig'] and \
+			os.path.exists(os.path.join(GlobalData.config['psseConfig']['installLocation'],'psspy.pyc')):
+				pssePath = GlobalData.config['psseConfig']['installLocation']
+			sys.path.insert(0,pssePath)
+			os.environ['PATH']+=';'+pssePath
+			import psspy			
+			import dyntools
+
 			outfile = data # path to file
 			outfile=outfile.encode('ascii')
 			assert os.path.exists(outfile),"{} does not exist".format(outfile)

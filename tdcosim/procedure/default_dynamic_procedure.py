@@ -10,7 +10,7 @@ from tdcosim.global_data import GlobalData
 from tdcosim.procedure.default_procedure import DefaultProcedure
 from tdcosim.model.psse.psse_model import PSSEModel
 from tdcosim.model.opendss.opendss_model import OpenDSSModel
-from tdcosim.report import generate_excel_report
+from tdcosim.report import generateReport
 
 
 class DefaultDynamicProcedure(DefaultProcedure):
@@ -107,10 +107,9 @@ class DefaultDynamicProcedure(DefaultProcedure):
 							stepThreshold=int(memory_threshold/memUseRate)
 							GlobalData.log(level=10,msg="Step Threshhold: " + str(stepThreshold))
 						elif stepCount>1 and stepCount%stepThreshold==0:
-							ffullpath = str(GlobalData.config["outputPath"]+\
-							"\\report{}.xlsx".format(nPart))
+							ffullpath = str("report{}.xlsx".format(nPart))
 							stype = str(GlobalData.config['simulationConfig']['simType'])
-							generate_excel_report(GlobalData,fname=ffullpath,sim=stype)
+							generateReport(GlobalData,fname=ffullpath,sim=stype)
 							GlobalData.log(level=10,msg="generated report part" + str(nPart))
 							GlobalData.data['monitorData']={}# empty data
 							GlobalData.data['TNet']['Dynamic']={}# empty data
@@ -132,6 +131,10 @@ class DefaultDynamicProcedure(DefaultProcedure):
 									break;
 						if DSSconvergenceFlg is False:
 							GlobalData.log(msg='OpenDSS Convergence Failed')
+			ffullpath = str("report{}.xlsx".format(nPart))
+			stype = str(GlobalData.config['simulationConfig']['simType'])
+			generateReport(GlobalData,fname=ffullpath,sim=stype)
+
 			# close
 			print('')# for newline
 			ack=self._dnet_model.close()

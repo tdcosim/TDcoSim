@@ -1,7 +1,7 @@
 {
   "cosimHome": ".\\tdcosim",
   "psseConfig": {
-    "installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27",
+    "installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY37",
     "rawFilePath": ".\\SampleData\\TNetworks\\68bus\\case68.raw",
     "dyrFilePath": ".\\SampleData\\TNetworks\\68bus\\case68.dyr"
   },
