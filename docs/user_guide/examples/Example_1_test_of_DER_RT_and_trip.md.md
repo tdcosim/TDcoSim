@@ -33,7 +33,6 @@ In this test, the TDcosim tool is tested for three different scenarios:
 Codes in current config_td.json
 
 ```json
-
 {
     "cosimHome": "..\\tdcosim",
     "psseConfig":{
@@ -77,7 +76,35 @@ Codes in current config_td.json
             ]
         }
     },
-   
+    "simulationConfig":{
+        "simType":"dynamic",
+		"memoryThreshold": 100.0,
+        "dynamicConfig":{
+            "events":{
+                "1":{
+                     "time":0.5,
+                    "type":"faultOn",
+                    "faultBus":10,
+                    "faultImpedance":[0.0,-10000]
+                },
+                "2":{
+                    "type":"faultOff",
+                    "time":0.667,
+                    "faultBus":10
+                },
+                "3":{
+                    "type":"simEnd",
+                    "time":1.0
+                }
+            }
+        },
+        "protocol":"loose_coupling"
+    },
+    "outputConfig":{
+        "outputfilename": "output.csv",
+        "type": "csv"
+    }
+}
 ```
     
 The DER trip settimg used for this case is shown in Figure A below.
