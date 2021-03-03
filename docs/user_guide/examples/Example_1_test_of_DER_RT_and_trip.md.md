@@ -13,7 +13,7 @@ In this test, the TDcosim tool is tested for three different scenarios:
                                 "solarFlag":1,                
                                 "DERParameters":{
                                 "default":{
-                                    "solarPenetration":0.0, 
+                                    "solarPenetration":0.1, 
                                     "powerRating": 50,
                                     "VrmsRating":174,
                                  "LVRT":"1":{"V_threshold":0.88,
