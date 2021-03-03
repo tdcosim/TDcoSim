@@ -34,7 +34,7 @@ In this test, the TDcosim tool is tested for three different scenarios:
 
 The DER trip settimg used for this case is shown in Figure A below.
 
-![Instant_trip_settings](C:/Users/splathottam/Box Sync/GitHub/TDcoSim/docs/user_guide/examples/use_case_results/study_1/Inst_trip_settings.png)
+![Instant_trip_settings](use_case_results/study_1/Inst_trip_settings.png)  
 Figure A: DER operational settings curve for the instantaneous trip settings.
 
 
