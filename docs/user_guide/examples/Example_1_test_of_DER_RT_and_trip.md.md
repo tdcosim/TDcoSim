@@ -30,8 +30,56 @@ In this test, the TDcosim tool is tested for three different scenarios:
                         ]
                     }
                 ```
-            
+Codes in current config_td.json
 
+```json
+
+{
+    "cosimHome": "..\\tdcosim",
+    "psseConfig":{
+        "installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27",
+        "rawFilePath":"..\\SampleData\\TNetworks\\68bus\\68_bus.raw",
+        "dyrFilePath":"..\\SampleData\\TNetworks\\68bus\\68_bus.dyr"        
+    },
+    "openDSSConfig":{        
+        "defaultFeederConfig":{
+            "filePath":["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+            "solarFlag":0,
+            "solarPenetration":0.0
+           
+        },
+        "manualFeederConfig":{
+            "nodes": [
+                {
+                    "nodenumber": 59,
+                    "filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                    "solarFlag":1,
+                    "DERFilePath": "..\\examples\\config_der.json",
+                    "initializeWithActual":true,
+                    "DERSetting":"PVPlacement",
+                    "DERModelType":"ThreePhaseUnbalanced",
+                    "DERParameters":{
+                        "default":{
+                        "solarPenetration":0.02,
+                        "derId":"50",
+                        "powerRating":50,
+                        "VrmsRating":177.0,
+                        "steadyStateInitialization":true,
+                        "pvderScale": 1
+                                              
+                         },
+                        "PVPlacement":{"50":{"derId":"50","powerRating":50,"pvderScale":1},
+                                       "51":{"derId":"50","powerRating":50,"pvderScale":1},
+                                       "25":{"derId":"50","powerRating":50,"pvderScale":1}
+                                      }                            
+                    }
+                }
+            ]
+        }
+    },
+   
+```
+    
 The DER trip settimg used for this case is shown in Figure A below.
 
 ![Instant_trip_settings](use_case_results/study_1/Inst_trip_settings.png)
