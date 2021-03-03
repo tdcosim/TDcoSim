@@ -30,7 +30,7 @@ In this test, the TDcosim tool is tested for three different scenarios:
                         ]
                     }
                 ```
-Codes in current config_td.json
+Codes in current master version of config_td.json
 
 ```json
 {
