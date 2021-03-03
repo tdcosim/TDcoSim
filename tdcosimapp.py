@@ -15,11 +15,12 @@ def main(configfile):
 	GlobalData.set_TDdata()	
 	startTime=time.time()		
 	simulate()
-	print('Solution time:',time.time()-startTime)
+	solutiontime = time.time()-startTime
+	print('Solution time:',solutiontime)
 	da=DataAnalytics()
 	df=da.get_simulation_result(GlobalData.config['outputConfig']['outputDir'])# output folder path\
 	df.to_csv(GlobalData.config['outputConfig']['outputDir']+'//dataframe.csv', index=False)
-
+	da.generateSummary(GlobalData, solutiontime)
 
 def simulate():
 	'''

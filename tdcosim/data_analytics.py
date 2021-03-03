@@ -370,3 +370,12 @@ class DataAnalytics(object):
 			return res
 		except:
 			raise
+
+#===================================================================================================
+	def generateSummary(self, GlobalData, solutiontime):
+		summarydata = {
+			"solutiontime": solutiontime
+		}
+		fpath=os.path.join(GlobalData.config['outputConfig']['outputDir'],'summary.json')
+		data={'data':summarydata}
+		json.dump(data,open(fpath,'w'),indent=3)
