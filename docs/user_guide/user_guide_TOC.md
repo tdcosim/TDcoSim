@@ -10,7 +10,7 @@
 8. [Software details](user_guide_software_details.md)
 9. Examples
     * [Example 1 - Dynamic Studies with single distribution system without disturbances](examples/Example_1_test_of_DER_RT_and_trip.md)
-    * [Example 2 - Dynamic Studies with single distribution system with disturbances](examples/Example_2_test_of_DER_RT_and_trip.md)
+    * [Example 2 - Dynamic Studies with single distribution system with disturbances](examples/Example_2_system_state_initialization_test.md)
     * [Example 3 - Dynamic Studies with two distribution system with disturbances](examples/Example_3_test_of_DER_RT_and_trip.md)
     * [Example 4 - Dynamic Studies with eight distribution system with disturbances](examples/Example_4_test_of_DER_RT_and_trip.md)
 10. Appendix
