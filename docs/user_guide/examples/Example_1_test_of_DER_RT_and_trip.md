@@ -50,8 +50,8 @@ In this test, the TDcosim tool is tested for three different scenarios:
     },
 ```
 The DERs connected in the distribution system follow "LVRT_1547cat3" config
-The 1st DER TRIP instantaneously below level "0" voltage threshold. 
-The 2nd and 3rd DER Ride Through the fault causing voltage sag below level "0" voltage threshold. 
+The ER TRIP instantaneously below level "0" voltage threshold. 
+The DER Ride Through the fault above level "1" and level "2" voltage threshold. 
 The DER configuration used for this case is shown below:
 ```json
 	  "LVRT":{"config_id":"LVRT_1547cat3"},
