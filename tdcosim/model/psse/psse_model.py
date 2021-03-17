@@ -2,6 +2,7 @@ import numpy as np
 import sys
 import os
 import re
+import pdb
 
 from tdcosim.global_data import GlobalData
 
@@ -14,8 +15,8 @@ class PSSEModel:
 		if "installLocation" in GlobalData.config['psseConfig'] and \
 		os.path.exists(GlobalData.config['psseConfig']['installLocation']+os.path.sep+'psspy.pyc'):
 			pssePath = GlobalData.config['psseConfig']['installLocation']
-		sys.path.append(pssePath)
-		os.environ['PATH']+=';'+pssePath
+			sys.path.insert(0,pssePath)
+			os.environ['PATH']=pssePath+';'+os.environ['PATH']
 		import psspy
 
 		# psse

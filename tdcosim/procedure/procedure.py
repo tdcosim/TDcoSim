@@ -1,9 +1,9 @@
 import os
 import sys
 
-from default_procedure import DefaultProcedure
-from default_static_procedure import DefaultStaticProcedure
-from default_dynamic_procedure import DefaultDynamicProcedure
+from tdcosim.procedure.default_procedure import DefaultProcedure
+from tdcosim.procedure.default_static_procedure import DefaultStaticProcedure
+from tdcosim.procedure.default_dynamic_procedure import DefaultDynamicProcedure
 from tdcosim.global_data import GlobalData
 
 class Procedure(DefaultProcedure):

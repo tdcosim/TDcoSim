@@ -1,6 +1,6 @@
 import numpy as np
 import pdb
-from default_procedure import DefaultProcedure
+from tdcosim.procedure.default_procedure import DefaultProcedure
 from tdcosim.model.psse.psse_model import PSSEModel
 from tdcosim.model.opendss.opendss_model import OpenDSSModel
 from tdcosim.global_data import GlobalData
