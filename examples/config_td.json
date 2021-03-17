@@ -66,7 +66,7 @@
         "protocol":"loose_coupling"
     },
     "outputConfig":{
-        "outputfilename": "output.csv",
+        "outputfilename": "LVRT_1547cat3.csv",
         "type": "csv"
     }
 }

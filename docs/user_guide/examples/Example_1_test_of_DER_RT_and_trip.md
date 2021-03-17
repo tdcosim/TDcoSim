@@ -2,35 +2,7 @@
 # Example 1: Test Example with Single Distribution System comparing the impact of DER Tripping with DER riding through fault.
 
 In this test, the TDcosim tool is tested for three different scenarios:
-1. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below level "0" voltage threshold. The DER configuration used for this case is shown below:
-
-                ```json
-                "manualFeederConfig":{
-                        "nodes": [
-                            {
-                                "nodenumber": 1,
-                                "filePath": ["\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                                "solarFlag":1,                
-                                "DERParameters":{
-                                "default":{
-                                    "solarPenetration":0.1, 
-                                    "powerRating": 50,
-                                    "VrmsRating":174,
-                                 "LVRT":"1":{"V_threshold":0.88,
-                                             "t_threshold":0.016,
-                                             "mode":"momentary_cessation"
-                                             }
-                                         "2":{"V_threshold":0.7,
-                                             "t_threshold":0.016,
-                                             "mode":"momentary_cessation"
-                                             }
-                                            }
-                                }}
-                            }
-                        ]
-                    }
-                ```
-Codes in current master version of config_td.json
+1. With distribution system connected to Bus 50, 51 and 25 of 68 bus system where the DER penetration level is 2% of distribution system load 
 
 ```json
 {
@@ -76,37 +48,44 @@ Codes in current master version of config_td.json
             ]
         }
     },
-    "simulationConfig":{
-        "simType":"dynamic",
-		"memoryThreshold": 100.0,
-        "dynamicConfig":{
-            "events":{
-                "1":{
-                     "time":0.5,
-                    "type":"faultOn",
-                    "faultBus":10,
-                    "faultImpedance":[0.0,-10000]
-                },
-                "2":{
-                    "type":"faultOff",
-                    "time":0.667,
-                    "faultBus":10
-                },
-                "3":{
-                    "type":"simEnd",
-                    "time":1.0
-                }
-            }
-        },
-        "protocol":"loose_coupling"
-    },
-    "outputConfig":{
-        "outputfilename": "output.csv",
-        "type": "csv"
-    }
-}
 ```
-    
+The DERs connected in the distribution system follow "LVRT_1547cat3" config
+The 1st DER TRIP instantaneously below level "0" voltage threshold. 
+The 2nd and 3rd DER Ride Through the fault causing voltage sag below level "0" voltage threshold. 
+The DER configuration used for this case is shown below:
+```json
+	  "LVRT":{"config_id":"LVRT_1547cat3"},
+	  "VRT_delays":{"config_id":"VRT_delay_cat3"}
+	 },
+"50_type1":{"parent_config":"50",						  
+			"inverter_ratings":{"Ioverload":1.0}
+	 },
+"50_type2":{"parent_config":"50",
+			"LVRT":{"config_id":"LVRT_1547cat3_rev1"}
+	 },
+"VRT_delay_cat3":{"config":{"output_cessation_delay":0.01,
+							"output_restore_delay":0.1,
+							"restore_Vdc":false}
+				},
+"LVRT_1547cat3":{"config":{"0":{"V_threshold":0.5,
+								"t_threshold":0.25,
+								"mode":"momentary_cessation",
+								"t_start":0.0,
+								"threshold_breach":false},
+							"1":{"V_threshold":0.7,
+								 "t_threshold":3.5,
+								 "mode":"mandatory_operation", 
+								 "t_start":0.0,
+								 "threshold_breach":false},
+							"2":{"V_threshold":0.88,
+								 "t_threshold":5.0,
+								 "mode":"mandatory_operation",
+								 "t_start":0.0,
+								 "threshold_breach":false}
+								  }
+						},
+```
+
 The DER trip settimg used for this case is shown in Figure A below.
 
 ![Instant_trip_settings](use_case_results/study_1/Inst_trip_settings.png)
@@ -114,7 +93,8 @@ The DER trip settimg used for this case is shown in Figure A below.
 Figure A: DER operational settings curve for the instantaneous trip settings.
 
 
-2. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system Ride Through the fault causing voltage sag below level "0" voltage threshold. The DER configuration used for this case is shown below:
+2. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load 
+and the DERs connected in the distribution system Ride Through the fault causing voltage sag below level "0" voltage threshold. The DER configuration used for this case is shown below:
 
 
 ```json
@@ -166,40 +146,44 @@ Figure A: DER operational settings curve for the instantaneous trip settings.
 
 
 
-A fault is applied in bus 5 of the T-system which causes a lower voltage sag in the D-system connected in bus 1. The simulation configuration to apply fault on bus 5 is shown below.
+A fault is applied in bus 10 of the T-system which causes a lower voltage sag in the D-system connected in bus XX. The simulation configuration to apply fault on bus 10 is shown below.
 
 
-        "simulationConfig":{
-        "simType":"dynamic",
-        "dynamicConfig":{
-            "events":{
-                "1":{
-                     "time":0.5,
-                    "type":"faultOn",
-                    "faultBus":5,
-                    "faultImpedance":[0.0,-2.0E11]
-                },
-                "2":{
-                    "type":"faultOff",
-                    "time":0.6,
-                    "faultBus":5
-                },
-                "3":{
-                    "type":"simEnd",
-                    "time":10.0
-                }
-            }
-        },
-        "staticConfig":{
-            "loadShape": [1,1.1,1.2,0.9]
-        },
-        "protocol":"loose_coupling"
-    },
-    "outputConfig":{
-        "outputfilename": "output.csv",
-        "type": "csv"
-    }
-}
+```json
+	"simulationConfig":{
+		"defaultLoadType":"complex_load",
+		"dera":{"1547_2003":[60]},
+		"simType":"dynamic",
+		"memoryThreshold": 1024.0,
+		"dynamicConfig":{
+			"events":{
+				"1":{
+					 "time":0.1,
+					"type":"faultOn",
+					"faultBus":10,
+					"faultImpedance":[0.0,-10000]
+				},
+				"2":{
+					"type":"faultOff",
+					"time":0.267,
+					"faultBus":10
+				},
+				"3":{
+					"type":"simEnd",
+					"time":0.3
+				}
+			}
+		},
+		"protocol":"loose_coupling"
+	},
+   "outputConfig": {
+      "simID": "LVRT_1547cat3", 
+      "type": "xlsx", 
+      "outputDir": "..\\output", 
+	  "outputfilename": "test",
+	  "scenarioID":"1"
+	},
+```
 
 ![Pload comparison](use_case_results/study_1/Pload_comparison_study_1.png)
 
