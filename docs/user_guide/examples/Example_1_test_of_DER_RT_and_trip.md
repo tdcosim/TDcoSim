@@ -2,7 +2,7 @@
 # Example 1: Test Example with Single Distribution System comparing the impact of DER Tripping with DER riding through fault.
 
 In this test, the TDcosim tool is tested for three different scenarios:
-1. With distribution system connected to Bus 50, 51 and 25 of 68 bus system where the DER penetration level is 2% of distribution system load 
+1. With distribution system connected to Bus 59 of 68 bus system where the DER penetration level is 2% of distribution system load (PV placed at bus 50, 51 and 25 in IEEE-123 bus distribution system) 
 
 ```json
 {
