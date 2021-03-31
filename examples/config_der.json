@@ -26,11 +26,13 @@
 "50_type2":{"parent_config":"50",
 			"LVRT":{"config_id":"LVRT_1547cat3_rev1"}
 	 },
+"50_numba":{"parent_config":"50",
+			"basic_specs":{"model_type":"SolarPVDERThreePhaseNumba"}
+	 },
 "VRT_delay_cat3":{"config":{"output_cessation_delay":0.01,
 							"output_restore_delay":0.1,
 							"restore_Vdc":false}
 				},
-				
 "LVRT_1547cat3":{"config":{"1":{"V_threshold":0.88,
 								"t_threshold":5.0,
 								"mode":"mandatory_operation",
@@ -86,7 +88,9 @@
 	  "verbosity":"WARNING",
 	  "LVRT":{"config_id":"LVRT_1547cat3"}	
 	 },
-
+"250_numba":{"parent_config":"250",                          
+			 "basic_specs":{"model_type":"SolarPVDERThreePhaseNumba"}
+	 },
 "10":{"parent_config":"",
 	  "basic_specs":{"model_type":"SolarPVDERSinglePhase"},
 	  "basic_options":{"Sinsol":100.0},
