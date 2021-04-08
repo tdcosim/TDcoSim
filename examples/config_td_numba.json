@@ -3,9 +3,9 @@
 	"psseConfig":{
 		"installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY37",
 		"rawFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.raw",
-		"dyrFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.dyr"		
+		"dyrFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.dyr"
 	},
-	"openDSSConfig":{"DEROdeSolver":"scipy",
+	"openDSSConfig":{"DEROdeSolver":"diffeqpy","DEROdeMethod":"CVODE_BDF",
 		"defaultFeederConfig":{
 			"filePath":["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
 			"solarFlag":0,
@@ -61,14 +61,14 @@
 				},
 				"3":{
 					"type":"simEnd",
-					"time":0.3
+					"time":2.3
 				}
 			}
 		},
 		"protocol":"loose_coupling"
 	},
    "outputConfig": {
-      "simID": "numba_test", 
+      "simID": "numba_test_2s", 
       "type": "xlsx", 
       "outputDir": "..\\output", 
 	  "outputfilename": "test",

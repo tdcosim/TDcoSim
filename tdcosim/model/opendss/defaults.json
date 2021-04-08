@@ -1,6 +1,7 @@
 {
     "solarFlag": 0, 
     "DEROdeSolver":"scipy",
+    "DEROdeMethod":"",
     "DERSetting": "default", 
     "solarPenetration": 0.0, 
     "DERModelType": "ThreePhaseUnbalanced", 
