@@ -25,7 +25,7 @@
 					"DERParameters":{
 						"default":{
 						"solarPenetration":0.9,
-						"derId":"50",
+						"derId":"50_numba",
 						"powerRating":50,
 						"VrmsRating":177.0,
 						"steadyStateInitialization":true,
