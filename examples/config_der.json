@@ -57,26 +57,20 @@
 						},
 "LVRT_1547cat3_rev1":{"config":{"1":{"V_threshold":0.88,
 								"t_threshold":5.0,
-								"mode":"mandatory_operation",
-								"t_start":0.0,
-								"threshold_breach":false},
+								"mode":"mandatory_operation"},
 							"2":{"V_threshold":0.7,
 								 "t_threshold":3.5,
-								 "mode":"mandatory_operation", 
-								 "t_start":0.0,
-								 "threshold_breach":false},
+								 "mode":"mandatory_operation"},
 							"3":{"V_threshold":0.5,
-								 "t_threshold":0.25,
-								 "mode":"mandatory_operation",
-								 "t_start":0.0,
-								 "threshold_breach":false}
+								 "t_threshold":0.5,
+								 "mode":"mandatory_operation"}
 								}
 						},
 "HVRT_1547cat3":{"config":{"1":{"V_threshold":1.06,
-								"t_threshold":2.5,
+								"t_threshold":4.0,
 								"mode":"mandatory_operation"},
 							"2":{"V_threshold":1.12,
-								 "t_threshold":1.0,
+								 "t_threshold":1.75,
 								 "mode":"mandatory_operation"}
 								}
 				},
