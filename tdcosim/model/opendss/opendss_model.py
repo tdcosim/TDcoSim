@@ -28,14 +28,20 @@ class OpenDSSModel(object):
 			'nodes' in openDSSConfig['manualFeederConfig'] and \
 			openDSSConfig['manualFeederConfig']['nodes']:
 				totalSolarGen=0; reductionPercent=0
+
 				for entry in openDSSConfig['manualFeederConfig']['nodes']:
+					if 'solarFlag' not in entry:####
+						entry['solarFlag']=0
+					if 'solarPenetration' not in entry:####
+						entry['solarPenetration']=0.0
+
 					DNet['Nodes'][entry['nodenumber']]={}
 					DNet['Nodes'][entry['nodenumber']]['filepath'] = entry['filePath'][0]
 					if 'solarFlag' in entry and entry['solarFlag']==1:
 						if 'DEROdeSolver' in openDSSConfig:
 							entry['DEROdeSolver'] = openDSSConfig['DEROdeSolver']
-						if 'DEROdeMethod' in openDSSConfig:
-							entry['DEROdeMethod'] = openDSSConfig['DEROdeMethod']
+						#### if 'DEROdeMethod' in openDSSConfig:
+						#### 	entry['DEROdeMethod'] = openDSSConfig['DEROdeMethod']
 						self.setDERParameter(entry, entry['nodenumber'])
 					if adjustOpPoint:
 						totalSolarGen+=TNet['BusRealPowerLoad'][entry['nodenumber']]*\
@@ -125,8 +131,11 @@ class OpenDSSModel(object):
 #===================================================================================================
 	def setDERParameter(self, entry, nodenumber):
 		try:
-			baseDir=os.path.dirname(os.path.abspath(__file__))
-			defaults=json.load(open(os.path.join(baseDir,'defaults.json')))
+			baseDir=os.path.abspath(__file__)
+			nLevel=4
+			for n in range(nLevel):
+				baseDir=os.path.dirname(baseDir)
+			defaults=json.load(open(os.path.join(baseDir,'config','der_defaults.json')))
 			DNet=GlobalData.data['DNet']
 			
 			for item in defaults:

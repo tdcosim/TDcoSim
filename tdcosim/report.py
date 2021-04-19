@@ -10,7 +10,7 @@ import xlsxwriter
 import pandas as pd
 
 
-def generate_output(GlobalData,excel=True,dataframe=True,config=True):
+def generate_output(GlobalData,excel=True,dataframe=True,config=False):
 	try:
 		if excel:
 			fpath=os.path.join(GlobalData.config['outputConfig']['outputDir'],'report.xlsx')

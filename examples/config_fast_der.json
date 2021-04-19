@@ -1,0 +1,70 @@
+{
+	"logging": {
+	   "level": 10, 
+	   "saveSubprocessOutErr": true
+	}, 
+	"cosimHome": "..\\tdcosim", 
+	"openDSSConfig": {
+		"DEROdeSolver":"fast_der",
+		"manualFeederConfig": {
+			"nodes": [
+				{
+					"nodenumber": 39, 
+					"filePath": [
+					   "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+					], 
+					"DERFilePath": "config_der_debug.json", 
+					"solarFlag": 1,
+					"solarPenetration": 0.1,
+					"DERParameters": {
+					   "default": {
+						  "pvderScale": 1, 
+						  "solarFlag": 1,
+						  "solarPenetration": 0.1
+					   }
+					}
+				 }
+			]
+		}
+	}, 
+	"psseConfig": {
+	   "installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY37", 
+	   "dyrFilePath": "..\\SampleData\\TNetworks\\68bus\\case68.dyr", 
+	   "rawFilePath": "..\\SampleData\\TNetworks\\68bus\\case68.raw"
+	}, 
+	"simulationConfig": {
+	   "defaultLoadType": "cmld", 
+	   "simType": "dynamic", 
+	   "dynamicConfig": {
+		  "events": {
+			 "1": {
+				"faultImpedance": [
+				   0.0, 
+				   -100000
+				], 
+				"type": "faultOn", 
+				"faultBus": 59, 
+				"time": 0.2
+			 }, 
+			 "3": {
+				"type": "simEnd", 
+				"time": 1.0
+			 }, 
+			 "2": {
+				"type": "faultOff", 
+				"faultBus": 59, 
+				"time": 0.3
+			 }
+		  }
+	   }, 
+	   "memoryThreshold": 20480.0, 
+	   "protocol": "loose_coupling"
+	}, 
+	"outputConfig": {
+	   "simID": "debug", 
+	   "type": "dataframe", 
+	   "outputDir": "..\\output", 
+	   "outputfilename": "test", 
+	   "scenarioID": "cmld"
+	}
+ }

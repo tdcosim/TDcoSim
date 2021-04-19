@@ -120,7 +120,7 @@ class PVDERModel(object):
 			OpenDSSData.log()
 
 #===================================================================================================
-	def prerun(self,gridVoltagePhaseA,gridVoltagePhaseB,gridVoltagePhaseC):
+	def prerun(self,gridVoltagePhaseA,gridVoltagePhaseB,gridVoltagePhaseC,dt=1/120.0):
 		"""Prerun will set the required data in pvder model. This method should be run before
 		running the integrator."""
 		try:
@@ -131,7 +131,7 @@ class PVDERModel(object):
 			if templates.DER_design_template[self.PV_model.DER_model_type]['basic_specs']['unbalanced']:
 				self.PV_model.gridVoltagePhaseB=gridVoltagePhaseB*math.sqrt(2)/Grid.Vbase
 				self.PV_model.gridVoltagePhaseC=gridVoltagePhaseC*math.sqrt(2)/Grid.Vbase
-			self.sim.t = self.lastT + 1/120.0
+			self.sim.t = self.lastT + dt
 
 			return None
 		except:
