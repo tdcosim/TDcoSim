@@ -11,17 +11,17 @@ class PVDERAggregatedProcedure(object):
 			OpenDSSData.log()
 
 #===================================================================================================
-	def setup(self,S0,V0):
+	def setup(self,S0,V0,V0pu):
 		try:
-			pvdermap = self._pvderAggModel.setup(S0, V0)
+			pvdermap = self._pvderAggModel.setup(S0, V0, V0pu)
 			return pvdermap
 		except:
 			OpenDSSData.log()
 
 #===================================================================================================
-	def run(self,V):
+	def run(self,V,Vpu):
 		try:
-			P, Q = self._pvderAggModel.run(V)
+			P, Q = self._pvderAggModel.run(V,Vpu)
 			return P, Q
 		except:
 			OpenDSSData.log()

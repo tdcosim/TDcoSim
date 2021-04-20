@@ -33,7 +33,8 @@ class OpenDSSProcedure(object):
 				# Re-setup DER after reload the OpenDSS
 				S0 = self._opendssinterface.getLoads()
 				V0 = self._opendssinterface.getVoltage(vtype='actual')
-				pvdermap = self._pvderAggProcedure.setup(S0, V0)
+				V0pu = self._opendssinterface.getVoltage(vtype='pu')
+				pvdermap = self._pvderAggProcedure.setup(S0, V0,V0pu=V0pu)
 				self._opendssinterface.setupDER(pvdermap)
 
 				derType=OpenDSSData.config['openDSSConfig']['DEROdeSolver']
@@ -41,14 +42,15 @@ class OpenDSSProcedure(object):
 					tic = time.perf_counter()
 					for n in range(n_pre_run_steps):# synchronize
 						V = self._opendssinterface.getVoltage(vtype='actual')
-						derP, derQ = self._pvderAggProcedure.run(V)
+						Vpu = self._opendssinterface.getVoltage(vtype='pu')
+						derP, derQ = self._pvderAggProcedure.run(V,Vpu)
 						self._opendssinterface.pvderInjection(derP, derQ)
 						P,Q,Converged = self._opendssinterface.getS(pccName='Vsource.source')
 					toc = time.perf_counter()
 					OpenDSSData.log(level=10,msg="Completed {} steps pre-run at {:.3f} seconds in {:.3f} seconds".format(n_pre_run_steps,toc,toc - tic))
 			
 			P, Q, convergedFlg = self._opendssinterface.initialize(Vpcc, targetS, tol)
-			OpenDSSData.log(level=20,msg="Completed initialize for feeder at bus {} after {} steps with P:{},Q:{},convergedFlg:{}".format(OpenDSSData.config['myconfig']['nodenumber'],n_pre_run_steps,P,Q,convergedFlg))
+			OpenDSSData.log(level=20,msg="Completed initialize for feeder after {} steps with P:{},Q:{},convergedFlg:{}".format(n_pre_run_steps,P,Q,convergedFlg))
 			return P, Q
 		except:
 			OpenDSSData.log()
@@ -64,13 +66,9 @@ class OpenDSSProcedure(object):
 	def getLoads(self, pccName):
 		try:
 			if OpenDSSData.config['myconfig']['solarFlag']:
-				vtype='actual'
-				derType=OpenDSSData.config['openDSSConfig']['DEROdeSolver']
-				if derType.replace('_','').replace('-','').lower()=='fastder':
-					vtype='pu'
-				V = self._opendssinterface.getVoltage(vtype=vtype,busID=self._pvNodes)
-
-				derP, derQ = self._pvderAggProcedure.run(V)
+				V = self._opendssinterface.getVoltage(vtype='actual',busID=self._pvNodes)
+				Vpu = self._opendssinterface.getVoltage(vtype='pu',busID=self._pvNodes)
+				derP, derQ = self._pvderAggProcedure.run(V,Vpu)
 				if not self._pvNodes:
 					self._pvNodes=[entry+'_tfr' for entry in derP.keys()]
 				self._opendssinterface.pvderInjection(derP,derQ,busID=self._pvNodes)

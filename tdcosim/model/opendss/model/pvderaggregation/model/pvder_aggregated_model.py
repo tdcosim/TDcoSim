@@ -85,12 +85,12 @@ class PVDERAggregatedModel(object):
 			OpenDSSData.log()
 
 #===================================================================================================
-	def setup(self, S0, V0):
+	def setup(self, S0, V0, V0pu=None):
 		try:
 			pvderMap=None
 			self.der_solver_type=OpenDSSData.config['myconfig']['DEROdeSolver']
 			if self.der_solver_type.replace('_','').replace('-','').lower()=='fastder':
-				pvderMap=self._setup_fast(S0,V0)	
+				pvderMap=self._setup_fast(S0,V0,V0pu)	
 			else:
 				pvderMap=self._setup_detailed(S0,V0)
 
@@ -156,7 +156,7 @@ class PVDERAggregatedModel(object):
 			OpenDSSData.log()
 
 #===================================================================================================
-	def _setup_fast(self, S0, V0):
+	def _setup_fast(self, S0, V0, V0pu):
 		try:
 			DNet=OpenDSSData.data['DNet']
 			myconfig=OpenDSSData.config['myconfig']
@@ -178,13 +178,14 @@ class PVDERAggregatedModel(object):
 				['nSolar_at_this_node']]=n
 				DNet['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']+=1
 
-				thisConf['vref']=abs(V0[thisKey]['a'])/2401.0 ####
-				thisConf['vref_ang']=np.angle(V0[thisKey]['a'])
+				thisConf['vref']=abs(V0pu[thisKey]['a'])
+				thisConf['vref_ang']=np.angle(V0pu[thisKey]['a'])
 				thisConf['pref']=1.0 #### 100 kVA base
 				thisConf['qref']=0.0 #### 100 kVA base
 				self._pvders[n]=FastDER(**{'config':thisConf})
 				self._pvders[n].compute_initial_condition(\
 				thisConf['pref'],thisConf['qref'],thisConf['vref'],thisConf['vref_ang'])
+
 				DNet['DER']['PVDERData']['lowSideV'][thisKey]=\
 				myconfig['DERParameters']['default']['VrmsRating']
 				DNet['DER']['PVDERData']['PNominal'][thisKey]=100 # kw
@@ -393,36 +394,49 @@ class PVDERAggregatedModel(object):
 			OpenDSSData.log()
 
 #===================================================================================================
-	def run(self, V,nEqs=23,dt=1/120.):
+	def run(self,V,Vpu,nEqs=23,dt=1/120.):
 		try:
 			if self.der_solver_type.replace('_','').replace('-','').lower()=='fastder':
-				P,Q=self._run_fast(V,dt)
+				P,Q=self._run_fast(V,Vpu,dt)
 			else:
-				P,Q=self._run_detailed(V,nEqs,dt)
+				P,Q=self._run_detailed(V,Vpu,nEqs,dt)
 			
 			return P, Q
 		except:
 			OpenDSSData.log(msg="Failed run the pvder aggregated model")
 
 #===================================================================================================
-	def _run_fast(self,V,dt=1/120.):
+	def _run_fast(self,V,Vpu,dt=1/120.):
 		try:
 			P = {}
 			Q = {}
 			# prerun for all pvder instances at this node
 			for node in OpenDSSData.data['DNet']['DER']['PVDERMap']:# compute solar inj at each node
 				lowSideNode='{}_tfr'.format(node)
-				Va = V[lowSideNode]['a']
-				Vb = V[lowSideNode]['b']
-				Vc = V[lowSideNode]['c']
+				Va = Vpu[lowSideNode]['a']
+				Vb = Vpu[lowSideNode]['b']
+				Vc = Vpu[lowSideNode]['c']
 
 				nodeP=0; nodeQ=0
 				for pv in OpenDSSData.data['DNet']['DER']['PVDERMap'][node]:
 					if pv!='nSolar_at_this_node':
 						pvID=OpenDSSData.data['DNet']['DER']['PVDERMap'][node][pv]
 						thisPV=self._pvders[pvID]
+						
+						# compute initial condition
+						thisT=thisPV._integrator_data['time_values'][-1]
+						if thisT==0:
+							thisConf={}
+							thisConf['vref']=abs(Va)
+							thisConf['vref_ang']=np.angle(Va)
+							thisConf['pref']=1.0 #### 100 kVA base
+							thisConf['qref']=0.0 #### 100 kVA base
+							thisPV.compute_initial_condition(\
+							thisConf['pref'],thisConf['qref'],thisConf['vref'],thisConf['vref_ang'])
+
 						# update Voltage injection
 						thisPV.update_model(Va)
+
 						# integrate
 						thisPV.integrate(dt=dt)
 						thisId=thisPV.x[2]
@@ -444,7 +458,7 @@ class PVDERAggregatedModel(object):
 
 
 #===================================================================================================
-	def _run_detailed(self, V,nEqs=23,dt=1/120.):
+	def _run_detailed(self,V,Vpu,nEqs=23,dt=1/120.):
 		try:
 			P = {}
 			Q = {}

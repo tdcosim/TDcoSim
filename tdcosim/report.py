@@ -10,7 +10,7 @@ import xlsxwriter
 import pandas as pd
 
 
-def generate_output(GlobalData,excel=True,dataframe=True,config=False):
+def generate_output(GlobalData,excel=True,dataframe=True,config=True):
 	try:
 		if excel:
 			fpath=os.path.join(GlobalData.config['outputConfig']['outputDir'],'report.xlsx')
@@ -154,8 +154,10 @@ def save_config(GlobalData):
 			for thisRemoveID in removeID:
 				_=GlobalData.data['DNet']['Nodes'][thisNode].pop(thisRemoveID)
 
+
 		fpath=os.path.join(GlobalData.config['outputConfig']['outputDir'],'options.json')
 		data={'data':GlobalData.data,'config':GlobalData.config}
+		_=data['data'].pop('monitorData')
 		json.dump(data,open(fpath,'w'),indent=3)
 	except:
 		raise

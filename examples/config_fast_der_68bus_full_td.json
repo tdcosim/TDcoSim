@@ -1,31 +1,19 @@
 {
 	"logging": {
 	   "level": 20, 
-	   "saveSubprocessOutErr": true
+	   "saveSubprocessOutErr": false
 	}, 
 	"cosimHome": "..\\tdcosim", 
 	"openDSSConfig": {
 		"DEROdeSolver":"fast_der",
-		"manualFeederConfig": {
-			"nodes": [
-				{
-					"nodenumber": 39, 
-					"filePath": [
-					   "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
-					], 
-					"DERFilePath": "config_der_debug.json", 
-					"solarFlag": 1,
-					"solarPenetration": 0.1,
-					"DERParameters": {
-					   "default": {
-						  "pvderScale": 1, 
-						  "solarFlag": 1,
-						  "solarPenetration": 0.1
-					   }
-					}
-				 }
+		"defaultFeederConfig": {
+			"DEROdeSolver":"fast_der",
+			"solarFlag": 1, 
+			"solarPenetration": 0.4, 
+			"filePath": [
+			   "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
 			]
-		}
+		 }
 	}, 
 	"psseConfig": {
 	   "installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY37", 
