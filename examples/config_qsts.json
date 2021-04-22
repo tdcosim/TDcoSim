@@ -1,7 +1,7 @@
 {
 	"cosimHome": "..\\tdcosim",
 	"psseConfig":{
-		"installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27",
+		"installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY37",
 		"rawFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.raw",
 		"dyrFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.dyr"		
 	},
@@ -10,61 +10,24 @@
 			"filePath":["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
 			"solarFlag":0,
 			"solarPenetration":0.0
-		},
-		"manualFeederConfig":{
-			"nodes": [
-				{
-					"nodenumber": 59,
-					"filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-					"solarFlag":0,
-					"solarPenetration":0,
-					"DERParameters":{
-						"pvderScale": 1,
-						"V_LV1": 0.70,
-						"V_LV2": 0.88,
-						"t_LV1_limit": 10.0,  
-						"t_LV2_limit": 20.0,
-						"LVRT_INSTANTANEOUS_TRIP": false,
-						"LVRT_MOMENTARY_CESSATION": true,
-						"power_rating":50
-					}
-				}
-			]
 		}
 	},
 	"simulationConfig":{
 		"simType":"static",
-		"dynamicConfig":{
-			"events":{
-				"1":{
-					 "time":0.5,
-					"type":"faultOn",
-					"faultBus":60,
-					"faultImpedance":[0.0,-10000]
-				},
-				"2":{
-					"type":"faultOff",
-					"time":0.667,
-					"faultBus":60
-				},
-				"3":{
-					"type":"simEnd",
-					"time":1.0
-				}
-			}
-		},
 		"staticConfig":{
-			"loadShape": [0.81518164, 0.77456979, 0.74237094, 0.72439771, 0.71946463,
-			0.72891013, 0.75212237, 0.76833652, 0.783174  , 0.79468451,
-			0.80634799, 0.80370937, 0.8016826 , 0.79288719, 0.79437859,
-			 0.79720841, 0.82271511, 0.92470363, 1.0, 0.99021033,
-			 0.97101338, 0.94042065, 0.88397706, 0.81097514]
+			"loadShape": [0.81518164, 0.77456979]
 		},
-		"protocol":"loose_coupling"
+		"protocol":"tight_coupling"
 	},
 	"outputConfig":{
+		"outputDir": "..\\output", 
+		"simID": "qsts",
 		"outputfilename": "output.csv",
 		"type": "csv"
-	}
+	},
+	"logging": {
+		"level": 20, 
+		"saveSubprocessOutErr": true
+	 }
 }
 	

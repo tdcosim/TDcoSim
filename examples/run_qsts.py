@@ -2,7 +2,6 @@ import os
 import time
 import pdb
 
-from tdcosim.report import generateReport
 from tdcosim.global_data import GlobalData
 from tdcosim.procedure.procedure import Procedure
 
@@ -11,11 +10,11 @@ def main():
 	'''
 	Main function to run the T&D Cosimulation	
 	'''
+	startTime=time.time()
 	GlobalData.set_config('config_qsts.json')
 	GlobalData.set_TDdata()
-	simulate()  
-	generateReport(GlobalData,fname='report.xlsx',sim=GlobalData.config['simulationConfig']['simType'])
-	return 0
+	simulate()
+	print("Total simulation time:",time.time()-startTime)
 
 def simulate():
 	'''

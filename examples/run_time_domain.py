@@ -12,7 +12,7 @@ def main():
 	Main function to run the T&D Cosimulation	
 	'''
 	try:
-		GlobalData.set_config('config_td_mod_debug_1.json')
+		GlobalData.set_config('config_fast_der_118bus_full_td.json')
 		GlobalData.set_TDdata()
 		simulate()
 	except:

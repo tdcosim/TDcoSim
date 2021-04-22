@@ -14,6 +14,7 @@ class OpenDSSInterface(object):
 			startingDir=os.getcwd()
 			self._engine = win32com.client.Dispatch("OpenDSSEngine.DSS")
 			os.chdir(startingDir)  
+			self.busname2ind={}
 			if self._engine.Start("0") == True:#DSS started OK
 				self.flg_startComm=1 # pass
 				self.Circuit=self._engine.ActiveCircuit
@@ -76,7 +77,7 @@ class OpenDSSInterface(object):
 			# to the low side of the tfr.
 			V=self.getVoltage(vtype='actual')
 			Vpu=self.getVoltage(vtype='pu')
-			
+
 			for node in pvdermap:
 				thisTransformer="Transformer.{}_pvder".format(node)
 				lowSideV=OpenDSSData.data['DNet']['DER']['PVDERData']['lowSideV'][node]*math.sqrt(3)*1e-3
@@ -113,6 +114,10 @@ class OpenDSSInterface(object):
 			# Force bus instantiation and then compute voltage bases.
 			self.Text.Command="MakeBusList"
 			self.Text.Command="CalcVoltageBases"
+
+			# update
+			for n in range(0,self.Circuit.NumBuses):
+				self.busname2ind[self.Circuit.Buses(n).Name]=n
 		except:
 			OpenDSSData.log("Failed setupDER in OpenDSS Interface")
 
@@ -135,7 +140,7 @@ class OpenDSSInterface(object):
 			OpenDSSData.log ("Failed Get Loads in OpenDSS Interface")
 
 #===================================================================================================
-	def getVoltage(self,vtype='actual'):
+	def getVoltage(self,vtype='actual',busID=None):
 		"""Needs to be called after solve. Gathers Voltage (complex) of all buses into a,b,c phases
 		and populates a dictionary and returns it."""
 		try:
@@ -145,18 +150,34 @@ class OpenDSSInterface(object):
 			entryMap['2']='b'
 			entryMap['3']='c'
 
-			for n in range(0,self.Circuit.NumBuses):
-				Voltage[self.Circuit.Buses(n).Name]={}
-				if vtype=='actual':
-					V=self.Circuit.Buses(n).Voltages
-				elif vtype=='pu':
-					V=self.Circuit.Buses(n).puVoltages
+			if not busID:
+				for n in range(0,self.Circuit.NumBuses):
+					Voltage[self.Circuit.Buses(n).Name]={}
+					if vtype=='actual':
+						V=self.Circuit.Buses(n).Voltages
+					elif vtype=='pu':
+						V=self.Circuit.Buses(n).puVoltages
 
-				count=0
-				for entry in self.Circuit.Buses(n).Nodes:
-					Voltage[self.Circuit.Buses(n).Name][entryMap[str(int(entry))]]=\
-					V[count]+1j * V[count+1]
-					count+=2
+					count=0
+					for entry in self.Circuit.Buses(n).Nodes:
+						Voltage[self.Circuit.Buses(n).Name][entryMap[str(int(entry))]]=\
+						V[count]+1j * V[count+1]
+						count+=2
+			else:
+				assert isinstance(busID,list) or isinstance(busID,tuple),'busID: {}'.format(busID)
+				for entry in busID:
+					Voltage[entry]={}
+					if vtype=='actual':
+						V=self.Circuit.Buses(self.busname2ind[entry]).Voltages
+					elif vtype=='pu':
+						V=self.Circuit.Buses(self.busname2ind[entry]).puVoltages
+
+					count=0
+					for item in self.Circuit.Buses(self.busname2ind[entry]).Nodes:
+						Voltage[entry][entryMap[str(int(item))]]=\
+						V[count]+1j*V[count+1]
+						count+=2
+
 
 			return Voltage
 		except:
@@ -265,6 +286,7 @@ class OpenDSSInterface(object):
 				# -ve sign convention
 				P,Q=self.Circuit.ActiveCktElement.SeqPowers[2]*-1,\
 				self.Circuit.ActiveCktElement.SeqPowers[3]*-1
+
 				# scale P and Q
 				P=self.K*P*self.unitConversion
 				Q=self.K*Q*self.unitConversion
@@ -275,9 +297,9 @@ class OpenDSSInterface(object):
 			OpenDSSData.log('Failed to get S from OpenDSS')
 
 #===================================================================================================
-	def pvderInjection(self, derP, derQ):
+	def pvderInjection(self, derP, derQ, busID=None):
 		try:
-			V=self.getVoltage(vtype='actual')# this will get the last known solution
+			V=self.getVoltage(vtype='actual',busID=busID)# this will get the last known solution
 			P_pv=0; Q_pv=0
 			myconfig=OpenDSSData.config['myconfig']
 
