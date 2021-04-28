@@ -40,8 +40,8 @@ class OpenDSSModel(object):
 					if 'solarFlag' in entry and entry['solarFlag']==1:
 						if 'DEROdeSolver' in openDSSConfig:
 							entry['DEROdeSolver'] = openDSSConfig['DEROdeSolver']
-						#### if 'DEROdeMethod' in openDSSConfig:
-						#### 	entry['DEROdeMethod'] = openDSSConfig['DEROdeMethod']
+						if 'DEROdeMethod' in openDSSConfig:
+						 	entry['DEROdeMethod'] = openDSSConfig['DEROdeMethod']
 						self.setDERParameter(entry, entry['nodenumber'])
 					if adjustOpPoint:
 						totalSolarGen+=TNet['BusRealPowerLoad'][entry['nodenumber']]*\

@@ -104,9 +104,6 @@ class PVDERAggregatedModel(object):
 			# set the random number seed
 			randomSeed = 25000
 			np.random.seed(randomSeed)
-			self.der_solver_type = OpenDSSData.config['myconfig']['DEROdeSolver']#"scipy"#"diffeqpy"
-			#### self.ode_solver_method = OpenDSSData.config['myconfig']['DEROdeMethod']#"scipy"#"diffeqpy"
-			self.import_diffeqpy() #Import diffeqpy if required as an attribute
 
 			DNet=OpenDSSData.data['DNet']
 			myconfig=OpenDSSData.config['myconfig']
@@ -150,7 +147,7 @@ class PVDERAggregatedModel(object):
 				else:
 					raise ValueError('Config file contains following invalid nodes:{}'.format(
 					invalid_nodes))
-
+			OpenDSSData.log(level=10,msg="{} DERs will be created...".format(nSolar))
 			return threePhaseNode,PVPlacement,nSolar
 		except:
 			OpenDSSData.log()
@@ -211,6 +208,7 @@ class PVDERAggregatedModel(object):
 	def _setup_detailed(self, S0, V0):
 		try:
 			self.der_solver_type = OpenDSSData.config['myconfig']['DEROdeSolver']#"scipy"#"diffeqpy"
+			self.ode_solver_method = OpenDSSData.config['myconfig']['DEROdeMethod']#"bdf"/"CVODE_BDF"
 			self.import_diffeqpy() #Import diffeqpy if required as an attribute
 
 			DNet=OpenDSSData.data['DNet']
@@ -281,7 +279,15 @@ class PVDERAggregatedModel(object):
 				raise ValueError("'{}' is not a valid DER model solver type - valid solvers are:scipy,diffeqpy".format(self.der_solver_type))
 			toc = time.perf_counter()
 			OpenDSSData.log(level=10,msg="{} integrator using {} method initialized at {:.3f} seconds in {:.3f} seconds".format(self.der_solver_type,self.ode_solver_method,toc,toc - tic))
-			
+			"""
+			tic = time.perf_counter()
+			if self.der_solver_type == "scipy":
+				y=self.integrator.integrate(self.integrator.t+1/120.)
+			elif self.der_solver_type == "diffeqpy":
+				self.de.step_b(self.integrator,1/120.,True)
+			toc = time.perf_counter()
+			OpenDSSData.log(level=10,msg="{} test integration completed at {:.3f} seconds in {:.3f} seconds".format(self.der_solver_type,toc,toc - tic))
+			"""
 			return DNet['DER']['PVDERMap']
 		except:
 			OpenDSSData.log(msg="Failed Setup PVDERAGG")
@@ -486,10 +492,6 @@ class PVDERAggregatedModel(object):
 				y = self.integrator.u
 				if not self.de.check_error(self.integrator) == 'Success':
 					raise ValueError("Integration was not successul with return code:{}".format(self.de.check_error(self.integrator)))
-			#### 	self.integrator.set_initial_value(y,self.integrator.t)
-			#### elif self.der_solver_type == "diffeqpy":
-			#### 	self.de.step_b(self.integrator,dt,True)
-			#### 	y = self.integrator.u
 
 			# postrun for all pvder instances
 			for node in OpenDSSData.data['DNet']['DER']['PVDERMap']:# compute solar inj at each node

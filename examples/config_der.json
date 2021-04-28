@@ -16,7 +16,7 @@
 	  "steadystate_values":{"maR0":0.89,"maI0":0.0,"iaR0":1.0,"iaI0":0.001},
 	  "initial_states":{"iaR":0,"iaI":0.0,"xaR":0.0,"xaI":0.0,"uaR":0.0,"uaI":0.0,
 						"xDC":0.0,"xQ":0.0,"xPLL":0.0,"wte":6.28},
-	  "verbosity":"DEBUG",
+	  "verbosity":"INFO",
 	  "LVRT":{"config_id":"LVRT_1547cat3"},	  
 	  "VRT_delays":{"config_id":"VRT_delay_cat3"},
 	  "HVRT":{"config_id":"HVRT_1547cat3"}
@@ -33,6 +33,9 @@
 "50_numba_highC":{"parent_config":"50",
 			"basic_specs":{"model_type":"SolarPVDERThreePhaseNumba"},
 			"circuit_parameters":{"C_actual":1500.0e-6}
+	 },
+"50_typeSZ":{"parent_config":"50",
+			"LVRT":{"config_id":"LVRT_1547cat3_revSZ"}
 	 },
 "VRT_delay_cat3":{"config":{"output_cessation_delay":0.01,
 							"output_restore_delay":0.1,
@@ -66,6 +69,13 @@
 								 "mode":"mandatory_operation"}
 								}
 						},
+"LVRT_1547cat3_revSZ":{"config":{"1":{"V_threshold":0.88,
+								"t_threshold":0.01,
+								"mode":"momentary_cessation",
+								"t_start":0.0,
+								"threshold_breach":false}
+								}
+						},						
 "HVRT_1547cat3":{"config":{"1":{"V_threshold":1.06,
 								"t_threshold":4.0,
 								"mode":"mandatory_operation"},
