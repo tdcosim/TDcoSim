@@ -91,7 +91,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
 						# collect data and store
 						msg={'varName':{}}
 						for node in Vpcc:
-							msg['varName'][node]=['voltage','der']
+							msg['varName'][node]=['voltage_der','der']
 
 						GlobalData.data['monitorData'][t]=self._dnet_model.monitor(msg)
 						GlobalData.data['TNet']['Dynamic'][t] = {'V': Vpcc,'S': S}
@@ -129,7 +129,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
 							if busID in GlobalData.data['DNet']['Nodes']:
 								if S[busID]['convergenceFlg'] is False:
 									DSSconvergenceFlg = False
-									break;
+									break
 						if DSSconvergenceFlg is False:
 							GlobalData.log(msg='OpenDSS Convergence Failed')
 			# close

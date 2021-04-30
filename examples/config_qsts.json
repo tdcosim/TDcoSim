@@ -6,27 +6,33 @@
 		"dyrFilePath":"..\\SampleData\\TNetworks\\68bus\\case68.dyr"		
 	},
 	"openDSSConfig":{		
-		"defaultFeederConfig":{
-			"filePath":["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-			"solarFlag":0,
-			"solarPenetration":0.0
+		"manualFeederConfig": {
+			"nodes": [
+				{
+					"nodenumber": 39, 
+					"filePath": [
+					   "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+					]
+				 }
+			]
 		}
 	},
 	"simulationConfig":{
 		"simType":"static",
 		"staticConfig":{
-			"loadShape": [0.81518164, 0.77456979]
+			"loadShape": [0.81518164, 0.77456979,0.81518164, 0.77456979,0.81518164, 0.77456979,0.81518164, 0.77456979]
 		},
 		"protocol":"tight_coupling"
 	},
-	"outputConfig":{
+	"outputConfig": {
+		"simID": "qsts", 
+		"type": "dataframe", 
 		"outputDir": "..\\output", 
-		"simID": "qsts",
-		"outputfilename": "output.csv",
-		"type": "csv"
-	},
+		"outputfilename": "test", 
+		"scenarioID": "cmld"
+	 },
 	"logging": {
-		"level": 20, 
+		"level": 10, 
 		"saveSubprocessOutErr": true
 	 }
 }

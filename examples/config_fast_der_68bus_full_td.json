@@ -1,7 +1,7 @@
 {
 	"logging": {
 	   "level": 20, 
-	   "saveSubprocessOutErr": false
+	   "saveSubprocessOutErr": true
 	}, 
 	"cosimHome": "..\\tdcosim", 
 	"openDSSConfig": {
@@ -9,10 +9,18 @@
 		"defaultFeederConfig": {
 			"DEROdeSolver":"fast_der",
 			"solarFlag": 1, 
-			"solarPenetration": 0.4, 
+			"solarPenetration": 0.25, 
 			"filePath": [
 			   "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
-			]
+			],
+			"excludenode":[3,64],
+			"DERParameters": {
+				"default": {
+				   "pvderScale": 1, 
+				   "solarFlag": 1,
+				   "solarPenetration": 0.25
+				}
+			 }
 		 }
 	}, 
 	"psseConfig": {
@@ -36,7 +44,7 @@
 			 }, 
 			 "3": {
 				"type": "simEnd", 
-				"time": 1.0
+				"time": 10.0
 			 }, 
 			 "2": {
 				"type": "faultOff", 

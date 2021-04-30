@@ -9,18 +9,20 @@
 		"manualFeederConfig": {
 			"nodes": [
 				{
-					"nodenumber": 39, 
+					"nodenumber": 41, 
 					"filePath": [
 					   "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
-					], 
-					"DERFilePath": "config_der_debug.json", 
+					],
 					"solarFlag": 1,
-					"solarPenetration": 0.1,
+					"solarPenetration": 0.06,
 					"DERParameters": {
 					   "default": {
 						  "pvderScale": 1, 
 						  "solarFlag": 1,
-						  "solarPenetration": 0.1
+						  "solarPenetration": 0.1,
+						  "pref":100,
+						  "qref":0,
+						  "sbase":100
 					   }
 					}
 				 }

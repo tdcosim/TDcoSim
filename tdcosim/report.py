@@ -78,10 +78,12 @@ def generate_excel_report(GlobalData,fpath=None,sim=None):
 				for n in range(len(colHeader)):
 					ws[node].write(0,n,colHeader[n])
 
-			dispatch=staticData.keys()
-			dispatch.sort()
+			staticDataKeys=staticData.keys()
+			if six.PY3:
+				staticDataKeys=list(staticDataKeys)
+			staticDataKeys.sort()
 			row=1
-			for dispatch in staticData:
+			for dispatch in staticDataKeys:
 				for node in staticData[dispatch]['S']:
 					ws[node].write(row,0,dispatch)
 					ws[node].write(row,1,node)
@@ -98,12 +100,16 @@ def generate_excel_report(GlobalData,fpath=None,sim=None):
 					ws[node]=wb.add_worksheet('feeder_{}'.format(node))
 
 		t=GlobalData.data['monitorData'].keys()
+		if six.PY3:
+			t=list(t)
 		t.sort()
 		colMap={}; colMap['time']=0
 		for node in GlobalData.data['monitorData'][t[0]]:
 			ws[node].write(0,0,'time')
 			count=1
 			items=GlobalData.data['monitorData'][t[0]][node].keys()
+			if six.PY3:
+				items=list(items)
 			items.sort()
 			for item in items:
 				if item.lower()=='vmag' or item.lower()=='vang':
@@ -154,10 +160,12 @@ def save_config(GlobalData):
 			for thisRemoveID in removeID:
 				_=GlobalData.data['DNet']['Nodes'][thisNode].pop(thisRemoveID)
 
-
 		fpath=os.path.join(GlobalData.config['outputConfig']['outputDir'],'options.json')
 		data={'data':GlobalData.data,'config':GlobalData.config}
-		_=data['data'].pop('monitorData')
+		if GlobalData.config['simulationConfig']['simType']=='dynamic':
+			_=data['data'].pop('monitorData')
+		if 'Dynamic' in data['data']['TNet']:
+			_=data['data']['TNet'].pop('Dynamic')
 		json.dump(data,open(fpath,'w'),indent=3)
 	except:
 		raise
@@ -176,6 +184,7 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 				scenario=uuid.uuid4().hex
 
 			monData=GlobalData.data['monitorData']
+
 			t=monData.keys()
 			if six.PY3:
 				t=list(t)
@@ -197,47 +206,51 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			data['tnodesubid']=['']*len(data['t'])
 			df_monitorData=pd.DataFrame(data)
 
-			stride=2
 			outputConfig=GlobalData.config['outputConfig']
-			fname=outputConfig['outputfilename'].split('.')[0]+'.out'
-			outfile=os.path.join(outputConfig['outputDir'],fname)
-			outfile=outfile.encode('ascii')
-			psseVersion=psspy.psseversion()[1]
-			if psseVersion==33:
-				chnfobj = dyntools.CHNF(outfile,0)
-				_, ch_id, ch_data = chnfobj.get_data()
-			elif psseVersion==35:
-				chnfobj = dyntools.CHNF(outfile,outvrsn=0)
-				_, ch_id, ch_data = chnfobj.get_data()
 
-			symbols=[ch_id[entry] for entry in ch_id]
-			properties=list(set([ch_id[entry].split(' ')[0] for entry in ch_id]))
-			nodes=list(set([ch_id[entry].split(' ')[1][0:ch_id[entry].split(' ')[1].find(
-			'[')].replace(' ','') for entry in ch_id if 'Time' not in ch_id[entry]]))
+			if GlobalData.config['simulationConfig']['simType']=='dynamic':
+				stride=2
+				fname=outputConfig['outputfilename'].split('.')[0]+'.out'
+				outfile=os.path.join(outputConfig['outputDir'],fname)
+				outfile=outfile.encode('ascii')
+				psseVersion=psspy.psseversion()[1]
+				if psseVersion==33:
+					chnfobj = dyntools.CHNF(outfile,0)
+					_, ch_id, ch_data = chnfobj.get_data()
+				elif psseVersion==35:
+					chnfobj = dyntools.CHNF(outfile,outvrsn=0)
+					_, ch_id, ch_data = chnfobj.get_data()
 
-			tnodeid=[]; tnodesubid=[]; props=[]; value=[]; t=[]; count=0
-			for entry in ch_id:
-				if 'Time' not in ch_id[entry]:
-					prop_node=ch_id[entry].split()
-					prop,node=prop_node[0],prop_node[1]
-					if prop!='VOLT':
-						tnodesubid.extend([prop_node[-1][prop_node[-1].find(']')+1::].strip()]*\
-						len(ch_data[entry][0::stride]))
-						node=node[0:node.find('[')].strip()
-					else:
-						tnodesubid.extend(['']*len(ch_data[entry][0::stride]))
-					value.extend(ch_data[entry][0::stride])
-					props.extend([prop]*len(ch_data[entry][0::stride]))
-					tnodeid.extend([node]*len(ch_data[entry][0::stride]))
-					count+=1
+				symbols=[ch_id[entry] for entry in ch_id]
+				properties=list(set([ch_id[entry].split(' ')[0] for entry in ch_id]))
+				nodes=list(set([ch_id[entry].split(' ')[1][0:ch_id[entry].split(' ')[1].find(
+				'[')].replace(' ','') for entry in ch_id if 'Time' not in ch_id[entry]]))
 
-			t.extend(ch_data['time'][0::stride]*count)
+				tnodeid=[]; tnodesubid=[]; props=[]; value=[]; t=[]; count=0
+				for entry in ch_id:
+					if 'Time' not in ch_id[entry]:
+						prop_node=ch_id[entry].split()
+						prop,node=prop_node[0],prop_node[1]
+						if prop!='VOLT':
+							tnodesubid.extend([prop_node[-1][prop_node[-1].find(']')+1::].strip()]*\
+							len(ch_data[entry][0::stride]))
+							node=node[0:node.find('[')].strip()
+						else:
+							tnodesubid.extend(['']*len(ch_data[entry][0::stride]))
+						value.extend(ch_data[entry][0::stride])
+						props.extend([prop]*len(ch_data[entry][0::stride]))
+						tnodeid.extend([node]*len(ch_data[entry][0::stride]))
+						count+=1
 
-			df=pd.DataFrame(columns=['scenario','t','tnodeid','tnodesubid','dfeederid','dnodeid','property',
-			'value'])
-			df['t'],df['tnodeid'],df['tnodesubid'],df['property'],df['value']=t,tnodeid,tnodesubid,props,value
-			df['scenario']=[scenario]*len(t)
-			df=df.append(df_monitorData,ignore_index=True,sort=True)
+				t.extend(ch_data['time'][0::stride]*count)
+
+				df=pd.DataFrame(columns=['scenario','t','tnodeid','tnodesubid','dfeederid','dnodeid','property',
+				'value'])
+				df['t'],df['tnodeid'],df['tnodesubid'],df['property'],df['value']=t,tnodeid,tnodesubid,props,value
+				df['scenario']=[scenario]*len(t)
+				df=df.append(df_monitorData,ignore_index=True,sort=True)
+			elif GlobalData.config['simulationConfig']['simType']=='static':
+				df=df_monitorData
 
 			fpath=os.path.join(outputConfig['outputDir'],'df_pickle.pkl')
 			df.to_pickle(fpath)

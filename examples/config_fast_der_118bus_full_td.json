@@ -1,7 +1,7 @@
 {
 	"logging": {
 	   "level": 20, 
-	   "saveSubprocessOutErr": false
+	   "saveSubprocessOutErr": true
 	}, 
 	"cosimHome": "..\\tdcosim", 
 	"openDSSConfig": {
@@ -12,9 +12,20 @@
 			"solarPenetration": 0.4, 
 			"filePath": [
 			   "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
-			]
+			],
+			"excludenode":[8,73],
+			"DERParameters": {
+				"default": {
+				   "pvderScale": 1, 
+				   "solarFlag": 1,
+				   "solarPenetration": 0.4,
+				   "pref":100,
+				   "qref":0,
+				   "sbase":100
+				}
+			 }
 		 }
-	}, 
+	},  
 	"psseConfig": {
 	   "installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY37", 
 	   "dyrFilePath": "..\\SampleData\\TNetworks\\118bus\\case118.dyr", 
@@ -36,7 +47,7 @@
 			 }, 
 			 "3": {
 				"type": "simEnd", 
-				"time": 1.0
+				"time": 10.0
 			 }, 
 			 "2": {
 				"type": "faultOff", 

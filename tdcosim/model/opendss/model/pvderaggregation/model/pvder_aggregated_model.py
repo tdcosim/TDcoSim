@@ -107,6 +107,9 @@ class PVDERAggregatedModel(object):
 
 			DNet=OpenDSSData.data['DNet']
 			myconfig=OpenDSSData.config['myconfig']
+			defaultConfig=myconfig['DERParameters']['default']
+
+
 			if myconfig['DERSetting'] == 'PVPlacement':
 				PVPlacement = True
 				nSolar=len(myconfig['DERParameters']['PVPlacement']) #Number of solarpv DERs
@@ -120,9 +123,8 @@ class PVDERAggregatedModel(object):
 						feeder_load+=S0['P'][entry]
 				# number of 50 kVA solar installtions required
 				if self.der_solver_type.replace('_','').replace('-','').lower()=='fastder':
-					foo=FastDER()
-					nSolar=int(np.ceil((feeder_load/(foo.data['config']['pref']*100))*\
-					myconfig['DERParameters']['default']['solarPenetration']))
+					nSolar=int(np.ceil((feeder_load/defaultConfig['pref'])*\
+					defaultConfig['solarPenetration']))
 				else:
 					nSolar=int(np.ceil((feeder_load/myconfig['DERParameters']['default']['powerRating'])*\
 					myconfig['DERParameters']['default']['solarPenetration']))
@@ -133,9 +135,7 @@ class PVDERAggregatedModel(object):
 			# find all three phase nodes
 			threePhaseNode=[]
 			for node in V0:
-				count=0
-				for phase in V0[node]:
-					count+=1
+				count=len(V0[node])
 				if count==3 and node not in myconfig['DERParameters']['avoidNodes']: # three phase node
 					threePhaseNode.append(node)
 
@@ -160,14 +160,14 @@ class PVDERAggregatedModel(object):
 			threePhaseNode,PVPlacement,nSolar=self._find_three_phase_nodes(S0, V0)
 
 			# now map each solar to the available nodes
-			nThreePhaseNode=len(threePhaseNode); count=0
+			nThreePhaseNode=len(threePhaseNode)
+			count=0
+			DNet['DER']['PVDERData']['nSolar_at_this_node']={}
+			if not PVPlacement:
+				np.random.shuffle(threePhaseNode)
 			for n in range(nSolar):
 				thisConf={}
-				if not PVPlacement:
-					thisKey=threePhaseNode[np.random.randint(0,nThreePhaseNode)]
-				else:
-					thisKey=threePhaseNode[count]
-					
+				thisKey=threePhaseNode[count%nThreePhaseNode]
 				if thisKey not in DNet['DER']['PVDERMap']:
 					DNet['DER']['PVDERMap'][thisKey]={}
 					DNet['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']=0
@@ -175,18 +175,25 @@ class PVDERAggregatedModel(object):
 				['nSolar_at_this_node']]=n
 				DNet['DER']['PVDERMap'][thisKey]['nSolar_at_this_node']+=1
 
-				thisConf['vref']=abs(V0pu[thisKey]['a'])
-				thisConf['vref_ang']=np.angle(V0pu[thisKey]['a'])
-				thisConf['pref']=1.0 #### 100 kVA base
-				thisConf['qref']=0.0 #### 100 kVA base
-				self._pvders[n]=FastDER(**{'config':thisConf})
-				self._pvders[n].compute_initial_condition(\
-				thisConf['pref'],thisConf['qref'],thisConf['vref'],thisConf['vref_ang'])
-
 				DNet['DER']['PVDERData']['lowSideV'][thisKey]=\
 				myconfig['DERParameters']['default']['VrmsRating']
-				DNet['DER']['PVDERData']['PNominal'][thisKey]=100 # kw
-				DNet['DER']['PVDERData']['QNominal'][thisKey]=0 # kvar
+				DNet['DER']['PVDERData']['PNominal'][thisKey]=\
+				myconfig['DERParameters']['default']['pref'] #### kw
+				DNet['DER']['PVDERData']['QNominal'][thisKey]=\
+				myconfig['DERParameters']['default']['qref'] #### kvar
+				DNet['DER']['PVDERData']['nSolar_at_this_node'][thisKey]=np.ceil(count/nThreePhaseNode)
+
+				thisConf['vref']=abs(V0pu[thisKey]['a'])
+				thisConf['vref_ang']=np.angle(V0pu[thisKey]['a'])
+				defaultConfig=myconfig['DERParameters']['default']
+				thisConf['pref']=defaultConfig['pref']/defaultConfig['sbase']
+				thisConf['qref']=defaultConfig['qref']/defaultConfig['sbase']
+				thisConf['sbase']=defaultConfig['sbase']
+				self._pvders[n]=FastDER(**{'config':thisConf})
+				# self._pvders[n].data['config']['pref']=myconfig['DERParameters']['default']['pref']
+				# self._pvders[n].data['config']['qref']=myconfig['DERParameters']['default']['qref']
+				self._pvders[n].compute_initial_condition(\
+				thisConf['pref'],thisConf['qref'],thisConf['vref'],thisConf['vref_ang'])
 				count+=1
 
 			# assign data object
@@ -419,12 +426,15 @@ class PVDERAggregatedModel(object):
 			# prerun for all pvder instances at this node
 			for node in OpenDSSData.data['DNet']['DER']['PVDERMap']:# compute solar inj at each node
 				lowSideNode='{}_tfr'.format(node)
+
 				Va = Vpu[lowSideNode]['a']
 				Vb = Vpu[lowSideNode]['b']
 				Vc = Vpu[lowSideNode]['c']
 
 				nodeP=0; nodeQ=0
 				for pv in OpenDSSData.data['DNet']['DER']['PVDERMap'][node]:
+					nSolar_at_this_node=\
+					OpenDSSData.data['DNet']['DER']['PVDERMap'][node]['nSolar_at_this_node']
 					if pv!='nSolar_at_this_node':
 						pvID=OpenDSSData.data['DNet']['DER']['PVDERMap'][node][pv]
 						thisPV=self._pvders[pvID]
@@ -435,10 +445,10 @@ class PVDERAggregatedModel(object):
 							thisConf={}
 							thisConf['vref']=abs(Va)
 							thisConf['vref_ang']=np.angle(Va)
-							thisConf['pref']=1.0 #### 100 kVA base
-							thisConf['qref']=0.0 #### 100 kVA base
-							thisPV.compute_initial_condition(\
-							thisConf['pref'],thisConf['qref'],thisConf['vref'],thisConf['vref_ang'])
+							thisConf['pref']=thisPV.data['config']['pref']
+							thisConf['qref']=thisPV.data['config']['qref']
+							thisPV.compute_initial_condition(thisConf['pref'],\
+							thisConf['qref'],thisConf['vref'],thisConf['vref_ang'])
 
 						# update Voltage injection
 						thisPV.update_model(Va)
@@ -449,8 +459,8 @@ class PVDERAggregatedModel(object):
 						thisIq=thisPV.x[5]
 						thisVd=thisPV.data['model']['vd']
 						thisVq=thisPV.data['model']['vq']
-						nodeP-=thisVd*thisId*100 #### 100 kVA base, -ve load => generation
-						nodeQ-=-thisVd*thisIq*100
+						nodeP-=thisVd*thisId*thisPV.data['config']['sbase'] # -ve load => generation
+						nodeQ-=-thisVd*thisIq*thisPV.data['config']['sbase']
 
 				P[node]=nodeP
 				Q[node]=nodeQ

@@ -24,6 +24,19 @@ class OpenDSSModel(object):
 			TNet=GlobalData.data['TNet']
 			openDSSConfig=GlobalData.config['openDSSConfig']
 
+			if 'defaultFeederConfig' in openDSSConfig:
+				openDSSConfig['manualFeederConfig']={'nodes':[]}
+
+				if 'excludenode' not in openDSSConfig['defaultFeederConfig']:
+					openDSSConfig['defaultFeederConfig']['excludenode']=[]
+
+				for thisNode in set(TNet['LoadBusNumber']).difference(\
+				openDSSConfig['defaultFeederConfig']['excludenode']):
+					thisEntry={'nodenumber':thisNode}
+					for item in openDSSConfig['defaultFeederConfig']:
+						thisEntry[item]=openDSSConfig['defaultFeederConfig'][item]
+					openDSSConfig['manualFeederConfig']['nodes'].append(thisEntry)
+
 			if 'manualFeederConfig' in openDSSConfig and \
 			'nodes' in openDSSConfig['manualFeederConfig'] and \
 			openDSSConfig['manualFeederConfig']['nodes']:
@@ -51,16 +64,6 @@ class OpenDSSModel(object):
 						entry['fractionAggregatedLoad']
 				if adjustOpPoint:
 					reductionPercent=totalSolarGen/TNet['TotalRealPowerLoad']
-
-			elif 'defaultFeederConfig' in openDSSConfig:
-				solarFlag=bool(openDSSConfig["defaultFeederConfig"]["solarFlag"])
-				solarPenetration=openDSSConfig["defaultFeederConfig"]["solarPenetration"]
-				for entry in TNet['LoadBusNumber']:
-					DNet['Nodes'][entry]={}
-					DNet['Nodes'][entry]['filepath']=openDSSConfig["defaultFeederConfig"]['filePath'][0]
-					if solarFlag:
-						self.setDERParameter(openDSSConfig['defaultFeederConfig'], entry)
-				reductionPercent=solarPenetration # the amount of syn gen reduction
 			else:
 				reductionPercent=0
 

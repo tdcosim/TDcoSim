@@ -1,3 +1,4 @@
+import json
 import pdb
 
 import numpy as np
@@ -29,8 +30,8 @@ class DefaultStaticProcedure(DefaultProcedure):
 	def initialize(self):
 		try:
 			targetS, Vpcc = self._tnet_model.staticInitialize()
+			GlobalData.log(20,'Attaching substaion to following buses: {}'.format(Vpcc.keys()))
 			power = self._dnet_model.initialize(targetS, Vpcc)
-			self._tnet_model.shunt(targetS, Vpcc, power)
 		except:
 			GlobalData.log()
 
@@ -43,7 +44,10 @@ class DefaultStaticProcedure(DefaultProcedure):
 			count = 0
 			loadShape = GlobalData.config['simulationConfig']['staticConfig']['loadShape']
 			GlobalData.data['monitorData']={}
+			updateBins=20
+
 			for scale in loadShape:
+				GlobalData.log(20,'Running dispatch with loadshape {}'.format(scale))
 				GlobalData.data['static'][count] = {}
 				f=lambda x:[x[entry] for entry in x]
 				iteration=0
@@ -63,6 +67,10 @@ class DefaultStaticProcedure(DefaultProcedure):
 					Vcheck[:,0]=Vcheck[:,1]#iterate for tight coupling
 					Vcheck[:,1]=np.array(f(Vpcc))
 					iteration+=1
+				
+				print('Simulation Progress : ='+'='*int((updateBins-1)*(count/len(loadShape)))+'>'+\
+				' {}%({} dispatches/{} dispatches)'.format(((count+1)/len(loadShape))*100,count+1,len(loadShape)),end='\r')
+				GlobalData.log(20,'Loadshape {} Converged in {} iterations with mismatch {}'.format(scale,iteration,max(abs(np.abs(Vcheck[:,0]-Vcheck[:,1])))))
 
 				# collect data and store
 				msg={}
@@ -75,6 +83,12 @@ class DefaultStaticProcedure(DefaultProcedure):
 				GlobalData.data['static'][count]['S'] = S
 				GlobalData.data['static'][count]['Scale'] = scale
 				count+=1
+
+			# close
+			print('')# for newline
+			ack=self._dnet_model.close()
+			GlobalData.log(level=20,msg=json.dumps(ack))
+			ierr=self._tnet_model._psspy.pssehalt_2(); assert ierr==0
 		except:
 			GlobalData.log()
 

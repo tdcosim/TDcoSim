@@ -582,7 +582,7 @@ class PSSEModel(Dera):
 	def shunt(self, targetS, Vpcc, power):
 		try:
 			mismatchTolerance=0.1
-			GlobalData.logger.debug('Input: targetS={}; Vpcc={}; power={};'.format(\
+			GlobalData.logger.info('Input: targetS={}; Vpcc={}; power={};'.format(\
 			targetS, Vpcc, power))
 			for node in power:
 				if abs(power[node]['P']-targetS[node][0])>mismatchTolerance or abs(

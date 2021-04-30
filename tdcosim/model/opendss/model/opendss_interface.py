@@ -2,6 +2,7 @@ import os
 import math
 import pdb
 
+import six
 import numpy as np
 import win32com.client
 
@@ -72,7 +73,7 @@ class OpenDSSInterface(object):
 	def setupDER(self, pvdermap):	
 		try: 
 			# for each node where there is pvder, create a bus,
-			# attach low side of tfr to that bus and high side of tfr to
+			# attach high side of tfr to that bus and low side of tfr to
 			# the node in pvderMap. pv is attached as a negative load (generator)
 			# to the low side of the tfr.
 			V=self.getVoltage(vtype='actual')
@@ -102,9 +103,10 @@ class OpenDSSInterface(object):
 									[thisTransformer,'bus',node,'set']
 								]) # high side to existing bus
 
+				nSolar_at_this_node=OpenDSSData.data['DNet']['DER']['PVDERData']['nSolar_at_this_node'][node]
 				kv=lowSideV
-				kw=-OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'][node] #-ve load=>gen
-				kvar=-OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'][node]
+				kw=-OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'][node]*nSolar_at_this_node #-ve load=>gen
+				kvar=-OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'][node]*nSolar_at_this_node
 				directive='New Load.{}_pvder Bus1={}_tfr Phases=3 Conn=Wye '.format(node,node)
 				directive+='Model=1 kV={} kW={} kvar={} '.format(kv,kw,kvar)
 				directive+='vminpu=0.5 vmaxpu=1.2 vlowpu=0.0'# connect to low side bus of tfr
@@ -367,6 +369,20 @@ class OpenDSSInterface(object):
 					self._changeObj(qry)
 					res['der'][node]['P']=-float(qry[0][2])#-ve load => gen
 					res['der'][node]['Q']=-float(qry[1][2])#-ve load => gen
+			if 'voltage_der' in varName or 'DER' in varName:
+				busID=OpenDSSData.data['DNet']['DER']['PVDERMap'].keys()
+				if six.PY3:
+					busID=list(busID)
+				if busID:# only if DERs are present
+					V=self.getVoltage(vtype='pu',busID=busID)
+					# cannot JSON serialize complex number, convert to mag and ang
+					Vmag={}; Vang={}
+					for node in V:
+						Vmag[node]={}; Vang[node]={}
+						for phase in V[node]:
+							Vmag[node][phase]=np.abs(V[node][phase])
+							Vang[node][phase]=np.angle(V[node][phase])
+					res['Vmag']=Vmag; res['Vang']=Vang
 
 			return res
 		except:
