@@ -47,10 +47,10 @@ The DER configuration used for this case is shown below:
 			"LVRT":{"config_id":"LVRT_1547cat3_SZ_insttrip"}
 	 },
 "LVRT_1547cat3_SZ_insttrip":{"config":{"1":{"V_threshold":0.88,
-								"t_threshold":0.01,
-								"mode":"momentary_cessation",
-								"t_start":0.0,
-								"threshold_breach":false}
+					    "t_threshold":0.01,
+					    "mode":"momentary_cessation",
+					    "t_start":0.0,
+					    "threshold_breach":false}
 								}								
 						},	
 ```
