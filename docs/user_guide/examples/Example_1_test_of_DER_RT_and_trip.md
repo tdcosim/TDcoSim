@@ -2,88 +2,57 @@
 # Example 1: Test Example with Single Distribution System comparing the impact of DER Tripping with DER riding through fault.
 
 In this test, the TDcosim tool is tested for three different scenarios:
-1. With distribution system connected to Bus 59 of 68 bus system where the DER penetration level is 2% of distribution system load (PV placed at bus 50, 51 and 25 in IEEE-123 bus distribution system) 
+1. With distribution system (IEEE-123 bus distribution system) connected to Bus 59 of transmission system (IEEE-68 bus system) where the DER penetration level is 1% of distribution system load 
 
 ```json
-{
-    "cosimHome": "..\\tdcosim",
-    "psseConfig":{
-        "installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27",
-        "rawFilePath":"..\\SampleData\\TNetworks\\68bus\\68_bus.raw",
-        "dyrFilePath":"..\\SampleData\\TNetworks\\68bus\\68_bus.dyr"        
-    },
-    "openDSSConfig":{        
-        "defaultFeederConfig":{
-            "filePath":["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-            "solarFlag":0,
-            "solarPenetration":0.0
-           
-        },
-        "manualFeederConfig":{
-            "nodes": [
-                {
-                    "nodenumber": 59,
-                    "filePath": ["..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                    "solarFlag":1,
-                    "DERFilePath": "..\\examples\\config_der.json",
-                    "initializeWithActual":true,
-                    "DERSetting":"PVPlacement",
-                    "DERModelType":"ThreePhaseUnbalanced",
-                    "DERParameters":{
-                        "default":{
-                        "solarPenetration":0.02,
-                        "derId":"50",
-                        "powerRating":50,
-                        "VrmsRating":177.0,
-                        "steadyStateInitialization":true,
-                        "pvderScale": 1
-                                              
-                         },
-                        "PVPlacement":{"50":{"derId":"50","powerRating":50,"pvderScale":1},
-                                       "51":{"derId":"50","powerRating":50,"pvderScale":1},
-                                       "25":{"derId":"50","powerRating":50,"pvderScale":1}
-                                      }                            
-                    }
-                }
-            ]
-        }
-    },
+"cosimHome": "..\\tdcosim", 
+	"openDSSConfig": {
+		"DEROdeSolver":"scipy","DEROdeMethod":"bdf",
+		"manualFeederConfig": {
+			"nodes": [
+				{
+					"nodenumber": 59, 
+					"filePath": [
+					   "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+					], 
+					"DERModelType": "ThreePhaseUnbalanced", 
+					"solarFlag": 1, 
+					"DERSetting": "default", 
+					"solarPenetration": 0.1, 
+					"fractionAggregatedLoad": {
+					   "cmld": 0.4
+					}, 
+					"initializeWithActual": true, 
+					"DERFilePath": "..\\examples\\config_der.json", 
+					"DERParameters": {
+					   "default": {
+						  "pvderScale": 1, 
+						  "steadyStateInitialization": true, 
+						  "solarPenetration": 0.1, 
+						  "derId": "50_typeSZ_insttrip", 
+						  "solarFlag": 1
+						  
+					   }
+					}
+				 }
+			]
+		}
+	}, 
 ```
-The DERs connected in the distribution system follow "LVRT_1547cat3" config
-The DER TRIP instantaneously below level "0" voltage threshold. 
-The DER Ride Through the fault above level "1" and level "2" voltage threshold. 
+The DERs connected in the distribution system follow "50_typeSZ_insttrip" DER-ID config and "LVRT_1547cat3_SZ_insttrip" triping config
+The DER TRIP instantaneously below 0.88 voltage level
 The DER configuration used for this case is shown below:
 ```json
-	  "LVRT":{"config_id":"LVRT_1547cat3"},
-	  "VRT_delays":{"config_id":"VRT_delay_cat3"}
+"50_typeSZ_insttrip":{"parent_config":"50",
+			"LVRT":{"config_id":"LVRT_1547cat3_SZ_insttrip"}
 	 },
-"50_type1":{"parent_config":"50",						  
-			"inverter_ratings":{"Ioverload":1.0}
-	 },
-"50_type2":{"parent_config":"50",
-			"LVRT":{"config_id":"LVRT_1547cat3_rev1"}
-	 },
-"VRT_delay_cat3":{"config":{"output_cessation_delay":0.01,
-							"output_restore_delay":0.1,
-							"restore_Vdc":false}
-				},
-"LVRT_1547cat3":{"config":{"0":{"V_threshold":0.5,
-								"t_threshold":0.25,
+"LVRT_1547cat3_SZ_insttrip":{"config":{"1":{"V_threshold":0.88,
+								"t_threshold":0.01,
 								"mode":"momentary_cessation",
 								"t_start":0.0,
-								"threshold_breach":false},
-							"1":{"V_threshold":0.7,
-								 "t_threshold":3.5,
-								 "mode":"mandatory_operation", 
-								 "t_start":0.0,
-								 "threshold_breach":false},
-							"2":{"V_threshold":0.88,
-								 "t_threshold":5.0,
-								 "mode":"mandatory_operation",
-								 "t_start":0.0,
-								 "threshold_breach":false}
-								  }
-						},
+								"threshold_breach":false}
+								}								
+						},	
 ```
 
 The DER trip settimg used for this case is shown in Figure A below.
@@ -93,31 +62,28 @@ The DER trip settimg used for this case is shown in Figure A below.
 Figure A: DER operational settings curve for the instantaneous trip settings.
 
 
-2. With distribution system connected to Bus 1 of 118 bus system where the DER penetration level is 10% of distribution system load 
-and the DERs connected in the distribution system Ride Through the fault causing voltage sag below level "0" voltage threshold. The DER configuration used for this case is shown below:
+2. With distribution system (IEEE-123 bus distribution system) connected to Bus 59 of transmission system (IEEE-68 bus system) where the DER penetration level is 1% of distribution system load 
+The DERs connected in the distribution system follow "50_typeSZ_ridethrough" DER-ID config and "LVRT_1547cat3_SZ_ridethrough" triping config
+This time the DERs connected in the distribution system is expected to ride through the fault with updated DER settings. 
+The DER configuration used for this case is shown below:
 
 
 ```json
-"manualFeederConfig":{
-        "nodes": [
-            {
-                "nodenumber": 1,
-                "filePath": ["\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                "solarFlag":1,                
-                "DERParameters":{
-                "default":{
-                    "solarPenetration":0.1, 
-                    "powerRating": 50,
-                    "VrmsRating":174,
-                 "LVRT":"1":{"V_threshold":0.88,
-                             "t_threshold":2.0,
-                             "mode":"mandatory_operation"
-                             }
-                            }
-                }}
-            }
-        ]
-    }
+"50_typeSZ_ridethrough":{"parent_config":"50",
+		"LVRT":{"config_id":"LVRT_1547cat3_SZ_ridethrough"}
+ },
+ "LVRT_1547cat3_SZ_ridethrough":{"config":{"1":{"V_threshold":0.88,
+							"t_threshold":2.0,
+							"mode":"mandatory_operation",
+							"t_start":0.0,
+							"threshold_breach":false},
+						"2":{"V_threshold":0.7,
+							 "t_threshold":1.0,
+							 "mode":"mandatory_operation", 
+							 "t_start":0.0,
+							 "threshold_breach":false}
+							  }
+					},	
 ```
 
  The DER trip settimg used for this case is shown in Figure B below.
