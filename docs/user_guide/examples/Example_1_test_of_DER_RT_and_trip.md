@@ -28,7 +28,7 @@ In this test, the TDcosim tool is tested for three different scenarios:
 					   "default": {
 						  "pvderScale": 1, 
 						  "steadyStateInitialization": true, 
-						  "solarPenetration": 0.1, 
+						  "solarPenetration": 0.01, 
 						  "derId": "50_typeSZ_insttrip", 
 						  "solarFlag": 1
 						  
