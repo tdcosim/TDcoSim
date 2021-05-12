@@ -15,8 +15,8 @@ class FastDER(object):
 	foo.func_val(foo.x)
 	"""
 #===================================================================================================
-	def __init__(self,inverterStandard='ieee_2018_category_3',\
-	inverterStandardConfig='fast_der_ride_through.json',**kwargs):
+	def __init__(self,interconnectionStandard='ieee_2018_category_2',\
+	interconnectionStandardConfig='fast_der_ride_through.json',**kwargs):
 		try:
 			self._baseDir=os.path.abspath(__file__)
 			nLevel=7 # number of levels to root/base dir
@@ -31,8 +31,8 @@ class FastDER(object):
 			# load ride through settings
 			self._ride_through_flags={'momentary_cessation':False,'trip':False,'enter_service':False}
 			self._ride_through_settings=json.load(open(\
-			os.path.join(self._baseDir,'config',inverterStandardConfig)))
-			self._ride_through_settings=self._ride_through_settings[inverterStandard]
+			os.path.join(self._baseDir,'config',interconnectionStandardConfig)))
+			self._ride_through_settings=self._ride_through_settings[interconnectionStandard]
 			rts=self._ride_through_settings
 			for entry in rts:
 				if entry!='normal_operation' and entry!='enter_service':
@@ -331,7 +331,8 @@ class FastDER(object):
 					if rts['lvrt'][thisZone]['time_in_zone']>=\
 					rts['lvrt'][thisZone]['minimum_ride_through_time']:
 						flags[rts['lvrt'][thisZone]['action']]=True
-					rts['lvrt'][thisZone]['time_in_zone']+=dt
+					if thisVmin<=vmag<thisVmax:
+						rts['lvrt'][thisZone]['time_in_zone']+=dt
 			elif vmag>rts['normal_operation']['voltage_range'][1]:# abnormal HV operation
 				for thisZone in rts['hvrt']:
 					thisVmin,thisVmax=rts['lvrt'][thisZone]['voltage_range']

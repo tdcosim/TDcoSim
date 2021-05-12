@@ -1,6 +1,7 @@
 import os
 import math
 import pdb
+import time
 
 import six
 import numpy as np
@@ -16,6 +17,7 @@ class OpenDSSInterface(object):
 			self._engine = win32com.client.Dispatch("OpenDSSEngine.DSS")
 			os.chdir(startingDir)  
 			self.busname2ind={}
+			self._stats={'getVoltage':0,'getS':0,'setVoltage':0}
 			if self._engine.Start("0") == True:#DSS started OK
 				self.flg_startComm=1 # pass
 				self.Circuit=self._engine.ActiveCircuit
@@ -180,7 +182,6 @@ class OpenDSSInterface(object):
 						V[count]+1j*V[count+1]
 						count+=2
 
-
 			return Voltage
 		except:
 			OpenDSSData.log('Failed Get Voltage in OpenDSS Interface')
@@ -294,6 +295,7 @@ class OpenDSSInterface(object):
 				Q=self.K*Q*self.unitConversion
 			else:
 				P,Q=None,None
+
 			return P,Q,self.Solution.Converged
 		except:
 			OpenDSSData.log('Failed to get S from OpenDSS')

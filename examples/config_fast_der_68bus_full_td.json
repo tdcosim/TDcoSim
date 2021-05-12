@@ -9,7 +9,7 @@
 		"defaultFeederConfig": {
 			"DEROdeSolver":"fast_der",
 			"solarFlag": 1, 
-			"solarPenetration": 0.25, 
+			"solarPenetration": 0.5, 
 			"filePath": [
 			   "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
 			],
@@ -17,8 +17,9 @@
 			"DERParameters": {
 				"default": {
 				   "pvderScale": 1, 
-				   "solarFlag": 1,
-				   "solarPenetration": 0.25
+				   "pref":100,
+				   "qref":0,
+				   "sbase":100
 				}
 			 }
 		 }
@@ -36,10 +37,10 @@
 			 "1": {
 				"faultImpedance": [
 				   0.0, 
-				   -100000
+				   -32000
 				], 
 				"type": "faultOn", 
-				"faultBus": 59, 
+				"faultBus": 41, 
 				"time": 0.2
 			 }, 
 			 "3": {
@@ -48,8 +49,8 @@
 			 }, 
 			 "2": {
 				"type": "faultOff", 
-				"faultBus": 59, 
-				"time": 0.3
+				"faultBus": 41, 
+				"time": 0.4
 			 }
 		  }
 	   }, 
@@ -57,7 +58,7 @@
 	   "protocol": "loose_coupling"
 	}, 
 	"outputConfig": {
-	   "simID": "debug", 
+	   "simID": "68bus_50_percent", 
 	   "type": "dataframe", 
 	   "outputDir": "..\\output", 
 	   "outputfilename": "test", 

@@ -47,6 +47,8 @@ class OpenDSSModel(object):
 						entry['solarFlag']=0
 					if 'solarPenetration' not in entry:####
 						entry['solarPenetration']=0.0
+					if 'interconnectionStandard' not in entry:
+						entry['interconnectionStandard']={'ieee_2018_category_2':1.0}
 
 					DNet['Nodes'][entry['nodenumber']]={}
 					DNet['Nodes'][entry['nodenumber']]['filepath'] = entry['filePath'][0]
@@ -56,6 +58,8 @@ class OpenDSSModel(object):
 						if 'DEROdeMethod' in openDSSConfig:
 						 	entry['DEROdeMethod'] = openDSSConfig['DEROdeMethod']
 						self.setDERParameter(entry, entry['nodenumber'])
+						entry['DERParameters']['default']['solarFlag']=entry['solarFlag']
+						entry['DERParameters']['default']['solarPenetration']=entry['solarPenetration']
 					if adjustOpPoint:
 						totalSolarGen+=TNet['BusRealPowerLoad'][entry['nodenumber']]*\
 						entry['solarPenetration']

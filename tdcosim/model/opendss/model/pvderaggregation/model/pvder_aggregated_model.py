@@ -29,6 +29,7 @@ class PVDERAggregatedModel(object):
 		self._nEqs = {}
 		self.profiler=0
 		self.funcCalls={'jac':0,'f':0}
+		self._stats={'_run_fast':0}
 
 #===================================================================================================
 	def import_diffeqpy(self):
@@ -163,6 +164,13 @@ class PVDERAggregatedModel(object):
 			nThreePhaseNode=len(threePhaseNode)
 			count=0
 			DNet['DER']['PVDERData']['nSolar_at_this_node']={}
+
+			totalPercentage=0; interconnectionStandard={}
+			for entry in myconfig['interconnectionStandard']:
+				interconnectionStandard[entry]=[totalPercentage,\
+				totalPercentage+myconfig['interconnectionStandard'][entry]]
+				totalPercentage+=myconfig['interconnectionStandard'][entry]
+
 			if not PVPlacement:
 				np.random.shuffle(threePhaseNode)
 			for n in range(nSolar):
@@ -181,7 +189,9 @@ class PVDERAggregatedModel(object):
 				myconfig['DERParameters']['default']['pref'] #### kw
 				DNet['DER']['PVDERData']['QNominal'][thisKey]=\
 				myconfig['DERParameters']['default']['qref'] #### kvar
-				DNet['DER']['PVDERData']['nSolar_at_this_node'][thisKey]=np.ceil(count/nThreePhaseNode)
+				if thisKey not in DNet['DER']['PVDERData']['nSolar_at_this_node']:
+					DNet['DER']['PVDERData']['nSolar_at_this_node'][thisKey]=0
+				DNet['DER']['PVDERData']['nSolar_at_this_node'][thisKey]+=1
 
 				thisConf['vref']=abs(V0pu[thisKey]['a'])
 				thisConf['vref_ang']=np.angle(V0pu[thisKey]['a'])
@@ -189,9 +199,17 @@ class PVDERAggregatedModel(object):
 				thisConf['pref']=defaultConfig['pref']/defaultConfig['sbase']
 				thisConf['qref']=defaultConfig['qref']/defaultConfig['sbase']
 				thisConf['sbase']=defaultConfig['sbase']
-				self._pvders[n]=FastDER(**{'config':thisConf})
-				# self._pvders[n].data['config']['pref']=myconfig['DERParameters']['default']['pref']
-				# self._pvders[n].data['config']['qref']=myconfig['DERParameters']['default']['qref']
+
+				thisRandomPick=np.random.random()
+				for entry in interconnectionStandard:
+					if interconnectionStandard[entry][0]<thisRandomPick<=\
+					interconnectionStandard[entry][1]:
+						thisInterconnectionStandard=entry
+
+				self._pvders[n]=FastDER(interconnectionStandard=thisInterconnectionStandard,\
+				**{'config':thisConf})
+				#### self._pvders[n].data['config']['pref']=myconfig['DERParameters']['default']['pref']
+				#### self._pvders[n].data['config']['qref']=myconfig['DERParameters']['default']['qref']
 				self._pvders[n].compute_initial_condition(\
 				thisConf['pref'],thisConf['qref'],thisConf['vref'],thisConf['vref_ang'])
 				count+=1

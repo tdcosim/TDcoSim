@@ -1,6 +1,7 @@
 import os
 import copy
 import json
+import pdb
 
 import numpy as np
 
@@ -30,21 +31,42 @@ class Dera(object):
 			GlobalData.log()
 
 #=======================================================================================================================
-	def generate_config(self,busID,configType):
+	def generate_config(self,busID,configType,userInput=None):
 		try:
 			conf={}
 			if configType in self.template:
 				for thisBusID in busID:
-					flagArray=np.zeros(len(self.template[configType]['flags']),dtype=int)
-					paramArray=np.zeros(len(self.template[configType]['included_parameters']))
+					thisTemplate=copy.deepcopy(self.template[configType])
+					if userInput:
+						if 'all' in userInput:
+							if 'flags' in userInput['all']:
+								for thisFlag in userInput['all']['flags']:
+									thisTemplate['flags'][thisFlag]['value']=\
+									userInput['all']['flags'][thisFlag]
+							if 'params' in userInput['all']:
+								for thisParam in userInput['all']['params']:
+									thisTemplate['included_parameters'][thisParam]['value']=\
+									userInput['all']['params'][thisParam]
+						elif str(thisBusID) in userInput:
+							if 'flags' in userInput[str(thisBusID)]:
+								for thisFlag in userInput[str(thisBusID)]['flags']:
+									thisTemplate['flags'][thisFlag]['value']=\
+									userInput[str(thisBusID)]['flags'][thisFlag]
+							if 'params' in userInput[str(thisBusID)]:
+								for thisParam in userInput[str(thisBusID)]['params']:
+									thisTemplate['included_parameters'][thisParam]['value']=\
+									userInput[str(thisBusID)]['params'][thisParam]
 
-					for flag in self.template[configType]['flags']:
+					flagArray=np.zeros(len(thisTemplate['flags']),dtype=int)
+					paramArray=np.zeros(len(thisTemplate['included_parameters']))
+
+					for flag in thisTemplate['flags']:
 						flagArray[self.ind['flag_properties'][flag]['index']]=\
-						self.template[configType]['flags'][flag]['value']
+						thisTemplate['flags'][flag]['value']
 
 					for param in self.ind['parameter_properties']:
 						paramArray[self.ind['parameter_properties'][param]['index']]=\
-						self.template[configType]['included_parameters'][param]['value']
+						thisTemplate['included_parameters'][param]['value']
 
 					conf[thisBusID]={'flags':flagArray,'params':paramArray}
 

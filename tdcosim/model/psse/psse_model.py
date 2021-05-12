@@ -700,12 +700,15 @@ class PSSEModel(Dera):
 					S.append(val)
 
 			# generate dera params and write .dya file
+			userInput=None
+			if 'der_a' in GlobalData.config['psseConfig'] and GlobalData.config['psseConfig']['der_a']:
+				userInput=GlobalData.config['psseConfig']['der_a']
+			
 			thisConf={}; busID=[]
 			for entry in conf:
-				thisConf.update(self.generate_config(conf[entry],entry))
+				thisConf.update(self.generate_config(conf[entry],entry,userInput))
 				busID.extend(conf[entry])
-			self.dera2dyr(thisConf,additionalDyrFilePath)
-
+			
 			# rating
 			realarData=rating
 			if rating and solarPercentage==0:
@@ -721,18 +724,53 @@ class PSSEModel(Dera):
 					'pt':thisS.real*solarPercentage,'pb':0.0,
 					'qt':abs(thisS.imag*solarPercentage),'qb':-abs(thisS.imag*solarPercentage)})
 					realarData.append(thisRating)
+					thisConf[thisBus]['params'][self.ind['parameter_properties']['PMAX']['index']]=\
+					thisRating['pt']/thisRating['mbase']
 
 			ind2name=self.__dera_rating_default['ind2name']
-			for thisBusID,thisRealarData in zip(busID,realarData):
-				ierr=self._psspy.bus_data_2(thisBusID,[2,1,1,1])# convert to a gen bus
-				assert ierr==0, 'bus_data_2 failed with error code {}'.format(ierr)
-				ierr=self._psspy.plant_data(thisBusID)
-				assert ierr==0, 'plant_data failed with error code {}'.format(ierr)
-				realar=[thisRealarData[ind2name[str(n)]] for n in range(len(thisRealarData))]
-				ierr=self._psspy.machine_data_2(i=thisBusID,intgar=[1,1,0,0,0,1],realar=realar)
-				assert ierr==0,'machine_data_2 failed with error code {}'.format(ierr)
+			if "deraModelTransformer" not in GlobalData.config['simulationConfig']:
+				GlobalData.config['simulationConfig']['deraModelTransformer']=False
+
+			if not GlobalData.config['simulationConfig']['deraModelTransformer']:# no tfr
+				for thisBusID,thisRealarData in zip(busID,realarData):
+					ierr=self._psspy.bus_data_2(thisBusID,intgar1=2)
+					assert ierr==0, 'bus_data_2 failed with error code {}'.format(ierr)
+					ierr=self._psspy.plant_data(ibus=thisBusID)
+					assert ierr==0, 'plant_data failed with error code {}'.format(ierr)
+					realar=[thisRealarData[ind2name[str(n)]] for n in range(len(thisRealarData))]
+					ierr=self._psspy.machine_data_2(i=thisBusID,intgar6=1,realar=realar)
+					assert ierr==0,'machine_data_2 failed with error code {}'.format(ierr)
+			else:# model transformer
+				ierr, busNo = self._psspy.abusint(-1, 2, string='number')
+				busNumberOffset=busNo[0][-1]
+				if "deraTransformer" not in GlobalData.config['simulationConfig']:
+					GlobalData.config['simulationConfig']["deraTransformer"]={}
+				for thisBusID,thisRealarData in zip(busID,realarData):
+					thisNewBusID=int(busNumberOffset+thisBusID)
+					if str(thisBusID) not in GlobalData.config['simulationConfig']["deraTransformer"]:
+						GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]={'r':0.02,'x':0.06}
+					else:
+						GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]=\
+						GlobalData.config['simulationConfig']["deraTransformer"].pop(str(thisBusID))
+					ierr,toBusBaseKV=self._psspy.busdat(thisBusID,string='BASE'); assert ierr==0
+					ierr=self._psspy.bus_data_2(thisNewBusID,intgar1=2,realar1=toBusBaseKV)# new bus
+					assert ierr==0, 'bus_data_2 failed with error code {}'.format(ierr)
+					thisR=GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]['r']
+					thisX=GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]['x']
+					ierr,rx=self._psspy.two_winding_data_4(thisNewBusID,thisBusID,realari1=thisR,realari2=thisX)# tfr
+					assert ierr==0, 'two_winding_data_4 failed with error code {}'.format(ierr)
+					
+					ierr=self._psspy.plant_data(ibus=thisNewBusID)
+					assert ierr==0, 'plant_data failed with error code {}'.format(ierr)
+
+					realar=[thisRealarData[ind2name[str(n)]] for n in range(len(thisRealarData))]
+					ierr=self._psspy.machine_data_2(i=thisNewBusID,intgar6=1,realar=realar)
+					assert ierr==0,'machine_data_2 failed with error code {}'.format(ierr)
+					thisConf[thisNewBusID]=thisConf.pop(thisBusID)
+
 
 			# add dera to base case
+			self.dera2dyr(thisConf,additionalDyrFilePath)
 			ierr=self._psspy.dyre_add(dyrefile=additionalDyrFilePath); assert ierr==0
 
 			# cleanup

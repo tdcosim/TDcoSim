@@ -48,10 +48,9 @@ if __name__=="__main__":
 			if six.PY3:
 				raw=raw.decode('ascii')
 			
-			####
-			print(raw)
 			msg=json.loads(raw)# expect the msg to be of json format
 			OpenDSSData.logger.debug('recvmsg={}'.format(msg))
+
 			if 'COMM_END' in msg:
 				comm_end=1
 				if six.PY2:
@@ -77,11 +76,7 @@ if __name__=="__main__":
 			elif msg['method'].lower()=='scaleload':
 				dssProcedure.scaleLoad(scale=msg['scale'])
 			elif msg['method'].lower()=='monitor':
-				####
-				print('monitor####',msg)
 				replyMsg=dssProcedure.monitor(msg=msg['varName'])
-				print(len(json.dumps(replyMsg)))
-
 			
 			OpenDSSData.logger.debug('replyMsg={}'.format(msg))
 			if six.PY2:

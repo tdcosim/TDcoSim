@@ -12,7 +12,7 @@ def main():
 	Main function to run the T&D Cosimulation	
 	'''
 	try:
-		GlobalData.set_config('config_fast_der.json')
+		GlobalData.set_config('config_tonly_dera_68bus.json')
 		GlobalData.set_TDdata()
 		simulate()
 	except:
