@@ -4,6 +4,7 @@ import string
 import json
 import uuid
 import pdb
+import re
 
 import six
 import xlsxwriter
@@ -171,90 +172,143 @@ def save_config(GlobalData):
 		raise
 
 def generate_dataframe(GlobalData,scenario=None,saveFile=True):
-		try:
-			####TODO: This is a temp fix for psspy import issue.
-			# psseConfig->installLocation is set in psse_model, if tdcosim.report, which uses psspy and dyntools,
-			# is imported when this module is loaded it could result in a) import error, b) wrong version
-			# imported or c) everything works fine because psse path is already set and the user is still
-			# pointing to the same path using psseConfig->installLocation. As a temp workaround lazy load  
-			import psspy
-			import dyntools
+	try:
+		####TODO: This is a temp fix for psspy import issue.
+		# psseConfig->installLocation is set in psse_model, if tdcosim.report, which uses psspy and dyntools,
+		# is imported when this module is loaded it could result in a) import error, b) wrong version
+		# imported or c) everything works fine because psse path is already set and the user is still
+		# pointing to the same path using psseConfig->installLocation. As a temp workaround lazy load  
+		import psspy
+		import dyntools
 
-			if not scenario:
-				scenario=uuid.uuid4().hex
+		if not scenario:
+			scenario=uuid.uuid4().hex
 
-			monData=GlobalData.data['monitorData']
+		monData=GlobalData.data['monitorData']
 
-			t=monData.keys()
-			if six.PY3:
-				t=list(t)
-			t.sort()
-			data={'t':[],'tnodeid':[],'tnodesubid':[],'dfeederid':[],'dnodeid':[],'property':[],'value':[]}
-			for thisTime in t:
-				for thisTDInterface in monData[thisTime]:
-					for thisProp in monData[thisTime][thisTDInterface]:
-						for thisNodeID in monData[thisTime][thisTDInterface][thisProp]:
-							for thisSubProp in monData[thisTime][thisTDInterface][thisProp][thisNodeID]:
-								data['t'].append(thisTime)
-								data['tnodeid'].append(str(thisTDInterface))
-								data['dnodeid'].append(thisNodeID)
-								data['property'].append(thisProp+'_'+thisSubProp)
-								data['value'].append(monData[thisTime][thisTDInterface][thisProp][thisNodeID][thisSubProp])
+		t=monData.keys()
+		if six.PY3:
+			t=list(t)
+		t.sort()
+		data={'t':[],'tnodeid':[],'tnodesubid':[],'dfeederid':[],'dnodeid':[],'property':[],'value':[]}
+		for thisTime in t:
+			for thisTDInterface in monData[thisTime]:
+				for thisProp in monData[thisTime][thisTDInterface]:
+					for thisNodeID in monData[thisTime][thisTDInterface][thisProp]:
+						for thisSubProp in monData[thisTime][thisTDInterface][thisProp][thisNodeID]:
+							data['t'].append(thisTime)
+							data['tnodeid'].append(str(thisTDInterface))
+							data['dnodeid'].append(thisNodeID)
+							data['property'].append(thisProp+'_'+thisSubProp)
+							data['value'].append(monData[thisTime][thisTDInterface][thisProp][thisNodeID][thisSubProp])
 
-			data['scenario']=[scenario]*len(data['t'])
-			data['dfeederid']=['1']*len(data['t'])
-			data['tnodesubid']=['']*len(data['t'])
-			df_monitorData=pd.DataFrame(data)
+		data['scenario']=[scenario]*len(data['t'])
+		data['dfeederid']=['1']*len(data['t'])
+		data['tnodesubid']=['']*len(data['t'])
+		df_monitorData=pd.DataFrame(data)
 
-			outputConfig=GlobalData.config['outputConfig']
+		outputConfig=GlobalData.config['outputConfig']
 
-			if GlobalData.config['simulationConfig']['simType']=='dynamic':
-				stride=2
-				fname=outputConfig['outputfilename'].split('.')[0]+'.out'
-				outfile=os.path.join(outputConfig['outputDir'],fname)
-				outfile=outfile.encode('ascii')
-				psseVersion=psspy.psseversion()[1]
-				if psseVersion==33:
-					chnfobj = dyntools.CHNF(outfile,0)
-					_, ch_id, ch_data = chnfobj.get_data()
-				elif psseVersion==35:
-					chnfobj = dyntools.CHNF(outfile,outvrsn=0)
-					_, ch_id, ch_data = chnfobj.get_data()
+		if GlobalData.config['simulationConfig']['simType']=='dynamic':
+			stride=2
+			fname=outputConfig['outputfilename'].split('.')[0]+'.out'
+			outfile=os.path.join(outputConfig['outputDir'],fname)
+			outfile=outfile.encode('ascii')
+			psseVersion=psspy.psseversion()[1]
+			if psseVersion==33:
+				chnfobj = dyntools.CHNF(outfile,0)
+				_, ch_id, ch_data = chnfobj.get_data()
+			elif psseVersion==35:
+				chnfobj = dyntools.CHNF(outfile,outvrsn=0)
+				_, ch_id, ch_data = chnfobj.get_data()
 
-				symbols=[ch_id[entry] for entry in ch_id]
-				properties=list(set([ch_id[entry].split(' ')[0] for entry in ch_id]))
-				nodes=list(set([ch_id[entry].split(' ')[1][0:ch_id[entry].split(' ')[1].find(
-				'[')].replace(' ','') for entry in ch_id if 'Time' not in ch_id[entry]]))
+			symbols=[ch_id[entry] for entry in ch_id]
+			properties=list(set([ch_id[entry].split(' ')[0] for entry in ch_id]))
+			nodes=list(set([ch_id[entry].split(' ')[1][0:ch_id[entry].split(' ')[1].find(
+			'[')].replace(' ','') for entry in ch_id if 'Time' not in ch_id[entry]]))
 
-				tnodeid=[]; tnodesubid=[]; props=[]; value=[]; t=[]; count=0
-				for entry in ch_id:
-					if 'Time' not in ch_id[entry]:
-						prop_node=ch_id[entry].split()
-						prop,node=prop_node[0],prop_node[1]
-						if prop!='VOLT':
-							tnodesubid.extend([prop_node[-1][prop_node[-1].find(']')+1::].strip()]*\
-							len(ch_data[entry][0::stride]))
-							node=node[0:node.find('[')].strip()
-						else:
-							tnodesubid.extend(['']*len(ch_data[entry][0::stride]))
-						value.extend(ch_data[entry][0::stride])
-						props.extend([prop]*len(ch_data[entry][0::stride]))
-						tnodeid.extend([node]*len(ch_data[entry][0::stride]))
-						count+=1
+			tnodeid=[]; tnodesubid=[]; props=[]; value=[]; t=[]; count=0
+			for entry in ch_id:
+				if 'Time' not in ch_id[entry]:
+					prop=re.findall('[\w]{1,}',ch_id[entry])[0]
+					node=re.findall('[\d]{1,}',ch_id[entry])[0]
+					if prop.isalnum():
+						prop=prop.replace(node,'')	
+					if prop!='VOLT':
+						tnodesubid.extend([re.findall('[\d]{1,}',ch_id[entry])[-1]]*len(ch_data[entry][0::stride]))
+					else:
+						tnodesubid.extend(['']*len(ch_data[entry][0::stride]))
+					value.extend(ch_data[entry][0::stride])
+					props.extend([prop]*len(ch_data[entry][0::stride]))
+					tnodeid.extend([node]*len(ch_data[entry][0::stride]))
+					count+=1
 
-				t.extend(ch_data['time'][0::stride]*count)
+			t.extend(ch_data['time'][0::stride]*count)
 
-				df=pd.DataFrame(columns=['scenario','t','tnodeid','tnodesubid','dfeederid','dnodeid','property',
-				'value'])
-				df['t'],df['tnodeid'],df['tnodesubid'],df['property'],df['value']=t,tnodeid,tnodesubid,props,value
-				df['scenario']=[scenario]*len(t)
-				df=df.append(df_monitorData,ignore_index=True,sort=True)
-			elif GlobalData.config['simulationConfig']['simType']=='static':
-				df=df_monitorData
+			df=pd.DataFrame(columns=['scenario','t','tnodeid','tnodesubid','dfeederid','dnodeid','property',
+			'value'])
+			df['t'],df['tnodeid'],df['tnodesubid'],df['property'],df['value']=t,tnodeid,tnodesubid,props,value
+			df['scenario']=[scenario]*len(t)
+			df=df.append(df_monitorData,ignore_index=True,sort=True)
+		elif GlobalData.config['simulationConfig']['simType']=='static':
+			df=df_monitorData
 
-			fpath=os.path.join(outputConfig['outputDir'],'df_pickle.pkl')
-			df.to_pickle(fpath)
+		# updates for der_p_total and der_q_total
+		df=get_der_total_injection(df,GlobalData)
+		df=update_dera_nodes(df,GlobalData)
 
-			return df
-		except:
-			raise
+		fpath=os.path.join(outputConfig['outputDir'],'df_pickle.pkl')
+		df.to_pickle(fpath)
+
+		return df
+	except:
+		raise
+
+def get_der_total_injection(df,GlobalData):
+	try:
+		for thisProp in ['der_P','der_Q']:
+			res=df[df.property==thisProp]
+			if not res.empty:
+				data={'dfeederid':[],'dnodeid':[],'property':[],'scenario':[],'t':[],
+				'tnodeid':[],'tnodesubid':[],'value':[]}
+				for entry in set(res.tnodeid):
+					thisRes=res[res.tnodeid==entry]
+					for thisT in set(thisRes.t):
+						thisDf=thisRes[thisRes.t==thisT]
+						data['t'].append(thisT)
+						data['value'].append(thisDf.value.sum()*\
+						GlobalData.data['DNet']['Nodes'][int(entry)]['scale'])
+						data['tnodeid'].append(entry)
+				data['property']=['{}_total'.format(thisProp.lower())]*len(data['value'])
+				data['scenario']=list(set(res.scenario))
+				assert len(data['scenario'])==1
+				data['scenario']=data['scenario']*len(data['value'])
+				data['dfeederid']=['']*len(data['value'])
+				data['dnodeid']=['']*len(data['value'])
+				data['tnodesubid']=['']*len(data['value'])
+
+				df_new=pd.DataFrame(data)
+				if not df_new.empty: 
+					df_new.sort_values(by='t',inplace=True)
+					df=df.append(df_new,ignore_index=True)
+					df.reindex()
+
+		return df
+	except:
+		raise
+
+def update_dera_nodes(df,GlobalData):
+	try:
+		deraNodes=[]
+		if 'dera' in GlobalData.config['simulationConfig']:
+			for entry in GlobalData.config['simulationConfig']['dera']:
+				deraNodes.extend(GlobalData.config['simulationConfig']['dera'][entry])
+		
+		for node in deraNodes:
+			node=str(node)
+			df.loc[(df.tnodeid==node)&(df.property=='POWR'),'property']='der_p_total'
+			df.loc[(df.tnodeid==node)&(df.property=='VARS'),'property']='der_q_total'
+
+		return df
+	except:
+		raise

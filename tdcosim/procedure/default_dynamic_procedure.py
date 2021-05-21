@@ -46,7 +46,6 @@ class DefaultDynamicProcedure(DefaultProcedure):
 		try:
 			GlobalData.data['monitorData']={}
 			GlobalData.data['TNet']['Dynamic'] = {}
-			dt = 0.0083333
 			maxIter=1
 			tol=10**-4
 			if GlobalData.config['simulationConfig']['protocol'].lower() != 'loose_coupling':
@@ -58,26 +57,28 @@ class DefaultDynamicProcedure(DefaultProcedure):
 			events.sort()
 
 			memory_threshold = GlobalData.config['simulationConfig']['memoryThreshold']
-			t = 0
+			t = 0.0
+			dt= dt_default = 1/120.
+			eps=1e-4
 			stepCount=0
 			stepThreshold=1e6
 			lastWriteInd=0
 			nPart=0
 			simEnd=eventData[events[-1]]['time']
 			updateBins=20
+			eventFlag=False
+			resetFlag=False
 
 			for event in events:
 				while t<eventData[event]['time']:
 					iteration=0
 					mismatch=100.
-					if t<=eventData[event]['time'] and t+dt>=eventData[event]['time']:
-						if eventData[event]['type']=='faultOn':
-							self._tnet_model.faultOn(eventData[event]['faultBus'],
-							eventData[event]['faultImpedance'])
-						elif eventData[event]['type']=='faultOff':
-							self._tnet_model.faultOff(eventData[event]['faultBus'])
 					while mismatch>tol and iteration<maxIter:
-						t = t + dt
+						if t+dt-eps<eventData[event]['time']<t+dt+eps:
+							eventFlag=True
+							dt=dt_default-eps
+						t+=dt
+					
 						iteration+=1
 						self._tnet_model.runDynamic(t)
 						print('Simulation Progress : ='+'='*int((updateBins-1)*(t/simEnd))+'>'+\
@@ -85,8 +86,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
 						GlobalData.log(level=10,msg="Sim time: " + str(t))
 						Vpcc = self._tnet_model.getVoltage()
 						self._dnet_model.setVoltage(Vpcc)
-						S = self._dnet_model.getLoad()
-						GlobalData.logger.debug('time:{},S:{},Vpcc:{}'.format(t,S,Vpcc))
+						S = self._dnet_model.getLoad(t=t,dt=dt)
 						self._tnet_model.setLoad(S)
 
 						# collect data and store
@@ -133,6 +133,21 @@ class DefaultDynamicProcedure(DefaultProcedure):
 									break
 						if DSSconvergenceFlg is False:
 							GlobalData.log(msg='OpenDSS Convergence Failed')
+
+						if resetFlag:
+							dt=dt_default-2*eps
+							resetFlag=False
+						elif eventFlag:
+							if eventData[event]['type']=='faultOn':
+								self._tnet_model.faultOn(eventData[event]['faultBus'],
+								eventData[event]['faultImpedance'])
+							elif eventData[event]['type']=='faultOff':
+								self._tnet_model.faultOff(eventData[event]['faultBus'])
+							eventFlag=False
+							dt=3*eps
+							resetFlag=True
+						else:
+							dt=dt_default
 			# close
 			print('')# for newline
 			ack=self._dnet_model.close()

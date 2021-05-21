@@ -700,25 +700,65 @@ class PSSEModel(Dera):
 					S.append(val)
 
 			# generate dera params and write .dya file
-			userInput=None
+			userInput={}
 			if 'der_a' in GlobalData.config['psseConfig'] and GlobalData.config['psseConfig']['der_a']:
 				userInput=GlobalData.config['psseConfig']['der_a']
 			
-			thisConf={}; busID=[]
-			for entry in conf:
-				thisConf.update(self.generate_config(conf[entry],entry,userInput))
-				busID.extend(conf[entry])
+			interconnectionStandardOrg={}
+			for thisBus in userInput:
+				if 'interconnectionStandard' in userInput[thisBus]:
+					interconnectionStandardOrg[int(thisBus)]=\
+					userInput[thisBus].pop('interconnectionStandard')
+			interconnectionStandard=copy.deepcopy(interconnectionStandardOrg)
+
+			thisConf={}; busID=[]; sep='::::'
+			for thisInterconnectionStandard in conf:
+				thisConf.update(self.generate_config(conf[thisInterconnectionStandard],\
+				thisInterconnectionStandard,userInput))
+				for thisDeraBus in interconnectionStandard:
+					if thisDeraBus in thisConf:
+						thisConf['{}{}{}'.format(thisDeraBus,sep,thisInterconnectionStandard)]=\
+						thisConf.pop(thisDeraBus)
+				busID.extend(conf[thisInterconnectionStandard])
 			
+			for thisBus in interconnectionStandard:
+				thisBus=int(thisBus)
+				if thisBus in loadBusNumber:
+					nInstance=len(interconnectionStandard[thisBus])
+					thisBusS=S[loadBusNumber.index(thisBus)]
+					loadBusNumber.extend([thisBus]*(nInstance-1))
+					S.extend([thisBusS]*(nInstance-1))
+
 			# rating
 			realarData=rating
+			idOffset=50; usedID={}
 			if rating and solarPercentage==0:
 				assert isinstance(rating,list) and len(rating)==len(busID)
 				for thisRating,thisRealarData in zip(rating,realarData):
 					if isinstance(thisRating,dict):
 						thisRealarData.update(thisRating)
 			elif solarPercentage>0:
-				realarData=[]
+				realarData=[]; interconnectionStandard2id={}
 				for thisBus,thisS in zip(loadBusNumber,S):
+					if interconnectionStandard and interconnectionStandard[thisBus]:
+						thisInterconnectionStandard=interconnectionStandard[thisBus].keys()
+						if six.PY3:
+							thisInterconnectionStandard=list(thisInterconnectionStandard)
+						thisInterconnectionStandard=thisInterconnectionStandard[0]
+						thisS=thisS*interconnectionStandard[thisBus][thisInterconnectionStandard] # scale
+						interconnectionStandard[thisBus].pop(thisInterconnectionStandard)
+						if thisBus not in interconnectionStandard2id:
+							interconnectionStandard2id[thisBus]={}
+						if thisBus not in usedID:
+							usedID[thisBus]=[]
+						if usedID[thisBus]:
+							thisID='{}'.format(usedID[thisBus][-1]+1)
+							usedID[thisBus].append(usedID[thisBus][-1]+1)
+						else:
+							thisID='{}'.format(idOffset+1)
+							usedID[thisBus].append(idOffset+1)
+						interconnectionStandard2id[thisBus][thisInterconnectionStandard]=thisID
+						thisBus='{}{}{}'.format(thisBus,sep,thisInterconnectionStandard)
 					thisRating=copy.deepcopy(self.__dera_rating_default['default'])
 					thisRating.update({'pg':thisS.real*solarPercentage,'qg':0.0,
 					'pt':thisS.real*solarPercentage,'pb':0.0,
@@ -731,14 +771,26 @@ class PSSEModel(Dera):
 			if "deraModelTransformer" not in GlobalData.config['simulationConfig']:
 				GlobalData.config['simulationConfig']['deraModelTransformer']=False
 
+			interconnectionStandard=copy.deepcopy(interconnectionStandardOrg)
 			if not GlobalData.config['simulationConfig']['deraModelTransformer']:# no tfr
 				for thisBusID,thisRealarData in zip(busID,realarData):
+					if thisBusID not in usedID:
+						usedID[thisBusID]=[]
+					if thisBusID in interconnectionStandard:
+						thisInterconnectionStandard=interconnectionStandard[thisBusID].keys()
+						if six.PY3:
+							thisInterconnectionStandard=list(thisInterconnectionStandard)
+						thisInterconnectionStandard=thisInterconnectionStandard[0]
+						thisID=interconnectionStandard2id[thisBusID][thisInterconnectionStandard]
+						interconnectionStandard[thisBusID].pop(thisInterconnectionStandard)
+					else:
+						thisID='1'
 					ierr=self._psspy.bus_data_2(thisBusID,intgar1=2)
 					assert ierr==0, 'bus_data_2 failed with error code {}'.format(ierr)
 					ierr=self._psspy.plant_data(ibus=thisBusID)
 					assert ierr==0, 'plant_data failed with error code {}'.format(ierr)
 					realar=[thisRealarData[ind2name[str(n)]] for n in range(len(thisRealarData))]
-					ierr=self._psspy.machine_data_2(i=thisBusID,intgar6=1,realar=realar)
+					ierr=self._psspy.machine_data_2(i=thisBusID,id=thisID,intgar6=1,realar=realar)
 					assert ierr==0,'machine_data_2 failed with error code {}'.format(ierr)
 			else:# model transformer
 				ierr, busNo = self._psspy.abusint(-1, 2, string='number')
@@ -768,9 +820,19 @@ class PSSEModel(Dera):
 					assert ierr==0,'machine_data_2 failed with error code {}'.format(ierr)
 					thisConf[thisNewBusID]=thisConf.pop(thisBusID)
 
-
 			# add dera to base case
-			self.dera2dyr(thisConf,additionalDyrFilePath)
+			thisConfKeys=thisConf.keys()
+			if six.PY3:
+				thisConfKeys=list(thisConfKeys)
+			for thisBus in thisConfKeys:
+				if isinstance(thisBus,str) and sep in thisBus:
+					thisBusOrgID,thisInterconnectionStandard=thisBus.split(sep)
+					thisDeraID=interconnectionStandard2id[int(thisBusOrgID)][thisInterconnectionStandard]
+					thisConf[thisBusOrgID]=thisConf.pop(thisBus)
+					self.dera2dyr({thisBusOrgID:thisConf[thisBusOrgID]},additionalDyrFilePath,\
+					deraID=[thisDeraID],fileMode='a')
+					thisConf.pop(thisBusOrgID)
+			self.dera2dyr(thisConf,additionalDyrFilePath,fileMode='a')
 			ierr=self._psspy.dyre_add(dyrefile=additionalDyrFilePath); assert ierr==0
 
 			# cleanup

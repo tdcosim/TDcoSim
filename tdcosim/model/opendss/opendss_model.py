@@ -102,9 +102,9 @@ class OpenDSSModel(object):
 		self._opendss_server.setVoltage(Vpcc)
 
 #===================================================================================================
-	def getLoad(self):
+	def getLoad(self,pccName='Vsource.source',t=None,dt=1/120.):
 		try:
-			S = self._opendss_server.getLoad()
+			S = self._opendss_server.getLoad(pccName=pccName,t=t,dt=dt)
 			return S
 		except:
 			OpenDSSData.log()

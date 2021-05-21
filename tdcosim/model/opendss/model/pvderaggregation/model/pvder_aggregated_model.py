@@ -425,19 +425,19 @@ class PVDERAggregatedModel(object):
 			OpenDSSData.log()
 
 #===================================================================================================
-	def run(self,V,Vpu,nEqs=23,dt=1/120.):
+	def run(self,V,Vpu,t,dt=1/120.,nEqs=23):
 		try:
 			if self.der_solver_type.replace('_','').replace('-','').lower()=='fastder':
-				P,Q=self._run_fast(V,Vpu,dt)
+				P,Q=self._run_fast(V=V,Vpu=Vpu,t=t,dt=dt)
 			else:
-				P,Q=self._run_detailed(V,Vpu,nEqs,dt)
+				P,Q=self._run_detailed(V=V,Vpu=Vpu,nEqs=nEqs,dt=dt)
 			
 			return P, Q
 		except:
 			OpenDSSData.log(msg="Failed run the pvder aggregated model")
 
 #===================================================================================================
-	def _run_fast(self,V,Vpu,dt=1/120.):
+	def _run_fast(self,V,Vpu,t=None,dt=1/120.):
 		try:
 			P = {}
 			Q = {}

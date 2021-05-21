@@ -13,9 +13,9 @@
 					"filePath": [
 					   "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
 					],
-					"fractionAggregatedLoad": {"cmld": 0.4},
+					"fractionAggregatedLoad": {"cmld": 0.5},
 					"solarFlag": 1,
-					"solarPenetration": 0.5,
+					"solarPenetration": 0.6,
 					"interconnectionStandard":{"ieee_2018_category_2":1.0},
 					"DERParameters": {
 					   "default": {
@@ -42,20 +42,20 @@
 			 "1": {
 				"faultImpedance": [
 				   0.0, 
-				   -50000
+				   -100000
 				], 
 				"type": "faultOn", 
 				"faultBus": 41, 
-				"time": 0.5
+				"time": 0.2
 			 }, 
 			 "3": {
 				"type": "simEnd", 
-				"time": 1.0
+				"time": 0.5
 			 }, 
 			 "2": {
 				"type": "faultOff", 
 				"faultBus": 41, 
-				"time": 0.7
+				"time": 0.3
 			 }
 		  }
 	   }, 

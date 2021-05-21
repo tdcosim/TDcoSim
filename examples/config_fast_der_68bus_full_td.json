@@ -9,11 +9,12 @@
 		"defaultFeederConfig": {
 			"DEROdeSolver":"fast_der",
 			"solarFlag": 1, 
-			"solarPenetration": 0.5, 
+			"solarPenetration": 0.1, 
+			"fractionAggregatedLoad": {"cmld": 0.5},
 			"filePath": [
 			   "..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
 			],
-			"excludenode":[3,64],
+			"excludenode":[3,64,17,18],
 			"DERParameters": {
 				"default": {
 				   "pvderScale": 1, 
@@ -37,7 +38,7 @@
 			 "1": {
 				"faultImpedance": [
 				   0.0, 
-				   -32000
+				   -100000
 				], 
 				"type": "faultOn", 
 				"faultBus": 41, 
@@ -45,12 +46,12 @@
 			 }, 
 			 "3": {
 				"type": "simEnd", 
-				"time": 10.0
+				"time": 20.0
 			 }, 
 			 "2": {
 				"type": "faultOff", 
 				"faultBus": 41, 
-				"time": 0.4
+				"time": 0.3
 			 }
 		  }
 	   }, 

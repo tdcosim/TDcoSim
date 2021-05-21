@@ -67,12 +67,14 @@ if __name__=="__main__":
 				dssProcedure.setup()
 				replyMsg = {'response': nodeid}
 			elif msg['method'].lower()=='initialize':
-				replyMsg['P'],replyMsg['Q']=dssProcedure.initialize(targetS=msg['targetS'],Vpcc=msg['Vpcc'],tol=msg['tol'])
+				replyMsg['P'],replyMsg['Q'],replyMsg['convergedFlag'],replyMsg['scale']=\
+				dssProcedure.initialize(targetS=msg['targetS'],Vpcc=msg['Vpcc'],tol=msg['tol'])
 			elif msg['method'].lower()=='setvoltage':
 				dssProcedure.setVoltage(Vpu=msg['Vpu'],Vang=msg['Vang'],pccName=msg['pccName'])
 				replyMsg = {"AckNode":nodeid}
 			elif msg['method'].lower()=='getload':
-				replyMsg['P'],replyMsg['Q'],replyMsg['convergenceFlg']=dssProcedure.getLoads(pccName=msg['pccName'])
+				replyMsg['P'],replyMsg['Q'],replyMsg['convergenceFlg']=\
+				dssProcedure.getLoads(pccName=msg['pccName'],t=msg['t'],dt=msg['dt'])
 			elif msg['method'].lower()=='scaleload':
 				dssProcedure.scaleLoad(scale=msg['scale'])
 			elif msg['method'].lower()=='monitor':

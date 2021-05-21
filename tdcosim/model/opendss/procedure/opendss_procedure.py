@@ -49,9 +49,9 @@ class OpenDSSProcedure(object):
 					toc = time.perf_counter()
 					OpenDSSData.log(level=10,msg="Completed {} steps pre-run at {:.3f} seconds in {:.3f} seconds".format(n_pre_run_steps,toc,toc - tic))
 			
-			P, Q, convergedFlg = self._opendssinterface.initialize(Vpcc, targetS, tol)
+			P, Q, convergedFlg,scale = self._opendssinterface.initialize(Vpcc, targetS, tol)
 			OpenDSSData.log(level=20,msg="Completed initialize for feeder after {} steps with P:{},Q:{},convergedFlg:{}".format(n_pre_run_steps,P,Q,convergedFlg))
-			return P, Q
+			return P, Q,convergedFlg,scale 
 		except:
 			OpenDSSData.log()
 
@@ -63,12 +63,13 @@ class OpenDSSProcedure(object):
 			OpenDSSData.log()
 
 #===================================================================================================
-	def getLoads(self, pccName):
+	def getLoads(self, pccName, t, dt):
 		try:
 			if OpenDSSData.config['myconfig']['solarFlag']:
+				P,Q,Converged = self._opendssinterface.getS(pccName=pccName) #### get updated solution
 				V = self._opendssinterface.getVoltage(vtype='actual',busID=self._pvNodes)
 				Vpu = self._opendssinterface.getVoltage(vtype='pu',busID=self._pvNodes)
-				derP, derQ = self._pvderAggProcedure.run(V,Vpu)
+				derP, derQ = self._pvderAggProcedure.run(V=V,Vpu=Vpu,t=t,dt=dt)
 				if not self._pvNodes:
 					self._pvNodes=[entry+'_tfr' for entry in derP.keys()]
 				self._opendssinterface.pvderInjection(derP,derQ,busID=self._pvNodes)

@@ -269,7 +269,8 @@ class OpenDSSInterface(object):
 					exit(1)
 
 			#return P, Q, convergedFlg
-			return self.K*P*self.unitConversion,self.K*Q*self.unitConversion, convergedFlg
+			return self.K*P*self.unitConversion,self.K*Q*self.unitConversion, convergedFlg,\
+			self.K*self.unitConversion
 		except:
 			OpenDSSData.log("Failed initialSolve in OpenDSS Interface")
 

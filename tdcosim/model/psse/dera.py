@@ -75,19 +75,21 @@ class Dera(object):
 			GlobalData.log()
 
 #=======================================================================================================================
-	def dera2dyr(self,conf,dyrFilePath):
+	def dera2dyr(self,conf,dyrFilePath,deraID=None,fileMode='w'):
 		"""Write dera data to dyrFilePath that can then be added using psspy.dyre_add method."""
 		try:
 			dyrStr=''
-			for busID in conf:
-				dyrStr+="{},'DERA1',1,".format(busID)
+			if not deraID:
+				deraID=['1']*len(conf)
+			for busID,thisDeraID in zip(conf,deraID):
+				dyrStr+="{},'DERA1',{},".format(busID,thisDeraID)
 				for thisIdata in conf[busID]['flags']:
 					dyrStr+='{},'.format(thisIdata)
 				for thisRdata in conf[busID]['params']:
 					dyrStr+='{},'.format(thisRdata)
 				dyrStr+=' /\n'
 
-			f=open(dyrFilePath,'w'); f.write(dyrStr); f.close()
+			f=open(dyrFilePath,fileMode); f.write(dyrStr); f.close()
 		except:
 			GlobalData.log()
 

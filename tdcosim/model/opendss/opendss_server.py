@@ -101,6 +101,7 @@ class OpenDSSServer(object):
 					elif six.PY3:
 						msg = GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(self._BUFFER_SIZE).decode('ascii')
 					power[entry]=json.loads(msg)
+					GlobalData.data['DNet']['Nodes'][entry]['scale']=power[entry]['scale']
 				except ValueError:
 					power[entry]={"faied":1}
 
@@ -133,11 +134,11 @@ class OpenDSSServer(object):
 			OpenDSSData.log()
 
 #===================================================================================================
-	def getLoad(self):
+	def getLoad(self,pccName='Vsource.source',t=None,dt=1/120.):
 		try:
 			# first send to all to allow computation to be run concurrently
 			for entry in GlobalData.data['DNet']['Nodes'].keys():
-				msg={'method':'getLoad','pccName':'Vsource.source'}
+				msg={'method':'getLoad','pccName':pccName,'dt':dt,'t':t}
 				if six.PY2:
 					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg))# send msg
 				elif six.PY3:
