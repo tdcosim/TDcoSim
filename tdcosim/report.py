@@ -9,6 +9,7 @@ import re
 import six
 import xlsxwriter
 import pandas as pd
+import numpy as np
 
 
 def generate_output(GlobalData,excel=True,dataframe=True,config=True):
@@ -221,6 +222,10 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			elif psseVersion==35:
 				chnfobj = dyntools.CHNF(outfile,outvrsn=0)
 				_, ch_id, ch_data = chnfobj.get_data()
+			
+			events=GlobalData.config['simulationConfig']['dynamicConfig']['events']
+			eventTimes=list(set([events[thisEvent]['time'] for thisEvent in events]))
+			eventTimes.remove(max(eventTimes))
 
 			symbols=[ch_id[entry] for entry in ch_id]
 			properties=list(set([ch_id[entry].split(' ')[0] for entry in ch_id]))
@@ -228,8 +233,11 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			'[')].replace(' ','') for entry in ch_id if 'Time' not in ch_id[entry]]))
 
 			tnodeid=[]; tnodesubid=[]; props=[]; value=[]; t=[]; count=0
-			for entry in ch_id:
-				if 'Time' not in ch_id[entry]:
+			ch_id_keys=ch_id.keys()
+			if six.PY3:
+				ch_id_keys=list(ch_id_keys)
+			for entry in ch_id_keys:
+				if not isinstance(entry,str):
 					prop=re.findall('[\w]{1,}',ch_id[entry])[0]
 					node=re.findall('[\d]{1,}',ch_id[entry])[0]
 					if prop.isalnum():
@@ -244,6 +252,29 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 					count+=1
 
 			t.extend(ch_data['time'][0::stride]*count)
+
+			# process event points
+			nPts=int(len(t)/(len(ch_id)-1))
+			time_all=np.array(t[0:nPts])
+			try:
+				ch_id_keys.remove('time')
+			except ValueError:
+				ch_id_keys.remove('Time')
+			for thisEventTime in eventTimes:
+				thisInd=np.where(time_all>=thisEventTime-1e-6)[0][0]
+				count=0; indexOffset=0
+				for entry in ch_id_keys:
+					t.insert(thisInd+indexOffset+count*nPts,time_all[thisInd])
+					tnodeid.insert(thisInd+indexOffset+count*nPts,tnodeid[thisInd+indexOffset+count*nPts])
+					tnodesubid.insert(thisInd+indexOffset+count*nPts,tnodesubid[thisInd+indexOffset+count*nPts])
+					props.insert(thisInd+indexOffset+count*nPts,props[thisInd+indexOffset+count*nPts])
+					value.insert(thisInd+indexOffset+count*nPts,ch_data[entry][thisInd])
+					count+=1
+					indexOffset+=1
+				nPts+=1
+				time_all=time_all.tolist()
+				time_all.insert(thisInd,time_all[thisInd])
+				time_all=np.array(time_all)
 
 			df=pd.DataFrame(columns=['scenario','t','tnodeid','tnodesubid','dfeederid','dnodeid','property',
 			'value'])

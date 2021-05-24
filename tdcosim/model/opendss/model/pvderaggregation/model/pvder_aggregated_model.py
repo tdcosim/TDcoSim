@@ -173,6 +173,10 @@ class PVDERAggregatedModel(object):
 
 			if not PVPlacement:
 				np.random.shuffle(threePhaseNode)
+			randomPickData={}
+			interconnectionStandardKeys=interconnectionStandard.keys()
+			if six.PY3:
+				interconnectionStandardKeys=list(interconnectionStandardKeys)
 			for n in range(nSolar):
 				thisConf={}
 				thisKey=threePhaseNode[count%nThreePhaseNode]
@@ -201,10 +205,17 @@ class PVDERAggregatedModel(object):
 				thisConf['sbase']=defaultConfig['sbase']
 
 				thisRandomPick=np.random.random()
-				for entry in interconnectionStandard:
-					if interconnectionStandard[entry][0]<thisRandomPick<=\
-					interconnectionStandard[entry][1]:
-						thisInterconnectionStandard=entry
+				for entry in interconnectionStandardKeys:
+					if entry in interconnectionStandard:
+						if entry not in randomPickData:
+							randomPickData[entry]=0
+						if interconnectionStandard[entry][0]<thisRandomPick<=\
+						interconnectionStandard[entry][1]:
+							thisInterconnectionStandard=entry
+							randomPickData[entry]+=1
+							if randomPickData[entry]>=np.ceil(\
+							(interconnectionStandard[entry][1]-interconnectionStandard[entry][0])*nSolar):
+								interconnectionStandard.pop(entry)
 
 				self._pvders[n]=FastDER(interconnectionStandard=thisInterconnectionStandard,\
 				**{'config':thisConf})

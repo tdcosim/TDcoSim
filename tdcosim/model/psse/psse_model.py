@@ -4,6 +4,7 @@ import re
 import pdb
 import json
 import copy
+import uuid
 
 import six
 import numpy as np
@@ -469,7 +470,8 @@ class PSSEModel(Dera):
 					solarPercentage=GlobalData.config['simulationConfig']['solarPenetration']
 				else:
 					solarPercentage=0.0
-				self.add_dera_to_case(conf=conf,solarPercentage=solarPercentage)
+				self.add_dera_to_case(conf=conf,solarPercentage=solarPercentage,\
+				additionalDyrFilePath='dera_{}.dya'.format(uuid.uuid4().hex))
 			elif conf and self._psspy.psseversion()[1]<35:
 				GlobalData.logger.warning(\
 				"This version of psse ({}) does not support der_a".format(self._psspy.psseversion()))
@@ -772,6 +774,7 @@ class PSSEModel(Dera):
 				GlobalData.config['simulationConfig']['deraModelTransformer']=False
 
 			interconnectionStandard=copy.deepcopy(interconnectionStandardOrg)
+			tfrNew2OldBusIDMap={}
 			if not GlobalData.config['simulationConfig']['deraModelTransformer']:# no tfr
 				for thisBusID,thisRealarData in zip(busID,realarData):
 					if thisBusID not in usedID:
@@ -790,7 +793,7 @@ class PSSEModel(Dera):
 					ierr=self._psspy.plant_data(ibus=thisBusID)
 					assert ierr==0, 'plant_data failed with error code {}'.format(ierr)
 					realar=[thisRealarData[ind2name[str(n)]] for n in range(len(thisRealarData))]
-					ierr=self._psspy.machine_data_2(i=thisBusID,id=thisID,intgar6=1,realar=realar)
+					ierr=self._psspy.machine_data_2(thisBusID,id=thisID,intgar6=1,realar=realar)
 					assert ierr==0,'machine_data_2 failed with error code {}'.format(ierr)
 			else:# model transformer
 				ierr, busNo = self._psspy.abusint(-1, 2, string='number')
@@ -799,6 +802,17 @@ class PSSEModel(Dera):
 					GlobalData.config['simulationConfig']["deraTransformer"]={}
 				for thisBusID,thisRealarData in zip(busID,realarData):
 					thisNewBusID=int(busNumberOffset+thisBusID)
+					if thisNewBusID not in usedID:
+						usedID[thisNewBusID]=[]
+					if thisBusID in interconnectionStandard:
+						thisInterconnectionStandard=interconnectionStandard[thisBusID].keys()
+						if six.PY3:
+							thisInterconnectionStandard=list(thisInterconnectionStandard)
+						thisInterconnectionStandard=thisInterconnectionStandard[0]
+						thisID=interconnectionStandard2id[thisBusID][thisInterconnectionStandard]
+						interconnectionStandard[thisBusID].pop(thisInterconnectionStandard)
+					else:
+						thisID='1'
 					if str(thisBusID) not in GlobalData.config['simulationConfig']["deraTransformer"]:
 						GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]={'r':0.02,'x':0.06}
 					else:
@@ -816,9 +830,17 @@ class PSSEModel(Dera):
 					assert ierr==0, 'plant_data failed with error code {}'.format(ierr)
 
 					realar=[thisRealarData[ind2name[str(n)]] for n in range(len(thisRealarData))]
-					ierr=self._psspy.machine_data_2(i=thisNewBusID,intgar6=1,realar=realar)
+					ierr=self._psspy.machine_data_2(thisNewBusID,id=thisID,intgar6=1,realar=realar)
 					assert ierr==0,'machine_data_2 failed with error code {}'.format(ierr)
-					thisConf[thisNewBusID]=thisConf.pop(thisBusID)
+
+				thisConfKeys=thisConf.keys()
+				if six.PY3:
+					thisConfKeys=list(thisConfKeys)
+				for thisConfKey in thisConfKeys:
+					if str(thisBusID) in thisConfKey:
+						updatedKey=thisConfKey.replace(str(thisBusID),str(thisNewBusID))
+						thisConf[updatedKey]=thisConf.pop(thisConfKey)
+						tfrNew2OldBusIDMap[updatedKey]=thisConfKey
 
 			# add dera to base case
 			thisConfKeys=thisConf.keys()
@@ -827,7 +849,12 @@ class PSSEModel(Dera):
 			for thisBus in thisConfKeys:
 				if isinstance(thisBus,str) and sep in thisBus:
 					thisBusOrgID,thisInterconnectionStandard=thisBus.split(sep)
-					thisDeraID=interconnectionStandard2id[int(thisBusOrgID)][thisInterconnectionStandard]
+					try:
+						thisDeraID=interconnectionStandard2id[int(thisBusOrgID)][thisInterconnectionStandard]
+					except KeyError:
+						tfrBusID=int(tfrNew2OldBusIDMap[thisBus].split(sep)[0])
+						thisDeraID=interconnectionStandard2id[tfrBusID][thisInterconnectionStandard]
+
 					thisConf[thisBusOrgID]=thisConf.pop(thisBus)
 					self.dera2dyr({thisBusOrgID:thisConf[thisBusOrgID]},additionalDyrFilePath,\
 					deraID=[thisDeraID],fileMode='a')

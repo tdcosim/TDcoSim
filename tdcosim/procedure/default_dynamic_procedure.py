@@ -69,6 +69,18 @@ class DefaultDynamicProcedure(DefaultProcedure):
 			eventFlag=False
 			resetFlag=False
 
+			# t0
+			Vpcc = self._tnet_model.getVoltage()
+			self._dnet_model.setVoltage(Vpcc)
+			S = self._dnet_model.getLoad(t=t,dt=dt)
+			
+			msg={'varName':{}}
+			for node in Vpcc:
+				msg['varName'][node]=['voltage_der','der']
+
+			GlobalData.data['monitorData'][t]=self._dnet_model.monitor(msg)
+			GlobalData.data['TNet']['Dynamic'][t] = {'V': Vpcc,'S': S}
+
 			for event in events:
 				while t<eventData[event]['time']:
 					iteration=0

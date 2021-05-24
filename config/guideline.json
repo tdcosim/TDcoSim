@@ -629,6 +629,633 @@
 			}
 		 }
 	  }, 
+	  "ieee_1547_2003_base_standard": {
+		"included_parameters": {
+		   "tvl0": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "tvl1": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "Kqv": {
+			  "default": 0, 
+			  "value": 0
+		   }, 
+		   "Tv": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "Tiq": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "Tp": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "Vref0": {
+			  "default": 0, 
+			  "value": 0
+		   }, 
+		   "Dup": {
+			  "default": 20, 
+			  "value": 20
+		   }, 
+		   "Ddn": {
+			  "default": 20, 
+			  "value": 20
+		   }, 
+		   "Vrfrac": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "Tg": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "vl1": {
+			  "default": 0.49, 
+			  "value": 0.55
+		   }, 
+		   "vl0": {
+			  "default": 0.44, 
+			  "value": 0.5
+		   }, 
+		   "dbd2": {
+			  "default": 99, 
+			  "value": 99
+		   }, 
+		   "dbd1": {
+			  "default": -99, 
+			  "value": -99
+		   }, 
+		   "Vpr": {
+			  "default": 0.3, 
+			  "value": 0.3
+		   }, 
+		   "vh1": {
+			  "default": 1.15, 
+			  "value": 1.15
+		   }, 
+		   "vh0": {
+			  "default": 1.2, 
+			  "value": 1.2
+		   }, 
+		   "Imax": {
+			  "default": 1.2, 
+			  "value": 1.2
+		   }, 
+		   "Kig": {
+			  "default": 10, 
+			  "value": 10
+		   }, 
+		   "tfl": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "dPmax": {
+			  "default": 99, 
+			  "value": 99
+		   }, 
+		   "tfh": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "dPmin": {
+			  "default": -99, 
+			  "value": -99
+		   }, 
+		   "femax": {
+			  "default": 99, 
+			  "value": 99
+		   }, 
+		   "lqh1": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "Kpg": {
+			  "default": 0.1, 
+			  "value": 0.1
+		   }, 
+		   "Tpord": {
+			  "default": 5, 
+			  "value": 5.0
+		   }, 
+		   "Trf": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "fl": {
+			  "default": 56.5, 
+			  "value": 56.5
+		   }, 
+		   "rrpwr": {
+			  "default": 2.0, 
+			  "value": 2.0
+		   }, 
+		   "Trv": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "fh": {
+			  "default": 62.0, 
+			  "value": 62.0
+		   }, 
+		   "lql1": {
+			  "default": -1, 
+			  "value": -1
+		   }, 
+		   "PMIN": {
+			  "default": 0, 
+			  "value": 0
+		   }, 
+		   "PMAX": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "tvh0": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "tvh1": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "fdbd1": {
+			  "default": -0.0006, 
+			  "value": -0.0006
+		   }, 
+		   "fdbd2": {
+			  "default": 0.0006, 
+			  "value": 0.0006
+		   }, 
+		   "femin": {
+			  "default": -99, 
+			  "value": -99
+		   }
+		}, 
+		"flags": {
+		   "PfFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "VrtipFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "FreqFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "PQFlag": {
+			  "default": 0, 
+			  "value": 1
+		   }, 
+		   "GenFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "FrtipFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }
+		}, 
+		"interconnection_vintage": "Newer Vintage DER System IEEE Std. 1547-2018(Category II)", 
+		"excluded_parameters": {
+		   "VrtipFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "FrtipFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "Trf": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }
+		}
+	 },
+	 "ieee_1547_2003_base_standard_copy": {
+		"included_parameters": {
+		   "tvl0": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "tvl1": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "Kqv": {
+			  "default": 0, 
+			  "value": 0
+		   }, 
+		   "Tv": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "Tiq": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "Tp": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "Vref0": {
+			  "default": 0, 
+			  "value": 0
+		   }, 
+		   "Dup": {
+			  "default": 20, 
+			  "value": 20
+		   }, 
+		   "Ddn": {
+			  "default": 20, 
+			  "value": 20
+		   }, 
+		   "Vrfrac": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "Tg": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "vl1": {
+			  "default": 0.49, 
+			  "value": 0.55
+		   }, 
+		   "vl0": {
+			  "default": 0.44, 
+			  "value": 0.5
+		   }, 
+		   "dbd2": {
+			  "default": 99, 
+			  "value": 99
+		   }, 
+		   "dbd1": {
+			  "default": -99, 
+			  "value": -99
+		   }, 
+		   "Vpr": {
+			  "default": 0.3, 
+			  "value": 0.3
+		   }, 
+		   "vh1": {
+			  "default": 1.15, 
+			  "value": 1.15
+		   }, 
+		   "vh0": {
+			  "default": 1.2, 
+			  "value": 1.2
+		   }, 
+		   "Imax": {
+			  "default": 1.2, 
+			  "value": 1.2
+		   }, 
+		   "Kig": {
+			  "default": 10, 
+			  "value": 10
+		   }, 
+		   "tfl": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "dPmax": {
+			  "default": 99, 
+			  "value": 99
+		   }, 
+		   "tfh": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "dPmin": {
+			  "default": -99, 
+			  "value": -99
+		   }, 
+		   "femax": {
+			  "default": 99, 
+			  "value": 99
+		   }, 
+		   "lqh1": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "Kpg": {
+			  "default": 0.1, 
+			  "value": 0.1
+		   }, 
+		   "Tpord": {
+			  "default": 5, 
+			  "value": 5.0
+		   }, 
+		   "Trf": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "fl": {
+			  "default": 56.5, 
+			  "value": 56.5
+		   }, 
+		   "rrpwr": {
+			  "default": 2.0, 
+			  "value": 2.0
+		   }, 
+		   "Trv": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "fh": {
+			  "default": 62.0, 
+			  "value": 62.0
+		   }, 
+		   "lql1": {
+			  "default": -1, 
+			  "value": -1
+		   }, 
+		   "PMIN": {
+			  "default": 0, 
+			  "value": 0
+		   }, 
+		   "PMAX": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "tvh0": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "tvh1": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "fdbd1": {
+			  "default": -0.0006, 
+			  "value": -0.0006
+		   }, 
+		   "fdbd2": {
+			  "default": 0.0006, 
+			  "value": 0.0006
+		   }, 
+		   "femin": {
+			  "default": -99, 
+			  "value": -99
+		   }
+		}, 
+		"flags": {
+		   "PfFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "VrtipFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "FreqFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "PQFlag": {
+			  "default": 0, 
+			  "value": 1
+		   }, 
+		   "GenFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "FrtipFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }
+		}, 
+		"interconnection_vintage": "Newer Vintage DER System IEEE Std. 1547-2018(Category II)", 
+		"excluded_parameters": {
+		   "VrtipFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "FrtipFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "Trf": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }
+		}
+	 },
+	  "ieee_1547_2018_cat_2_base_standard": {
+		"included_parameters": {
+		   "tvl0": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "tvl1": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "Kqv": {
+			  "default": 0, 
+			  "value": 0
+		   }, 
+		   "Tv": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "Tiq": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "Tp": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "Vref0": {
+			  "default": 0, 
+			  "value": 0
+		   }, 
+		   "Dup": {
+			  "default": 20, 
+			  "value": 20
+		   }, 
+		   "Ddn": {
+			  "default": 20, 
+			  "value": 20
+		   }, 
+		   "Vrfrac": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "Tg": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "vl1": {
+			  "default": 0.49, 
+			  "value": 0.35
+		   }, 
+		   "vl0": {
+			  "default": 0.44, 
+			  "value": 0.3
+		   }, 
+		   "dbd2": {
+			  "default": 99, 
+			  "value": 99
+		   }, 
+		   "dbd1": {
+			  "default": -99, 
+			  "value": -99
+		   }, 
+		   "Vpr": {
+			  "default": 0.3, 
+			  "value": 0.3
+		   }, 
+		   "vh1": {
+			  "default": 1.15, 
+			  "value": 1.15
+		   }, 
+		   "vh0": {
+			  "default": 1.2, 
+			  "value": 1.2
+		   }, 
+		   "Imax": {
+			  "default": 1.2, 
+			  "value": 1.2
+		   }, 
+		   "Kig": {
+			  "default": 10, 
+			  "value": 10
+		   }, 
+		   "tfl": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "dPmax": {
+			  "default": 99, 
+			  "value": 99
+		   }, 
+		   "tfh": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "dPmin": {
+			  "default": -99, 
+			  "value": -99
+		   }, 
+		   "femax": {
+			  "default": 99, 
+			  "value": 99
+		   }, 
+		   "lqh1": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "Kpg": {
+			  "default": 0.1, 
+			  "value": 0.1
+		   }, 
+		   "Tpord": {
+			  "default": 5, 
+			  "value": 5.0
+		   }, 
+		   "Trf": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "fl": {
+			  "default": 56.5, 
+			  "value": 56.5
+		   }, 
+		   "rrpwr": {
+			  "default": 2.0, 
+			  "value": 2.0
+		   }, 
+		   "Trv": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }, 
+		   "fh": {
+			  "default": 62.0, 
+			  "value": 62.0
+		   }, 
+		   "lql1": {
+			  "default": -1, 
+			  "value": -1
+		   }, 
+		   "PMIN": {
+			  "default": 0, 
+			  "value": 0
+		   }, 
+		   "PMAX": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "tvh0": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "tvh1": {
+			  "default": 0.16, 
+			  "value": 0.16
+		   }, 
+		   "fdbd1": {
+			  "default": -0.0006, 
+			  "value": -0.0006
+		   }, 
+		   "fdbd2": {
+			  "default": 0.0006, 
+			  "value": 0.0006
+		   }, 
+		   "femin": {
+			  "default": -99, 
+			  "value": -99
+		   }
+		}, 
+		"flags": {
+		   "PfFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "VrtipFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "FreqFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "PQFlag": {
+			  "default": 0, 
+			  "value": 1
+		   }, 
+		   "GenFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "FrtipFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }
+		}, 
+		"interconnection_vintage": "Newer Vintage DER System IEEE Std. 1547-2018(Category II)", 
+		"excluded_parameters": {
+		   "VrtipFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "FrtipFlag": {
+			  "default": 1, 
+			  "value": 1
+		   }, 
+		   "Trf": {
+			  "default": 0.02, 
+			  "value": 0.02
+		   }
+		}
+	 },
 	  "1547_2018CatIINEW": {
 		 "included_parameters": {
 			"tvl0": {

@@ -11,6 +11,7 @@ sys.path.append(pssePath)
 import psspy
 import dyntools
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import six
 
@@ -23,6 +24,27 @@ class DataAnalytics(object):
 
 	def __init__(self):
 		self.__legend=[]
+		self.__propertyInfo={
+			'ANGL':'rotor angle of machine',
+			'PLOD':'real power demand',
+			'PMEC':'mechanical power input to machine',
+			'POWR':'real power output of machine',
+			'QLOD':'reactive power demand',
+			'SPD':'omega of machine',
+			'VARS':'reactive power output of machine',
+			'VOLT':'voltage magnitude of transmission bus',
+			'Vang_a':'phase a voltage magnitude of distribution node',
+			'Vang_b':'phase b voltage magnitude of distribution node',
+			'Vang_c':'phase c voltage magnitude of distribution node',
+			'Vang_a':'phase a voltage angle of distribution node',
+			'Vang_b':'phase b voltage angle of distribution node',
+			'Vang_c':'phase c voltage angle of distribution node',
+			'der_P':'real power output of der at a given distribution node',
+			'der_Q':'reactive power output of der at a given distribution node',
+			'der_p_total':'total real power output of der at a given transmission node',
+			'der_q_total':'total reactive power output of der at a given transmission node'
+		}
+
 		return None
 
 #===================================================================================================
@@ -350,17 +372,95 @@ class DataAnalytics(object):
 			raise
 
 #===================================================================================================
-	def get_net_load(self,df,tnodeid,prop):
+	def get_net_load(self,df,tnodeid,simType='tonly'):
 		try:
-			res={'value':0,'t':0}
-			filteredDF=df[df.tnodeid==tnodeid]
-			if not filteredDF.empty:
-				for thisSubID in set(filteredDF.tnodesubid):
-					thisDF=filteredDF[(filteredDF.tnodesubid==thisSubID)&(filteredDF.property==prop)]
-					if not thisDF.empty:
-						res['value']+=thisDF.value.values
-				res['t']=thisDF.t.values
+			df=df[(df.tnodeid==tnodeid)&(df.t>=0.0)]
+			res={'p':[],'q':[],'t':[]}
+		
+			for subID in set(df.tnodesubid):
+				if isinstance(res['p'],list):
+					if not df[(df.property=='PLOD')&(df.tnodesubid==subID)].value.empty:
+						res['p']=df[(df.property=='PLOD')&(df.tnodesubid==subID)].value.values
+						res['q']=df[(df.property=='QLOD')&(df.tnodesubid==subID)].value.values
+						res['t']=df[(df.property=='PLOD')&(df.tnodesubid==subID)].t.values
+				else:
+					if not df[(df.property=='PLOD')&(df.tnodesubid==subID)].value.empty:
+						res['p']+=df[(df.property=='PLOD')&(df.tnodesubid==subID)].value.values
+						res['q']+=df[(df.property=='QLOD')&(df.tnodesubid==subID)].value.values
 
+			df=df[(df.property=='der_p_total')|(df.property=='der_q_total')]
+			if simType=='tonly':
+				for subID in set(df.tnodesubid):
+					res['p']-=df[(df.property=='der_p_total')&(df.tnodesubid==subID)].value.values
+					res['q']-=df[(df.property=='der_q_total')&(df.tnodesubid==subID)].value.values
+				
 			return res
+		except:
+			raise
+
+#===================================================================================================
+	def get_der_data(self,df):
+		try:
+			df_der_slice=df[df.property.str.startswith('der')]
+			return df_der_slice
+		except:
+			raise
+
+#===================================================================================================
+	def get_transmission_data(self,df):
+		try:
+			df_transmission_slice=df[-df.dfeederid.notna()]
+			return df_transmission_slice
+		except:
+			raise
+
+#===================================================================================================
+	def get_distribution_data(self,df):
+		try:
+			df_distribution_slice=df[df.dfeederid.notna()]
+			return df_distribution_slice
+		except:
+			raise
+
+#===================================================================================================
+	def get_property_info(self,qry):
+		try:
+			res={}
+			if qry in self.__propertyInfo:
+				res={qry:self.__propertyInfo[qry]}
+			else:
+				res={'error':'property not found, available properties: {}'.format(\
+				self.__propertyInfo.keys())}
+			return res
+		except:
+			raise
+
+#===================================================================================================
+	def query(self,df,columnName,condition,value):
+		"""Sample call: da.query(df,[['tnodeid','tnodeid']],[['eq','eq']],[['41','42']])
+		da.query(df,['tnodeid','property','value'],['eq','eq','ge'],['41','VOLT',.95])"""
+		try:
+			for thisColumnName,thisCondition,thisValue in zip(columnName,condition,value):
+				if not isinstance(thisColumnName,list):
+					thisColumnName=[thisColumnName]
+					thisCondition=[thisCondition]
+					thisValue=[thisValue]
+				assert type(thisColumnName)==type(thisCondition)==type(thisValue)
+				assert len(thisColumnName)==len(thisCondition)==len(thisValue)
+
+				flag=[False]*df.shape[0]
+				for thisSubColumnName,thisSubCondition,thisSubValue in \
+				zip(thisColumnName,thisCondition,thisValue):
+					if thisSubCondition=='eq':
+						flag=flag|df[thisSubColumnName].eq(thisSubValue)
+					elif thisSubCondition=='ne':
+						flag=flag|df[thisSubColumnName].ne(thisSubValue)
+					elif thisSubCondition=='ge':
+						flag=flag|df[thisSubColumnName].ge(thisSubValue)
+					elif thisSubCondition=='le':
+						flag=flag|df[thisSubColumnName].le(thisSubValue)
+				df=df[flag]
+
+			return df
 		except:
 			raise
