@@ -35,14 +35,14 @@
 	   "rawFilePath": "..\\SampleData\\TNetworks\\68bus\\case68.raw"
 	}, 
 	"simulationConfig": {
-	   "defaultLoadType": "cmld", 
+	   "defaultLoadType": "zip", 
 	   "simType": "dynamic", 
 	   "dynamicConfig": {
 		  "events": {
 			 "1": {
 				"faultImpedance": [
 				   0.0, 
-				   -30000
+				   -25000
 				], 
 				"type": "faultOn", 
 				"faultBus": 41, 
@@ -50,7 +50,7 @@
 			 }, 
 			 "3": {
 				"type": "simEnd", 
-				"time": 1.0
+				"time": 20.0
 			 }, 
 			 "2": {
 				"type": "faultOff", 
