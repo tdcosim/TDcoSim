@@ -15,7 +15,7 @@ def main():
 		# config_tonly_dera_68bus_2003-2018-mixed-vintage
 		# config_fast_der_68bus_full_td
 		# config_fast_der
-		GlobalData.set_config('config_tonly_dera_68bus_2003-2018-mixed-vintage_debug.json')
+		GlobalData.set_config('config_fast_der.json')
 		GlobalData.set_TDdata()
 		simulate()
 	except:

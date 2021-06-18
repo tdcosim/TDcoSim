@@ -43,7 +43,7 @@ class OpenDSSProcedure(object):
 					for n in range(n_pre_run_steps):# synchronize
 						V = self._opendssinterface.getVoltage(vtype='actual')
 						Vpu = self._opendssinterface.getVoltage(vtype='pu')
-						derP, derQ = self._pvderAggProcedure.run(V,Vpu)
+						derP, derQ = self._pvderAggProcedure.run(V,Vpu,t=0,dt=1/120.)
 						self._opendssinterface.pvderInjection(derP, derQ)
 						P,Q,Converged = self._opendssinterface.getS(pccName='Vsource.source')
 					toc = time.perf_counter()

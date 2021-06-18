@@ -105,7 +105,7 @@ class OpenDSSInterface(object):
 									[thisTransformer,'bus',node,'set']
 								]) # high side to existing bus
 
-				nSolar_at_this_node=OpenDSSData.data['DNet']['DER']['PVDERData']['nSolar_at_this_node'][node]
+				nSolar_at_this_node=pvdermap[node]['nSolar_at_this_node']
 				kv=lowSideV
 				kw=-OpenDSSData.data['DNet']['DER']['PVDERData']['PNominal'][node]*nSolar_at_this_node #-ve load=>gen
 				kvar=-OpenDSSData.data['DNet']['DER']['PVDERData']['QNominal'][node]*nSolar_at_this_node

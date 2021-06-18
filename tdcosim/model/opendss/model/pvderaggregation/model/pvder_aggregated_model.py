@@ -441,7 +441,7 @@ class PVDERAggregatedModel(object):
 			if self.der_solver_type.replace('_','').replace('-','').lower()=='fastder':
 				P,Q=self._run_fast(V=V,Vpu=Vpu,t=t,dt=dt)
 			else:
-				P,Q=self._run_detailed(V=V,Vpu=Vpu,nEqs=nEqs,dt=dt)
+				P,Q=self._run_detailed(V=V,Vpu=Vpu,nEqs=nEqs,t=t,dt=dt)
 			
 			return P, Q
 		except:
@@ -503,7 +503,7 @@ class PVDERAggregatedModel(object):
 
 
 #===================================================================================================
-	def _run_detailed(self,V,Vpu,nEqs=23,dt=1/120.):
+	def _run_detailed(self,V,Vpu,nEqs=23,t=0,dt=1/120.):
 		try:
 			P = {}
 			Q = {}
