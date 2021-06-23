@@ -423,7 +423,46 @@ class DataAnalytics(object):
 			raise
 
 #===================================================================================================
+	def get_distribution_der_data(self,df,tnodeid=None):
+		try:
+			df=self.get_distribution_data(df)
+			if tnodeid:
+				df=df[df.tnodeid==tnode]
+			df=df[(df.property=='der_P')|(df.property=='der_q')|\
+			(df.property=='der_p_total')|(df.property=='der_q_total')]
+			return df
+		except:
+			raise
+
+#===================================================================================================
+	def plot_distribution_der_data(self,df,tnodeid=None,plotDerTotal=True):
+		try:
+			df=self.get_distribution_der_data(df,tnodeid)
+			if plotDerTotal:
+				props=['der_p_total','der_q_total']
+			else:
+				props=['der_P','der_Q']
+
+			for n in range(len(props)):
+				legend=[]
+				for thisTnodeid in set(df.tnodeid):
+					df_temp=df[(df.property==props[n])&(df.tnodeid=='{}'.format(thisTnodeid))]
+					plt.plot(df_temp.t,df_temp.value)
+					plt.xlabel('Time (s)')
+					if props[n]=='der_P' or props[n]=='der_p_total':
+						plt.ylabel('Mw')
+					elif props[n]=='der_Q' or props[n]=='der_q_total':
+						plt.ylabel('Mvar')
+					legend.append('bus_{}'.format(thisTnodeid))
+				plt.legend(legend)
+				plt.show()
+		except:
+			raise
+
+#===================================================================================================
 	def get_property_info(self,qry):
+		"""Get the property info for elements of df.property.
+		Sample call: da.get_property_info('der_p_total')"""
 		try:
 			res={}
 			if qry in self.__propertyInfo:

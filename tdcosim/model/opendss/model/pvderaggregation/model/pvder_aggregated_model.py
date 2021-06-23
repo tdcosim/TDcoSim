@@ -110,6 +110,13 @@ class PVDERAggregatedModel(object):
 			myconfig=OpenDSSData.config['myconfig']
 			defaultConfig=myconfig['DERParameters']['default']
 
+			#### default settings
+			if 'pref' not in defaultConfig:
+				myconfig['DERParameters']['default']['pref']=10
+			if 'qref' not in defaultConfig:
+				myconfig['DERParameters']['default']['qref']=0
+			if 'sbase' not in defaultConfig:
+				myconfig['DERParameters']['default']['sbase']=10
 
 			if myconfig['DERSetting'] == 'PVPlacement':
 				PVPlacement = True
