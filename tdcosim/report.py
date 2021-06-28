@@ -226,13 +226,25 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			events=GlobalData.config['simulationConfig']['dynamicConfig']['events']
 			eventTimes=list(set([events[thisEvent]['time'] for thisEvent in events]))
 			eventTimes.remove(max(eventTimes))
+	
+			t=np.array(ch_data['time'])
+			ind=np.arange(len(t))
+			indFilt=[]
+			for thisEventTime in eventTimes:
+				indTemp=np.where(np.bitwise_and(t>=thisEventTime-1e-6,t<=thisEventTime+1e-6))[0].tolist()
+				if len(indFilt)==0:
+					indFilt+=ind[0:indTemp[0]:2].tolist()+indTemp
+				else:
+					indFilt+=ind[indFilt[-1]+1:indTemp[0]:2].tolist()+indTemp
+			indFilt+=ind[indFilt[-1]+1::2].tolist()
+			indFilt=np.array(indFilt)
 
 			symbols=[ch_id[entry] for entry in ch_id]
 			properties=list(set([ch_id[entry].split(' ')[0] for entry in ch_id]))
 			nodes=list(set([ch_id[entry].split(' ')[1][0:ch_id[entry].split(' ')[1].find(
 			'[')].replace(' ','') for entry in ch_id if 'Time' not in ch_id[entry]]))
 
-			tnodeid=[]; tnodesubid=[]; props=[]; value=[]; t=[]; count=0
+			tnodeid=[]; tnodesubid=[]; props=[]; value=[]; count=0
 			ch_id_keys=ch_id.keys()
 			if six.PY3:
 				ch_id_keys=list(ch_id_keys)
@@ -243,43 +255,21 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 					if prop.isalnum():
 						prop=prop.replace(node,'')	
 					if prop!='VOLT':
-						tnodesubid.extend([re.findall('[\d]{1,}',ch_id[entry])[-1]]*len(ch_data[entry][0::stride]))
+						tnodesubid.extend([re.findall('[\d]{1,}',ch_id[entry])[-1]]*len(indFilt))
 					else:
-						tnodesubid.extend(['']*len(ch_data[entry][0::stride]))
-					value.extend(ch_data[entry][0::stride])
-					props.extend([prop]*len(ch_data[entry][0::stride]))
-					tnodeid.extend([node]*len(ch_data[entry][0::stride]))
+						tnodesubid.extend(['']*len(indFilt))
+					value.extend(np.array(ch_data[entry])[indFilt])
+					props.extend([prop]*len(indFilt))
+					tnodeid.extend([node]*len(indFilt))
 					count+=1
 
-			t.extend(ch_data['time'][0::stride]*count)
-
-			# process event points
-			nPts=int(len(t)/(len(ch_id)-1))
-			time_all=np.array(t[0:nPts])
-			try:
-				ch_id_keys.remove('time')
-			except ValueError:
-				ch_id_keys.remove('Time')
-			for thisEventTime in eventTimes:
-				thisInd=np.where(time_all>=thisEventTime-1e-6)[0][0]
-				count=0; indexOffset=0
-				for entry in ch_id_keys:
-					t.insert(thisInd+indexOffset+count*nPts,time_all[thisInd])
-					tnodeid.insert(thisInd+indexOffset+count*nPts,tnodeid[thisInd+indexOffset+count*nPts])
-					tnodesubid.insert(thisInd+indexOffset+count*nPts,tnodesubid[thisInd+indexOffset+count*nPts])
-					props.insert(thisInd+indexOffset+count*nPts,props[thisInd+indexOffset+count*nPts])
-					value.insert(thisInd+indexOffset+count*nPts,ch_data[entry][thisInd])
-					count+=1
-					indexOffset+=1
-				nPts+=1
-				time_all=time_all.tolist()
-				time_all.insert(thisInd,time_all[thisInd])
-				time_all=np.array(time_all)
+			t_all=[]
+			t_all.extend(t[indFilt].tolist()*count)
 
 			df=pd.DataFrame(columns=['scenario','t','tnodeid','tnodesubid','dfeederid','dnodeid','property',
 			'value'])
-			df['t'],df['tnodeid'],df['tnodesubid'],df['property'],df['value']=t,tnodeid,tnodesubid,props,value
-			df['scenario']=[scenario]*len(t)
+			df['t'],df['tnodeid'],df['tnodesubid'],df['property'],df['value']=t_all,tnodeid,tnodesubid,props,value
+			df['scenario']=[scenario]*len(t_all)
 			df=df.append(df_monitorData,ignore_index=True,sort=True)
 		elif GlobalData.config['simulationConfig']['simType']=='static':
 			df=df_monitorData

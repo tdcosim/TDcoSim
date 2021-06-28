@@ -149,7 +149,6 @@ class PSSEModel(Dera):
 				assert ierr==0,'psspy.aloadint failed with error {}'.format(ierr)
 				loadBusNumber=loadBusNumber[0]
 				default=self.__cmld_rating_default['default']
-				####
 				if 'cmldParameters' in GlobalData.config['psseConfig'] and GlobalData.config['psseConfig']['cmldParameters']:
 					cmldParameters=GlobalData.config['psseConfig']['cmldParameters']
 					cmldParametersKeys=cmldParameters.keys()

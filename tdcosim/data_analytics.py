@@ -427,7 +427,7 @@ class DataAnalytics(object):
 		try:
 			df=self.get_distribution_data(df)
 			if tnodeid:
-				df=df[df.tnodeid==tnode]
+				df=df[df.tnodeid==tnodeid]
 			df=df[(df.property=='der_P')|(df.property=='der_q')|\
 			(df.property=='der_p_total')|(df.property=='der_q_total')]
 			return df
@@ -501,5 +501,56 @@ class DataAnalytics(object):
 				df=df[flag]
 
 			return df
+		except:
+			raise
+
+#===================================================================================================
+	def plot_omega(self,df,excludeNodes=None):
+		try:
+			df=df[df.property=='SPD']
+			legend=[]
+			for thisNode in set(df.tnodeid):
+				thisDF=df[df.tnodeid==thisNode]
+				plt.plot(thisDF.t,thisDF.value)
+				legend.append(thisNode)
+			plt.legend(legend)
+			plt.xlabel('Time (s)')
+			plt.ylabel('Freq (hz)')
+			plt.show()
+		except:
+			raise
+
+#===================================================================================================
+	def plot_t_vmag(self,df,excludeNodes=None):
+		try:
+			df=df[df.property=='VOLT']
+			legend=[]
+			for thisNode in set(df.tnodeid):
+				thisDF=df[df.tnodeid==thisNode]
+				plt.plot(thisDF.t,thisDF.value)
+				legend.append(thisNode)
+			plt.legend(legend)
+			plt.xlabel('Time (s)')
+			plt.ylabel('Vmag (PU)')
+			plt.show()
+		except:
+			raise
+
+#===================================================================================================
+	def plot_t_delayed_voltage_recovery(self,df,distClearTime,tThreshold,vThreshold,excludeNodes=None):
+		try:
+			df=df[df.property=='VOLT']
+			df_=df[df.t>=distClearTime]
+			df_=df_[(df_.t>=tThreshold+distClearTime)&(df_.value<=vThreshold)]
+
+			legend=[]
+			for thisNode in set(df_.tnodeid):
+				thisDF=df[df.tnodeid==thisNode]
+				plt.plot(thisDF.t,thisDF.value)
+				legend.append(thisNode)
+			plt.legend(legend)
+			plt.xlabel('Time (s)')
+			plt.ylabel('Vmag (PU)')
+			plt.show()
 		except:
 			raise
