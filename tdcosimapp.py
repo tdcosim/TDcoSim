@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import argparse
 import json
@@ -66,13 +67,19 @@ def configHelp(args):
 	except:
 		raise
 
+def print_help():
+	try:
+		print('\n\nNo input arguments are provided. Typical usage is as follows,\n')
+		print('To run a test case use,\npython tdcosimapp.py -t run -c config.json\n')
+		print('To create template for QSTS,\npython tdcosimapp.py -t template --templatePath test.json --simType static\n')
+		print('To create template for dynamic simulation,\npython tdcosimapp.py -t template --templatePath test.json --simType dynamic\n')
+		print('To obtain help about configuration keywords,\npython tdcosimapp.py --configHelp outputConfig')
+		print('python tdcosimapp.py --configHelp outputConfig.scenarioID')
+	except:
+		raise
+
 
 if __name__ == "__main__":
-	#### sampleRun: python tdcosimapp.py -t template --templatePath test.json --simType dynamic
-	#### python tdcosimapp.py -t template --templatePath test.json --simType static
-	#### python ..\tdcosimapp.py -t run -c config_fast_der.json
-	#### python tdcosimapp.py --configHelp outputConfig
-	#### python tdcosimapp.py --configHelp outputConfig.scenarioID
 	startTime = time.time()
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-t','--type', required=False, type=str)	
@@ -81,11 +88,13 @@ if __name__ == "__main__":
 	parser.add_argument('--templatePath', type=str, help='location to store template config')	
 	parser.add_argument('--simType', type=str,default='dynamic')	
 
-
-	args = parser.parse_args()
-	if args.configHelp:
-		configHelp(args)
-	elif args.type=='run':
-		run(args)
-	elif args.type=='template':
-		template(args)
+	if len(sys.argv)==1:
+		print_help()
+	else:
+		args = parser.parse_args()
+		if args.configHelp:
+			configHelp(args)
+		elif args.type=='run':
+			run(args)
+		elif args.type=='template':
+			template(args)
