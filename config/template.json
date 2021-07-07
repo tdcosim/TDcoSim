@@ -1,0 +1,86 @@
+{
+   "logging": {
+      "level": 20,
+      "saveSubprocessOutErr": true
+   },
+   "cosimHome": "..\\tdcosim",
+   "openDSSConfig": {
+      "DEROdeSolver": "fast_der",
+      "manualFeederConfig": {
+         "nodes": [
+            {
+               "nodenumber":0,
+               "filePath": [
+                  ""
+               ],
+               "fractionAggregatedLoad": {
+                  "cmld": 0.0
+               },
+               "solarFlag": 1,
+               "solarPenetration": 0.1,
+               "interconnectionStandard": {
+                  "ieee_1547_2018_cat_2_base_standard": 0.7,
+                  "ieee_1547_2003_base_standard": 0.3
+               },
+               "DERParameters": {
+                  "default": {
+                     "pvderScale": 1,
+                     "pref": 10,
+                     "qref": 0,
+                     "sbase": 10
+                  }
+               }
+            },
+            {
+					"nodenumber": 0, 
+					"filePath": [
+					   ""
+					]
+				 }
+         ]
+      }
+   },
+   "psseConfig": {
+      "installLocation": "",
+      "dyrFilePath": "",
+      "rawFilePath": ""
+   },
+   "simulationConfig": {
+      "defaultLoadType": "cmld",
+      "simType": "dynamic",
+      "staticConfig":{
+			"loadShape": [0.81518164, 0.77456979,0.81518164, 0.77456979,0.81518164, 0.77456979,0.81518164, 0.77456979]
+		},
+      "dynamicConfig": {
+         "events": {
+            "1": {
+               "faultImpedance": [
+                  0.0,
+                  -100000
+               ],
+               "type": "faultOn",
+               "faultBus": 0,
+               "time": 0.0
+            },
+            "2": {
+               "type": "faultOff",
+               "faultBus": 0,
+               "time": 0.0
+            },
+            "3": {
+               "type": "simEnd",
+               "time": 0.0
+            }
+         }
+      },
+      "memoryThreshold": 20480.0,
+      "protocol": "loose_coupling"
+   },
+   "outputConfig": {
+      "simID": "",
+      "type": "dataframe",
+      "outputDir": "",
+      "outputfilename": "",
+      "scenarioID": ""
+   }
+}
