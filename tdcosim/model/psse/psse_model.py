@@ -17,7 +17,6 @@ class PSSEModel(Dera):
 	def __init__(self):
 		try:
 			super(PSSEModel,self).__init__()
-			pssePath="C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN" # Default PSSEPY path is PSSE33
 			if "installLocation" in GlobalData.config['psseConfig'] and \
 			os.path.exists(os.path.join(GlobalData.config['psseConfig']['installLocation'],'psspy.pyc')):
 				pssePath = GlobalData.config['psseConfig']['installLocation']
@@ -30,6 +29,9 @@ class PSSEModel(Dera):
 			ierr=self._psspy.psseinit(0); assert ierr==0
 			ierr=self._psspy.report_output(6,'',[]); assert ierr==0
 			ierr=self._psspy.progress_output(6,'',[]); assert ierr==0
+			outputFilePath=os.path.join(GlobalData.config['outputConfig']['outputDir'],'psse_progress_output.txt')
+			ierr=self._psspy.progress_output(2,outputFilePath,0); assert ierr==0
+
 			ierr=self._psspy.alert_output(6,'',[]); assert ierr==0
 			ierr=self._psspy.prompt_output(6,'',[]); assert ierr==0
 
@@ -41,6 +43,9 @@ class PSSEModel(Dera):
 			'composite_load_model_rating.json')))
 			self.__dera_rating_default=json.load(open(os.path.join(baseDir,'config',\
 			'dera_rating.json')))
+			self.__model_state_var_ind=json.load(open(os.path.join(baseDir,'config',\
+			'psse_machine_state_var_ind.json')))
+			self.__model_state_var_ind['outputFilePath']=outputFilePath
 		except:
 			GlobalData.log()
 
@@ -855,6 +860,7 @@ class PSSEModel(Dera):
 			thisConfKeys=thisConf.keys()
 			if six.PY3:
 				thisConfKeys=list(thisConfKeys)
+			thisConfKeys.sort()
 			for thisBus in thisConfKeys:
 				if isinstance(thisBus,str) and sep in thisBus:
 					thisBusOrgID,thisInterconnectionStandard=thisBus.split(sep)
@@ -869,10 +875,39 @@ class PSSEModel(Dera):
 					deraID=[thisDeraID],fileMode='a')
 					thisConf.pop(thisBusOrgID)
 			self.dera2dyr(thisConf,additionalDyrFilePath,fileMode='a')
+
+			psseConfig=GlobalData.config['psseConfig']
+			if 'monitor' in psseConfig and 'dera1' in psseConfig['monitor']:
+				outputFilePath=self.__model_state_var_ind['outputFilePath']
+				res=self.parse_progress_output(outputFilePath)# next available index before adding dera
 			ierr=self._psspy.dyre_add(dyrefile=additionalDyrFilePath); assert ierr==0
+		
+			if 'monitor' in psseConfig and 'dera1' in psseConfig['monitor']:
+				ierr=self._psspy.report_output(6,'',[]); assert ierr==0
+				os.system('del {}'.format(outputFilePath))
+				for thisState in psseConfig['monitor']['dera1']:
+					idOffset=self.__model_state_var_ind['dera1']['state']['name2ind'][thisState]
+					modelOffset=len(self.__model_state_var_ind['dera1']['state']['name2ind'])
+					for n in range(len(thisConfKeys)):
+						ierr=self._psspy.state_channel([-1,res['nState']+(n*modelOffset)+idOffset],\
+						'{} {}[]1'.format(thisState,thisConfKeys[n])); assert ierr==0
 
 			# cleanup
 			if cleanup:
 				os.system('del {}'.format(additionalDyrFilePath))
+		except:
+			GlobalData.log()
+
+#=======================================================================================================================
+	def parse_progress_output(self,outputFilePath):
+		try:
+			res={}
+			if os.path.exists(outputFilePath):
+				f=open(outputFilePath); data=f.read(); f.close()
+				res=re.findall('NEXT AVAILABLE ADDRESSES ARE:\n[\s\w]{1,}\n[\s]{0,}[\s\d]{1,}',data)
+				if res:
+					res=res[-1].split('\n')[2].strip().split()# use the latest value
+				res={'nCon':int(res[0]),'nState':int(res[1]),'nVar':int(res[2]),'nIcon':int(res[3])}
+			return res
 		except:
 			GlobalData.log()
