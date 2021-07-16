@@ -73,7 +73,7 @@ if __name__=="__main__":
 				dssProcedure.setVoltage(Vpu=msg['Vpu'],Vang=msg['Vang'],pccName=msg['pccName'])
 				replyMsg = {"AckNode":nodeid}
 			elif msg['method'].lower()=='getload':
-				replyMsg['P'],replyMsg['Q'],replyMsg['convergenceFlg']=\
+				replyMsg['P'],replyMsg['Q'],replyMsg['convergenceFlg'],replyMsg['derX']=\
 				dssProcedure.getLoads(pccName=msg['pccName'],t=msg['t'],dt=msg['dt'])
 			elif msg['method'].lower()=='scaleload':
 				dssProcedure.scaleLoad(scale=msg['scale'])

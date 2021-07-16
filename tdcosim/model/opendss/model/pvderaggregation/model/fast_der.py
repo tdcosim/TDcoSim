@@ -267,8 +267,8 @@ class FastDER(object):
 #===================================================================================================
 	def integrate(self,dt):
 		try:
-			#self.data['model']['vt'] should have been updated prior to this call
-			self.ride_through_logic(vmag=self.data['model']['vt'],dt=dt)
+			vmag=self.x[3]
+			self.ride_through_logic(vmag=vmag,dt=dt)
 			recompute_initial_condition=self.enter_service(dt=dt)
 
 			flags=self._ride_through_flags

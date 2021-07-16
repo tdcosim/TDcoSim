@@ -137,7 +137,7 @@ class TestOpenDSSProcedure(unittest.TestCase):
 				print('Restoring voltage from {} V to {} V at {} s'.format(Vfault,Vnominal,self.tfault_start))
 				self.opendss_model.setVoltage(Vpu=Vnominal,Vang=0.0,pccName=pccName)
 			
-			Pfeeder,Qfeeder,flag = self.opendss_model.getLoads(pccName=pccName)
+			Pfeeder,Qfeeder,flag,derX = self.opendss_model.getLoads(pccName=pccName)
 			print('{:.2f}:{}-Pfeeder:{:.2f}'.format(t_t[-1],scenario,Pfeeder))
 			if flag:
 				Pfeeder_t.append(Pfeeder)

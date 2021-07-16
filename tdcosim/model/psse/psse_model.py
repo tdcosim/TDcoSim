@@ -28,9 +28,12 @@ class PSSEModel(Dera):
 			self._psspy=psspy
 			ierr=self._psspy.psseinit(0); assert ierr==0
 			ierr=self._psspy.report_output(6,'',[]); assert ierr==0
-			ierr=self._psspy.progress_output(6,'',[]); assert ierr==0
 			outputFilePath=os.path.join(GlobalData.config['outputConfig']['outputDir'],'psse_progress_output.txt')
-			ierr=self._psspy.progress_output(2,outputFilePath,0); assert ierr==0
+			psseConfig=GlobalData.config['psseConfig']
+			if 'monitor' in psseConfig and 'dera1' in psseConfig['monitor']:
+				ierr=self._psspy.progress_output(2,outputFilePath,0); assert ierr==0
+			else:
+				ierr=self._psspy.progress_output(6,'',[]); assert ierr==0
 
 			ierr=self._psspy.alert_output(6,'',[]); assert ierr==0
 			ierr=self._psspy.prompt_output(6,'',[]); assert ierr==0
@@ -719,7 +722,7 @@ class PSSEModel(Dera):
 			userInput={}
 			if 'der_a' in GlobalData.config['psseConfig'] and GlobalData.config['psseConfig']['der_a']:
 				userInput=GlobalData.config['psseConfig']['der_a']
-			
+
 			interconnectionStandardOrg={}
 			for thisBus in userInput:
 				if 'interconnectionStandard' in userInput[thisBus]:
@@ -808,10 +811,13 @@ class PSSEModel(Dera):
 					assert ierr==0, 'plant_data failed with error code {}'.format(ierr)
 					realar=[thisRealarData[ind2name[str(n)]] for n in range(len(thisRealarData))]
 					ierr=self._psspy.machine_data_2(thisBusID,id=thisID,intgar6=1,realar=realar)
-					assert ierr==0,'machine_data_2 failed with error code {}'.format(ierr)
+					assert ierr==0,'machine_data_2 failed with error code {} and realar is {}'.format(ierr,thisRealarData)
 			else:# model transformer
 				ierr, busNo = self._psspy.abusint(-1, 2, string='number')
 				busNumberOffset=busNo[0][-1]
+				thisConfKeys=thisConf.keys()
+				if six.PY3:
+					thisConfKeys=list(thisConfKeys)
 				if "deraTransformer" not in GlobalData.config['simulationConfig']:
 					GlobalData.config['simulationConfig']["deraTransformer"]={}
 				for thisBusID,thisRealarData in zip(busID,realarData):
@@ -847,14 +853,11 @@ class PSSEModel(Dera):
 					ierr=self._psspy.machine_data_2(thisNewBusID,id=thisID,intgar6=1,realar=realar)
 					assert ierr==0,'machine_data_2 failed with error code {}'.format(ierr)
 
-				thisConfKeys=thisConf.keys()
-				if six.PY3:
-					thisConfKeys=list(thisConfKeys)
-				for thisConfKey in thisConfKeys:
-					if str(thisBusID) in thisConfKey:
-						updatedKey=thisConfKey.replace(str(thisBusID),str(thisNewBusID))
-						thisConf[updatedKey]=thisConf.pop(thisConfKey)
-						tfrNew2OldBusIDMap[updatedKey]=thisConfKey
+					for thisConfKey in thisConfKeys:
+						if str(thisBusID) in str(thisConfKey):
+							updatedKey=str(thisConfKey).replace(str(thisBusID),str(thisNewBusID))
+							thisConf[updatedKey]=thisConf.pop(thisConfKey)
+							tfrNew2OldBusIDMap[updatedKey]=thisConfKey
 
 			# add dera to base case
 			thisConfKeys=thisConf.keys()
@@ -880,8 +883,9 @@ class PSSEModel(Dera):
 			if 'monitor' in psseConfig and 'dera1' in psseConfig['monitor']:
 				outputFilePath=self.__model_state_var_ind['outputFilePath']
 				res=self.parse_progress_output(outputFilePath)# next available index before adding dera
+				processingOrder=self.parse_progress_output_dera_order(outputFilePath)
 			ierr=self._psspy.dyre_add(dyrefile=additionalDyrFilePath); assert ierr==0
-		
+
 			if 'monitor' in psseConfig and 'dera1' in psseConfig['monitor']:
 				ierr=self._psspy.report_output(6,'',[]); assert ierr==0
 				os.system('del {}'.format(outputFilePath))
@@ -889,8 +893,17 @@ class PSSEModel(Dera):
 					idOffset=self.__model_state_var_ind['dera1']['state']['name2ind'][thisState]
 					modelOffset=len(self.__model_state_var_ind['dera1']['state']['name2ind'])
 					for n in range(len(thisConfKeys)):
+						thisDeraBusID,thisDeraMacID=processingOrder[0]
+						thisDeraBusID=int(thisDeraBusID)
+						thisDeraMacID=thisDeraMacID.replace('"','')
+						idStr='{}::::'.format(thisDeraBusID)
+						for thisInterconnectionStandard in interconnectionStandard2id[thisDeraBusID]:
+							if interconnectionStandard2id[thisDeraBusID][thisInterconnectionStandard]==thisDeraMacID:
+								idStr+='{}'.format(thisInterconnectionStandard)
+								break
 						ierr=self._psspy.state_channel([-1,res['nState']+(n*modelOffset)+idOffset],\
-						'{} {}[]1'.format(thisState,thisConfKeys[n])); assert ierr==0
+						'{} {}[]1'.format(thisState,idStr)); assert ierr==0
+						processingOrder.pop(0)
 
 			# cleanup
 			if cleanup:
@@ -911,3 +924,20 @@ class PSSEModel(Dera):
 			return res
 		except:
 			GlobalData.log()
+
+#=======================================================================================================================
+	def parse_progress_output_dera_order(self,outputFilePath):
+		try:
+			res={}
+			if os.path.exists(outputFilePath):
+				f=open(outputFilePath); data=f.read(); f.close()
+				res=re.findall('Machine "[\d]{1,}" at bus [\d]{1,} \[[\d\s\w.]{1,}\][\s\w.:]{1,}',data)
+				processingOrder=[]#[busID,machineID]
+				if res:
+					for entry in res:
+						splitData=entry.split()
+						processingOrder.append([splitData[4],splitData[1]])
+			return processingOrder
+		except:
+			GlobalData.log()
+		

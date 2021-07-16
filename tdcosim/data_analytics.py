@@ -401,7 +401,7 @@ class DataAnalytics(object):
 #===================================================================================================
 	def get_der_data(self,df):
 		try:
-			df_der_slice=df[df.property.str.startswith('der')]
+			df_der_slice=df[(df.property.str.startswith('der'))|(df.property.str.endswith('der'))]
 			return df_der_slice
 		except:
 			raise
@@ -521,11 +521,15 @@ class DataAnalytics(object):
 			raise
 
 #===================================================================================================
-	def plot_t_vmag(self,df,excludeNodes=None):
+	def plot_t_vmag(self,df,tnodeid=None,excludeNodes=None):
 		try:
 			df=df[df.property=='VOLT']
 			legend=[]
-			for thisNode in set(df.tnodeid):
+			if not tnodeid:
+				tnodeid=set(df.tnodeid)
+			if not isinstance(tnodeid,list):
+				tnodeid=[tnodeid]
+			for thisNode in tnodeid:
 				thisDF=df[df.tnodeid==thisNode]
 				plt.plot(thisDF.t,thisDF.value)
 				legend.append(thisNode)
@@ -554,3 +558,32 @@ class DataAnalytics(object):
 			plt.show()
 		except:
 			raise
+
+#===================================================================================================
+	def plot_vt_filt_fast_der(self,df,tnodeid,legendDistNode=False,showPlot=False):
+		try:
+			df=df[df.t>=0]
+			df=df[df.tnodeid==tnodeid]
+			vmag=df[df.property=='VOLT']
+			plt.plot(vmag.t,vmag.value,'-.')
+			legend=['Transmission node {}'.format(tnodeid)]
+			
+			df=df[df.property=='vt_filt_fast_der']
+			for thisNode in set(df.dnodeid):
+				thisDF=df[df.dnodeid==thisNode]
+				plt.plot(thisDF.t,thisDF.value)
+				if legendDistNode:
+					legend.append(thisNode)
+			if not legendDistNode:
+				legend.append('vt_filt seen by DERs in feeder')
+			plt.legend(legend)
+			plt.title('vt_filt seen by DERs')
+			plt.xlabel('Time (s)')
+			plt.ylabel('Vmag (PU)')
+			if showPlot:
+				plt.show()
+		except:
+			raise
+
+
+			

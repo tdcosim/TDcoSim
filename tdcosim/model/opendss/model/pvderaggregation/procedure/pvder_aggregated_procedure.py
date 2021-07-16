@@ -21,7 +21,7 @@ class PVDERAggregatedProcedure(object):
 #===================================================================================================
 	def run(self,V,Vpu,t,dt):
 		try:
-			P, Q = self._pvderAggModel.run(V=V,Vpu=Vpu,t=t,dt=dt)
-			return P, Q
+			P,Q,x= self._pvderAggModel.run(V=V,Vpu=Vpu,t=t,dt=dt)
+			return P,Q,x
 		except:
 			OpenDSSData.log()

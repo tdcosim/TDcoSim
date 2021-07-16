@@ -43,7 +43,7 @@ class OpenDSSProcedure(object):
 					for n in range(n_pre_run_steps):# synchronize
 						V = self._opendssinterface.getVoltage(vtype='actual')
 						Vpu = self._opendssinterface.getVoltage(vtype='pu')
-						derP, derQ = self._pvderAggProcedure.run(V,Vpu,t=0,dt=1/120.)
+						derP,derQ,derX= self._pvderAggProcedure.run(V,Vpu,t=0,dt=1/120.)
 						self._opendssinterface.pvderInjection(derP, derQ)
 						P,Q,Converged = self._opendssinterface.getS(pccName='Vsource.source')
 					toc = time.perf_counter()
@@ -65,17 +65,18 @@ class OpenDSSProcedure(object):
 #===================================================================================================
 	def getLoads(self, pccName, t, dt):
 		try:
+			derX={}
 			if OpenDSSData.config['myconfig']['solarFlag']:
 				P,Q,Converged = self._opendssinterface.getS(pccName=pccName) #### get updated solution
 				V = self._opendssinterface.getVoltage(vtype='actual',busID=self._pvNodes)
 				Vpu = self._opendssinterface.getVoltage(vtype='pu',busID=self._pvNodes)
-				derP, derQ = self._pvderAggProcedure.run(V=V,Vpu=Vpu,t=t,dt=dt)
+				derP,derQ,derX = self._pvderAggProcedure.run(V=V,Vpu=Vpu,t=t,dt=dt)
 				if not self._pvNodes:
 					self._pvNodes=[entry+'_tfr' for entry in derP.keys()]
 				self._opendssinterface.pvderInjection(derP,derQ,busID=self._pvNodes)
 			P,Q,Converged = self._opendssinterface.getS(pccName=pccName)
 		
-			return P,Q,Converged
+			return P,Q,Converged,derX
 		except:
 			OpenDSSData.log()
 

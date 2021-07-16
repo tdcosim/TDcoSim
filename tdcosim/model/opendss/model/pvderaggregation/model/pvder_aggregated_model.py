@@ -446,11 +446,12 @@ class PVDERAggregatedModel(object):
 	def run(self,V,Vpu,t,dt=1/120.,nEqs=23):
 		try:
 			if self.der_solver_type.replace('_','').replace('-','').lower()=='fastder':
-				P,Q=self._run_fast(V=V,Vpu=Vpu,t=t,dt=dt)
+				P,Q,x=self._run_fast(V=V,Vpu=Vpu,t=t,dt=dt)
 			else:
 				P,Q=self._run_detailed(V=V,Vpu=Vpu,nEqs=nEqs,t=t,dt=dt)
-			
-			return P, Q
+				x={}
+
+			return P,Q,x
 		except:
 			OpenDSSData.log(msg="Failed run the pvder aggregated model")
 
@@ -459,6 +460,7 @@ class PVDERAggregatedModel(object):
 		try:
 			P = {}
 			Q = {}
+			x={}
 			# prerun for all pvder instances at this node
 			for node in OpenDSSData.data['DNet']['DER']['PVDERMap']:# compute solar inj at each node
 				lowSideNode='{}_tfr'.format(node)
@@ -497,6 +499,11 @@ class PVDERAggregatedModel(object):
 						thisVq=thisPV.data['model']['vq']
 						nodeP-=thisVd*thisId*thisPV.data['config']['sbase'] # -ve load => generation
 						nodeQ-=-thisVd*thisIq*thisPV.data['config']['sbase']
+						if node not in x:
+							x[node]={}
+						if pv not in x[node]:
+							x[node][pv]={}
+						x[node][pv]=copy.deepcopy(thisPV.x).tolist()
 
 				P[node]=nodeP
 				Q[node]=nodeQ
@@ -504,7 +511,7 @@ class PVDERAggregatedModel(object):
 				OpenDSSData.data['DNet']['DER']['PVDERData'][node]['Vmag']['b']=Vb
 				OpenDSSData.data['DNet']['DER']['PVDERData'][node]['Vmag']['c']=Vc
 
-			return P, Q
+			return P,Q,x
 		except:
 			OpenDSSData.log(msg="Failed run the fast pvder aggregated model")
 

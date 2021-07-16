@@ -203,6 +203,17 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 							data['property'].append(thisProp+'_'+thisSubProp)
 							data['value'].append(monData[thisTime][thisTDInterface][thisProp][thisNodeID][thisSubProp])
 
+		for thisTime in GlobalData.data['TNet']['Dynamic']:
+			for thisTnodeid in GlobalData.data['TNet']['Dynamic'][thisTime]['S']:
+				for thisDnodeid in GlobalData.data['TNet']['Dynamic'][thisTime]['S'][thisTnodeid]['derX']:
+					thisDerX=GlobalData.data['TNet']['Dynamic'][thisTime]['S'][thisTnodeid]['derX'][thisDnodeid]['0']####only use one PV to reduce data size
+					vt_filt_val=thisDerX[3]
+					data['t'].append(thisTime)
+					data['tnodeid'].append(str(thisTnodeid))
+					data['dnodeid'].append(thisDnodeid)
+					data['property'].append('vt_filt_fast_der')
+					data['value'].append(vt_filt_val)
+
 		data['scenario']=[scenario]*len(data['t'])
 		data['dfeederid']=['1']*len(data['t'])
 		data['tnodesubid']=['']*len(data['t'])

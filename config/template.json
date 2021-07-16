@@ -43,7 +43,9 @@
    "psseConfig": {
       "installLocation": "",
       "dyrFilePath": "",
-      "rawFilePath": ""
+      "rawFilePath": "",
+	   "der_a":{"busNo":{"flags":{},"params":{}}},
+	   "monitor":{"dera1":["vt_filt"]}
    },
    "simulationConfig": {
       "defaultLoadType": "cmld",
