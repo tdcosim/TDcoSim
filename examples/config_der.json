@@ -160,7 +160,7 @@
      },
 "10_constantVdc":{"parent_config":"",
 				  "basic_specs":{"model_type":"SolarPVDERSinglePhaseConstantVdc"},
-				  "basic_options":{"Sinsol":100.,"current_gradient_limiter":false0},
+				  "basic_options":{"Sinsol":100.0,"current_gradient_limiter":false},
 	  "module_parameters":{"Np":2,"Ns":1000,"Vdcmpp0":750.0,"Vdcmpp_min": 650.0,"Vdcmpp_max": 800.0},
 	  
 	  "inverter_ratings":{"Srated":10e3,"Varated":250.0,"Vdcrated":550.0,"Ioverload":1.3,"Vrmsrated":177.0,"Iramp_max_gradient_real":1.0,"Iramp_max_gradient_imag":1.0},
