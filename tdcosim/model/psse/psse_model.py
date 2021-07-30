@@ -781,7 +781,7 @@ class PSSEModel(Dera):
 					thisRating=copy.deepcopy(self.__dera_rating_default['default'])
 					thisRating.update({'pg':thisS.real*solarPercentage,'qg':0.0,
 					'pt':thisS.real*solarPercentage,'pb':0.0,
-					'qt':abs(thisS.imag*solarPercentage),'qb':-abs(thisS.imag*solarPercentage)})
+					'qt':abs(thisS.imag*solarPercentage),'qb':-abs(thisS.imag*solarPercentage*0)})####
 					realarData.append(thisRating)
 					thisConf[thisBus]['params'][self.ind['parameter_properties']['PMAX']['index']]=\
 					thisRating['pt']/thisRating['mbase']
@@ -816,12 +816,14 @@ class PSSEModel(Dera):
 				ierr, busNo = self._psspy.abusint(-1, 2, string='number')
 				busNumberOffset=busNo[0][-1]
 				thisConfKeys=thisConf.keys()
+				old2newBusIDMap={}
 				if six.PY3:
 					thisConfKeys=list(thisConfKeys)
 				if "deraTransformer" not in GlobalData.config['simulationConfig']:
 					GlobalData.config['simulationConfig']["deraTransformer"]={}
 				for thisBusID,thisRealarData in zip(busID,realarData):
 					thisNewBusID=int(busNumberOffset+thisBusID)
+					old2newBusIDMap[thisBusID]=thisNewBusID
 					if thisNewBusID not in usedID:
 						usedID[thisNewBusID]=[]
 					if thisBusID in interconnectionStandard:
@@ -834,7 +836,8 @@ class PSSEModel(Dera):
 					else:
 						thisID='1'
 					if str(thisBusID) not in GlobalData.config['simulationConfig']["deraTransformer"]:
-						GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]={'r':0.02,'x':0.06}
+						GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]={'r':0.0,'x':0.0001}
+						####GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]={'r':0.02,'x':0.06}
 					else:
 						GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]=\
 						GlobalData.config['simulationConfig']["deraTransformer"].pop(str(thisBusID))
@@ -843,7 +846,7 @@ class PSSEModel(Dera):
 					assert ierr==0, 'bus_data_2 failed with error code {}'.format(ierr)
 					thisR=GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]['r']
 					thisX=GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]['x']
-					ierr,rx=self._psspy.two_winding_data_4(thisNewBusID,thisBusID,realari1=thisR,realari2=thisX)# tfr
+					ierr,rx=self._psspy.two_winding_data_4(thisBusID,thisNewBusID,realari1=thisR,realari2=thisX)#### tfr
 					assert ierr==0, 'two_winding_data_4 failed with error code {}'.format(ierr)
 					
 					ierr=self._psspy.plant_data(ibus=thisNewBusID)
@@ -853,9 +856,10 @@ class PSSEModel(Dera):
 					ierr=self._psspy.machine_data_2(thisNewBusID,id=thisID,intgar6=1,realar=realar)
 					assert ierr==0,'machine_data_2 failed with error code {}'.format(ierr)
 
+				for thisBusID in old2newBusIDMap:
 					for thisConfKey in thisConfKeys:
 						if str(thisBusID) in str(thisConfKey):
-							updatedKey=str(thisConfKey).replace(str(thisBusID),str(thisNewBusID))
+							updatedKey=str(thisConfKey).replace(str(thisBusID),str(old2newBusIDMap[thisBusID]))
 							thisConf[updatedKey]=thisConf.pop(thisConfKey)
 							tfrNew2OldBusIDMap[updatedKey]=thisConfKey
 
@@ -883,6 +887,8 @@ class PSSEModel(Dera):
 			if 'monitor' in psseConfig and 'dera1' in psseConfig['monitor']:
 				outputFilePath=self.__model_state_var_ind['outputFilePath']
 				res=self.parse_progress_output(outputFilePath)# next available index before adding dera
+				# psse allocates indices based on busID and then macID and not based on
+				# the order in which the data is defined in dyr/dya file. Hence, find processing order.
 				processingOrder=self.parse_progress_output_dera_order(outputFilePath)
 			ierr=self._psspy.dyre_add(dyrefile=additionalDyrFilePath); assert ierr==0
 

@@ -5,6 +5,7 @@ import json
 import uuid
 import pdb
 import re
+import time
 
 import six
 import xlsxwriter
@@ -218,7 +219,6 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 		data['dfeederid']=['1']*len(data['t'])
 		data['tnodesubid']=['']*len(data['t'])
 		df_monitorData=pd.DataFrame(data)
-
 		outputConfig=GlobalData.config['outputConfig']
 
 		if GlobalData.config['simulationConfig']['simType']=='dynamic':
@@ -259,6 +259,7 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			ch_id_keys=ch_id.keys()
 			if six.PY3:
 				ch_id_keys=list(ch_id_keys)
+
 			for entry in ch_id_keys:
 				if not isinstance(entry,str):
 					prop=re.findall('[\w]{1,}',ch_id[entry])[0]
@@ -288,7 +289,6 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 		# updates for der_p_total and der_q_total
 		df=get_der_total_injection(df,GlobalData)
 		df=update_dera_nodes(df,GlobalData)
-
 		fpath=os.path.join(outputConfig['outputDir'],'df_pickle.pkl')
 		df.to_pickle(fpath)
 
@@ -305,12 +305,18 @@ def get_der_total_injection(df,GlobalData):
 				'tnodeid':[],'tnodesubid':[],'value':[]}
 				for entry in set(res.tnodeid):
 					thisRes=res[res.tnodeid==entry]
-					for thisT in set(thisRes.t):
-						thisDf=thisRes[thisRes.t==thisT]
-						data['t'].append(thisT)
-						data['value'].append(thisDf.value.sum()*\
-						GlobalData.data['DNet']['Nodes'][int(entry)]['scale'])
-						data['tnodeid'].append(entry)
+					res_value=None
+					for thisDER in set(thisRes.dnodeid):
+						thisDF=thisRes[thisRes.dnodeid==thisDER]
+						thisDF=thisDF.sort_values(by='t')
+						if isinstance(res_value,type(None)):
+							res_value=thisDF.value.values
+						else:
+							res_value+=thisDF.value.values
+					data['value'].extend(res_value.tolist())
+					data['t'].extend(thisDF.t.values.tolist())
+					data['tnodeid'].extend([entry]*len(thisDF.t.values.tolist()))
+
 				data['property']=['{}_total'.format(thisProp.lower())]*len(data['value'])
 				data['scenario']=list(set(res.scenario))
 				assert len(data['scenario'])==1
@@ -321,10 +327,8 @@ def get_der_total_injection(df,GlobalData):
 
 				df_new=pd.DataFrame(data)
 				if not df_new.empty: 
-					df_new.sort_values(by='t',inplace=True)
 					df=df.append(df_new,ignore_index=True)
 					df.reindex()
-
 		return df
 	except:
 		raise
