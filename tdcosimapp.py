@@ -18,11 +18,37 @@ def run(args):
 		args.config=os.path.abspath(args.config)
 		assert os.path.exists(args.config),'{} does not exist'.format(args.config)
 
+		# check if the config is valid
+		check_config(args.config)
+
 		GlobalData.set_config(args.config)
 		GlobalData.set_TDdata()
 		proc = Procedure()
 		proc.simulate()
 		print('Solution time:',time.time()-startTime)
+	except:
+		raise
+
+def check_config(fpath):
+	try:
+		conf=json.load(open(fpath))
+
+		# check if files exist
+		items2check=[conf['cosimHome'],conf['psseConfig']['installLocation'],
+		conf['psseConfig']['dyrFilePath'],conf['psseConfig']['rawFilePath']]
+
+		if conf['openDSSConfig']:
+			if 'defaultFeederConfig' in conf['openDSSConfig'] and \
+			'filePath' in conf['openDSSConfig']['defaultFeederConfig']:
+				items2check.append(conf['openDSSConfig']['defaultFeederConfig']['filePath'][0])
+			if 'manualFeederConfig' in conf['openDSSConfig'] and \
+			'nodes' in conf['openDSSConfig']['manualFeederConfig']:
+				for thisNode in conf['openDSSConfig']['manualFeederConfig']['nodes']:
+					if 'filePath' in thisNode:
+						items2check.append(thisNode['filePath'][0])
+
+		for entry in items2check:
+			assert os.path.exists(entry),'{} does not exist'.format(entry)
 	except:
 		raise
 

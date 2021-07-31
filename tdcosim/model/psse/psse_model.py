@@ -97,10 +97,12 @@ class PSSEModel(Dera):
 			GlobalData.log()
 
 #===================================================================================================
-	def convert_loads(self,conf=None,loadType='zip',avoidBus=None,prefix=None):
+	def convert_loads(self,conf=None,loadType='zip',avoidBus=None,prefix=None,old2newBusIDMap=None):
 		try:
 			if not avoidBus:
 				avoidBus=GlobalData.data['DNet']['Nodes'].keys()
+
+			simulationConfig=GlobalData.config['simulationConfig']
 
 			if loadType.lower()=='zip':
 				GlobalData.logger.info('converting all loads at to ZIP load')
@@ -179,6 +181,21 @@ class PSSEModel(Dera):
 				f=open(tempCMLDDyrFile,'w')
 
 				for thisBus in set(loadBusNumber).difference(avoidBus):
+					if old2newBusIDMap and thisBus in old2newBusIDMap and 'deraModelType' in simulationConfig \
+					and simulationConfig['deraModelType'].lower()=='rder':
+						# copy load from high side to low side bus and remove high side load
+						ierr,thisBusS=self._psspy.loddt2(ibus=thisBus, id='1', string1='TOTAL', string2='ACT')
+						assert ierr==0, 'error is {}'.format(ierr)
+
+						# zero out loads
+						ierr=self._psspy.load_chng_4(thisBus,'1',realar=[0]*6)
+						assert ierr==0,"load change failed with error {}".format(ierr)
+
+						# change mapping and set loads on low side
+						thisBus=old2newBusIDMap[thisBus]
+						ierr=self._psspy.load_data_4(thisBus,'1',realar1=thisBusS.real,realar2=thisBusS.imag)
+						assert ierr==0,"load data failed with error {}".format(ierr)
+
 					thisData=[thisBus]+prefix+defaultVal
 					thisStr=''; thisLineLen=0
 					for thisItem in thisData:
@@ -196,7 +213,6 @@ class PSSEModel(Dera):
 				os.system('del {}'.format(tempCMLDDyrFile))
 		except:
 			GlobalData.log()
-
 
 #===================================================================================================
 	def dynamicInitialize(self,adjustOpPoint=True):
@@ -317,6 +333,8 @@ class PSSEModel(Dera):
 			dyrData=f.read().splitlines()
 			f.close()
 
+			old2newBusIDMap=None
+
 			dyrDataStr=''; Zr={}; Zx={}
 			for line in dyrData:
 				line=line.lstrip().rstrip()
@@ -397,13 +415,30 @@ class PSSEModel(Dera):
 				ierr=self._psspy.machine_chng_2(genBusNumber[n], realar=macVarDataNew)# change machine data
 				assert ierr==0,"machine_chng_2 failed with error {}".format(ierr)
 
+			# add der_a, if configured
+			conf=None
+			if 'dera' in GlobalData.config['simulationConfig']:
+				conf=GlobalData.config['simulationConfig']['dera']
+
+			if conf and self._psspy.psseversion()[1]>=35:
+				if 'solarPenetration' in GlobalData.config['simulationConfig']:
+					solarPercentage=GlobalData.config['simulationConfig']['solarPenetration']
+				else:
+					solarPercentage=0.0
+				old2newBusIDMap=self.add_dera_to_case(conf=conf,solarPercentage=solarPercentage,\
+				additionalDyrFilePath='dera_{}.dya'.format(uuid.uuid4().hex))
+			elif conf and self._psspy.psseversion()[1]<35:
+				GlobalData.logger.warning(\
+				"This version of psse ({}) does not support der_a".format(self._psspy.psseversion()))
+
+
 			# adjust load data
 			ierr,S=self._psspy.alodbuscplx(string='MVAACT')
 			assert ierr==0,"reading complex load failed with error {}".format(ierr)
 			S=S[0]
 
 			# convert all loads to given load type
-			self.convert_loads(loadType=defaultLoadType)
+			self.convert_loads(loadType=defaultLoadType,old2newBusIDMap=old2newBusIDMap)
 
 			# add new loads, if configured
 			ierr, systemBuses = self._psspy.abusint(sid=-1, flag=2, string='NUMBER')
@@ -476,22 +511,6 @@ class PSSEModel(Dera):
 				self.convert_loads(loadType='cmld',\
 				avoidBus=set(systemBuses).difference(busIDToAddCompositeLoad.keys()),\
 				prefix=prefix)# use load identifier as 2
-
-			# add der_a, if configured
-			conf=None
-			if 'dera' in GlobalData.config['simulationConfig']:
-				conf=GlobalData.config['simulationConfig']['dera']
-
-			if conf and self._psspy.psseversion()[1]>=35:
-				if 'solarPenetration' in GlobalData.config['simulationConfig']:
-					solarPercentage=GlobalData.config['simulationConfig']['solarPenetration']
-				else:
-					solarPercentage=0.0
-				self.add_dera_to_case(conf=conf,solarPercentage=solarPercentage,\
-				additionalDyrFilePath='dera_{}.dya'.format(uuid.uuid4().hex))
-			elif conf and self._psspy.psseversion()[1]<35:
-				GlobalData.logger.warning(\
-				"This version of psse ({}) does not support der_a".format(self._psspy.psseversion()))
 
 			# update
 			loadType=0
@@ -781,7 +800,7 @@ class PSSEModel(Dera):
 					thisRating=copy.deepcopy(self.__dera_rating_default['default'])
 					thisRating.update({'pg':thisS.real*solarPercentage,'qg':0.0,
 					'pt':thisS.real*solarPercentage,'pb':0.0,
-					'qt':abs(thisS.imag*solarPercentage),'qb':-abs(thisS.imag*solarPercentage*0)})####
+					'qt':abs(thisS.imag*solarPercentage),'qb':-abs(thisS.imag*solarPercentage)})
 					realarData.append(thisRating)
 					thisConf[thisBus]['params'][self.ind['parameter_properties']['PMAX']['index']]=\
 					thisRating['pt']/thisRating['mbase']
@@ -791,7 +810,7 @@ class PSSEModel(Dera):
 				GlobalData.config['simulationConfig']['deraModelTransformer']=False
 
 			interconnectionStandard=copy.deepcopy(interconnectionStandardOrg)
-			tfrNew2OldBusIDMap={}
+			tfrNew2OldBusIDMap={}; old2newBusIDMap={}
 			if not GlobalData.config['simulationConfig']['deraModelTransformer']:# no tfr
 				for thisBusID,thisRealarData in zip(busID,realarData):
 					if thisBusID not in usedID:
@@ -816,7 +835,6 @@ class PSSEModel(Dera):
 				ierr, busNo = self._psspy.abusint(-1, 2, string='number')
 				busNumberOffset=busNo[0][-1]
 				thisConfKeys=thisConf.keys()
-				old2newBusIDMap={}
 				if six.PY3:
 					thisConfKeys=list(thisConfKeys)
 				if "deraTransformer" not in GlobalData.config['simulationConfig']:
@@ -837,7 +855,6 @@ class PSSEModel(Dera):
 						thisID='1'
 					if str(thisBusID) not in GlobalData.config['simulationConfig']["deraTransformer"]:
 						GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]={'r':0.0,'x':0.0001}
-						####GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]={'r':0.02,'x':0.06}
 					else:
 						GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]=\
 						GlobalData.config['simulationConfig']["deraTransformer"].pop(str(thisBusID))
@@ -846,7 +863,7 @@ class PSSEModel(Dera):
 					assert ierr==0, 'bus_data_2 failed with error code {}'.format(ierr)
 					thisR=GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]['r']
 					thisX=GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]['x']
-					ierr,rx=self._psspy.two_winding_data_4(thisBusID,thisNewBusID,realari1=thisR,realari2=thisX)#### tfr
+					ierr,rx=self._psspy.two_winding_data_4(thisBusID,thisNewBusID,realari1=thisR,realari2=thisX)
 					assert ierr==0, 'two_winding_data_4 failed with error code {}'.format(ierr)
 					
 					ierr=self._psspy.plant_data(ibus=thisNewBusID)
@@ -856,10 +873,12 @@ class PSSEModel(Dera):
 					ierr=self._psspy.machine_data_2(thisNewBusID,id=thisID,intgar6=1,realar=realar)
 					assert ierr==0,'machine_data_2 failed with error code {}'.format(ierr)
 
-				for thisBusID in old2newBusIDMap:
-					for thisConfKey in thisConfKeys:
-						if str(thisBusID) in str(thisConfKey):
-							updatedKey=str(thisConfKey).replace(str(thisBusID),str(old2newBusIDMap[thisBusID]))
+				for thisConfKey in thisConfKeys:
+					if isinstance(thisConfKey,str):
+						thisBusID=thisConfKey.split(sep)[0]
+						if int(thisBusID) in old2newBusIDMap:
+							updatedKey=thisConfKey.replace('{}{}'.format(thisBusID,sep),\
+							'{}{}'.format(old2newBusIDMap[int(thisBusID)],sep))
 							thisConf[updatedKey]=thisConf.pop(thisConfKey)
 							tfrNew2OldBusIDMap[updatedKey]=thisConfKey
 
@@ -914,6 +933,8 @@ class PSSEModel(Dera):
 			# cleanup
 			if cleanup:
 				os.system('del {}'.format(additionalDyrFilePath))
+			
+			return old2newBusIDMap
 		except:
 			GlobalData.log()
 
