@@ -329,6 +329,7 @@ def get_der_total_injection(df,GlobalData):
 				if not df_new.empty: 
 					df=df.append(df_new,ignore_index=True)
 					df.reindex()
+
 		return df
 	except:
 		raise

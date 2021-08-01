@@ -372,28 +372,31 @@ class DataAnalytics(object):
 			raise
 
 #===================================================================================================
-	def get_net_load(self,df,tnodeid,simType='tonly'):
+	def get_net_load(self,df,tnodeid,simType='tonly',tfr=True,nodeOffset=None):
 		try:
-			df=df[(df.tnodeid==tnodeid)&(df.t>=0.0)]
+			df_=df[(df.tnodeid==tnodeid)&(df.t>=0.0)]
 			res={'p':[],'q':[],'t':[]}
-		
-			for subID in set(df.tnodesubid):
-				if isinstance(res['p'],list):
-					if not df[(df.property=='PLOD')&(df.tnodesubid==subID)].value.empty:
-						res['p']=df[(df.property=='PLOD')&(df.tnodesubid==subID)].value.values
-						res['q']=df[(df.property=='QLOD')&(df.tnodesubid==subID)].value.values
-						res['t']=df[(df.property=='PLOD')&(df.tnodesubid==subID)].t.values
-				else:
-					if not df[(df.property=='PLOD')&(df.tnodesubid==subID)].value.empty:
-						res['p']+=df[(df.property=='PLOD')&(df.tnodesubid==subID)].value.values
-						res['q']+=df[(df.property=='QLOD')&(df.tnodesubid==subID)].value.values
 
-			df=df[(df.property=='der_p_total')|(df.property=='der_q_total')]
+			for subID in set(df_.tnodesubid):
+				if isinstance(res['p'],list):
+					if not df_[(df_.property=='PLOD')&(df_.tnodesubid==subID)].value.empty:
+						res['p']=df_[(df_.property=='PLOD')&(df_.tnodesubid==subID)].value.values
+						res['q']=df_[(df_.property=='QLOD')&(df_.tnodesubid==subID)].value.values
+						res['t']=df_[(df_.property=='PLOD')&(df_.tnodesubid==subID)].t.values
+				else:
+					if not df_[(df_.property=='PLOD')&(df_.tnodesubid==subID)].value.empty:
+						res['p']+=df_[(df_.property=='PLOD')&(df_.tnodesubid==subID)].value.values
+						res['q']+=df_[(df_.property=='QLOD')&(df_.tnodesubid==subID)].value.values
+
 			if simType=='tonly':
+				if tfr:
+					tnodeid='{}'.format(int(tnodeid)+nodeOffset)
+				df=df[(df.tnodeid==tnodeid)&(df.t>=0.0)]
+				df=df[(df.property=='POWR')|(df.property=='VARS')]
 				for subID in set(df.tnodesubid):
-					res['p']-=df[(df.property=='der_p_total')&(df.tnodesubid==subID)].value.values
-					res['q']-=df[(df.property=='der_q_total')&(df.tnodesubid==subID)].value.values
-				
+					res['p']-=df[(df.property=='POWR')&(df.tnodesubid==subID)].value.values
+					res['q']-=df[(df.property=='VARS')&(df.tnodesubid==subID)].value.values
+
 			return res
 		except:
 			raise

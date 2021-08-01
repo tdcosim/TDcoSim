@@ -183,6 +183,11 @@ class PSSEModel(Dera):
 				for thisBus in set(loadBusNumber).difference(avoidBus):
 					if old2newBusIDMap and thisBus in old2newBusIDMap and 'deraModelType' in simulationConfig \
 					and simulationConfig['deraModelType'].lower()=='rder':
+						# update composite load model properties
+						updateProp={'Rfdr':.0001,'Xfdr':.0001,'Xxf':.0001,'Tfixhs':1,'Tfixls':1}
+						for thisProp in updateProp:
+							defaultVal[int(self.__cmld_rating_default['name2ind'][thisProp])]=updateProp[thisProp]
+					
 						# copy load from high side to low side bus and remove high side load
 						ierr,thisBusS=self._psspy.loddt2(ibus=thisBus, id='1', string1='TOTAL', string2='ACT')
 						assert ierr==0, 'error is {}'.format(ierr)
@@ -739,8 +744,22 @@ class PSSEModel(Dera):
 
 			# generate dera params and write .dya file
 			userInput={}
+			if 'dera' in GlobalData.config['simulationConfig']:
+				for thisInterconnectionStandard in GlobalData.config['simulationConfig']['dera']:
+					for thisBus in GlobalData.config['simulationConfig']['dera'][thisInterconnectionStandard]:
+						thisBus='{}'.format(thisBus)
+						if thisBus not in userInput:
+							userInput[thisBus]={'interconnectionStandard':{}}
+						userInput[thisBus]['interconnectionStandard'][thisInterconnectionStandard]=1.0
+				for thisBus in userInput:
+					for thisInterconnectionStandard in userInput[thisBus]['interconnectionStandard']:
+						userInput[thisBus]['interconnectionStandard'][thisInterconnectionStandard]=\
+						1.0/len(userInput[thisBus]['interconnectionStandard'])
+
 			if 'der_a' in GlobalData.config['psseConfig'] and GlobalData.config['psseConfig']['der_a']:
-				userInput=GlobalData.config['psseConfig']['der_a']
+				if 'interconnectionStandard' in GlobalData.config['psseConfig']['der_a']:
+					userInput['interconnectionStandard'].update(GlobalData.config['psseConfig']['der_a'].pop('interconnectionStandard'))
+				userInput.update(GlobalData.config['psseConfig']['der_a'])
 
 			interconnectionStandardOrg={}
 			for thisBus in userInput:
@@ -858,14 +877,18 @@ class PSSEModel(Dera):
 					else:
 						GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]=\
 						GlobalData.config['simulationConfig']["deraTransformer"].pop(str(thisBusID))
+
 					ierr,toBusBaseKV=self._psspy.busdat(thisBusID,string='BASE'); assert ierr==0
-					ierr=self._psspy.bus_data_2(thisNewBusID,intgar1=2,realar1=toBusBaseKV)# new bus
+					fromBusBaseKV=12.5
+					ierr=self._psspy.bus_data_2(thisNewBusID,intgar1=2,realar1=fromBusBaseKV)# new bus
 					assert ierr==0, 'bus_data_2 failed with error code {}'.format(ierr)
+					
 					thisR=GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]['r']
 					thisX=GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]['x']
-					ierr,rx=self._psspy.two_winding_data_4(thisBusID,thisNewBusID,realari1=thisR,realari2=thisX)
+					ierr,rx=self._psspy.two_winding_data_4(thisNewBusID,thisBusID,realari1=thisR,realari2=thisX,\
+					realari5=fromBusBaseKV)
 					assert ierr==0, 'two_winding_data_4 failed with error code {}'.format(ierr)
-					
+
 					ierr=self._psspy.plant_data(ibus=thisNewBusID)
 					assert ierr==0, 'plant_data failed with error code {}'.format(ierr)
 
@@ -917,6 +940,11 @@ class PSSEModel(Dera):
 				for thisState in psseConfig['monitor']['dera1']:
 					idOffset=self.__model_state_var_ind['dera1']['state']['name2ind'][thisState]
 					modelOffset=len(self.__model_state_var_ind['dera1']['state']['name2ind'])
+					if old2newBusIDMap:
+						interconnectionStandard2id_={}
+						for thisOldKey in interconnectionStandard2id:
+							interconnectionStandard2id_[old2newBusIDMap[thisOldKey]]=interconnectionStandard2id[thisOldKey]
+						interconnectionStandard2id=interconnectionStandard2id_
 					for n in range(len(thisConfKeys)):
 						thisDeraBusID,thisDeraMacID=processingOrder[0]
 						thisDeraBusID=int(thisDeraBusID)
