@@ -589,4 +589,60 @@ class DataAnalytics(object):
 			raise
 
 
+#===================================================================================================
+	def exculde_value(self,df,fromValue,toValue):
+		"""Filter the given data frame based on >= and <= condition. For == condition use the same
+		value for fromValue and toValue."""
+		try:
+			excludedDF=df[(df.value<=fromValue)|(df.value>=toValue)]
+
+			return excludedDF
+		except:
+			raise
+
+#-------------------------------------------------------------------------------------------			
+	def compute_stability_time(self,df,error_threshold):
+		try:
+			
+			V =np.array(df.value)
+			T = np.array(df.time)
+			dV = []
+			for t in range(len(V)-1):
+				dV.append(V[t+1]-V[t])
+			t0 = 0
+			t2 = 0
+			exit_token = 0
+			Stability_time = 0
+			T1 = -1
+			for i in range(len(dV)):
+				if abs(dV[i]) >= error_threshold*V[0] and t0 == 0 and exit_token == 0:
+					t0 = i # index of first significant deviation
+					T0 = T[i] # # time of first significant deviation
+				if t0 != 0 and max([abs(ele) for ele in dV[i:len(dV)]] ) <= error_threshold*V[0] and exit_token == 0:
+					exit_token = 1
+					T1 = T[i] # time of stability
+					t2 = i # time index of stability
+					Stability_time = T1 - T0
+			if t0 == 0:
+				Comment = 'System is always stable'
+				Stability_time = 0
+			elif T1 == -1:
+				Comment = 'System does not Stabilize'
+				Stability_time = max(T)
+			print(Comment)
+			return Stability_time
+		except:
+			raise
+
+#-------------------------------------------------------------------------------------------			
+	def instances_of_violation(self,df,maxValue,minValue):
+		try:
+			
+			violated_df=df[(df.value<=minValue)|(df.value>=maxValue)]
+			V =np.array(violated_df)
+			violations = len(V)
+			return violations
+		except:
+			raise
+
 			
