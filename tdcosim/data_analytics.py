@@ -647,4 +647,21 @@ class DataAnalytics(object):
 		except:
 			raise
 
+	
+#--------------------------------------------------------------	
+	def lag_finder(self,df1, df2):
+		try:
+			y1=np.array(df1.value)
+			y2=np.array(df2.value)
+			n = len(y1)
+			corr = []
+			delay_arr = range(-(n-1)/2, (n-1)/2)
+			for i in delay_arr:
+				y_temp = np.roll(y1,i)
+				corr.append(sum(y_temp*y2))
 			
+			delay = delay_arr[np.argmax(corr)]
+			
+			return delay
+		except:
+			PrintException()
