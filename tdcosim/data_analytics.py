@@ -629,8 +629,10 @@ class DataAnalytics(object):
 			elif T1 == -1:
 				Comment = 'System does not Stabilize'
 				Stability_time = max(T)
+			
+			max_deviation = max(V[t2:len(V)]) - min(V[t2:len(V)])
 			print(Comment)
-			return Stability_time
+			return Stability_time,max_deviation
 		except:
 			raise
 
