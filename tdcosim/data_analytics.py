@@ -618,7 +618,8 @@ class DataAnalytics(object):
 				if abs(dV[i]) >= error_threshold*V[0] and t0 == 0 and exit_token == 0:
 					t0 = i # index of first significant deviation
 					T0 = T[i] # # time of first significant deviation
-				if t0 != 0 and max([abs(ele) for ele in dV[i:len(dV)]] ) <= error_threshold*V[0] and exit_token == 0:
+				#if t0 != 0 and max([abs(ele) for ele in dV[i:len(dV)]] ) <= error_threshold*V[0] and exit_token == 0:
+				if t0 != 0 and max([abs(ele) for ele in (max(V[i:len(V)]) - min(V[i:len(V)]))/min(V[t2:len(V)])   ] ) <= error_threshold and exit_token == 0:	
 					exit_token = 1
 					T1 = T[i] # time of stability
 					t2 = i # time index of stability
@@ -668,7 +669,7 @@ class DataAnalytics(object):
 
 
 #-----------------------------------------------------------
-def compute_mean_square_error(self,Df1,Df2,error_threshold,):
+def compute_mean_square_error(self,Df1,Df2):
 		try:
 			
 			V1 =np.array(Df1.value)
