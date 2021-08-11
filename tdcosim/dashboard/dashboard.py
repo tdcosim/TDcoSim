@@ -44,6 +44,18 @@ class Dashboard(object):
 			return res
 		except:
 			LogUtil.exception_handler()
+	def update_graph2(self, df, propname):
+		mydf = df.loc[df.property==propname]
+		figure=px.line(mydf, title=propname, x="t", y="value", color="tnodeid", line_group="property", hover_name="tnodeid", line_shape="spline", render_mode="svg")
+		return figure
+	def graph_template2(self,id,df,propname):
+		mydf = df.loc[df.property==propname]
+		figure=px.line(mydf, title=propname, x="t", y="value", color="tnodeid", line_group="property", hover_name="tnodeid", line_shape="spline", render_mode="svg")
+		#figure.show()
+		res=dcc.Graph(id=id,figure=figure)			
+
+		return res
+		
 
 	def tab_template(self,id,children):
 		try:
@@ -118,14 +130,12 @@ class Dashboard(object):
 			hover_name=None, 
 			hover_data=["tnodeid"],
 			color_discrete_sequence=["fuchsia"], 
-			zoom=3,
-			width=900,
-			height=300	
+			zoom=4	
 			)
 
 		myMap.update_layout(mapbox_style='stamen-toner')
 		myMap.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-		mapObj=dcc.Graph(id="mapObj",figure=myMap,clear_on_unhover=True, style={"width": "48vw", "height":"30vh",'display':'inline-block', 'vertical-align':'top', 'padding':'20px 0vw .5vh .5vw'})
+		mapObj=dcc.Graph(id="mapObj",figure=myMap,clear_on_unhover=True, style={"width": "99vw", "height":"80vh",'display':'inline-block', 'vertical-align':'top', 'padding':'20px 0vw .5vh .5vw'})
 		return mapObj
 
 	def table_template(self, df):
@@ -148,36 +158,22 @@ class Dashboard(object):
 			style_header={'backgroundColor': 'rgb(200, 200, 200)','fontWeight': 'bold','fontSize':20})
 		return myTable
 	
-	def update_filter(self, df, uniqueColumnID, selectednode):
-		tnodeids = set(df[uniqueColumnID])
-		unselectedchildren = []
-		selectedchildren = []
+	def update_filter(self, df, uniqueColumnID, selectednode):	
+		valuelsit = df['property'].drop_duplicates().to_list()
 		columnoptions = []
-		for node in tnodeids:
-			node = str(node)			
-			if node in selectednode:
-				selectedchildren.append(
-					html.Option(value=str(node), children=[node])
-					)
-			else:
-				unselectedchildren.append(
-					html.Option(value=str(node), children=[node])
-					)		
+		for x in valuelsit:
+			columnoptions.append({
+					'label': x, 
+					'value':x
+				})
+		
+			
 
-		return unselectedchildren, selectedchildren, columnoptions
+		return columnoptions
 	def filter_template(self, df, uniqueColumnID, selectednode):
-		unselectedchildren, selectedchildren, columnoptions = self.update_filter(df, uniqueColumnID, selectednode)
-
-		unselectednode = html.Select(multiple=True, id="unselectednodesel", children=unselectedchildren)
-		nodeaddbtn = html.Button("==>", id='addbtn')
-		noderemovebtn = html.Button("<==", id='removebtn')
-		selectednode = html.Select(multiple=True, id="selectednodesel", children=selectedchildren)
+		columnoptions = self.update_filter(df, uniqueColumnID, selectednode)			
 		columndrop = dcc.Dropdown(id="columndrop",options=columnoptions)
-		div = html.Div([
-			unselectednode,
-			nodeaddbtn,
-			noderemovebtn,
-			selectednode,
+		div = html.Div([			
 			columndrop
 			])
 		return div
