@@ -7,6 +7,7 @@ import dash_table
 import numpy as np
 import math
 import plotly.express as px
+import pandas as pd
 
 
 class Dashboard(object):
@@ -15,6 +16,7 @@ class Dashboard(object):
 		self.currentDF=None
 		self._obj={}
 
+#=======================================================================================================================
 	def add_df(self,id,df):
 		try:
 			self.df[id]=df
@@ -22,10 +24,11 @@ class Dashboard(object):
 		except:
 			LogUtil.exception_handler()
 
+#=======================================================================================================================
 	def graph_template(self,id,track=False,**kwargs):
 		try:
 			figure={'data': [{'x': [], 'y': [], 'type': 'chart'}],
-			'layout':{'height':'100vh','plot_bgcolor': "black",'paper_bgcolor': "black"}}
+			'layout':{'height':'10vh','plot_bgcolor': "black",'paper_bgcolor': "black"}}
 
 			if 'figure' in kwargs:
 				figure.update(kwargs['figure'])
@@ -34,7 +37,7 @@ class Dashboard(object):
 				newData=kwargs
 
 			res={}
-			res[id]=dcc.Graph(id=id,figure=figure,**newData)
+			res[id]=dcc.Graph(id=id,figure=figure,style={},**newData)
 			if track:
 				if 'graph' not in self._obj:
 					self._obj['graph']={}
@@ -44,19 +47,8 @@ class Dashboard(object):
 			return res
 		except:
 			LogUtil.exception_handler()
-	def update_graph2(self, df, propname):
-		mydf = df.loc[df.property==propname]
-		figure=px.line(mydf, title=propname, x="t", y="value", color="tnodeid", line_group="property", hover_name="tnodeid", line_shape="spline", render_mode="svg")
-		return figure
-	def graph_template2(self,id,df,propname):
-		mydf = df.loc[df.property==propname]
-		figure=px.line(mydf, title=propname, x="t", y="value", color="tnodeid", line_group="property", hover_name="tnodeid", line_shape="spline", render_mode="svg")
-		#figure.show()
-		res=dcc.Graph(id=id,figure=figure)			
 
-		return res
-		
-
+#=======================================================================================================================
 	def tab_template(self,id,children):
 		try:
 			res={}
@@ -66,6 +58,7 @@ class Dashboard(object):
 		except:
 			LogUtil.exception_handler()
 
+#=======================================================================================================================
 	def update_children(self,parentObj,children):
 		try:
 			for thisChildID in children:
@@ -77,13 +70,16 @@ class Dashboard(object):
 		except:
 			LogUtil.exception_handler()
 
-	def filter_dropdown(self,columnFilter=['nodeid','property','scenario'],multi=['nodeid']):
+#=======================================================================================================================
+	def filter_dropdown(self,columnFilter=['tnodeid','property','scenario'],multi=['tnodeid']):
 		try:
 			dropdown={}
+			width='{}vw'.format(int((90/len(columnFilter))-1))
 			if isinstance(self.currentDF,pd.DataFrame):
-				options={thisFilter:[{'label':entry,'value':entry} for entry in set(self.currentDF[thisFilter][-self.currentDF[thisFilter].isna()])] for thisFilter in columnFilter}
+				options={thisFilter:[{'label':entry,'value':entry} for entry in set(self.currentDF[thisFilter]\
+				[-self.currentDF[thisFilter].isna()])] for thisFilter in columnFilter}
 				dropdown={thisFilter:dcc.Dropdown(id=thisFilter,options=options[thisFilter],value='',\
-				placeholder=thisFilter,multi=False,style={'display':'inline-block','width':'25%'}) \
+				placeholder=thisFilter,multi=False,style={'display':'inline-block','width':width}) \
 				for thisFilter in columnFilter}
 
 				for entry in multi:
@@ -95,7 +91,9 @@ class Dashboard(object):
 
 			return dropdown
 		except:
-			LogUtil.exception_handler()
+			raise
+
+#=======================================================================================================================
 	def generate_lat_lon(self,nPts,latMin=33,latMax=44,lonMin=-115,lonMax=-80):
 		try:
 			res={}
@@ -106,6 +104,7 @@ class Dashboard(object):
 		except:
 			raise
 
+#=======================================================================================================================
 	def add_lat_lon_to_df(self,df,uniqueColumnID):
 		try:
 			if 'lat' not in df.columns:
@@ -113,31 +112,67 @@ class Dashboard(object):
 			if 'lon' not in df.columns:
 				df=df.assign(lon=[0]*df.shape[0])
 
-			for entry in set(df[uniqueColumnID]):								
-			 	res=self.generate_lat_lon(nPts=1)	
+			for entry in set(df[uniqueColumnID]):
+			 	res=self.generate_lat_lon(nPts=1)
 			 	tempd = df[df[uniqueColumnID]==entry].copy()
 			 	df.loc[df[uniqueColumnID]==entry, 'lat'] = [res['lat'][0] for i in range(tempd.shape[0])]
-			 	df.loc[df[uniqueColumnID]==entry, 'lon'] = [res['lon'][0] for i in range(tempd.shape[0])]	 	
+			 	df.loc[df[uniqueColumnID]==entry, 'lon'] = [res['lon'][0] for i in range(tempd.shape[0])]
 
 			return df
 		except:
 			raise
-	def map_template(self, df):
+
+#=======================================================================================================================
+	def build_map_df(self,df,prop='VOLT'):
+		res={'tnodeid':[],'lat':[],'lon':[],'min_value':[],'max_value':[],'deviation_value':[]}
+		df=df[df.property==prop]
+		for thisTnode in set(df.tnodeid):
+			res['tnodeid'].append(thisTnode)
+			res['lat'].append(df[df.tnodeid==thisTnode].lat.values[0])
+			res['lon'].append(df[df.tnodeid==thisTnode].lon.values[0])
+			thisMin=df[df.tnodeid==thisTnode].value.min()
+			res['min_value'].append(thisMin)
+			thisMax=df[df.tnodeid==thisTnode].value.max()
+			res['max_value'].append(thisMax)
+			res['deviation_value'].append(thisMax-thisMin)
+		newDF=pd.DataFrame(res)
+		return newDF
+
+#=======================================================================================================================
+	def map_template(self, df,radarOverlay=True,color='min_value',size='deviation_value'):
 		myMap = px.scatter_mapbox(		
 			data_frame=df, 
 			lat="lat", 
 			lon="lon", 
-			hover_name=None, 
-			hover_data=["tnodeid"],
-			color_discrete_sequence=["fuchsia"], 
-			zoom=4	
+			hover_name="tnodeid", 
+			hover_data=["tnodeid","min_value"],
+			color=color,
+			color_continuous_scale="twilight",#icefire, mint, twilight
+			size=size,
+			zoom=3
+#			width=2400,
+#			height=600
 			)
+			#color_discrete_sequence=["fuchsia"], 
 
 		myMap.update_layout(mapbox_style='stamen-toner')
 		myMap.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-		mapObj=dcc.Graph(id="mapObj",figure=myMap,clear_on_unhover=True, style={"width": "99vw", "height":"80vh",'display':'inline-block', 'vertical-align':'top', 'padding':'20px 0vw .5vh .5vw'})
+
+		if radarOverlay:
+			myMap.update_layout(mapbox_layers=[
+				{
+				"sourcetype": "raster",
+				"sourceattribution": "Government of Canada",
+				"source": ["https://geo.weather.gc.ca/geomet/?"
+						"SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX={bbox-epsg-3857}&CRS=EPSG:3857"
+						"&WIDTH=1000&HEIGHT=1000&LAYERS=RADAR_1KM_RDBR&TILED=true&FORMAT=image/png"],
+				}])
+
+		mapObj=dcc.Graph(id="mapObj",figure=myMap,clear_on_unhover=True, style={"width": "97vw", "height":"65vh",\
+		'display':'inline-block', 'vertical-align':'top', 'margin':'20px 1vw 20px 1vw'})
 		return mapObj
 
+#=======================================================================================================================
 	def table_template(self, df):
 		myTable = dash_table.DataTable(
 			id='myTable',
@@ -146,35 +181,53 @@ class Dashboard(object):
 			editable=False,
 			filter_action="native",
 			sort_action="native",
-			sort_mode="multi",		
+			sort_mode="multi",
 			selected_columns=[],
 			selected_rows=[],
 			page_action="native",
 			page_current= 0,
-			page_size= 14,
+			page_size= 25,
 			style_data_conditional=[
 			{'if': {'row_index': 'odd'},'backgroundColor': 'rgb(248, 248, 248)'},
-			{'if': {'row_index': 'even'},'backgroundColor': 'rgba(0, 0, 0,.9)','color':"white"}],
+			{'if': {'row_index': 'even'},'backgroundColor': 'grey','color':"white"}],
 			style_header={'backgroundColor': 'rgb(200, 200, 200)','fontWeight': 'bold','fontSize':20})
 		return myTable
-	
-	def update_filter(self, df, uniqueColumnID, selectednode):	
-		valuelsit = df['property'].drop_duplicates().to_list()
-		columnoptions = []
-		for x in valuelsit:
-			columnoptions.append({
-					'label': x, 
-					'value':x
-				})
-		
-			
 
-		return columnoptions
+#=======================================================================================================================
+	def update_filter(self, df, uniqueColumnID, selectednode):
+		tnodeids = set(df[uniqueColumnID])
+		unselectedchildren = []
+		selectedchildren = []
+		columnoptions = []
+		for node in tnodeids:
+			node = str(node)
+			if node in selectednode:
+				selectedchildren.append(
+					html.Option(value=str(node), children=[node])
+					)
+			else:
+				unselectedchildren.append(
+					html.Option(value=str(node), children=[node])
+					)
+
+		return unselectedchildren, selectedchildren, columnoptions
+
+#=======================================================================================================================
 	def filter_template(self, df, uniqueColumnID, selectednode):
-		columnoptions = self.update_filter(df, uniqueColumnID, selectednode)			
+		unselectedchildren, selectedchildren, columnoptions = self.update_filter(df, uniqueColumnID, selectednode)
+
+		unselectednode = html.Select(multiple=True, id="unselectednodesel", children=unselectedchildren)
+		nodeaddbtn = html.Button("==>", id='addbtn')
+		noderemovebtn = html.Button("<==", id='removebtn')
+		selectednode = html.Select(multiple=True, id="selectednodesel", children=selectedchildren)
 		columndrop = dcc.Dropdown(id="columndrop",options=columnoptions)
-		div = html.Div([			
+		div = html.Div([
+			unselectednode,
+			nodeaddbtn,
+			noderemovebtn,
+			selectednode,
 			columndrop
 			])
 		return div
+
 
