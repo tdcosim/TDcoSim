@@ -3,11 +3,13 @@
 
 1. [Introduction](user_guide_introduction.md)
 2. [Getting Started](user_guide_getting_started.md)
-3. [Understanding the config file](user_guide_understanding_config.md)
+3. [Using the configuration template](user_guide_user_interaction.md)
+4. [Understanding the config file](user_guide_understanding_config.md)
 4. [T & D co-simulation details](user_guide_cosimulation_details.md)
 5. [Capabilities and Limitations](user_guide_capability_and_limitations.md)
-7. [Using TDcoSim in Python scripts](user_guide_using_tdcosim.md)
+7. [Using TDcoSim in Python scripts](user_guide_advanced_usage.md)
 8. [Software details](user_guide_software_details.md)
+9. [Performance guide](user_guide_performance.md)
 9. Examples
     * [Example 1 - Dynamic Studies with single distribution system without disturbances](examples/Example_1_system_state_initialization_test.md)
     * [Example 2 - Dynamic Studies with single distribution system with disturbances](examples/Example_2_test_of_DER_RT_and_trip.md)

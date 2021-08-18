@@ -1,6 +1,6 @@
-# User Interaction
+# Using the configuration template
 
-TDcoSim is a declarative tool, where the user defines specification for the cosimulation. The specifications are given as a JSON file. In order to speed up the process, TDcoSim comes with tdcosimapp. The *tdcosimapp* is to *TDcoSim* what *kubectl* is to *kubernetes*. The *tdcosimapp* allows users to,
+TDcoSim is a declarative tool, where the user defines specification for the cosimulation. The specifications are given through a JSON configuration file which can be  manually populated as explained in [Getting Started](user_guide_getting_started.md). An alternative and faster option is to use the **tdcosimapp**. The *tdcosimapp* is to *TDcoSim* what *kubectl* is to *kubernetes*. The *tdcosimapp* allows users to,
 
 1. Create configuration template
 2. Validate user provided configuration, providing helpful hints to troubleshoot issues, if there are any.

@@ -32,12 +32,21 @@ The solution time may also be expressed as a function of the specific T&D+DER co
 
 ## Solution time benchmarks on test systems 
 
-The following benchmark times were obtained for various test co-simulation (7s).
+The following benchmark times were obtained for the following scenario using workstation with the recommended specifications mentioned in [System requirements](user_guide_sys_requirements.md):
 
-| DER Model type               | DER solver type      | Feeders with DER | PV penetration | Solution time/DER/Simulation  time (s/DER/s) |
-| ---------------------------- | -------------------- | ---------------- | -------------- | -------------------------------------------- |
-| ThreePhaseBalanced - 50 kW   | DiffEqPy (CVODE_BDF) | 97               | 40 %           | 0.06                                         |
-| ThreePhaseUnBalanced - 50 kW | DiffEqPy (CVODE_BDF) | 97               | 40             | 0.07                                         |
-| Fast DER - 100 kW            | Forward Euler        | 97               | 40             | 0.04                                         |
-|                              |                      |                  |                |                                              |
+T system: IEEE 118 bus system
+
+D feeder: IEEE 123 node feeder
+
+Simulation time: 20.0 s
+
+Events: Three phase fault from 0.2 s to 0.3 s
+
+Number of T nodes with feeders and DER: 97 
+
+| DER Model type               | DER solver type      | PV penetration (%) | DER models | Solution time/Simulation  time/DER (s/s/DER) |
+| ---------------------------- | -------------------- | ------------------ | ---------- | -------------------------------------------- |
+| ThreePhaseBalanced - 50 kW   | DiffEqPy (CVODE_BDF) | 25                 | 1746       | 0.047                                        |
+| ThreePhaseUnBalanced - 50 kW | DiffEqPy (CVODE_BDF) | 25                 | 1746       | 0.054                                        |
+| Fast DER - 50kW              | Forward Euler        | 25                 | 1746       | **0.038**                                    |
 
