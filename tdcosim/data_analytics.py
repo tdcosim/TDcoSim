@@ -678,3 +678,99 @@ def compute_mean_square_error(self,Df1,Df2):
 			return MSE
 		except:
 			raise
+			
+#------------------------------------------------------------
+	def compare_signals(self,thisBusId1,thisBusId2,df1,df2,error_threshold,show_results):
+		try:
+			
+			V1 =np.array(df1.value)
+			T1 = np.array(df1.t)
+			V2 =np.array(df2.value)
+			T2 = np.array(df2.t)
+			
+			# Check if signals are essentially the same
+			MSE = (((V1-V2)/V1)**2).mean(axis=None)
+			lag = self.lag_finder(df1, df2)
+			status = 0
+			if MSE <= error_threshold**2:
+				status = 1
+				MSG = 'Both Signals are essentially the same'
+			else:
+			# If signals are not same and if there is a time shift, detect it and correct it
+				V2 = self.shift_array(V2, -lag)							# Leg correction
+				MSE = (((V1-V2)/V1)**2).mean(axis=None)					# Compute Mean Square Error after lag correction
+				if MSE <= error_threshold**2:
+					status = 2
+					MSG = 'Both Signals are essentially the same after correcting the lag of ' + str(lag) +'.'
+				
+				# If signals are not same after bias corrections. Correct for measurement bias...
+				if status == 0:
+					V2 =np.array(thisDf2.value)
+					M1 = np.mean(V1)
+					M2 = np.mean(V2)
+					V2 = V2 - (M2-M1)
+					MSE = (((V1-V2)/V1)**2).mean(axis=None)	
+			
+					if MSE <= error_threshold**2 and status == 0:
+						MSG = 'Both Signals are essentially the same after correcting the Bias of ' + str(M2-M1) + '.'
+						status = 3
+				
+				# If signals are not same after bias and lag corrections. try both...
+				if status == 0:
+					V2 =np.array(thisDf2.value)
+					V2 = self.shift_array(V2, -lag)			# Leg correction
+					M1 = np.mean(V1)
+					M2 = np.mean(V2)
+					V2 = V2 - (M2-M1)
+					MSE = (((V1-V2)/V1)**2).mean(axis=None)	
+					if MSE <= error_threshold**2:
+						MSG = 'Both Signals are essentially the same after correcting the lag of ' + str(lag)+' and the Bias of ' + str(M2-M1) + '.'
+						status = 4
+					else:
+					# Both signals are not same
+						MSG = 'Both Signals are not same'
+						status = 5
+					
+			V1 =np.array(thisDf1.value)
+			T1 = np.array(thisDf1.t)
+			V2 =np.array(thisDf2.value)
+			T2 = np.array(thisDf2.t)
+			
+			P1_min = np.min(V1)
+			P1_max = np.max(V1)
+			P2_min = np.min(V2)
+			P2_max = np.max(V2)
+			Stability_time_1 = compute_stability_time(df1,error_threshold)
+			Stability_time_2 = compute_stability_time(df2,error_threshold)
+	#Plot signals
+			if show_results ==1:
+				fig, axs = plt.subplots()
+				axs.plot(T1,V1, '-b', label = '%s' % thisBusId1)
+				axs.plot(T2,V2, '--r', label = '%s' % thisBusId2)
+				axs.set_title('Original Signals without Bias and Lag Corrections')
+				axs.legend()
+				plt.text(0.1, 0.05, 'Signal 1\nMin Value = %s\nMax Value = %s\nStability Time = %s' %(P1_min,P1_max,Stability_time_1) , transform=axs.transAxes)
+				plt.text(0.9, 0.05, 'Signal 2\nMin Value = %s\nMax Value = %s\nStability Time = %s' %(P2_min,P2_max,Stability_time_2) , transform=axs.transAxes)
+				plt.text(0.5, 0.05, 'Mean Square Error = %s\nLag between Signals = %s' %(MSE, lag) , transform=axs.transAxes)
+				plt.text(0.5, 0.95, '%s' %(MSG) , transform=axs.transAxes)
+				axs.grid(True)		
+			return lag,MSE,Stability_time_1,Stability_time_2
+		except:
+			raise
+
+#-------------------------------------------------------------------	
+	def shift_array(self,y, n):
+		try:
+			Y = np.roll(y,n)
+			if n<0:
+				n = -n
+				for i in range(n):
+					Y[len(y) - i-1] = y[len(y)-1]
+			elif n>0:
+				for i in range(n):
+					Y[i] = y[0]
+			else:
+				Y = y
+			return Y
+		except:
+			raise
