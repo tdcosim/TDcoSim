@@ -595,7 +595,6 @@ class DataAnalytics(object):
 		value for fromValue and toValue."""
 		try:
 			excludedDF=df[(df.value<=fromValue)|(df.value>=toValue)]
-
 			return excludedDF
 		except:
 			raise
@@ -603,9 +602,9 @@ class DataAnalytics(object):
 #-------------------------------------------------------------------------------------------			
 	def compute_stability_time(self,df,error_threshold):
 		try:
-			
+			df=df.sort_values(by='t')
 			V =np.array(df.value)
-			T = np.array(df.time)
+			T = np.array(df.t)
 			dV = []
 			for t in range(len(V)-1):
 				dV.append(V[t+1]-V[t])
@@ -618,8 +617,7 @@ class DataAnalytics(object):
 				if abs(dV[i]) >= error_threshold*V[0] and t0 == 0 and exit_token == 0:
 					t0 = i # index of first significant deviation
 					T0 = T[i] # # time of first significant deviation
-				#if t0 != 0 and max([abs(ele) for ele in dV[i:len(dV)]] ) <= error_threshold*V[0] and exit_token == 0:
-				if t0 != 0 and max([abs(ele) for ele in (max(V[i:len(V)]) - min(V[i:len(V)]))/min(V[t2:len(V)])   ] ) <= error_threshold and exit_token == 0:	
+				if t0 != 0 and abs((max(V[i:len(V)]) - min(V[i:len(V)]))/min(V[t2:len(V)]))<= error_threshold and exit_token == 0:
 					exit_token = 1
 					T1 = T[i] # time of stability
 					t2 = i # time index of stability
@@ -630,17 +628,18 @@ class DataAnalytics(object):
 			elif T1 == -1:
 				Comment = 'System does not Stabilize'
 				Stability_time = max(T)
-			
+			else:
+				Comment = 'Stability could not be determined'
+				Stability_time = -1
 			max_deviation = max(V[t2:len(V)]) - min(V[t2:len(V)])
-			print(Comment)
-			return Stability_time,max_deviation
+
+			return Comment,Stability_time,max_deviation
 		except:
 			raise
 
 #-------------------------------------------------------------------------------------------			
 	def instances_of_violation(self,df,maxValue,minValue):
 		try:
-			
 			violated_df=df[(df.value<=minValue)|(df.value>=maxValue)]
 			V =np.array(violated_df)
 			violations = len(V)
@@ -648,7 +647,6 @@ class DataAnalytics(object):
 		except:
 			raise
 
-	
 #--------------------------------------------------------------	
 	def lag_finder(self,df1, df2):
 		try:
@@ -656,17 +654,30 @@ class DataAnalytics(object):
 			y2=np.array(df2.value)
 			n = len(y1)
 			corr = []
-			delay_arr = range(-(n-1)/2, (n-1)/2)
+
+			if n%2:
+				delay_arr = range(int(-(n-1)/2), int((n-1)/2))
+			else:
+				delay_arr = range(int(-n/2),int(n/2))
+
 			for i in delay_arr:
 				y_temp = np.roll(y1,i)
 				corr.append(sum(y_temp*y2))
-			
 			delay = delay_arr[np.argmax(corr)]
-			
+
 			return delay
 		except:
 			raise
 
+	#-----------------------------------------------------------
+	def compute_mean_square_error(self,Df1,Df2):
+			try:
+				V1 =np.array(Df1.value)
+				V2 =np.array(Df2.value)
+				MSE = (((V1-V2)/V1)**2).mean(axis=None)
+				return MSE
+			except:
+				raise
 
 #-----------------------------------------------------------
 def compute_mean_square_error(self,Df1,Df2):

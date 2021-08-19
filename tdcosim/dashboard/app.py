@@ -13,6 +13,7 @@ import networkx as nx
 import numpy as np
 
 from tdcosim.dashboard import Dashboard
+from tdcosim.data_analytics import DataAnalytics
 
 
 app = dash.Dash(__name__)
@@ -79,11 +80,11 @@ def gather_objects():
 	# create required objects
 	create_map(df, 'gis')
 	create_table(df, 'table')
-	create_filter(df, 'filter')
 	create_graphs(objects,['vmag','freq'],['vmag','freq'],['white','white'],['Time (s)', 'Time (s)'],\
 	['Vmag (PU)','f (hz)'])
-	create_tab(objects,['gis','table','analytics'],['GIS','Table','Analytics'])
-	create_tabs(objects,'main_tab',[objects['tab']['gis'],objects['tab']['table'],objects['tab']['analytics']])
+	create_tab(objects,['gis','table','plots','analytics'],['GIS','Table','Plots','Analytics'])
+	create_tabs(objects,'main_tab',[objects['tab']['gis'],objects['tab']['table'],objects['tab']['plots'],\
+	objects['tab']['analytics']])
 
 	# define tab objects
 	# gis
@@ -100,9 +101,9 @@ def gather_objects():
 	style={'display':'flex','flexDirection':'row','alignItems':'space-around','justifyContent':'space-around',\
 	'height':'auto','width':'90vw','marginTop':'10vh','marginLeft':'4vw','marginRight':'4vw'})]
 
-	# analytics
+	# plots
 	objects['graph']['vmag'].style['height']='70vh'
-	objects['tab']['analytics'].children=[
+	objects['tab']['plots'].children=[
 		html.Div(style={'display':'flex','flexDirection':'column','justifyContent':'space-around'},children=[
 			html.Div(children=[objects['dropdown']['scenario'],objects['dropdown']['tnodeid'],\
 			objects['dropdown']['dnodeid'],objects['dropdown']['tnodesubid'],objects['dropdown']['property']],
@@ -213,6 +214,7 @@ if __name__ == '__main__':
 	BaseDir=os.path.dirname(os.path.abspath(__file__))
 	BaseDir=os.path.join(BaseDir,"vizsample")
 	df=pd.read_csv(open(os.path.join(BaseDir,'dataframe.csv')),compression=None)
+	da=DataAnalytics()
 	helper=Dashboard()
 	helper.add_df('df',df)
 	df = helper.add_lat_lon_to_df(df, 'tnodeid')

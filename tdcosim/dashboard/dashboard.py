@@ -71,16 +71,19 @@ class Dashboard(object):
 			LogUtil.exception_handler()
 
 #=======================================================================================================================
-	def filter_dropdown(self,columnFilter=['tnodeid','property','scenario'],multi=['tnodeid']):
+	def filter_dropdown(self,columnFilter=['tnodeid','property','scenario'],id=None,multi=['tnodeid']):
 		try:
+			if not id:
+				id=columnFilter
 			dropdown={}
 			width='{}vw'.format(int((90/len(columnFilter))-1))
 			if isinstance(self.currentDF,pd.DataFrame):
-				options={thisFilter:[{'label':entry,'value':entry} for entry in set(self.currentDF[thisFilter]\
-				[-self.currentDF[thisFilter].isna()])] for thisFilter in columnFilter}
-				dropdown={thisFilter:dcc.Dropdown(id=thisFilter,options=options[thisFilter],value='',\
+				options={thisID:[{'label':entry,'value':entry} for entry in set(self.currentDF[thisFilter]\
+				[-self.currentDF[thisFilter].isna()])] for thisFilter,thisID in zip(columnFilter,id)}
+
+				dropdown={thisID:dcc.Dropdown(id=thisID,options=options[thisID],value='',\
 				placeholder=thisFilter,multi=False,style={'display':'inline-block','width':width}) \
-				for thisFilter in columnFilter}
+				for thisFilter,thisID in zip(columnFilter,id)}
 
 				for entry in multi:
 					dropdown[entry].multi=True # allow multiselect of nodes
