@@ -817,12 +817,15 @@ class PSSEModel(Dera):
 						interconnectionStandard2id[thisBus][thisInterconnectionStandard]=thisID
 						thisBus='{}{}{}'.format(thisBus,sep,thisInterconnectionStandard)
 					thisRating=copy.deepcopy(self.__dera_rating_default['default'])
+					OPScaling=1/.8 # assumes current operating point is 80% of rating, perhaps add user config?
 					thisRating.update({'pg':thisS.real*solarPercentage,'qg':0.0,
-					'pt':thisS.real*solarPercentage,'pb':0.0,
+					'pt':thisS.real*solarPercentage*OPScaling,'pb':0.0,
 					'qt':abs(thisS.imag*solarPercentage),'qb':-abs(thisS.imag*solarPercentage)})
 					realarData.append(thisRating)
 					thisConf[thisBus]['params'][self.ind['parameter_properties']['PMAX']['index']]=\
 					thisRating['pt']/thisRating['mbase']
+					thisConf[thisBus]['params'][self.ind['parameter_properties']['Imax']['index']]=\
+					thisConf[thisBus]['params'][self.ind['parameter_properties']['Imax']['index']]*OPScaling*(thisS.real*solarPercentage/thisRating['mbase'])
 
 			ind2name=self.__dera_rating_default['ind2name']
 			if "deraModelTransformer" not in GlobalData.config['simulationConfig']:
@@ -937,26 +940,37 @@ class PSSEModel(Dera):
 			if 'monitor' in psseConfig and 'dera1' in psseConfig['monitor']:
 				ierr=self._psspy.report_output(6,'',[]); assert ierr==0
 				os.system('del {}'.format(outputFilePath))
-				for thisState in psseConfig['monitor']['dera1']:
-					idOffset=self.__model_state_var_ind['dera1']['state']['name2ind'][thisState]
-					modelOffset=len(self.__model_state_var_ind['dera1']['state']['name2ind'])
-					if old2newBusIDMap:
-						interconnectionStandard2id_={}
-						for thisOldKey in interconnectionStandard2id:
-							interconnectionStandard2id_[old2newBusIDMap[thisOldKey]]=interconnectionStandard2id[thisOldKey]
-						interconnectionStandard2id=interconnectionStandard2id_
-					for n in range(len(thisConfKeys)):
-						thisDeraBusID,thisDeraMacID=processingOrder[0]
-						thisDeraBusID=int(thisDeraBusID)
-						thisDeraMacID=thisDeraMacID.replace('"','')
-						idStr='{}::::'.format(thisDeraBusID)
-						for thisInterconnectionStandard in interconnectionStandard2id[thisDeraBusID]:
-							if interconnectionStandard2id[thisDeraBusID][thisInterconnectionStandard]==thisDeraMacID:
-								idStr+='{}'.format(thisInterconnectionStandard)
-								break
-						ierr=self._psspy.state_channel([-1,res['nState']+(n*modelOffset)+idOffset],\
-						'{} {}[]1'.format(thisState,idStr)); assert ierr==0
-						processingOrder.pop(0)
+				monitorItems={}
+				monitorItems['state']=set(psseConfig['monitor']['dera1']).intersection(self.__model_state_var_ind['dera1']['state']['name2ind'])
+				monitorItems['var']=set(psseConfig['monitor']['dera1']).intersection(self.__model_state_var_ind['dera1']['var']['name2ind'])
+				for thisMonitorItem in monitorItems:
+					for thisItem in monitorItems[thisMonitorItem]:
+						thisProcessingOrder=copy.deepcopy(processingOrder)
+						thisInterconnectionStandard2id=copy.deepcopy(interconnectionStandard2id)
+						idOffset=self.__model_state_var_ind['dera1'][thisMonitorItem]['name2ind'][thisItem]
+						modelOffset=len(self.__model_state_var_ind['dera1'][thisMonitorItem]['name2ind'])
+						if old2newBusIDMap:
+							thisInterconnectionStandard2id_={}
+							for thisOldKey in thisInterconnectionStandard2id:
+								thisInterconnectionStandard2id_[old2newBusIDMap[thisOldKey]]=thisInterconnectionStandard2id[thisOldKey]
+							thisInterconnectionStandard2id=thisInterconnectionStandard2id_
+						for n in range(len(thisConfKeys)):
+							thisDeraBusID,thisDeraMacID=thisProcessingOrder[0]
+							thisDeraBusID=int(thisDeraBusID)
+							thisDeraMacID=thisDeraMacID.replace('"','')
+							idStr='{}::::'.format(thisDeraBusID)
+							for thisInterconnectionStandard in thisInterconnectionStandard2id[thisDeraBusID]:
+								if thisInterconnectionStandard2id[thisDeraBusID][thisInterconnectionStandard]==thisDeraMacID:
+									idStr+='{}'.format(thisInterconnectionStandard)
+									break
+							if thisMonitorItem=='state':
+								ierr=self._psspy.state_channel([-1,res['nState']+(n*modelOffset)+idOffset],\
+								'{} {}[]1'.format(thisItem,idStr)); assert ierr==0
+								thisProcessingOrder.pop(0)
+							elif thisMonitorItem=='var':
+								ierr=self._psspy.var_channel([-1,res['nVar']+(n*modelOffset)+idOffset],\
+								'{} {}[]1'.format(thisItem,idStr)); assert ierr==0
+								thisProcessingOrder.pop(0)
 
 			# cleanup
 			if cleanup:
