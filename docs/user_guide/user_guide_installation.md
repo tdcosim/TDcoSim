@@ -29,6 +29,9 @@ The packages listed below must be installed separately:
 ***
 
 ### Optional
+
+* TDcoSim dashboard: Dash, Plotly
+
 * High performance ODE solver *diffeqpy*: [diffeqpy, version >= 1.1.0](https://github.com/SciML/diffeqpy)
   * Download and install Julia interpreter: [Julia, version >= 1.5](https://julialang.org/downloads/)
   * Add Julia to system PATH environment variables as shown [here](https://julialang.org/downloads/platform/) (Only for Windows OS).

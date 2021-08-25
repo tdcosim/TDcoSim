@@ -98,16 +98,20 @@ Outputs (from both transmission and distribution systems) are saved in the follo
 1. PSS/E channel output file (**.out**) for containing all the simulated quantities from PSS/E.
 2. A pickle (**df_pickle.pkl**) file containing a data frame (as shown in Fig. 1) with simulated quantities from both PSS/E and OpenDSS.
 3. An **options.jSON** file containing the configuration parameters for the co-simulation. 
-4. A CSV or an MS Excel file (**.xlsx**) with the same information as the df_pickle.pkl file (as shown in Fig. 1).
+4. A CSV or an MS Excel file (**.xlsx**) with the same information as the **df_pickle.pkl** file (as shown in Fig. 1).
 
 ![report example](images/report_example.png)
 <p align="center">
-  <strong>Fig. 1. </strong>Dynamic T&D co-simuation report in MS Excel format.
+  <strong>Fig. 1. </strong>Dataframe generated after Dynamic T&D co-simuation.
 </p>
-***
-***Note:*** Both the **.xlsx** file and the **.out** file will be found in the folder specified by the user through the config file
 
 ***
+***Note:*** The **.pkl**,**.JSON**, **.xlsx**, and **.out** files will be found in the folder specified by the user through the config file.
+
+***
+
+## 4. Data visualization and analytics
+Modules for performing visualization and analytics are available as part of the TDcoSim package. Detailed intructions on its usage are included in the [TDcoSim Data Visualization and Analytics](user_guide_visualization_analytics.md) chapter.
 
 ## Examples
 
