@@ -94,11 +94,11 @@ This option avoids the need to manually populate the configuration file and inst
 
 ## 3.  Accessing the results
 
-Outputs (from both transmission and distribution systems) are saved in the following formats within the user specified output folder at the end of the co-simulation:
+Outputs (from both transmission and distribution systems) are saved in the following formats within the user specified output folder at the end of the co-simulation: 
 1. PSS/E channel output file (**.out**) for containing all the simulated quantities from PSS/E.
-2. A pickle (**df_pickle.pkl**) file containing a data frame (as shown in Fig. 1) with simulated quantities from both PSS/E and OpenDSS.
+2. A pickle (**df_pickle.pkl**) file containing the values of co-simulation variables from both PSS/E and OpenDSS. The co-simulated variables are stored as a data frame (as shown in Fig. 1). More information on the fields within the data frame is provided in [TDcoSim Data Visualization and Analytics](user_guide_visualization_analytics.md#TDcoSim-DataFrame ).
 3. An **options.jSON** file containing the configuration parameters for the co-simulation. 
-4. A CSV or an MS Excel file (**.xlsx**) with the same information as the **df_pickle.pkl** file (as shown in Fig. 1).
+4. A CSV or an MS Excel file (**.xlsx**) with the same information as the **df_pickle.pkl** file.
 
 ![report example](images/report_example.png)
 <p align="center">
