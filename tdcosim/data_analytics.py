@@ -679,17 +679,7 @@ class DataAnalytics(object):
 			except:
 				raise
 
-#-----------------------------------------------------------
-def compute_mean_square_error(self,Df1,Df2):
-		try:
-			
-			V1 =np.array(Df1.value)
-			V2 =np.array(Df2.value)
-			MSE = (((V1-V2)/V1)**2).mean(axis=None)
-			return MSE
-		except:
-			raise
-			
+
 #------------------------------------------------------------
 	def compare_signals(self,thisBusId1,thisBusId2,df1,df2,error_threshold,show_results):
 		try:
