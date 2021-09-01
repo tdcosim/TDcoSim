@@ -116,10 +116,10 @@ delay: 		Delay between signals df1.value and df2.value
 *	Syntex:
 MSE = compute_mean_square_error (df1, df2)
 *	Inputs:
-df1: 			DataFrame 1 with at least one column: value
-df2: 			DataFrame 2 with at least one column: value
+      df1: 			DataFrame 1 with at least one column: value
+      df2: 			DataFrame 2 with at least one column: value
 *	Output:
-MSE: 		Mean square error between signal df1.value and df2.value
+      MSE: 		Mean square error between signal df1.value and df2.value
 
 
 ***Additional description of methods to be included by Kumar***
