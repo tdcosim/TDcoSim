@@ -611,7 +611,7 @@ class DataAnalytics(object):
 			t0 = 0
 			t2 = 0
 			exit_token = 0
-			Stability_time = 0
+			stability_time = 0
 			T1 = -1
 			for i in range(len(dV)):
 				if abs(dV[i]) >= error_threshold*V[0] and t0 == 0 and exit_token == 0:
@@ -621,19 +621,19 @@ class DataAnalytics(object):
 					exit_token = 1
 					T1 = T[i] # time of stability
 					t2 = i # time index of stability
-					Stability_time = T1 - T0
+					stability_time = T1 - T0
 			if t0 == 0:
-				Comment = 'System is always stable'
-				Stability_time = 0
+				comment = 'System is always stable'
+				stability_time = 0
 			elif T1 == -1:
-				Comment = 'System does not Stabilize'
-				Stability_time = max(T)
+				comment = 'System does not Stabilize'
+				stability_time = max(T)
 			else:
-				Comment = 'Stability could not be determined'
-				Stability_time = -1
+				comment = 'Stability could not be determined'
+				stability_time = -1
 			max_deviation = max(V[t2:len(V)]) - min(V[t2:len(V)])
 
-			return Comment,Stability_time,max_deviation
+			return stability_time,comment,max_deviation
 		except:
 			raise
 
@@ -670,10 +670,10 @@ class DataAnalytics(object):
 			raise
 
 	#-----------------------------------------------------------
-	def compute_mean_square_error(self,Df1,Df2):
+	def compute_mean_square_error(self,df1,df2):
 			try:
-				V1 =np.array(Df1.value)
-				V2 =np.array(Df2.value)
+				V1 =np.array(df1.value)
+				V2 =np.array(df2.value)
 				MSE = (((V1-V2)/V1)**2).mean(axis=None)
 				return MSE
 			except:
@@ -706,7 +706,7 @@ class DataAnalytics(object):
 				
 				# If signals are not same after bias corrections. Correct for measurement bias...
 				if status == 0:
-					V2 =np.array(thisDf2.value)
+					V2 =np.array(df2.value)
 					M1 = np.mean(V1)
 					M2 = np.mean(V2)
 					V2 = V2 - (M2-M1)
@@ -718,7 +718,7 @@ class DataAnalytics(object):
 				
 				# If signals are not same after bias and lag corrections. try both...
 				if status == 0:
-					V2 =np.array(thisDf2.value)
+					V2 =np.array(df2.value)
 					V2 = self.shift_array(V2, -lag)			# Leg correction
 					M1 = np.mean(V1)
 					M2 = np.mean(V2)
@@ -732,17 +732,17 @@ class DataAnalytics(object):
 						MSG = 'Both Signals are not same'
 						status = 5
 					
-			V1 =np.array(thisDf1.value)
-			T1 = np.array(thisDf1.t)
-			V2 =np.array(thisDf2.value)
-			T2 = np.array(thisDf2.t)
+			V1 =np.array(df1.value)
+			T1 = np.array(df1.t)
+			V2 =np.array(df2.value)
+			T2 = np.array(df2.t)
 			
 			P1_min = np.min(V1)
 			P1_max = np.max(V1)
 			P2_min = np.min(V2)
 			P2_max = np.max(V2)
-			Stability_time_1 = compute_stability_time(df1,error_threshold)
-			Stability_time_2 = compute_stability_time(df2,error_threshold)
+			Stability_time_1 = self.compute_stability_time(df1,error_threshold)
+			Stability_time_2 = self.compute_stability_time(df2,error_threshold)
 	#Plot signals
 			if show_results ==1:
 				fig, axs = plt.subplots()
