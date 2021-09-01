@@ -20,6 +20,7 @@
      * [Installation](user_guide_installation.md)
      * [System requirements](user_guide_sys_requirements.md)
      * [References](user_guide_references.md)
+     * [References](user_guide_DER_parameters.md)
      * [Software License](../../LICENSE.md)
 
 \pagebreak
