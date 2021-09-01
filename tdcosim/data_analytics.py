@@ -706,7 +706,7 @@ class DataAnalytics(object):
 				
 				# If signals are not same after bias corrections. Correct for measurement bias...
 				if status == 0:
-					V2 =np.array(thisDf2.value)
+					V2 =np.array(df2.value)
 					M1 = np.mean(V1)
 					M2 = np.mean(V2)
 					V2 = V2 - (M2-M1)
@@ -718,7 +718,7 @@ class DataAnalytics(object):
 				
 				# If signals are not same after bias and lag corrections. try both...
 				if status == 0:
-					V2 =np.array(thisDf2.value)
+					V2 =np.array(df2.value)
 					V2 = self.shift_array(V2, -lag)			# Leg correction
 					M1 = np.mean(V1)
 					M2 = np.mean(V2)
