@@ -90,6 +90,7 @@ The most useful methods available within the module are described below:
 * *plot_distribution_der_data(df)*: It plots the time series plots for active and reactive power output from each DER.
 * *compute_stability_time(df,error_threshold)*: It determines whether the co-simulation variables within the data frame reach steady state, and the time taken to reach steady state after a disturbance event has occurred.
 
+
 ***Additional description of methods to be included by Kumar***
 
 [Continue to Understanding the config file](user_guide_understanding_config.md)
