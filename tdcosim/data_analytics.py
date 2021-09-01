@@ -611,7 +611,7 @@ class DataAnalytics(object):
 			t0 = 0
 			t2 = 0
 			exit_token = 0
-			Stability_time = 0
+			stability_time = 0
 			T1 = -1
 			for i in range(len(dV)):
 				if abs(dV[i]) >= error_threshold*V[0] and t0 == 0 and exit_token == 0:
@@ -621,19 +621,19 @@ class DataAnalytics(object):
 					exit_token = 1
 					T1 = T[i] # time of stability
 					t2 = i # time index of stability
-					Stability_time = T1 - T0
+					stability_time = T1 - T0
 			if t0 == 0:
-				Comment = 'System is always stable'
-				Stability_time = 0
+				comment = 'System is always stable'
+				stability_time = 0
 			elif T1 == -1:
-				Comment = 'System does not Stabilize'
-				Stability_time = max(T)
+				comment = 'System does not Stabilize'
+				stability_time = max(T)
 			else:
-				Comment = 'Stability could not be determined'
-				Stability_time = -1
+				comment = 'Stability could not be determined'
+				stability_time = -1
 			max_deviation = max(V[t2:len(V)]) - min(V[t2:len(V)])
 
-			return Comment,Stability_time,max_deviation
+			return stability_time,comment,max_deviation
 		except:
 			raise
 
@@ -670,10 +670,10 @@ class DataAnalytics(object):
 			raise
 
 	#-----------------------------------------------------------
-	def compute_mean_square_error(self,Df1,Df2):
+	def compute_mean_square_error(self,df1,df2):
 			try:
-				V1 =np.array(Df1.value)
-				V2 =np.array(Df2.value)
+				V1 =np.array(df1.value)
+				V2 =np.array(df2.value)
 				MSE = (((V1-V2)/V1)**2).mean(axis=None)
 				return MSE
 			except:
