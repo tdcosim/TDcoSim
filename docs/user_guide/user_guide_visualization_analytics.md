@@ -91,8 +91,8 @@ The most useful methods available within the module are described below:
 * *compute_stability_time(df,error_threshold)*: It determines whether the co-simulation variables within the data frame reach steady state, and the time taken to reach steady state after a disturbance event has occurred.
 
 
-•	compute_stability_time: Computes stability time of a DataFrame with at least two columns: 1) value, and 2) t.
-o	Syntex:
+*	*compute_stability_time: Computes stability time of a DataFrame with at least two columns: 1) value, and 2) t.
+*	**Syntex:
 stability_time, comment= compute_stability_time(df, error_threshold)
 o	Inputs:
 df: 			DataFrame with at least two columns: 1) value, and 2) t.
