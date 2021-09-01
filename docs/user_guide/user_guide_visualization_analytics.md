@@ -91,37 +91,6 @@ The most useful methods available within the module are described below:
 * *compute_stability_time(df,error_threshold)*: It determines whether the co-simulation variables within the data frame reach steady state, and the time taken to reach steady state after a disturbance event has occurred.
 
 
-*	compute_stability_time: Computes stability time of a DataFrame with at least two columns: 1) value, and 2) t. \\
-**	Syntex:
-stability_time, comment= compute_stability_time(df, error_threshold)
-*	Inputs:
-df: 			DataFrame with at least two columns: 1) value, and 2) t.
-error_threshold: 	Error threshold for stability time calculations. Maximum allowed signal deviation after stability time
-*	Outputs:
-stability_time:		Time it takes for the signal to stabilize after disturbance 
-comment:		Message if the system is stable or not
-max_deviation:		Max signal amplitude deviation after stability 
-
-
-*	lag_finder:  Calculate lag/delay between DataFrames df1 and df2 of the same length. Negative outputs show that signal df2.value lags behind df1.value and the positive output shows that df1.value lags behind df2.value. 
-*	Syntex:
-delay = lag_finder(df1, df2)
-*	Inputs:
-df1: 			DataFrame 1 with at least one column: value
-df2: 			DataFrame 2 with at least one column: value
-*	Output:
-delay: 		Delay between signals df1.value and df2.value
-
-*	compute_mean_square_error:  Calculate the mean square error between DataFrames df1 and df2 of the same length. 
-*	Syntex:
-MSE = compute_mean_square_error (df1, df2)
-*	Inputs:
-      df1: 			DataFrame 1 with at least one column: value
-      df2: 			DataFrame 2 with at least one column: value
-*	Output:
-      MSE: 		Mean square error between signal df1.value and df2.value
-
-
 ***Additional description of methods to be included by Kumar***
 
 [Continue to Understanding the config file](user_guide_understanding_config.md)
