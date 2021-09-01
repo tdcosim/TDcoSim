@@ -732,17 +732,17 @@ class DataAnalytics(object):
 						MSG = 'Both Signals are not same'
 						status = 5
 					
-			V1 =np.array(thisDf1.value)
-			T1 = np.array(thisDf1.t)
-			V2 =np.array(thisDf2.value)
-			T2 = np.array(thisDf2.t)
+			V1 =np.array(df1.value)
+			T1 = np.array(df1.t)
+			V2 =np.array(df2.value)
+			T2 = np.array(df2.t)
 			
 			P1_min = np.min(V1)
 			P1_max = np.max(V1)
 			P2_min = np.min(V2)
 			P2_max = np.max(V2)
-			Stability_time_1 = compute_stability_time(df1,error_threshold)
-			Stability_time_2 = compute_stability_time(df2,error_threshold)
+			Stability_time_1 = self.compute_stability_time(df1,error_threshold)
+			Stability_time_2 = self.compute_stability_time(df2,error_threshold)
 	#Plot signals
 			if show_results ==1:
 				fig, axs = plt.subplots()
