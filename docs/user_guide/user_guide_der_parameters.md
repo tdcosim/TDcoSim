@@ -1,9 +1,10 @@
 # Fast DER and Detailed DER parameters
 
 Detailed DER and Fast DER are two model types available to the user (through the **config** file). Detailed DER will use a Dynamic Phasor models while the Fast DER will use Dynamic current inject models. Since the modeling approaches are different, both the model use different set of parameters.
-Here the parameters for each are described.
+
+
 ## Fast DER
-The Fast DER is based on the DER_A model developed by EPRI and made available through commercial simulation software like PSS/E and PSLF. Note that the user need to populate the Fast DER parameters. They are automatically populated from the default values.
+The Fast DER is based on the DER_A model developed by EPRI and made available through commercial simulation software like PSS/E and PSLF. Note that the user need to populate the Fast DER parameters. They are automatically populated from the default values which can be accessed [here](https://github.com/tdcosim/TDcoSim/blob/v2_test/config/fast_der_default.json).
 
 * **Circuit parameters**
   * *xf (float):* Voltage source reactance.
@@ -56,5 +57,10 @@ The Detailed DER is based on the Dynamic Phasor modell developed by ANL. It is a
 | Active power controller gains   |    Kpp/Kip      | Kp_P,Ki_P,Kp_DC,Ki_DC |
 | Reactive power controller gains | Kpq/Kiq | Kp_Q,Ki_Q             |
 
+## Composite model parameters
+If the composite model is connected to a T node, it is parameterized using the default values found [here] (https://github.com/tdcosim/TDcoSim/blob/v2_test/config/composite_load_model_rating.json). Note that the default values can be edited by the user.
+
+## DER_A model parameters
+If the DER_A model is connected to a T node, it is parameterized using the default values found [here] (https://github.com/tdcosim/TDcoSim/blob/v2_test/config/dera_rating.json). Note that the default values can be edited by the user.
 
 \pagebreak
