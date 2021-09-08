@@ -169,7 +169,7 @@ The most useful methods available within the module are described below:
 
 * *Syntex:* plot_vt_filt_fast_der(df,tnodeid,legendDistNode,showPlot)
 * *Inputs:*
-     - *df* 			               Data Frame 
+     - *df:* 			               Data Frame 
      - *tnodeid:* 			         Transmission node ID
      - *legendDistNode:* 			   Set equal to True to show legend for distribution node id (Optional: if not specified set to False)
      - *showPlot:* 			         Set equal to True to show the plot (Optional: if not specified set to False)
@@ -179,7 +179,7 @@ The most useful methods available within the module are described below:
 
 * *Syntex:* plot_t_vmag(df,tnodeid,excludeNodes)
 * *Inputs:*
-     - *df* 			               Data Frame 
+     - *df:* 			               Data Frame 
      - *tnodeid:* 			         Transmission node ID (Optional: if not specified set to none)
      - *excludeNodes:* 			   Nodes to be excluded from the plot (Optional: if not specified set to none)
      
