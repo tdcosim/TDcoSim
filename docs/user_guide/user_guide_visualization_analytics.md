@@ -90,6 +90,7 @@ The most useful methods available within the module are described below:
 * *plot_distribution_der_data(df)*: It plots the time series plots for active and reactive power output from each DER.
 * *compute_stability_time(df,error_threshold)*: It determines whether the co-simulation variables within the data frame reach steady state, and the time taken to reach steady state after a disturbance event has occurred.
 
+> Entries below needs to be reveiwed before publishing 
 
 
 #### *compute_stability_time:*     Computes stability time of a DataFrame with at least two columns: 1) value and 2) t.
@@ -119,9 +120,53 @@ The most useful methods available within the module are described below:
 * *Outputs:*
      - *MSE:* 		Mean square error between signal df1.value and df2.value
 
+####	*shift_array:*       Shifts array by n bit. Fills extra bits at the end of the vector by a copy of the last bit of the array. 
+* *Syntex:* x = shift_array(y, n)
+* *Inputs:*
+     - *y:* 			Signal (type: np.array)
+     - *n:* 			Number of bits to shift the signal. Positive values of n shifts signal y to the right and negative values shift signals to the left.
+* *Outputs:*
+     - *x:* 		   Shifted signal
+
+####	*instances_of_violation:*       Calculates the number of instances where the value of data frame violates upper and lower bounds set by minValue and maxValue.
+* *Syntex:* n = instances_of_violation(df,maxValue,minValue)
+* *Inputs:*
+     - *df:* 			      DataFrame with at least one property: df.value
+     - *maxValue:* 			Upper threshold 
+     - *minValue:* 			Lower threshold
+* *Outputs:*
+     - *n:* 		         Number of instances when 'df.value' is outside the bounds of [minValue, maxValue]
 
 
-***Additional description of methods to be included by Kumar***
+####	*exculde_value:*       Filter the given data frame based on >=toValue and <=fromValue conditions. For == condition use the same value for fromValue and toValue.
+* *Syntex:* excludedDF = exculde_value(df,fromValue,toValue)
+* *Inputs:*
+     - *df:* 			      DataFrame with at least one property: df.value
+     - *fromValue:* 			Upper threshold 
+     - *toValue:* 			Lower threshold
+* *Outputs:*
+     - *excludedDF:* 		Filtered data frame
+
+
+
+####	*compare_signals:*       Compare and plot two signals in data frame df1 and df2 of the same length. Returns result in terms of stability time of both signals as well as lag and mean square error between them.
+
+* *Syntex:* lag,MSE,Stability_time_1,Stability_time_2 = compare_signals(thisBusId1,thisBusId2,df1,df2,error_threshold,show_results)
+* *Inputs:*
+     - *thisBusId1:* 			      Bus ID of data frame 1
+     - *thisBusId2:* 			      Bus ID of data frame 2
+     - *df1:* 			               DataFrame 1 with at least one property: df1.value
+     - *df2:* 			               DataFrame 2 with at least one property: df2.value
+     - *error_threshold:* 			   Error threshold for mean square error and stability time calculations.
+     - *show_results:* 			      Set to 1 to show the plot. 
+* *Outputs:*
+     - *lag:* 		                  Delay between signals 1 and 2
+     - *MSE:* 		                  Mean square error between signals 1 and 2
+     - *Stability_time_1:* 		   Time it takes for the signal 2 to stabilize after disturbance 
+     - *Stability_time_2:* 		   Time it takes for the signal 1 to stabilize after disturbance
+
+
+
 
 [Continue to Understanding the config file](user_guide_understanding_config.md)
 
