@@ -165,16 +165,27 @@ The most useful methods available within the module are described below:
      - *Stability_time_1:* 		   Time it takes for the signal 2 to stabilize after disturbance 
      - *Stability_time_2:* 		   Time it takes for the signal 1 to stabilize after disturbance
 
-####	*plot_vt_filt_fast_der:*  Plots the voltage signal at given transmission node and DERs in the connected distribution system.       
+####	*plot_vt_filt_fast_der:*  Plot the voltage signal at given transmission node and DERs in the connected distribution system.       
 
 * *Syntex:* plot_vt_filt_fast_der(df,tnodeid,legendDistNode,showPlot)
 * *Inputs:*
      - *df* 			               Data Frame 
      - *tnodeid:* 			         Transmission node ID
-     - *legendDistNode:* 			   Set equal to 1 to show legend for distribution node id
-     - *showPlot:* 			         Set equal to 1 to show the plot
+     - *legendDistNode:* 			   Set equal to True to show legend for distribution node id (Optional: if not specified set to False)
+     - *showPlot:* 			         Set equal to True to show the plot (Optional: if not specified set to False)
+
+
+####	*plot_t_vmag:*  Plot the voltage signal at given transmission node. If no transmission node id is given, it will plot voltage at all transmission nodes. 
+
+* *Syntex:* plot_t_vmag(df,tnodeid,excludeNodes)
+* *Inputs:*
+     - *df* 			               Data Frame 
+     - *tnodeid:* 			         Transmission node ID (Optional: if not specified set to none)
+     - *excludeNodes:* 			   Nodes to be excluded from the plot (Optional: if not specified set to none)
      
- 
+
+
+
 
 [Continue to Understanding the config file](user_guide_understanding_config.md)
 
