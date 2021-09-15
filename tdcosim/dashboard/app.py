@@ -1,3 +1,5 @@
+import base64
+import io
 import os
 import pickle
 import pdb
@@ -5,7 +7,7 @@ import pdb
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_table
 import plotly.express as px
 import pandas as pd
@@ -13,7 +15,7 @@ import networkx as nx
 import numpy as np
 
 from tdcosim.dashboard import Dashboard
-from tdcosim.data_analytics import DataAnalytics
+#from tdcosim.data_analytics import DataAnalytics
 
 
 app = dash.Dash(__name__)
@@ -28,19 +30,19 @@ def create_graphs(objects,objID,title,fontColor,xlabel,ylabel):
 		objects['graph'][thisObjID].figure['layout']['yaxis']={'title':thisYlabel}
 
 #=======================================================================================================================
-def create_map(df, thisObjID):
+def create_map(objects, df, thisObjID):
 	objects['map']={}
 	objects['map']['df_{}'.format(thisObjID)]=helper.build_map_df(df)
 	objects['map'][thisObjID]=helper.map_template(objects['map']['df_{}'.format(thisObjID)],radarOverlay=False)
 
 #=======================================================================================================================
-def create_table(df, thisObjID):	
+def create_table(objects, df, thisObjID):	
 	objects['table'] = {
 	 thisObjID : helper.table_template(df)	
 	}
 
 #=======================================================================================================================
-def create_filter(df, thisObjID):
+def create_filter(objects, df, thisObjID):
 	objects['filter'] = {
 	 thisObjID : helper.filter_template(df, 'tnodeid', [])	
 	}
@@ -60,7 +62,7 @@ def create_tabs(objects,objID,children):
 	objects['tabs'][objID]=dcc.Tabs(id=objID,children=children)
 
 #=======================================================================================================================
-def gather_objects():
+def gather_objects(objects):
 	# dropdown objects
 	objects['dropdown']=helper.filter_dropdown(columnFilter=['tnodeid','tnodesubid','dnodeid','property','scenario'],
 	multi=['tnodeid','tnodesubid','dnodeid'])
@@ -78,8 +80,8 @@ def gather_objects():
 		placeholder='bubble_size_property',multi=False,style={'display':'inline-block','width':'200px','margin':'20px'})
 
 	# create required objects
-	create_map(df, 'gis')
-	create_table(df, 'table')
+	create_map(objects, df, 'gis')
+	create_table(objects, df, 'table')
 	create_graphs(objects,['vmag','freq'],['vmag','freq'],['white','white'],['Time (s)', 'Time (s)'],\
 	['Vmag (PU)','f (hz)'])
 	create_tab(objects,['gis','table','plots','analytics'],['GIS','Table','Plots','Analytics'])
@@ -92,7 +94,8 @@ def gather_objects():
 		objects['map']['gis'],\
 		html.Div(children=[objects['dropdown']['bubble_property'],objects['dropdown']['bubble_color_property'],\
 		objects['dropdown']['bubble_size_property']],\
-		style={'display':'flex','justifyContent':'end','marginRight':'20px','marginLeft':'20px'})
+		style={'display':'flex','justifyContent':'end','marginRight':'20px','marginLeft':'20px'}),
+		html.Div(children=[helper.file_upload()],style={'display':'flex','justifyContent':'end','marginRight':'20px','marginLeft':'20px'})
 	]
 
 	# table
@@ -206,6 +209,33 @@ def update_gis(bubble_property,bubble_color_property,bubble_size_property):
 		raise
 
 
+def LoadDataframe(contents, filename, date):		
+	content_type, content_string = contents.split(',')
+	decoded = base64.b64decode(content_string)
+	# Assume that the user uploaded a CSV file
+	df = pd.read_pickle(io.BytesIO(decoded))
+	return df
+	
+	
+@app.callback(Output('main_tab', 'children'),
+			  Input('upload-data', 'contents'),
+			  State('upload-data', 'filename'),
+			  State('upload-data', 'last_modified'),
+			  prevent_initial_call=True)
+def update_output(list_of_contents, list_of_names, list_of_dates):
+	if list_of_contents is not None:
+		df = LoadDataframe(list_of_contents[0], list_of_names[0], list_of_dates[0])
+		helper=Dashboard()
+		helper.add_df('df',df)
+		df = helper.add_lat_lon_to_df(df, 'tnodeid')			
+		# setup objects		
+		objects['df']=df
+		
+		# define layout
+		gather_objects(objects)		
+		#print(objects)
+		return [objects['tab']['gis'],objects['tab']['table'],objects['tab']['plots'],objects['tab']['analytics']]
+
 #======================================================================================================================
 if __name__ == '__main__':	
 	# http://localhost:8050/
@@ -213,8 +243,8 @@ if __name__ == '__main__':
 	# init
 	BaseDir=os.path.dirname(os.path.abspath(__file__))
 	BaseDir=os.path.join(BaseDir,"vizsample")
-	df=pd.read_csv(open(os.path.join(BaseDir,'dataframe.csv')),compression=None)
-	da=DataAnalytics()
+	df=pd.read_pickle(os.path.join(BaseDir,'df_pickle2.pkl'))	
+	#da=DataAnalytics()
 	helper=Dashboard()
 	helper.add_df('df',df)
 	df = helper.add_lat_lon_to_df(df, 'tnodeid')
@@ -224,9 +254,11 @@ if __name__ == '__main__':
 	objects['df']=df
 
 	# define layout
-	gather_objects()
-	app.layout=html.Div(objects['tabs']['main_tab'],
-	style={'width':'99vw','height':'98vh','background-color':'rgba(0,0,0,.8)'})
+	gather_objects(objects)
+	app.layout=html.Div(		
+		children= objects['tabs']['main_tab'],
+		style={'width':'99vw','height':'98vh','background-color':'rgba(0,0,0,.8)'}
+		)
 
 	# run
 	app.run_server(debug=True,use_reloader=True)
