@@ -1,7 +1,9 @@
 import os
 import sys
 import pdb
+import inspect
 
+import tdcosim
 from tdcosim.global_data import GlobalData
 from tdcosim.procedure.default_procedure import DefaultProcedure
 from tdcosim.procedure.default_dynamic_procedure import DefaultDynamicProcedure
@@ -14,7 +16,7 @@ class Procedure(DefaultProcedure):
 	def __init__(self):
 		try:
 			# empty opendss log file from previous run
-			baseDir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+			baseDir=os.path.dirname(inspect.getfile(tdcosim))
 			f=open(os.path.join(baseDir,'logs','opendssdata.log'),'w')
 			f.close()
 			if GlobalData.config['simulationConfig']['simType'].lower() == 'static':

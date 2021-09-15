@@ -1,12 +1,11 @@
+import os
 import platform
-import pathlib
 from setuptools import setup
 
-# The directory containing this file
-HERE = pathlib.Path(__file__).parent
-
 # The text of the README file
-README = (HERE / "README.md").read_text()
+f=open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'README.md'))
+README=f.read()
+f.close()
 
 if platform.architecture()[0]=='64bit':
 	setup(name='tdcosim',
@@ -29,8 +28,9 @@ if platform.architecture()[0]=='64bit':
         'Programming Language :: Python :: 3.7',
       ],
       install_requires=['pywin32==228','matplotlib>=2.0.2','numpy>=1.16.2','scipy>=1.2.1',
-      'xlsxwriter>=1.1.8','psutil>=5.7.0','pandas>=0.24.2','dash>=1.21.0','networkx>=2.6.2'],
-      extras_require={'diffeqpy': ['diffeqpy>=1.1.0']}
+      'xlsxwriter>=1.1.8','psutil>=5.7.0','pandas>=0.24.2','dash>=1.21.0','networkx','pvder'],
+      extras_require={'diffeqpy': ['diffeqpy>=1.1.0']},
+      package_data={'tdcosim':['SampleData/**/**/*','logs/.*','config/*']}
       )
 else:
 	setup(name='tdcosim',
@@ -53,7 +53,7 @@ else:
         'Programming Language :: Python :: 3.7',
       ],
       install_requires=['pywin32==224','matplotlib>=2.0.2','numpy>=1.16.2','scipy>=1.2.1',
-      'xlsxwriter==1.1.8','psutil==5.7.0','pandas>=0.24.2'],
-      extras_require={'diffeqpy': ['diffeqpy>=1.1.0']}
+      'xlsxwriter==1.1.8','psutil==5.7.0','pandas>=0.24.2','dash>=1.21.0','networkx','pvder'],
+      extras_require={'diffeqpy': ['diffeqpy>=1.1.0']},
+      package_data={'tdcosim':['SampleData/**/**/*','logs/.*','config/*']}
       )
-

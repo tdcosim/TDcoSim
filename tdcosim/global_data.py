@@ -5,9 +5,11 @@ import pprint
 import uuid
 import pdb
 import time
+import inspect
 
 import six
 
+import tdcosim
 from tdcosim.exceptionutil import ExceptionUtil
 
 
@@ -69,8 +71,8 @@ class GlobalData(ExceptionUtil):
 			else:
 				logLevel=logging.DEBUG
 
-			basedir=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-			self.create_logger("GlobalData_logger",logFilePath=os.path.join(basedir,'logs',
+			baseDir=os.path.dirname(inspect.getfile(tdcosim))
+			self.create_logger("GlobalData_logger",logFilePath=os.path.join(baseDir,'logs',
 			'globaldata.log'),logLevel=logLevel,mode='w')
 		except:
 			raise

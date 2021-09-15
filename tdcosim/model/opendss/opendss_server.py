@@ -4,9 +4,11 @@ import json
 import socket
 import os
 import subprocess
+import inspect
 
 import six
 
+import tdcosim
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.global_data import GlobalData
 
@@ -35,8 +37,7 @@ class OpenDSSServer(object):
 	def connect_opendssclient(self, nodeid):
 		try:
 			# start a subprocess asynchronously, one at a time
-			baseDir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(\
-			os.path.abspath(__file__)))))
+			baseDir=os.path.dirname(inspect.getfile(tdcosim))
 			if 'logging' in GlobalData.config and \
 			'saveSubprocessOutErr' in GlobalData.config['logging'] and \
 			GlobalData.config['logging']['saveSubprocessOutErr']:

@@ -1,7 +1,9 @@
 import os
 import json
 import pdb
+import inspect
 
+import tdcosim
 from tdcosim.model.opendss.opendss_server import OpenDSSServer
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.global_data import GlobalData
@@ -77,8 +79,7 @@ class OpenDSSModel(object):
 				if 'logging' in GlobalData.config and \
 				'saveSubprocessOutErr' in GlobalData.config['logging'] and \
 				GlobalData.config['logging']['saveSubprocessOutErr']:
-					baseDir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(\
-					os.path.abspath(__file__)))))
+					baseDir=os.path.dirname(inspect.getfile(tdcosim))
 					DNet['Nodes'][entry]['f_out']=open(os.path.join(baseDir,'logs',\
 					'dss_out_{}.txt'.format(entry)),'w')
 					DNet['Nodes'][entry]['f_err']=open(os.path.join(baseDir,'logs',\
@@ -138,10 +139,7 @@ class OpenDSSModel(object):
 #===================================================================================================
 	def setDERParameter(self, entry, nodenumber):
 		try:
-			baseDir=os.path.abspath(__file__)
-			nLevel=4
-			for n in range(nLevel):
-				baseDir=os.path.dirname(baseDir)
+			baseDir=os.path.dirname(inspect.getfile(tdcosim))
 			defaults=json.load(open(os.path.join(baseDir,'config','der_defaults.json')))
 			DNet=GlobalData.data['DNet']
 			

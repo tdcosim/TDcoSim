@@ -3,7 +3,9 @@ import os
 import pprint
 import logging
 import pdb
+import inspect
 
+import tdcosim
 from tdcosim.global_data import GlobalData
 from tdcosim.exceptionutil import ExceptionUtil
 
@@ -22,9 +24,8 @@ class OpenDSSData(ExceptionUtil):
 			else:
 				logLevel=logging.DEBUG
 
-			basedir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
-			os.path.abspath(__file__)))))
-			self.create_logger("OpenDSSData_logger",logFilePath=os.path.join(basedir,'logs',
+			baseDir=os.path.dirname(inspect.getfile(tdcosim))
+			self.create_logger("OpenDSSData_logger",logFilePath=os.path.join(baseDir,'logs',
 			'opendssdata.log'),logLevel=logLevel,mode='a')
 		except:
 			raise

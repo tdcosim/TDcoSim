@@ -2,9 +2,11 @@ import os
 import copy
 import json
 import pdb
+import inspect
 
 import numpy as np
 
+import tdcosim
 from tdcosim.global_data import GlobalData
 
 
@@ -13,8 +15,7 @@ class Dera(object):
 		try:
 			super(Dera,self).__init__()
 			if not templatePath:
-				baseDir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(\
-				os.path.abspath(__file__)))))
+				baseDir=os.path.dirname(inspect.getfile(tdcosim))
 			templatePath=os.path.join(baseDir,'config','guideline.json')
 			templates=self.load_config_template(templatePath)
 			self.template=templates['table3.1']

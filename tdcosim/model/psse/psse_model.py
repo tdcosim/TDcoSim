@@ -5,10 +5,12 @@ import pdb
 import json
 import copy
 import uuid
+import inspect
 
 import six
 import numpy as np
 
+import tdcosim
 from tdcosim.global_data import GlobalData
 from tdcosim.model.psse.dera import Dera
 
@@ -40,8 +42,7 @@ class PSSEModel(Dera):
 
 			self.faultmap = {}
 			self.faultindex = 1
-			baseDir=os.path.dirname(os.path.dirname(os.path.dirname(\
-			os.path.dirname(os.path.abspath(__file__)))))
+			baseDir=os.path.dirname(inspect.getfile(tdcosim))
 			self.__cmld_rating_default=json.load(open(os.path.join(baseDir,'config',\
 			'composite_load_model_rating.json')))
 			self.__dera_rating_default=json.load(open(os.path.join(baseDir,'config',\

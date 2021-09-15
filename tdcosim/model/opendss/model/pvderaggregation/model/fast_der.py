@@ -2,7 +2,9 @@ import os
 import json
 import copy
 import pdb
+import inspect
 
+import tdcosim
 import numpy as np
 from scipy.optimize import fsolve
 
@@ -18,10 +20,7 @@ class FastDER(object):
 	def __init__(self,interconnectionStandard='ieee_2018_category_2',\
 	interconnectionStandardConfig='fast_der_ride_through.json',**kwargs):
 		try:
-			self._baseDir=os.path.abspath(__file__)
-			nLevel=7 # number of levels to root/base dir
-			for n in range(nLevel):
-				self._baseDir=os.path.dirname(self._baseDir)
+			self._baseDir=os.path.dirname(inspect.getfile(tdcosim))
 			
 			self.defaultConfig=json.load(open(os.path.join(self._baseDir,'config','fast_der_default.json')))
 			thisConfig=copy.deepcopy(self.defaultConfig)
