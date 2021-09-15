@@ -185,6 +185,42 @@ The most useful methods available within the module are described below:
      
 
 
+####	*plot_omega:*  Plot time vs SPD at all transmission nodes except specified. 
+* *Syntex:* plot_omega(df,excludeNodes=None)
+* *Inputs:*
+     - *df:* 		Data Frame 	               
+     - *excludeNodes:* 	Nodes to be excluded from the plot (Optional: if not specified set to none)		   
+
+
+
+
+####	*plot_distribution_der_data:*  Plot real and reactive power of distribution connected DERs. 
+* *Syntex:* plot_distribution_der_data(df,tnodeid=None,plotDerTotal=True)
+* *Inputs:*
+     - *df:* 		                  Data Frame 	               
+     - *tnodeid:* 			         Transmission node ID
+     - *plotDerTotal:* 	Set true to plot total P and Q of distribution DERs  		   
+
+####	*show_plot:*  Generate plot with time as x-axis and ylable as y-axis
+* *Syntex:* show_plot(ylabel,title)
+* *Inputs:*
+     - *ylabel:* 			         Y-axis label 
+     - *title:* 			         Plot title
+     
+
+####	*clear_plot:*  Clear the plot
+* *Syntex:* clear_plot()
+
+####	*plot_t_delayed_voltage_recovery:*  ADD DISCRIPTION
+
+* *Syntex:* plot_t_delayed_voltage_recovery(df,distClearTime,tThreshold,vThreshold,excludeNodes=None)
+* *Inputs:*
+     - *df:* 	   Data Frame 		               
+     - *distClearTime:* 			         
+     - *tThreshold:*
+     - *vThreshold:*
+     - *excludeNodes:* 			   Nodes to be excluded from the plot (Optional: if not specified set to none)
+
 
 
 [Continue to Understanding the config file](user_guide_understanding_config.md)
