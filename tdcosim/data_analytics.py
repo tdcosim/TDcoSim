@@ -513,9 +513,10 @@ class DataAnalytics(object):
 			df=df[df.property=='SPD']
 			legend=[]
 			for thisNode in set(df.tnodeid):
-				thisDF=df[df.tnodeid==thisNode]
-				plt.plot(thisDF.t,thisDF.value)
-				legend.append(thisNode)
+				if not thisNode == excludeNodes:
+					thisDF=df[df.tnodeid==thisNode]
+					plt.plot(thisDF.t,thisDF.value)
+					legend.append(thisNode)
 			plt.legend(legend)
 			plt.xlabel('Time (s)')
 			plt.ylabel('Freq (hz)')
@@ -533,9 +534,10 @@ class DataAnalytics(object):
 			if not isinstance(tnodeid,list):
 				tnodeid=[tnodeid]
 			for thisNode in tnodeid:
-				thisDF=df[df.tnodeid==thisNode]
-				plt.plot(thisDF.t,thisDF.value)
-				legend.append(thisNode)
+				if not thisNode == excludeNodes:
+					thisDF=df[df.tnodeid==thisNode]
+					plt.plot(thisDF.t,thisDF.value)
+					legend.append(thisNode)
 			plt.legend(legend)
 			plt.xlabel('Time (s)')
 			plt.ylabel('Vmag (PU)')
@@ -552,9 +554,10 @@ class DataAnalytics(object):
 
 			legend=[]
 			for thisNode in set(df_.tnodeid):
-				thisDF=df[df.tnodeid==thisNode]
-				plt.plot(thisDF.t,thisDF.value)
-				legend.append(thisNode)
+				if not thisNode == excludeNodes:
+					thisDF=df[df.tnodeid==thisNode]
+					plt.plot(thisDF.t,thisDF.value)
+					legend.append(thisNode)
 			plt.legend(legend)
 			plt.xlabel('Time (s)')
 			plt.ylabel('Vmag (PU)')
