@@ -86,14 +86,11 @@ The methods within the module be accessed using the Analytics tab on the TDcoSim
 All the methods take the TDcoSim DataFrame as input. 
 The most useful methods available within the module are described below:
 
-* *get_min_max_voltage_der(df)*: It returns a dictionary containing the minimum and maximum **dnode** voltage magnitudes in a all tnodes.
-* *plot_distribution_der_data(df)*: It plots the time series plots for active and reactive power output from each DER.
-* *compute_stability_time(df,error_threshold)*: It determines whether the co-simulation variables within the data frame reach steady state, and the time taken to reach steady state after a disturbance event has occurred.
 
 > Entries below needs to be reveiwed before publishing 
 
 
-#### *compute_stability_time:*     Computes stability time of a DataFrame with at least two columns: 1) value and 2) t.
+#### *compute_stability_time:*   Determines whether the co-simulation variables within the data frame reach steady state, and the time taken to reach steady state after a disturbance event has occurred. The DataFrame has at least two columns: 1) value and 2) t.
 * *Syntex:* stability_time, comment= compute_stability_time(df, error_threshold)
 * *Inputs:*
      - *df:* 			DataFrame with at least two columns: 1) value, and 2) t.
@@ -194,7 +191,7 @@ The most useful methods available within the module are described below:
 
 
 
-####	*plot_distribution_der_data:*  Plot real and reactive power of distribution connected DERs. 
+####	*plot_distribution_der_data:*  Plots the time series plots for active and reactive power output from each DER.
 * *Syntex:* plot_distribution_der_data(df,tnodeid=None,plotDerTotal=True)
 * *Inputs:*
      - *df:* 		                  Data Frame 	               
