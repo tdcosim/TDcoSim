@@ -28,6 +28,34 @@
 				 "sbase": 20
 			  }
 		   }
+		},
+		"manualFeederConfig":{
+			"nodes":[
+				{
+				   "nodenumber": 28, 
+				   "filePath": [
+					  "..\\..\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"
+				   ], 
+				   "DERSetting": "default", 
+				   "solarFlag": 0, 
+				   "solarPenetration": 0.01, 
+				   "fractionAggregatedLoad": {
+					  "cmld": 0.4
+				   }, 
+				   "DERModelType": "ThreePhaseUnbalanced", 
+				   "initializeWithActual": true, 
+				   "DERFilePath": "..\\examples\\config_der.json", 
+				   "DERParameters": {
+					  "default": {
+						 "solarFlag": 0, 
+						 "pvderScale": 1, 
+						 "solarPenetration": 0.01, 
+						 "steadyStateInitialization": true, 
+						 "derId": "50"
+					  }
+				   }
+				}
+			]
 		}
 	},
 	"psseConfig": {
