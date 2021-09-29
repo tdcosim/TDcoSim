@@ -8,7 +8,6 @@ import pdb
 from tdcosim.global_data import GlobalData
 from tdcosim.procedure.procedure import Procedure
 
-
 baseDir=os.path.dirname(os.path.abspath(__file__))
 
 
@@ -76,6 +75,13 @@ def template(args):
 	except:
 		raise
 
+def dashboard(args):
+	try:
+		appPath=os.path.join(baseDir,'dashboard','app.py')
+		os.system('python {} {} "{}"'.format(appPath,args.outputPath,args.pssePath))
+	except:
+		raise
+
 def configHelp(args):
 	try:
 		data=json.load(open(os.path.join(baseDir,'config','configHelp.json')))
@@ -113,6 +119,8 @@ if __name__ == "__main__":
 	parser.add_argument('--configHelp', type=str, help='Help on configuration options',default='')
 	parser.add_argument('--templatePath', type=str, help='location to store template config')	
 	parser.add_argument('--simType', type=str,default='dynamic')	
+	parser.add_argument('-o','--outputPath', type=str, help='Path to output pickle file')
+	parser.add_argument('-p','--pssePath', type=str, help='psse location')
 
 	if len(sys.argv)==1:
 		print_help()
@@ -124,3 +132,5 @@ if __name__ == "__main__":
 			run(args)
 		elif args.type=='template':
 			template(args)
+		elif args.type=='dashboard':
+			dashboard(args)

@@ -1,4 +1,5 @@
 import os
+import sys
 import pickle
 import pdb
 
@@ -12,11 +13,11 @@ import pandas as pd
 import networkx as nx
 import numpy as np
 
-from tdcosim.dashboard import Dashboard
-from tdcosim.data_analytics import DataAnalytics
-
 
 app = dash.Dash(__name__)
+#### helper=Dashboard()
+#### objects={'graph':{},'tab':{},'tabs':{},'upload':{},'textarea':{},'dropdown':{},'selection':{},'df':{}}
+
 
 #=======================================================================================================================
 def create_graphs(objects,objID,title,fontColor,xlabel,ylabel):
@@ -34,7 +35,9 @@ def create_map(df, thisObjID):
 	objects['map'][thisObjID]=helper.map_template(objects['map']['df_{}'.format(thisObjID)],radarOverlay=False)
 
 #=======================================================================================================================
-def create_table(df, thisObjID):	
+def create_table(df, thisObjID,reducedMemory=True):
+	if reducedMemory:
+		df=df[(df.t==0)&((df.property=='VOLT')|(df.property=='SPD'))]	
 	objects['table'] = {
 	 thisObjID : helper.table_template(df)	
 	}
@@ -78,7 +81,7 @@ def gather_objects():
 		placeholder='bubble_size_property',multi=False,style={'display':'inline-block','width':'200px','margin':'20px'})
 
 	# create required objects
-	create_map(df, 'gis')
+	create_map(objects['dfMap'], 'gis')
 	create_table(df, 'table')
 	create_graphs(objects,['vmag','freq'],['vmag','freq'],['white','white'],['Time (s)', 'Time (s)'],\
 	['Vmag (PU)','f (hz)'])
@@ -184,7 +187,7 @@ def update_plot(scenario,tnodeid,dnodeid,tnodesubid,prop):
 [Input('bubble_property', 'value'),Input('bubble_color_property', 'value'),Input('bubble_size_property', 'value')])
 def update_gis(bubble_property,bubble_color_property,bubble_size_property):
 	try:
-		df=objects['df']
+		df=objects['dfMap']
 		figure=objects['map']['gis'].figure
 		if not bubble_property:
 			bubble_property='VOLT'
@@ -210,18 +213,22 @@ def update_gis(bubble_property,bubble_color_property,bubble_size_property):
 if __name__ == '__main__':	
 	# http://localhost:8050/
 
-	# init
-	BaseDir=os.path.dirname(os.path.abspath(__file__))
-	BaseDir=os.path.join(BaseDir,"vizsample")
-	df=pd.read_csv(open(os.path.join(BaseDir,'dataframe.csv')),compression=None)
+	import sys
+	sys.path.insert(0,sys.argv[2])
+
+	from tdcosim.dashboard import Dashboard
+	from tdcosim.data_analytics import DataAnalytics
+
+	# # init
+	df=pd.read_pickle(sys.argv[1])
 	da=DataAnalytics()
 	helper=Dashboard()
 	helper.add_df('df',df)
-	df = helper.add_lat_lon_to_df(df, 'tnodeid')
 
 	# setup objects
 	objects={'graph':{},'tab':{},'tabs':{},'upload':{},'textarea':{},'dropdown':{},'selection':{},'df':{}}
 	objects['df']=df
+	objects['dfMap'] = helper.add_lat_lon_to_df(df[(df.property=='VOLT')], 'tnodeid')
 
 	# define layout
 	gather_objects()
@@ -229,6 +236,6 @@ if __name__ == '__main__':
 	style={'width':'99vw','height':'98vh','background-color':'rgba(0,0,0,.8)'})
 
 	# run
-	app.run_server(debug=True,use_reloader=True)
+	app.run_server(debug=False,use_reloader=False)
 
 
