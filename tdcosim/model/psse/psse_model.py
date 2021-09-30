@@ -208,9 +208,9 @@ class PSSEModel(Dera):
 						thisStr+='{}'.format(thisItem)+','
 						thisLineLen+=len('{}'.format(thisItem)+',')
 						if thisLineLen>180:# break long lines so that PSSE can read without error
-							thisStr+='\n'
+							thisStr+='\r'
 							thisLineLen=0
-					f.write(thisStr[0:-1]+' /\n')
+					f.write(thisStr[0:-1]+' /\r')
 				f.close()
 
 				# load cmld file
