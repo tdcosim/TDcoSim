@@ -35,7 +35,8 @@ In order to run a co-simulation using **TDcoSim**, the user needs to provide the
 * DER penetration levels (required for dynamic co-simulation)
 * DER ratings and ride through settings (optional)
 * Simulation events (optional)
-* Presence of CMLD, CLOD, or DER_A (optional)
+* Presence of ZIP, Composite load model (CMLD), Composite load model (CLOD),
+* Presence of aggregate DER model (DER_A) (only available in PSS/E 35)
 
 Detailed description of each input can be found [here](user_guide_getting_started.md#getting-started-with TDcoSim).
 
