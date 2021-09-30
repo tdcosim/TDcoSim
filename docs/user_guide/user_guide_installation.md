@@ -7,7 +7,8 @@ The stable release of TDcoSim can be installed from PyPI. The version under deve
 ## From GitHub
     git clone https://github.com/tdcosim/TDcoSim.git
     cd tdcosim/
-    pip install -e .
+    pip install .
+    python post_install.py
 
 ***
 ***Note:*** [Git](https://git-scm.com/) needs to installed  (incase it is not already available) before TDcoSim can be installed.
