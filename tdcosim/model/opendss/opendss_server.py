@@ -46,7 +46,7 @@ class OpenDSSServer(object):
 			else:
 				fout=open(os.devnull,'w')
 				ferr=open(os.devnull,'w')
-			openDSSClientPath = GlobalData.config['cosimHome'] + '\\model\\opendss\\opendss_client.py'
+			openDSSClientPath = os.path.join(baseDir,'model','opendss','opendss_client.py')
 			GlobalData.data['DNet']['Nodes'][nodeid]['proc']=subprocess.Popen(shlex.split("python "
 			+ '"'+openDSSClientPath+'"'+" {}".format(nodeid)),shell=True,stdout=fout,stderr=ferr)
 

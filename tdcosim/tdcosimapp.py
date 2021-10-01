@@ -4,11 +4,14 @@ import time
 import argparse
 import json
 import pdb
+import inspect
 
+import tdcosim
 from tdcosim.global_data import GlobalData
 from tdcosim.procedure.procedure import Procedure
 
 baseDir=os.path.dirname(os.path.abspath(__file__))
+installDir=os.path.dirname(inspect.getfile(tdcosim))
 
 
 def run(args):
@@ -33,21 +36,39 @@ def check_config(fpath):
 		conf=json.load(open(fpath))
 
 		# check if files exist
-		items2check=[conf['cosimHome'],conf['psseConfig']['installLocation'],
-		conf['psseConfig']['dyrFilePath'],conf['psseConfig']['rawFilePath']]
+		items2check=[conf['psseConfig']['installLocation']]
+
+		if not os.path.exists(conf['psseConfig']['dyrFilePath']) and \
+		os.path.exists(os.path.join(installDir,conf['psseConfig']['dyrFilePath'])):
+			conf['psseConfig']['dyrFilePath']=os.path.join(installDir,conf['psseConfig']['dyrFilePath'])
+
+		if not os.path.exists(conf['psseConfig']['rawFilePath']) and \
+		os.path.exists(os.path.join(installDir,conf['psseConfig']['rawFilePath'])):
+			conf['psseConfig']['rawFilePath']=os.path.join(installDir,conf['psseConfig']['rawFilePath'])
+		
+		items2check.extend([conf['psseConfig']['dyrFilePath'],conf['psseConfig']['rawFilePath']])
 
 		if conf['openDSSConfig']:
 			if 'defaultFeederConfig' in conf['openDSSConfig'] and \
 			'filePath' in conf['openDSSConfig']['defaultFeederConfig']:
+				if not os.path.exists(conf['openDSSConfig']['defaultFeederConfig']['filePath'][0]) and \
+				os.path.exists(os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['filePath'][0])):
+					conf['openDSSConfig']['defaultFeederConfig']['filePath'][0]=\
+					os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['filePath'][0])
 				items2check.append(conf['openDSSConfig']['defaultFeederConfig']['filePath'][0])
 			if 'manualFeederConfig' in conf['openDSSConfig'] and \
 			'nodes' in conf['openDSSConfig']['manualFeederConfig']:
 				for thisNode in conf['openDSSConfig']['manualFeederConfig']['nodes']:
 					if 'filePath' in thisNode:
+						if not os.path.exists(thisNode['filePath'][0]) and os.path.exists(os.path.join(installDir,thisNode['filePath'][0])):
+							thisNode['filePath'][0]=os.path.join(installDir,thisNode['filePath'][0])
 						items2check.append(thisNode['filePath'][0])
 
 		for entry in items2check:
 			assert os.path.exists(entry),'{} does not exist'.format(entry)
+
+		# update
+		json.dump(conf,open(fpath,'w'),indent=3)
 	except:
 		raise
 
