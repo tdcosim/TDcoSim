@@ -21,11 +21,12 @@ Both the visualization and data analytics features available in TDcoSim uses the
 The visualization module provides an simple way to quickly visualize the co-simulation data without having to write code. Visualization is done through a browser based dashboard built using the [Dash](https://github.com/plotly/dash) framework. The plots within the visualization were created using [Plotly](https://github.com/plotly/plotly.py).
 
 ### Using the visualization dashboard
-Before the dashboard can be used the co-simulation output should be available in the form of  a TDcoSim DataFrame. The file path of data frame should be provided by opening **app.py** located in **/tdcosi/dashboard** and modifying line 215 and 216. Then the dashboard can be started using the following command on the command line interface. 
+Before the dashboard can be used the location of the folder containing the co-simulation results (in the TDcoSim DataFrame format) should be known.  The dashboard can be launched using the following command on the command line interface. Note that *.\results*  can be replaced with the folder containing the co-simulation results.
 
 ```
-   python /location of TDcoSim repository/tdcosim/dashboard/app.py
+   tdcosimapp -t dashboard -o .\results
 ```
+
 This will result in the following output:
 
 ![report example](images/starting_dashboard.png)
@@ -33,6 +34,11 @@ This will result in the following output:
   <strong>Fig. 1. </strong>Starting TDcoSim dashboard.
 </p>
 Copy and paste the web address (**http:/127.0.0.1:8050** in Fig. 1) into your browser. The dashboard will load after a few seconds. There are four tabs on the dashboard corresponding to four visualization capabilities, each of will be explained below.
+
+***
+***Note:*** Using the dashboard only requires TDcoSim to be installed. It does not require PSS/E or OpenDSS to be installed. So co-simulation results that were generated in another machine can be copied to a machine without PSS/E or OpenDSS and then visualized.
+
+***
 
 #### GIS
 This visualization overlays the all the nodes contained in the T system on an geographical map as bubble plots as shown in Fig. 2. The position of the bubbles are determined by latitude and longitude coordinates corresponding to each node in the T system.
