@@ -16,6 +16,7 @@ installDir=os.path.dirname(inspect.getfile(tdcosim))
 
 def run(args):
 	try:
+		assert args.config, "config should be set using -c option, got {}".format(args.config)
 		startTime = time.time()
 		args.config=os.path.abspath(args.config)
 		assert os.path.exists(args.config),'{} does not exist'.format(args.config)
@@ -74,6 +75,7 @@ def check_config(fpath):
 
 def template(args):
 	try:
+		assert args.templatePath, "templatePath not set"
 		res=json.load(open(os.path.join(baseDir,'config','template.json')))
 		args.templatePath=os.path.abspath(args.templatePath)
 		
@@ -123,11 +125,11 @@ def configHelp(args):
 def print_help():
 	try:
 		print('\n\nNo input arguments are provided. Typical usage is as follows,\n')
-		print('To run a test case use,\npython tdcosimapp.py -t run -c config.json\n')
-		print('To create template for QSTS,\npython tdcosimapp.py -t template --templatePath test.json --simType static\n')
-		print('To create template for dynamic simulation,\npython tdcosimapp.py -t template --templatePath test.json --simType dynamic\n')
-		print('To obtain help about configuration keywords,\npython tdcosimapp.py --configHelp outputConfig')
-		print('python tdcosimapp.py --configHelp outputConfig.scenarioID')
+		print('To run a test case use,\ntdcosim run -c config.json\n')
+		print('To create template for QSTS,\ntdcosim template --templatePath test.json --simType static\n')
+		print('To create template for dynamic simulation,\ntdcosim template --templatePath test.json --simType dynamic\n')
+		print('To obtain help about configuration keywords,\ntdcosim --configHelp outputConfig')
+		print('tdcosim --configHelp outputConfig.scenarioID')
 	except:
 		raise
 
@@ -135,7 +137,7 @@ def print_help():
 if __name__ == "__main__":
 	startTime = time.time()
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-t','--type', required=False, type=str)	
+	parser.add_argument('type', type=str)	
 	parser.add_argument('-c','--config', type=str, help='The configfile location')
 	parser.add_argument('--configHelp', type=str, help='Help on configuration options',default='')
 	parser.add_argument('--templatePath', type=str, help='location to store template config')	

@@ -778,3 +778,33 @@ class DataAnalytics(object):
 			return Y
 		except:
 			raise
+
+#===================================================================================================
+	def compare_prop_across_scenarios(self,dfDict,prop,topN=3,showPlot=False):
+		try:
+			res={}; legend=[]
+			for scenario in dfDict:
+				thisDF=dfDict[scenario]
+				thisDF=thisDF[thisDF.property==prop]
+				res[scenario]={'tnodeid':[],'value':[]}
+
+				for thisTnodeID in set(thisDF.tnodeid):
+					res[scenario]['tnodeid'].append(thisTnodeID)
+					res[scenario]['value'].append(thisDF[thisDF.tnodeid==thisTnodeID].value.std())
+				res[scenario]['df']=pd.DataFrame(res[scenario])
+				res[scenario]['df']=res[scenario]['df'].sort_values(by='value',ascending=False)
+				res[scenario]['df']=res[scenario]['df'].head(topN)
+
+
+				for thisTnodeID in set(res[scenario]['df'].tnodeid):
+					tempDF=thisDF[thisDF.tnodeid==thisTnodeID]
+					plt.plot(tempDF.t,tempDF.value)
+					legend.append('{}_{}'.format(scenario,thisTnodeID))
+
+			if showPlot:
+				plt.legend(legend)
+				plt.show()
+
+			return res
+		except:
+			raise
