@@ -51,31 +51,19 @@ The default feeder configuration is **defaultFeederConfig**, which automatically
          * *default:* DER settings that will be used if *DERSetting* is *default*. Note that these settings are optional if *DERSetting* is *PVPlacement*.
            * *pvderScale (float):* Specifies the scaling factor with which to multiply the DER power output from any given node. A higher value of *pvderScale* for similar *solarPenetration* will result in lower number of DER model instances.
            * *pref:* This is only applicable if fast DER models are being used in the feeder. Specifies the rated active power output of the fast DER model.
-           * *pref:* This is only applicable if fast DER models are being used in the feeder. Specifies the rated reactive power output of the fast DER model.
-           * *interconnectionStandard:* This is only applicable if fast DER models are being used in the feeder. It specified the interconnection settings that must be used during voltage anomalies.
-           * *derId (string):* This is only applicable if detailed DER models are being used in the feeder. The key word corresponding to DER model that is available in DER config file. Note that an exception will be thrown if a matching *derId* is not found in the DER config file.
+           * *qref:* This is only applicable if fast DER models are being used in the feeder. Specifies the rated reactive power output of the fast DER model.
+           * *interconnectionStandard:* This is only applicable if fast DER models are being used in the feeder. It specified the interconnection settings that must be used during voltage anomalies. The in
+           * *derId (string):* This is only applicable if detailed DER models are being used in the feeder. The key word corresponding to DER model that is available in DER config file. The interconnection settings for detailed DER are also specified through the *derId*. Description of all the parameters that can be specified through the *derId* may be found [here](user_guide_understanding_DER_config.md). Note that an exception will be thrown if a matching *derId* is not found in the DER config file. 
            * *powerRating (float):* This is only applicable if detailed DER models are being used in the feeder. Specifies the rated power of DER in kVA. Note that value specified here will override the rated power given in the DER config file. 
            * *VrmsRating (float):* This is only applicable if detailed DER models are being used in the feeder.  Specifies the rated RMS voltage (L-G) of the DER in Volts. The tool automatically adds a transformer to connect the DER to the distribution system. Note that value specified here will override the rated voltage given in the DER config file. 
            * *steadyStateInitialization (bool):* This is only applicable if detailed DER models are being used in the feeder. Specifies whether the states in PV-DER model is to be initialized with steady state values before simulation is started.
-           * *LVRT (dict):* This is only applicable if detailed DER models are being used in the feeder. Low voltage ride through settings.  Either a pre-defined configuration available in *config_der.json* may be provided or an arbitrary number of ride through settings may be defined based on voltage thresholds.
-               * *config_id (string):* Specifies the LVRT configuration available in the *config_der.json* that should be used.
-               * *V_threshold (float):* Specifies the voltage threshold for low voltage anomaly in p.u. 
-               * *t_threshold (float):* Specifies the trip time threshold for low voltage anomaly in seconds. 
-               * *mode (string):* Specifies the DER operating behavior during ride through (options: 'momentary_cessation','mandatory_operation'). 
-           
-           * *HVRT (dict):* High voltage ride through settings. An arbitrary number of ride through settings may be defined based on voltage thresholds.
-               * *V_threshold (float):* Specifies the voltage threshold for high voltage anomaly in p.u. 
-               * *t_threshold (float):* Specifies the trip time threshold for high voltage anomaly in seconds. 
-               * *mode (string):* Specifies the DER operating behavior during ride through (options: 'momentary_cessation','mandatory_operation'). 
-           * *VRT_delays (dict):* Time delay settings for power output cessation and output restoration.
-               * *output_cessation_delay (float):* Specifies the time delay before power output from DER ceases.
-               * *output_restore_delay (float):* Specifies the time delay before DER starts restoring power output after momentary cessation.
-         * *PVPlacement (dict):* Specifies the distribution system node and the details of the DER to be connected to that node. Note that these settings are optional if *DERSetting* is *default*.
-           * *node (string):* Any three phase node in the OpenDSS model. Note that the keyword ***node*** must be replaced with the actual node name.
-             *  *derId (string):* This is only applicable if detailed DER models are being used in the feeder. The key word corresponding to DER model that is available in DER config file. Note that an exception will be thrown if a matching *derId* is not found in the DER config file.
-             *  *powerRating (float):* This is only applicable if detailed DER models are being used in the feeder. Specifies the rated power of DER in kVA. Note that value specified here will override the rated power given in the DER config file. 
-             *  *pvderScale (float):* This is only applicable if detailed DER models are being used in the feeder. Specifies the scaling factor with which to multiply the DER power output from any given node.
-             *  *VrmsRating (float):* This is only applicable if detailed DER models are being used in the feeder. Specifies the rated RMS voltage (L-G) of the DER in Volts. The tool automatically adds a transformer to connect the DER to the distribution system. Note that value specified here will override the rated voltage given in the DER config file. 
+
+           * *PVPlacement (dict):* Specifies the distribution system node and the details of the DER to be connected to that node. Note that these settings are optional if *DERSetting* is *default*.
+             * *node (string):* Any three phase node in the OpenDSS model. Note that the keyword ***node*** must be replaced with the actual node name.
+               *  *derId (string):* This is only applicable if detailed DER models are being used in the feeder. The key word corresponding to DER model that is available in DER config file. Note that an exception will be thrown if a matching *derId* is not found in the DER config file.
+               *  *powerRating (float):* This is only applicable if detailed DER models are being used in the feeder. Specifies the rated power of DER in kVA. Note that value specified here will override the rated power given in the DER config file. 
+               *  *pvderScale (float):* This is only applicable if detailed DER models are being used in the feeder. Specifies the scaling factor with which to multiply the DER power output from any given node.
+               *  *VrmsRating (float):* This is only applicable if detailed DER models are being used in the feeder. Specifies the rated RMS voltage (L-G) of the DER in Volts. The tool automatically adds a transformer to connect the DER to the distribution system. Note that value specified here will override the rated voltage given in the DER config file. 
          
 ***
 ***Note:*** Please check sections 6.4.1 and 6.4.2 in [IEEE 1547-2018](https://standards.ieee.org/standard/1547-2018.html) for more information on voltage ride-through and trip settings.
