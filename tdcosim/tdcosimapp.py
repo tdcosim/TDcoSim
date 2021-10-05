@@ -16,9 +16,10 @@ installDir=os.path.dirname(inspect.getfile(tdcosim))
 
 def run(args):
 	try:
-		assert args.config, "config should be set using -c option, got {}".format(args.config)
 		startTime = time.time()
-		args.config=os.path.abspath(args.config)
+		assert args.config, "config should be set using -c option, got {}".format(args.config)
+		if not os.path.exists(os.path.abspath(args.config)) and os.path.exists(os.path.join(baseDir,args.config)):
+			args.config=os.path.join(baseDir,args.config)
 		assert os.path.exists(args.config),'{} does not exist'.format(args.config)
 
 		# check if the config is valid
@@ -133,6 +134,59 @@ def print_help():
 	except:
 		raise
 
+def describe(args):
+	try:
+		os.system('cls')
+		print('\nInstall Directory:\n'+'='*len("Install Directory:")+'\n{}\n'.format(baseDir))
+
+		print('Examples Directory:\n'+'='*len("Examples Directory:")+'\n{}\n'.format(os.path.join(baseDir,'examples')))
+
+		print('Available Examples:\n'+'-'*len("Available Examples:"))
+		for entry in os.listdir(os.path.join(baseDir,'examples')):
+			print('{}'.format(entry))
+
+		print('\nAvailable Test Systems:\n'+'='*len("Available Test Systems:"))
+		print('\nTransmission Test Systems:\n'+'-'*len("Transmission Test Systems:"))
+		for entry in os.listdir(os.path.join(baseDir,'data','transmission')):
+			if '~' not in entry:
+				print('{}'.format(entry))
+		print('\nDistribution Test Systems:\n'+'-'*len("Distribution Test Systems:"))
+		for entry in os.listdir(os.path.join(baseDir,'data','distribution')):
+			if '~' not in entry:
+				print('{}'.format(entry))
+
+		print('\nLog Directory:\n'+'='*len("Log Directory:")+'\n{}'.format(os.path.join(baseDir,'logs')))
+	except:
+		raise
+
+def test(args):
+	try:
+		pyExe=sys.executable.split('\\')[-1].replace('.exe','')
+		res={}
+
+		data=json.load(open(os.path.join(baseDir,'examples','config_case68_dynamics.json')))
+		data['outputConfig']['outputDir']=os.path.join(baseDir,'output')
+		json.dump(data,open(os.path.join(baseDir,'examples','config_case68_dynamics.json'),'w'),indent=3)
+		os.system('{} {} run -c examples{}config_case68_dynamics.json'.format(pyExe,os.path.abspath(__file__),os.path.sep))
+		mtime=time.time()-os.path.getmtime(os.path.join(baseDir,'output','case68_dynamics_b19f4c5a2cbf4ab0a3c1d1ba30a31442','df_pickle.pkl'))
+		if mtime<=60:
+			res['config_case68_dynamics']=True
+	
+		data=json.load(open(os.path.join(baseDir,'examples','config_case68_qsts.json')))
+		data['outputConfig']['outputDir']=os.path.join(baseDir,'output')
+		json.dump(data,open(os.path.join(baseDir,'examples','config_case68_qsts.json'),'w'),indent=3)
+		os.system('{} {} run -c examples{}config_case68_qsts.json'.format(pyExe,os.path.abspath(__file__),os.path.sep))
+		mtime=time.time()-os.path.getmtime(os.path.join(baseDir,'output','case68_qsts_b19f4c5a2cbf4ab0a3c1d1ba30a31442','df_pickle.pkl'))
+		if mtime<=60:
+			res['config_case68_qsts']=True
+
+		os.system('cls')
+		for entry in res:
+			print('Success flag for {}:{}'.format(entry,res[entry]))
+	except:
+		raise
+
+
 
 if __name__ == "__main__":
 	startTime = time.time()
@@ -157,3 +211,7 @@ if __name__ == "__main__":
 			template(args)
 		elif args.type=='dashboard':
 			dashboard(args)
+		elif args.type=='describe':
+			describe(args)
+		elif args.type=='test':
+			test(args)

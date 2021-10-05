@@ -1,0 +1,130 @@
+{
+   "openDSSConfig": {
+      "defaultFeederConfig": {
+         "filePath": [
+            "data\\distribution\\123Bus\\case123ZIP.dss"
+         ], 
+         "solarPenetration": 0.1, 
+         "interconnectionStandard": {
+            "ieee_1547_2018_cat_2_base_standard": 0.7, 
+            "ieee_1547_2003_base_standard": 0.3
+         }, 
+         "solarFlag": 1, 
+         "excludenode": [
+            3, 
+            17, 
+            18, 
+            19, 
+            20, 
+            21, 
+            22, 
+            23, 
+            24, 
+            25, 
+            26, 
+            27, 
+            28, 
+            29, 
+            30, 
+            31, 
+            32, 
+            33, 
+            34, 
+            35, 
+            36, 
+            37, 
+            38, 
+            39, 
+            40, 
+            42, 
+            43, 
+            44, 
+            45, 
+            46, 
+            47, 
+            48, 
+            49, 
+            50, 
+            51, 
+            52, 
+            53, 
+            54, 
+            55, 
+            56, 
+            57, 
+            58, 
+            59, 
+            60, 
+            61, 
+            62, 
+            63, 
+            64, 
+            65, 
+            66, 
+            67, 
+            68
+         ], 
+         "DERParameters": {
+            "default": {
+               "qref": 0, 
+               "pvderScale": 1, 
+               "pref": 20, 
+               "sbase": 20
+            }
+         }
+      }, 
+      "DEROdeSolver": "fast_der"
+   }, 
+   "simulationConfig": {
+      "defaultLoadType": "cmld", 
+      "simType": "dynamic", 
+      "dynamicConfig": {
+         "events": {
+            "1": {
+               "faultImpedance": [
+                  0.0, 
+                  -250000
+               ], 
+               "type": "faultOn", 
+               "faultBus": 41, 
+               "time": 0.2
+            }, 
+            "3": {
+               "type": "simEnd", 
+               "time": 0.5
+            }, 
+            "2": {
+               "type": "faultOff", 
+               "faultBus": 41, 
+               "time": 0.3
+            }
+         }
+      }, 
+      "memoryThreshold": 20480.0, 
+      "protocol": "loose_coupling"
+   }, 
+   "psseConfig": {
+      "installLocation": "C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN", 
+      "rawFilePath": "data\\transmission\\68bus\\case68.raw", 
+      "dyrFilePath": "data\\transmission\\68bus\\case68.dyr", 
+      "cmldParameters": {
+         "Fel": 0.2, 
+         "FmA": 0.2, 
+         "FmB": 0.2, 
+         "FmD": 0.2, 
+         "FmC": 0.2
+      }
+   }, 
+   "logging": {
+      "level": 20, 
+      "saveSubprocessOutErr": true
+   }, 
+   "outputConfig": {
+      "description": "", 
+      "scenarioID": "", 
+      "outputfilename": "test", 
+      "simID": "case68_dynamics_b19f4c5a2cbf4ab0a3c1d1ba30a31442", 
+      "type": "dataframe", 
+      "outputDir": "output"
+   }
+}
