@@ -36,6 +36,19 @@ def run(args):
 def check_config(fpath):
 	try:
 		conf=json.load(open(fpath))
+		userPreference=json.load(open(os.path.join(baseDir,'config','user_preference.json')))
+
+		if 'installLocation' not in conf['psseConfig'] and 'psseConfig' in userPreference and 'installLocation' in userPreference['psseConfig']:
+			conf['psseConfig']['installLocation']=userPreference['psseConfig']['installLocation']
+		
+		assert conf['psseConfig']['installLocation'],"psseConfig->installLocation not provided in configuration"
+
+		if 'outputDir' not in conf['outputConfig'] and 'outputConfig' in userPreference and 'outputDir' in userPreference['outputConfig']:
+			conf['outputConfig']['outputDir']=userPreference['outputConfig']['outputDir']
+
+		if conf['outputConfig']['outputDir']!=os.path.abspath(conf['outputConfig']['outputDir']) and \
+		'outputConfig' in userPreference and 'outputDir' in userPreference['outputConfig']:
+			conf['outputConfig']['outputDir']=os.path.join(userPreference['outputConfig']['outputDir'],conf['outputConfig']['outputDir'])
 
 		# check if files exist
 		items2check=[conf['psseConfig']['installLocation']]
@@ -186,7 +199,23 @@ def test(args):
 	except:
 		raise
 
+def setconfig(args):
+	try:
+		conf=json.load(open(os.path.join(baseDir,'config','user_preference.json')))
+		if args.outputRootDir:
+			conf['outputConfig']={'outputDir':args.outputRootDir}
+		if args.pssePath:
+			conf['psseConfig']={'installLocation':args.pssePath}
+		json.dump(conf,open(os.path.join(baseDir,'config','user_preference.json'),'w'),indent=3)
+	except:
+		raise
 
+def getconfig(args):
+	try:
+		conf=json.load(open(os.path.join(baseDir,'config','user_preference.json')))
+		print(json.dumps(conf,indent=3))
+	except:
+		raise
 
 if __name__ == "__main__":
 	startTime = time.time()
@@ -197,6 +226,7 @@ if __name__ == "__main__":
 	parser.add_argument('--templatePath', type=str, help='location to store template config')	
 	parser.add_argument('--simType', type=str,default='dynamic')	
 	parser.add_argument('-o','--outputPath', type=str, help='Path to output pickle file')
+	parser.add_argument('--outputRootDir', type=str, help='Root directory to store results')
 	parser.add_argument('-p','--pssePath', type=str, help='psse location')
 
 	if len(sys.argv)==1:
@@ -215,3 +245,7 @@ if __name__ == "__main__":
 			describe(args)
 		elif args.type=='test':
 			test(args)
+		elif args.type.lower()=='setconfig':
+			setconfig(args)
+		elif args.type.lower()=='getconfig':
+			getconfig(args)
