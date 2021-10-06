@@ -25,7 +25,8 @@ You can also install from GitHub with the following commands on command line.
 ```
     git clone https://github.com/tdcosim/TDcoSim.git
     cd tdcosim
-    pip install -e .
+    pip install .
+    python post_install.py
 ```
 
 ### Dependencies:
@@ -37,11 +38,11 @@ You can also install from GitHub with the following commands on command line.
 The [config.json file](config.json) provided in the [examples folder](https://github.com/tdcosim/TDcoSim/tree/v2_test/examples) can be used to do a co-simulation after editing the path names (with any text editor). Then open a command line prompt and use the following  commands to to run a co-simulation. Note that *config_td.json* could be replaced by the name of any other configuration file.
 
 ```
-   tdcosimapp -t run -c r".\examples\config_td.json"
+   tdcosim run -c ".\examples\config_td.json"
 ```
 To visualize the co-simulation results using the dashboard use the following commands. Note that *.\dashboard\vizsample*  can be replaced with the folder containing the co-simulation results.
 ```
-   tdcosimapp -t dashboard -o .\dashboard\vizsample
+   tdcosim dashboard -o ".\dashboard\vizsample"
 ```
 Detailed documentation on running a co-simulation may be found within the [user guide](https://github.com/tdcosim/TDcoSim/blob/v2_test/docs/user_guide/user_guide_getting_started.md). Additional examples are available [here](https://github.com/tdcosim/TDcoSim/tree/v2_test/docs/user_guide/examples).
 

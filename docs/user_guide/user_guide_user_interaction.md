@@ -8,22 +8,27 @@ TDcoSim is a declarative tool, where the user defines specification for the cosi
 4. Run the co-simulation
 5. Launch browser based dashboard to analyze the results
 
+***
+***Note:*** The **tdcosimapp** can be invoked using the *tdcosim* command from the command line .
+
+***
+
 ## Create Configuration Template
 
 ```
-python tdcosimapp.py --type template --templatePath config.json --simType static
+tdcosim template --templatePath config.json --simType static
 ```
 
-Let us go over the above command. **--type template** specifies that the user is interested in using tdcosimapp to create configuration template. Next, **--templatePath config.json** specifies that the user wants to store the created configuration in the current working directory under the name config.json. Finally, the type of configuration is specified using **--simType static**. One can create the configuration template for a dynamic co-simulation using,
+Let us go over the above command. **template** specifies that the user is interested in using tdcosimapp to create configuration template. Next, **--templatePath config.json** specifies that the user wants to store the created configuration in the current working directory under the name config.json. Finally, the type of configuration is specified using **--simType static**. One can create the configuration template for a dynamic co-simulation using,
 
 ```
-python tdcosimapp.py --type template --templatePath config.json --simType dynamic
+tdcosim template --templatePath config.json --simType dynamic
 ```
 
 ## Configuration File Help
 
 ```
-python tdcosimapp.py --configHelp outputConfig
+tdcosim template --configHelp outputConfig
 ```
 This will show the following information,
 
@@ -43,7 +48,7 @@ outputConfig.scenarioID
 In case one wants to know more information about outputConfig.type,
 
 ```
-python tdcosimapp.py --configHelp outputConfig.type
+tdcosim template --configHelp outputConfig.type
 ```
 
 which will result in,
@@ -60,7 +65,7 @@ Type of output. Default is dataframe.
 Running the co-simulation is as simple as,
 
 ```
-python tdcosimapp.py --type run --config config.json
+tdcosim run --config config.json
 ```
 The user will see a progress bar similar to the one shown below,
 
@@ -73,6 +78,6 @@ Solution time: 9.066482067108154
 ## Dashboard
 
 ```
-python tdcosimapp.py --type dashboard
+tdcosim dashboard -o "path/to/dataframefiles"
 ```
 
