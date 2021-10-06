@@ -114,8 +114,23 @@ def template(args):
 
 def dashboard(args):
 	try:
+		userPreference=json.load(open(os.path.join(baseDir,'config','user_preference.json')))
+		
+		if os.path.abspath(args.outputPath)!=args.outputPath and os.path.exists(os.path.abspath(args.outputPath)):
+			args.outputPath=os.path.abspath(args.outputPath)
+		elif os.path.abspath(args.outputPath)!=args.outputPath and not os.path.exists(os.path.abspath(args.outputPath)) and \
+		'outputConfig' in userPreference and 'outputDir' in userPreference['outputConfig'] and \
+		os.path.exists(os.path.join(userPreference['outputConfig']['outputDir'],args.outputPath)):
+			args.outputPath=os.path.join(userPreference['outputConfig']['outputDir'],args.outputPath)
+
+		if not args.reducedMemory or args.reducedMemory.lower()=='false' or args.reducedMemory.lower()=='0':
+			args.reducedMemory=False
+		else:
+			args.reducedMemory=True
+
 		appPath=os.path.join(baseDir,'dashboard','app.py')
-		os.system('python {} {} "{}"'.format(appPath,args.outputPath,args.pssePath))
+
+		os.system('python {} {} "{}" {}'.format(appPath,args.outputPath,args.pssePath,args.reducedMemory))
 	except:
 		raise
 
@@ -142,33 +157,46 @@ def print_help():
 		print('To run a test case use,\ntdcosim run -c config.json\n')
 		print('To create template for QSTS,\ntdcosim template --templatePath test.json --simType static\n')
 		print('To create template for dynamic simulation,\ntdcosim template --templatePath test.json --simType dynamic\n')
-		print('To obtain help about configuration keywords,\ntdcosim --configHelp outputConfig')
-		print('tdcosim --configHelp outputConfig.scenarioID')
+		print('To obtain information about configuration keywords,\ntdcosim info --configHelp outputConfig')
+		print('tdcosim info --configHelp outputConfig.scenarioID')
 	except:
 		raise
 
 def describe(args):
 	try:
 		os.system('cls')
-		print('\nInstall Directory:\n'+'='*len("Install Directory:")+'\n{}\n'.format(baseDir))
+		if args.outputFormat.lower()=='json':
+			res={}
+			res['Install Directory']=baseDir
+			res['Examples Directory']=os.path.join(baseDir,'examples')
+			res['Available Examples']=[entry for entry in os.listdir(os.path.join(baseDir,'examples'))]
+			res['Available Test Systems']={}
+			res['Available Test Systems']['Transmission Test Systems']=\
+			[entry for entry in os.listdir(os.path.join(baseDir,'data','transmission')) if '~' not in entry]
+			res['Available Test Systems']['Distribution Test Systems']=\
+			[entry for entry in os.listdir(os.path.join(baseDir,'data','distribution')) if '~' not in entry]
+			res['Log Directory']=os.path.join(baseDir,'logs')
+			print(json.dumps(res,indent=5))
+		else:
+			print('\nInstall Directory:\n'+'='*len("Install Directory:")+'\n{}\n'.format(baseDir))
 
-		print('Examples Directory:\n'+'='*len("Examples Directory:")+'\n{}\n'.format(os.path.join(baseDir,'examples')))
+			print('Examples Directory:\n'+'='*len("Examples Directory:")+'\n{}\n'.format(os.path.join(baseDir,'examples')))
 
-		print('Available Examples:\n'+'-'*len("Available Examples:"))
-		for entry in os.listdir(os.path.join(baseDir,'examples')):
-			print('{}'.format(entry))
-
-		print('\nAvailable Test Systems:\n'+'='*len("Available Test Systems:"))
-		print('\nTransmission Test Systems:\n'+'-'*len("Transmission Test Systems:"))
-		for entry in os.listdir(os.path.join(baseDir,'data','transmission')):
-			if '~' not in entry:
+			print('Available Examples:\n'+'-'*len("Available Examples:"))
+			for entry in os.listdir(os.path.join(baseDir,'examples')):
 				print('{}'.format(entry))
-		print('\nDistribution Test Systems:\n'+'-'*len("Distribution Test Systems:"))
-		for entry in os.listdir(os.path.join(baseDir,'data','distribution')):
-			if '~' not in entry:
-				print('{}'.format(entry))
 
-		print('\nLog Directory:\n'+'='*len("Log Directory:")+'\n{}'.format(os.path.join(baseDir,'logs')))
+			print('\nAvailable Test Systems:\n'+'='*len("Available Test Systems:"))
+			print('\nTransmission Test Systems:\n'+'-'*len("Transmission Test Systems:"))
+			for entry in os.listdir(os.path.join(baseDir,'data','transmission')):
+				if '~' not in entry:
+					print('{}'.format(entry))
+			print('\nDistribution Test Systems:\n'+'-'*len("Distribution Test Systems:"))
+			for entry in os.listdir(os.path.join(baseDir,'data','distribution')):
+				if '~' not in entry:
+					print('{}'.format(entry))
+
+			print('\nLog Directory:\n'+'='*len("Log Directory:")+'\n{}'.format(os.path.join(baseDir,'logs')))
 	except:
 		raise
 
@@ -227,7 +255,10 @@ if __name__ == "__main__":
 	parser.add_argument('--simType', type=str,default='dynamic')	
 	parser.add_argument('-o','--outputPath', type=str, help='Path to output pickle file')
 	parser.add_argument('--outputRootDir', type=str, help='Root directory to store results')
+	parser.add_argument('--outputFormat', type=str, help='Output format to use when displaying information',default='')
 	parser.add_argument('-p','--pssePath', type=str, help='psse location')
+	parser.add_argument('-r','--reducedMemory', type=str, help='Show only transmission and aggregated distribution system results in dashboard')
+
 
 	if len(sys.argv)==1:
 		print_help()
@@ -249,3 +280,5 @@ if __name__ == "__main__":
 			setconfig(args)
 		elif args.type.lower()=='getconfig':
 			getconfig(args)
+		elif args.type=='info':
+			configHelp(args)

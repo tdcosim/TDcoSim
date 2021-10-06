@@ -15,8 +15,6 @@ import numpy as np
 
 
 app = dash.Dash(__name__)
-#### helper=Dashboard()
-#### objects={'graph':{},'tab':{},'tabs':{},'upload':{},'textarea':{},'dropdown':{},'selection':{},'df':{}}
 
 
 #=======================================================================================================================
@@ -85,9 +83,8 @@ def gather_objects():
 	create_table(df, 'table')
 	create_graphs(objects,['vmag','freq'],['vmag','freq'],['white','white'],['Time (s)', 'Time (s)'],\
 	['Vmag (PU)','f (hz)'])
-	create_tab(objects,['gis','table','plots','analytics'],['GIS','Table','Plots','Analytics'])
-	create_tabs(objects,'main_tab',[objects['tab']['gis'],objects['tab']['table'],objects['tab']['plots'],\
-	objects['tab']['analytics']])
+	create_tab(objects,['gis','table','plots'],['GIS','Table','Plots'])
+	create_tabs(objects,'main_tab',[objects['tab']['gis'],objects['tab']['table'],objects['tab']['plots']])
 
 	# define tab objects
 	# gis
@@ -221,6 +218,8 @@ if __name__ == '__main__':
 
 	# # init
 	df=pd.read_pickle(sys.argv[1])
+	if sys.argv[3].lower()=="true":# reduced memory
+		df=df[df.dfeederid.isna()]
 	da=DataAnalytics()
 	helper=Dashboard()
 	helper.add_df('df',df)

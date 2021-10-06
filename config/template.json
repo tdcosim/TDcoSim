@@ -3,7 +3,6 @@
       "level": 20,
       "saveSubprocessOutErr": true
    },
-   "cosimHome": "..\\tdcosim",
    "openDSSConfig": {
       "DEROdeSolver": "fast_der",
       "manualFeederConfig": {
