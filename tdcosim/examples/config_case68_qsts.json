@@ -16,7 +16,6 @@
       }
    },
    "psseConfig": {
-      "installLocation": "C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN", 
 	   "dyrFilePath": "data\\transmission\\68bus\\case68.dyr", 
 	   "rawFilePath": "data\\transmission\\68bus\\case68.raw"
    },

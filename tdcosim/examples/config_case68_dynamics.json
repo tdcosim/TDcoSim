@@ -104,7 +104,6 @@
       "protocol": "loose_coupling"
    }, 
    "psseConfig": {
-      "installLocation": "C:\\Program Files (x86)\\PTI\\PSSE33\\PSSBIN", 
       "rawFilePath": "data\\transmission\\68bus\\case68.raw", 
       "dyrFilePath": "data\\transmission\\68bus\\case68.dyr", 
       "cmldParameters": {
