@@ -2,11 +2,11 @@ import os
 import sys
 import inspect
 
-import pvder
+import tdcosim
 
 
 if __name__=="__main__":
-	baseDir=os.path.dirname(os.path.dirname(inspect.getfile(pvder)))
+	baseDir=os.path.dirname(os.path.dirname(inspect.getfile(tdcosim)))
 	tdcosimapp=os.path.join(baseDir,'tdcosim','tdcosimapp.py')
 	assert os.path.exists(tdcosimapp)
 	pyExe=sys.executable.split('\\')[-1].replace('.exe','')
