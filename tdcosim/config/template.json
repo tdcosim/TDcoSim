@@ -3,7 +3,6 @@
       "level": 20,
       "saveSubprocessOutErr": true
    },
-   "cosimHome": "..\\tdcosim",
    "openDSSConfig": {
       "DEROdeSolver": "fast_der",
       "manualFeederConfig": {
@@ -11,7 +10,7 @@
             {
                "nodenumber":0,
                "filePath": [
-                  ""
+                  "data\\distribution\\123Bus\\case123.dss"
                ],
                "fractionAggregatedLoad": {
                   "cmld": 0.0
@@ -42,8 +41,8 @@
    },
    "psseConfig": {
       "installLocation": "",
-      "dyrFilePath": "",
-      "rawFilePath": "",
+      "dyrFilePath": "data\\transmission\\68bus\\case68.dyr",
+      "rawFilePath": "data\\transmission\\68bus\\case68.raw",
 	   "der_a":{"busNo":{"flags":{},"params":{}}},
 	   "monitor":{"dera1":["vt_filt"]}
    },
@@ -82,7 +81,7 @@
       "simID": "",
       "type": "dataframe",
       "outputDir": "",
-      "outputfilename": "",
+      "outputfilename": "test",
       "scenarioID": ""
    }
 }

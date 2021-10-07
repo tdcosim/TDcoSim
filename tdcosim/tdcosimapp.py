@@ -45,7 +45,10 @@ def check_config(fpath):
 
 		if 'installLocation' not in conf['psseConfig'] and 'psseConfig' in userPreference and 'installLocation' in userPreference['psseConfig']:
 			conf['psseConfig']['installLocation']=userPreference['psseConfig']['installLocation']
-		
+
+		if 'installLocation' in conf['psseConfig'] and not conf['psseConfig']['installLocation'] and 'psseConfig' in userPreference and 'installLocation' in userPreference['psseConfig']:
+			conf['psseConfig']['installLocation']=userPreference['psseConfig']['installLocation']
+
 		assert conf['psseConfig']['installLocation'],"psseConfig->installLocation not provided in configuration"
 
 		if 'outputDir' not in conf['outputConfig'] and 'outputConfig' in userPreference and 'outputDir' in userPreference['outputConfig']:
