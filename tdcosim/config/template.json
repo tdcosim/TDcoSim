@@ -80,7 +80,7 @@
    "outputConfig": {
       "simID": "",
       "type": "dataframe",
-      "outputDir": "",
+      "outputDir": "tdcosim_output",
       "outputfilename": "test",
       "scenarioID": ""
    }

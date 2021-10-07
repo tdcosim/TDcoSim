@@ -58,6 +58,8 @@ def check_config(fpath):
 		'outputConfig' in userPreference and 'outputDir' in userPreference['outputConfig']:
 			conf['outputConfig']['outputDir']=os.path.join(userPreference['outputConfig']['outputDir'],conf['outputConfig']['outputDir'])
 
+		if not os.path.exists(conf['outputConfig']['outputDir']):
+			os.system('mkdir "{}"'.format(conf['outputConfig']['outputDir']))
 		conf['outputConfig']['outputDir']='{}'.format(win32api.GetLongPathName(conf['outputConfig']['outputDir']))
 
 		# check if files exist
