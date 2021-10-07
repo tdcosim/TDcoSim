@@ -7,6 +7,7 @@ import pdb
 import time
 import inspect
 
+import win32api
 import six
 
 import tdcosim
@@ -26,7 +27,7 @@ class GlobalData(ExceptionUtil):
 	def set_config(self, inputfile):
 		try:
 			# check
-			filepath = os.path.abspath(inputfile)
+			filepath = win32api.GetLongPathName(os.path.abspath(inputfile))
 			assert os.path.exists(filepath),"config file {} does not exist".format(filepath)
 			self.config = json.load(open(filepath))
 
@@ -36,12 +37,16 @@ class GlobalData(ExceptionUtil):
 			if not 'outputDir' in self.config['outputConfig']:
 				GlobalData.setOutLocation()
 				self.config['outputConfig']['outputDir'] = GlobalData.config["outputPath"]
+			try:
+				win32api.GetLongPathName(os.path.abspath(self.config['outputConfig']['outputDir']))
+			except:
+				os.system('mkdir "{}"'.format(os.path.abspath(self.config['outputConfig']['outputDir'])))
 			self.config['outputConfig']['outputDir']=os.path.join(
-				os.path.abspath(self.config['outputConfig']['outputDir']),
-				self.config['outputConfig']['simID'])
+			win32api.GetLongPathName(os.path.abspath(self.config['outputConfig']['outputDir'])),
+			self.config['outputConfig']['simID'])
 
 			if not os.path.exists(self.config['outputConfig']['outputDir']):
-				os.system('mkdir {}'.format(self.config['outputConfig']['outputDir']))
+				os.system('mkdir "{}"'.format(self.config['outputConfig']['outputDir']))
 
 			if 'scenarioID' not in self.config['outputConfig'] or \
 			not self.config['outputConfig']['scenarioID']:
@@ -107,18 +112,6 @@ class GlobalData(ExceptionUtil):
 				self.exception_handler(msg)
 			else:
 				self.logger.log(level,msg)
-		except:
-			raise
-
-#===================================================================================================
-	def setOutLocation(self):
-		try:
-			t = time.localtime()
-			current_time = time.strftime("%m-%d-%y-%H-%M-%S", t)
-			print("output folder name: " + current_time)
-			outputfoldername = os.getcwd() + "\\output\\" + str(current_time)
-			os.mkdir(outputfoldername)
-			GlobalData.config["outputPath"] = outputfoldername
 		except:
 			raise
 

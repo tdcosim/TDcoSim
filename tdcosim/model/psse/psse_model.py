@@ -7,6 +7,7 @@ import copy
 import uuid
 import inspect
 
+import win32api
 import six
 import numpy as np
 
@@ -395,7 +396,15 @@ class PSSEModel(Dera):
 			ierr=self._psspy.dyre_new([1,1,1,1],tempDyrPath)
 			assert ierr==0
 			GlobalData.log(level=20,msg='read modified dyr file {}'.format(tempDyrPath))
-			os.system('del {}'.format(tempDyrPath))
+
+			if '~' in tempDyrPath:
+				tempDyrPath=win32api.GetLongPathName(tempDyrPath)
+			if ' ' in tempDyrPath and '"' not in tempDyrPath:
+				directive='del "{}"'.format(tempDyrPath)
+			else:
+				directive='del {}'.format(tempDyrPath)
+
+			os.system(directive)
 
 			# get machine data
 			macVarData={}

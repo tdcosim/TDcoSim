@@ -6,13 +6,18 @@ import json
 import pdb
 import inspect
 
+import win32api
+
 import tdcosim
 from tdcosim.global_data import GlobalData
 from tdcosim.procedure.procedure import Procedure
 
 baseDir=os.path.dirname(os.path.abspath(__file__))
+if '~' in baseDir:
+	baseDir=win32api.GetLongPathName(baseDir)
 installDir=os.path.dirname(inspect.getfile(tdcosim))
-
+if '~' in installDir:
+	installDir=win32api.GetLongPathName(installDir)
 
 def run(args):
 	try:
@@ -50,6 +55,8 @@ def check_config(fpath):
 		'outputConfig' in userPreference and 'outputDir' in userPreference['outputConfig']:
 			conf['outputConfig']['outputDir']=os.path.join(userPreference['outputConfig']['outputDir'],conf['outputConfig']['outputDir'])
 
+		conf['outputConfig']['outputDir']='{}'.format(win32api.GetLongPathName(conf['outputConfig']['outputDir']))
+
 		# check if files exist
 		items2check=[conf['psseConfig']['installLocation']]
 
@@ -62,6 +69,8 @@ def check_config(fpath):
 			conf['psseConfig']['rawFilePath']=os.path.join(installDir,conf['psseConfig']['rawFilePath'])
 		
 		items2check.extend([conf['psseConfig']['dyrFilePath'],conf['psseConfig']['rawFilePath']])
+		conf['psseConfig']['dyrFilePath']='{}'.format(win32api.GetLongPathName(conf['psseConfig']['dyrFilePath']))
+		conf['psseConfig']['rawFilePath']='{}'.format(win32api.GetLongPathName(conf['psseConfig']['rawFilePath']))
 
 		if conf['openDSSConfig']:
 			if 'defaultFeederConfig' in conf['openDSSConfig'] and \
@@ -71,6 +80,8 @@ def check_config(fpath):
 					conf['openDSSConfig']['defaultFeederConfig']['filePath'][0]=\
 					os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['filePath'][0])
 				items2check.append(conf['openDSSConfig']['defaultFeederConfig']['filePath'][0])
+				conf['openDSSConfig']['defaultFeederConfig']['filePath'][0]=\
+				'{}'.format(win32api.GetLongPathName(conf['openDSSConfig']['defaultFeederConfig']['filePath'][0]))
 			if 'manualFeederConfig' in conf['openDSSConfig'] and \
 			'nodes' in conf['openDSSConfig']['manualFeederConfig']:
 				for thisNode in conf['openDSSConfig']['manualFeederConfig']['nodes']:
@@ -78,6 +89,7 @@ def check_config(fpath):
 						if not os.path.exists(thisNode['filePath'][0]) and os.path.exists(os.path.join(installDir,thisNode['filePath'][0])):
 							thisNode['filePath'][0]=os.path.join(installDir,thisNode['filePath'][0])
 						items2check.append(thisNode['filePath'][0])
+						thisNode['filePath'][0]='{}'.format(win32api.GetLongPathName(thisNode['filePath'][0]))
 
 		for entry in items2check:
 			assert os.path.exists(entry),'{} does not exist'.format(entry)
@@ -208,16 +220,23 @@ def test(args):
 		data=json.load(open(os.path.join(baseDir,'examples','config_case68_dynamics.json')))
 		data['outputConfig']['outputDir']=os.path.join(baseDir,'output')
 		json.dump(data,open(os.path.join(baseDir,'examples','config_case68_dynamics.json'),'w'),indent=3)
-		os.system('{} {} run -c examples{}config_case68_dynamics.json'.format(pyExe,os.path.abspath(__file__),os.path.sep))
-		mtime=time.time()-os.path.getmtime(os.path.join(baseDir,'output','case68_dynamics_b19f4c5a2cbf4ab0a3c1d1ba30a31442','df_pickle.pkl'))
+		tdcosimappPath=os.path.abspath(__file__)
+		if '~' in tdcosimappPath:
+			tdcosimappPath=win32api.GetLongPathName(tdcosimappPath)
+		directive='{} "{}" run -c examples{}config_case68_dynamics.json'.format(pyExe,tdcosimappPath,os.path.sep)
+		os.system(directive)
+		mtime=time.time()-os.path.getmtime(\
+		os.path.join(baseDir,'output','case68_dynamics_b19f4c5a2cbf4ab0a3c1d1ba30a31442','df_pickle.pkl'))
 		if mtime<=60:
 			res['config_case68_dynamics']=True
 	
 		data=json.load(open(os.path.join(baseDir,'examples','config_case68_qsts.json')))
 		data['outputConfig']['outputDir']=os.path.join(baseDir,'output')
 		json.dump(data,open(os.path.join(baseDir,'examples','config_case68_qsts.json'),'w'),indent=3)
-		os.system('{} {} run -c examples{}config_case68_qsts.json'.format(pyExe,os.path.abspath(__file__),os.path.sep))
-		mtime=time.time()-os.path.getmtime(os.path.join(baseDir,'output','case68_qsts_b19f4c5a2cbf4ab0a3c1d1ba30a31442','df_pickle.pkl'))
+		directive='{} "{}" run -c examples{}config_case68_qsts.json'.format(pyExe,tdcosimappPath,os.path.sep)
+		os.system(directive)
+		mtime=time.time()-os.path.getmtime(\
+		os.path.join(baseDir,'output','case68_qsts_b19f4c5a2cbf4ab0a3c1d1ba30a31442','df_pickle.pkl'))
 		if mtime<=60:
 			res['config_case68_qsts']=True
 

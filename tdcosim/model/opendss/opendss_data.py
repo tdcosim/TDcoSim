@@ -5,6 +5,8 @@ import logging
 import pdb
 import inspect
 
+import win32api
+
 import tdcosim
 from tdcosim.global_data import GlobalData
 from tdcosim.exceptionutil import ExceptionUtil
@@ -33,7 +35,7 @@ class OpenDSSData(ExceptionUtil):
 #===================================================================================================
 	def set_config(self,filepath):
 		try:
-			filepath = os.path.abspath(inputfile)
+			filepath = win32api.GetLongPathName(os.path.abspath(inputfile))
 			self.config = json.load(open(filepath))
 		except:
 			raise

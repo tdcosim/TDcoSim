@@ -14,6 +14,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import six
+import win32api
 
 
 class DataAnalytics(object):
@@ -52,7 +53,7 @@ class DataAnalytics(object):
 		"""Will load T&D co-simulation results.
 		folderPath -- path to folder where the generated output results are stored."""
 		try:
-			folderPath=os.path.abspath(folderPath)
+			folderPath=win32api.GetLongPathName(os.path.abspath(folderPath))
 			assert os.path.exists(folderPath),"{} does not exist".format(folderPath)
 			df=pd.read_pickle(os.path.join(folderPath,'df_pickle.pkl'))
 
