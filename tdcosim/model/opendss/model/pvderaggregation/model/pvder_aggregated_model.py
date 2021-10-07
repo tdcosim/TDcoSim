@@ -38,7 +38,10 @@ class PVDERAggregatedModel(object):
 		try:
 			if self.der_solver_type == "diffeqpy":
 				DERModelType = OpenDSSData.config['myconfig']['DERModelType']
-				tic = time.perf_counter()
+				if six.PY3:
+					tic = time.perf_counter()
+				elif six.PY2:
+					tic = time.clock()
 				from diffeqpy import ode
 				from julia import Sundials
 				
@@ -51,7 +54,10 @@ class PVDERAggregatedModel(object):
 				
 				LinearAlgebra.BLAS.set_num_threads(18) #Set number of threads to be used by DiffEqPy if required
 				OpenDSSData.log(level=20,msg="BLAS threads:{}".format(Main.eval("ccall((:openblas_get_num_threads64_, Base.libblas_name), Cint, ())"))) #Show number of threads being used by DiffEqPy
-				toc = time.perf_counter()
+				if six.PY3:
+					toc = time.perf_counter()
+				elif six.PY2:
+					toc = time.clock()
 				OpenDSSData.log(level=10,msg="Time taken to import 'diffeqpy':{:.3f}".format(toc - tic))
 		
 		except:
@@ -294,7 +300,10 @@ class PVDERAggregatedModel(object):
 				y0.extend(self._pvders[self.pvIDIndex[n]]._pvderModel.lastSol)
 				self._nEqs[self.pvIDIndex[n]]=self._pvders[self.pvIDIndex[n]]._pvderModel.PV_model.n_ODE
 			
-			tic = time.perf_counter()
+			if six.PY3:
+				tic = time.perf_counter()
+			elif six.PY2:
+				tic = time.clock()
 			if self.der_solver_type == "scipy":
 				if self.ode_solver_method in ['bdf','adams']:
 					self.integrator=ode(self.funcval,self.jac).set_integrator('vode',method=self.ode_solver_method,rtol=1e-4,atol=1e-4)
@@ -320,7 +329,10 @@ class PVDERAggregatedModel(object):
 				self.integrator = self.de.init(diffeqpy_ode,solver_type,saveat=1/120.,abstol=1e-4,reltol=1e-4)#
 			else:
 				raise ValueError("'{}' is not a valid DER model solver type - valid solvers are:scipy,diffeqpy".format(self.der_solver_type))
-			toc = time.perf_counter()
+			if six.PY3:
+				toc = time.perf_counter()
+			elif six.PY2:
+				toc = time.clock()
 			OpenDSSData.log(level=10,msg="{} integrator using {} method initialized at {:.3f} seconds in {:.3f} seconds".format(self.der_solver_type,self.ode_solver_method,toc,toc - tic))
 			"""
 			tic = time.perf_counter()

@@ -39,14 +39,20 @@ class OpenDSSProcedure(object):
 
 				derType=OpenDSSData.config['openDSSConfig']['DEROdeSolver']
 				if derType.replace('_','').replace('-','').lower()!='fastder':
-					tic = time.perf_counter()
+					if six.PY3:
+						tic = time.perf_counter()
+					elif six.PY2:
+						tic = time.clock()
 					for n in range(n_pre_run_steps):# synchronize
 						V = self._opendssinterface.getVoltage(vtype='actual')
 						Vpu = self._opendssinterface.getVoltage(vtype='pu')
 						derP,derQ,derX= self._pvderAggProcedure.run(V,Vpu,t=0,dt=1/120.)
 						self._opendssinterface.pvderInjection(derP, derQ)
 						P,Q,Converged = self._opendssinterface.getS(pccName='Vsource.source')
-					toc = time.perf_counter()
+					if six.PY3:
+						toc = time.perf_counter()
+					elif six.PY2:
+						toc = time.clock()
 					OpenDSSData.log(level=10,msg="Completed {} steps pre-run at {:.3f} seconds in {:.3f} seconds".format(n_pre_run_steps,toc,toc - tic))
 			
 			P, Q, convergedFlg,scale = self._opendssinterface.initialize(Vpcc, targetS, tol)
