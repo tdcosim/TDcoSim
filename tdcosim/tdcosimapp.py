@@ -87,6 +87,15 @@ def check_config(fpath):
 				items2check.append(conf['openDSSConfig']['defaultFeederConfig']['filePath'][0])
 				conf['openDSSConfig']['defaultFeederConfig']['filePath'][0]=\
 				'{}'.format(win32api.GetLongPathName(conf['openDSSConfig']['defaultFeederConfig']['filePath'][0]))
+			if 'defaultFeederConfig' in conf['openDSSConfig'] and \
+			'DERFilePath' in conf['openDSSConfig']['defaultFeederConfig']:
+				if not os.path.exists(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0]) and \
+				os.path.exists(os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0])):
+					conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0]=\
+					os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0])
+				items2check.append(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0])
+				conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0]=\
+				'{}'.format(win32api.GetLongPathName(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0]))
 			if 'manualFeederConfig' in conf['openDSSConfig'] and \
 			'nodes' in conf['openDSSConfig']['manualFeederConfig']:
 				for thisNode in conf['openDSSConfig']['manualFeederConfig']['nodes']:
@@ -95,6 +104,11 @@ def check_config(fpath):
 							thisNode['filePath'][0]=os.path.join(installDir,thisNode['filePath'][0])
 						items2check.append(thisNode['filePath'][0])
 						thisNode['filePath'][0]='{}'.format(win32api.GetLongPathName(thisNode['filePath'][0]))
+					if 'DERFilePath' in thisNode:
+						if not os.path.exists(thisNode['DERFilePath']) and os.path.exists(os.path.join(installDir,thisNode['DERFilePath'])):
+							thisNode['DERFilePath']=os.path.join(installDir,thisNode['DERFilePath'])
+						items2check.append(thisNode['DERFilePath'])
+						thisNode['DERFilePath']='{}'.format(win32api.GetLongPathName(thisNode['DERFilePath']))
 
 		for entry in items2check:
 			assert os.path.exists(entry),'{} does not exist'.format(entry)
@@ -244,6 +258,16 @@ def test(args):
 		os.path.join(baseDir,'output','case68_qsts_b19f4c5a2cbf4ab0a3c1d1ba30a31442','df_pickle.pkl'))
 		if mtime<=60:
 			res['config_case68_qsts']=True
+
+		data=json.load(open(os.path.join(baseDir,'examples','config_case68_dynamics_detailed_der.json')))
+		data['outputConfig']['outputDir']=os.path.join(baseDir,'output')
+		json.dump(data,open(os.path.join(baseDir,'examples','config_case68_dynamics_detailed_der.json'),'w'),indent=3)
+		directive='{} "{}" run -c examples{}config_case68_dynamics_detailed_der.json'.format(pyExe,tdcosimappPath,os.path.sep)
+		os.system(directive)
+		mtime=time.time()-os.path.getmtime(\
+		os.path.join(baseDir,'output','case68_dynamics_detailed_der','df_pickle.pkl'))
+		if mtime<=100:
+			res['config_case68_dynamics_detailed_der']=True
 
 		os.system('cls')
 		for entry in res:
