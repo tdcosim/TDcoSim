@@ -315,6 +315,7 @@ def get_der_total_injection(df,GlobalData):
 							res_value=thisDF.value.values
 						else:
 							res_value+=thisDF.value.values
+					res_value=res_value*GlobalData.data['DNet']['Nodes'][int(entry)]['scale']
 					data['value'].extend(res_value.tolist())
 					data['t'].extend(thisDF.t.values.tolist())
 					data['tnodeid'].extend([entry]*len(thisDF.t.values.tolist()))
