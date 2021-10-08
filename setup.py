@@ -1,6 +1,34 @@
 import os
+import sys
+import inspect
 import platform
 from setuptools import setup
+from setuptools.command.install import install
+
+import win32api
+
+
+def post_install():
+	import pvder
+
+	baseDir=os.path.dirname(os.path.dirname(inspect.getfile(pvder)))
+	tdcosimapp=os.path.join(baseDir,'tdcosim','tdcosimapp.py')
+	tdcosimapp=win32api.GetLongPathName(tdcosimapp)
+	assert os.path.exists(tdcosimapp)
+	pyExe=sys.executable.split('\\')[-1].replace('.exe','')
+	os.system('mkdir "{}"'.format(os.path.join(baseDir,'tdcosim','install_logs')))
+	directive='reg query "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v AutoRun > {} 2>&1'.format(\
+	os.path.join(baseDir,'tdcosim','install_logs','previous_reg_query.txt'))
+	print('running directive,\n{}'.format(directive))
+	os.system(directive)
+	directive='reg add "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v AutoRun /d "doskey tdcosim={} \\"{}\\" $*" /f'.format(pyExe,tdcosimapp)
+	print('running directive,\n{}'.format(directive))
+	os.system(directive)
+
+class PostInstall(install):
+	def run(self):
+		install.run(self)
+		post_install()
 
 # The text of the README file
 f=open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'README.md'))
@@ -30,7 +58,8 @@ if platform.architecture()[0]=='64bit':
       install_requires=['pywin32==228','matplotlib>=2.0.2','numpy>=1.16.2','scipy>=1.2.1',
       'xlsxwriter>=1.1.8','psutil>=5.7.0','pandas>=0.24.2','dash>=1.21.0','networkx','pvder'],
       extras_require={'diffeqpy': ['diffeqpy>=1.1.0']},
-      package_data={'tdcosim':['data/**/**/*','logs/.*','config/*','examples/*']}
+      package_data={'tdcosim':['data/**/**/*','logs/.*','config/*','examples/*']},
+      cmdclass={'install':PostInstall}
       )
 else:
 	setup(name='tdcosim',
@@ -55,5 +84,6 @@ else:
       install_requires=['pywin32==224','matplotlib>=2.0.2','numpy>=1.16.2','scipy>=1.2.1',
       'xlsxwriter==1.1.8','psutil==5.7.0','pandas>=0.24.2','dash>=1.21.0','networkx','pvder'],
       extras_require={'diffeqpy': ['diffeqpy>=1.1.0']},
-      package_data={'tdcosim':['data/**/**/*','logs/.*','config/*','examples/*']}
+      package_data={'tdcosim':['data/**/**/*','logs/.*','config/*','examples/*']},
+      cmdclass={'install':PostInstall}
       )
