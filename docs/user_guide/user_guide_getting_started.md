@@ -12,11 +12,13 @@ Please install the software per installation instructions as the first step (Ins
    
    * Transmission system
         * Transmission system model (e.g. IEEE 118 bus system)
+          * Supported file formats:*.raw, *.dyr 
         * Buses where distribution system models are attached
         * Type of load model (static,ZIP,CLOD,CMLD).
         * Presence of DER_A model
    * Distribution system
         * Distribution system model (e.g. IEEE 123 node feeder)
+          * Supported file formats:*.dss  
         * Solar PV penetration level (fraction of the distribution system load)
         * Scaling factor for power output from single DER model instance 
    * DER parameters  (optional)
@@ -49,48 +51,44 @@ Please install the software per installation instructions as the first step (Ins
 ***
 
 ## 2. Configure T & D & DER models and simulation scenarios
+The power system models and simulation scenarios defined in the previous section can be transferred to TDcoSim using the **TDcoSim config** file (detailed explanations for every entry in the **TDcoSim config** file is provided [here](user_guide_understanding_config.md#understanding-the-config-file)). 
 
-There are two options to configure and start the T&D co-simulation. The first is to manually populate the configuration file and the second option is to use the configuration template functionality.
+### Defining the TDcoSim config file
 
-### Option 1
-#### Manually populating the configuration file
-
-The power system models and simulation scenarios defined in the previous section can be transferred to TDcoSim using the **config** file (detailed explanations for every entry in the **config** file is provided [here](user_guide_understanding_config.md#understanding-the-config-file)). The file formats currently supported are:
-
-* Transmission system model: *.raw, *.dyr
-* Distribution system model: *.dss
-
+The **TDcoSim config** file follows a specific template, and any deviations from the template will result in an error. The most streamlined way to make sure that the template is followed, is generate a sample config file and then manually populate the fields in this file. An example command for generating a sample config file for a dynamic co-simulation is given below:
+```
+tdcosim template --templatePath config_dynamic_example.json --simType dynamic
+```
+A detailed description of the configuration template is provided in the [Using the configuration template](user_guide_user_interaction.md) chapter.
 ***
 ***Note:*** The **config** file can be edited with Notepad++.
 
 ***
-***
-***Note:*** The **config** file should be in the same folder as **tdcosimapp.py**.
 
 ***
+***Note:*** The **config** file can be in any folder on the user machine.
 
-#### Start a co-simulation using run_*.py
+***
 
-Once the **config** file has been populated with the required entries, the user can start the co-simulation through either **run_qsts.py**, **run_time_domain.py**, or **run_aggregatedDERApp.py** depending on the type of co-simulation. To do this open the command line prompt within the folder containing the the **run_.py** files and run the following script.
+## 2. Running the co-simulation
+
+Once the **config** file has been populated with the required entries, the user can start the co-simulation through the run command on command line as shown below:
 
 ```
-python run_time_domain.py > log_file.txt
+tdcosim run -c "\path\to\config\config_dynamic_example.json"
+```
+The user will see a progress bar similar to the one shown below:
+
+```
+             INITIATED ON WED, JUN 02 2021  14:54
+Simulation Progress : ====================> 100.04000000000013%(0.5002000000000006s/0.5s)
+Solution time: 9.066482067108154
 ```
 
-
+***
+***Note:*** Logs generated during co-simulation are can be found in the **install\path\tdcosim\logs** folder.
 
 ***
-***Note:*** tdcosimapp.py is the default name of script that starts the co-simulation. If desired the user can write his/her own script by following the instructions given [here](user_guide_using_tdcosim.md#tdcosim-advanced-usage).
-
-***
-
-
-***
-***Note:*** Logs generated during co-simulation are written to log_file.txt (or any other user specified **.txt file**).
-
-***
-### Option 2
-This option avoids the need to manually populate the configuration file and instead uses templates  that are tailor made for a specific type of study or scenario. A detailed description of this provided in the [Using the configuration template](user_guide_user_interaction.md) chapter.
 
 ## 3.  Accessing the results
 
@@ -106,7 +104,7 @@ Outputs (from both transmission and distribution systems) are saved in the follo
 </p>
 
 ***
-***Note:*** The **.pkl**,**.JSON**, **.xlsx**, and **.out** files will be found in the folder specified by the user through the config file.
+***Note:*** The **.pkl**,**.JSON**, **.xlsx**, and **.out** files will be found in the folder specified by the user through the **output** field in the config file.
 
 ***
 
@@ -115,6 +113,6 @@ Modules for performing visualization and analytics are available as part of the 
 
 ## Examples
 
-**config** files for static and dynamic co-simulation scenarios as well as **run_qsts.py** and **run_time_domain.py** are provided in the '**examples**' folder within the TDcoSim repository.
+Example **TDcoSim config** files for static and dynamic co-simulation scenarios are available in **install\path\tdcosim\examples** folder.
 
 \pagebreak
