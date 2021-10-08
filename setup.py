@@ -1,20 +1,16 @@
 import os
 import sys
-import inspect
+import site
 import platform
 from setuptools import setup
 from setuptools.command.install import install
 
-import win32api
-
 
 def post_install():
-	import pvder
-
-	baseDir=os.path.dirname(os.path.dirname(inspect.getfile(pvder)))
+	baseDir=site.getsitepackages()
+	assert baseDir and 'site-packages'==baseDir[-1].split(os.path.sep)[-1]
+	baseDir=baseDir[-1]
 	tdcosimapp=os.path.join(baseDir,'tdcosim','tdcosimapp.py')
-	tdcosimapp=win32api.GetLongPathName(tdcosimapp)
-	assert os.path.exists(tdcosimapp)
 	pyExe=sys.executable.split('\\')[-1].replace('.exe','')
 	os.system('mkdir "{}"'.format(os.path.join(baseDir,'tdcosim','install_logs')))
 	directive='reg query "HKEY_CURRENT_USER\Software\Microsoft\Command Processor" /v AutoRun > {} 2>&1'.format(\
