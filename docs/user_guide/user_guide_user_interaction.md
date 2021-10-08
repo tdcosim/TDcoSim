@@ -1,19 +1,8 @@
 # Using the configuration template
 
-TDcoSim is a declarative tool, where the user defines specification for the cosimulation. The specifications are given through a JSON configuration file which can be  manually populated as explained in [Getting Started](user_guide_getting_started.md). An alternative and faster option is to use the **tdcosimapp**. The *tdcosimapp* is to *TDcoSim* what *kubectl* is to *kubernetes*. The *tdcosimapp* allows users to,
-
-1. Create configuration template
-2. Validate user provided configuration, providing helpful hints to troubleshoot issues, if there are any.
-3. Provide information/help about any declaration used in configuration file.
-4. Run the co-simulation
-5. Launch browser based dashboard to analyze the results
-
-***
-***Note:*** The **tdcosimapp** can be invoked using the *tdcosim* command from the command line .
-
-***
-
+TDcoSim is a declarative tool, where the user defines specification for the co-simulation. The specifications are given through a JSON configuration file. 
 ## Create Configuration Template
+Example configuration files which can be used as a template can be generated using the **tdcosimapp**. 
 
 ```
 tdcosim template --templatePath config.json --simType static
@@ -59,25 +48,3 @@ outputConfig.type
 
 Type of output. Default is dataframe.
 ```
-
-## Run the Co-Simulation
-
-Running the co-simulation is as simple as,
-
-```
-tdcosim run --config config.json
-```
-The user will see a progress bar similar to the one shown below,
-
-```
-             INITIATED ON WED, JUN 02 2021  14:54
-Simulation Progress : ====================> 100.04000000000013%(0.5002000000000006s/0.5s)
-Solution time: 9.066482067108154
-```
-
-## Dashboard
-
-```
-tdcosim dashboard -o "path/to/dataframefiles"
-```
-

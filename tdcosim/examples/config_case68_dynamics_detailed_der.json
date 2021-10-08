@@ -8,10 +8,6 @@
                   "data\\distribution\\123Bus\\case123ZIP.dss"
                ], 
                "DERModelType": "ThreePhaseUnbalanced", 
-               "interconnectionStandard": {
-                  "ieee_1547_2003_base_standard": 0.3, 
-                  "ieee_1547_2018_cat_2_base_standard": 0.7
-               }, 
                "solarFlag": 1, 
                "solarPenetration": 0.1, 
                "fractionAggregatedLoad": {
@@ -74,12 +70,11 @@
          }
       }, 
       "dyrFilePath": "data\\transmission\\68bus\\case68.dyr", 
-      
       "cmldParameters": {
-         "Fel": 0.2, 
-         "FmD": 0.2, 
-         "FmB": 0.2, 
          "FmC": 0.2, 
+         "Fel": 0.2, 
+         "FmB": 0.2, 
+         "FmD": 0.2, 
          "FmA": 0.2
       }
    }, 

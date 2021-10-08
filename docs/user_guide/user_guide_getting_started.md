@@ -3,8 +3,23 @@
 In this section, we describe how you can get started with using **TDcoSim** to conduct static or dynamic co-simulation studies for T & D systems with different DER penetration levels and various events.
 
 ## 1. Setup TDcoSim
-
 Please install the software per installation instructions as the first step (Installation instructions for can be found [here](user_guide_installation.md#installation)). Make sure the system requirements are satisfied (System requirements can be found [here](user_guide_sys_requirements.md)). 
+
+### Invoking TDcoSim from command line
+Once TDcoSim has been successfully installed, we get access to the *tdcosimapp* from the command line. The *tdcosimapp* is to *TDcoSim* what *kubectl* is to *kubernetes*. The following functionalities are available through the *tdcosimapp*:
+
+1. Describe the location of folders containing logs, example configurations, T system models, D system models etc.: **tdcosim describe**
+2. Run test configurations: **tdcosim test**
+3. Create configuration template: **tdcosim template**
+4. Validate user provided configuration, providing helpful hints to troubleshoot issues, if there are any.
+5. Provide information/help about any declaration used in configuration file: **tdcosim info**
+6. Run the co-simulation: **tdcosim run**
+7. Launch browser based dashboard to analyze the results: **tdcosim dashboard**
+
+***
+***Note:*** The **tdcosimapp** can be invoked using the **tdcosim** command from the command line .
+
+***
 
 ## 2. Information required by TDcoSim
 1. Specify version of PSS/E (either PSS/E 33 or PSS/E 35)
@@ -109,7 +124,13 @@ Outputs (from both transmission and distribution systems) are saved in the follo
 ***
 
 ## 4. Data visualization and analytics
-Modules for performing visualization and analytics are available as part of the TDcoSim package. Detailed intructions on its usage are included in the [TDcoSim Data Visualization and Analytics](user_guide_visualization_analytics.md) chapter.
+Modules for performing visualization and analytics are available as part of the TDcoSim package. The simplest way to visualize the data is using the **TDcoSim Dashboard** which may be launched using the command shown below.
+
+```
+tdcosim dashboard -o "path/to/results.pkl"
+```
+
+Detailed intructions on the **TDcoSim Dashboard** and other analytic tools are included in the [TDcoSim Data Visualization and Analytics](user_guide_visualization_analytics.md) chapter.
 
 ## Examples
 
