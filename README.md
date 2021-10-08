@@ -14,20 +14,20 @@ TDcoSim (T & D co-simulation tool) is a Python package that can be used to perfo
 * API Documentation: [API doc](docs/api-html/index.html)
 
 ## Installation
-You can install from PyPi with the following commands on command line (recommended).
+You can install tdcosim by running the following command on command line.
 
-```
-    pip install tdcosim
-```
+    pip install git+https://github.com/tdcosim/TDcoSim.git@master
 
-You can also install from GitHub with the following commands on command line.
 
-```
-    git clone https://github.com/tdcosim/TDcoSim.git
-    cd tdcosim
-    pip install .
-    python post_install.py
-```
+In the event you do not have git installed on your machine, you can alternatively run the following from command line.
+
+    pip install https://github.com/tdcosim/TDcoSim/archive/master.zip
+
+After installation open a new command prompt and run the following to set psse path,
+
+    tdcosim setconfig -p "path\to\psse_installation"  
+
+For example, something similar to, tdcosim setconfig -p "C:\Program Files\PTI\PSSE35\35.0\PSSPY37" 
 
 ### Dependencies:
 * External software: [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html), [OpenDSS](https://sourceforge.net/projects/electricdss/)
