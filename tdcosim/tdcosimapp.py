@@ -57,6 +57,8 @@ def check_config(fpath):
 		if conf['outputConfig']['outputDir']!=os.path.abspath(conf['outputConfig']['outputDir']) and \
 		'outputConfig' in userPreference and 'outputDir' in userPreference['outputConfig']:
 			conf['outputConfig']['outputDir']=os.path.join(userPreference['outputConfig']['outputDir'],conf['outputConfig']['outputDir'])
+		elif conf['outputConfig']['outputDir']!=os.path.abspath(conf['outputConfig']['outputDir']):
+			conf['outputConfig']['outputDir']=os.path.abspath(conf['outputConfig']['outputDir'])
 
 		if not os.path.exists(conf['outputConfig']['outputDir']):
 			os.system('mkdir "{}"'.format(conf['outputConfig']['outputDir']))
@@ -293,6 +295,23 @@ def getconfig(args):
 	except:
 		raise
 
+def batch(args):
+	try:
+		assert args.batchDir and os.path.exists(args.batchDir)
+		pyExe=sys.executable.split('\\')[-1].replace('.exe','')
+
+		for thisConfPath in os.listdir(args.batchDir):
+			if '.json' in thisConfPath:
+				tdcosimappPath=os.path.abspath(__file__)
+				if '~' in tdcosimappPath:
+					tdcosimappPath=win32api.GetLongPathName(tdcosimappPath)
+				directive='{} "{}" run -c {}'.format(pyExe,tdcosimappPath,os.path.join(args.batchDir,thisConfPath))
+				print('Running directive: ',directive)
+				os.system(directive)
+	except:
+		raise
+
+
 if __name__ == "__main__":
 	startTime = time.time()
 	parser = argparse.ArgumentParser()
@@ -306,7 +325,7 @@ if __name__ == "__main__":
 	parser.add_argument('--outputFormat', type=str, help='Output format to use when displaying information',default='')
 	parser.add_argument('-p','--pssePath', type=str, help='psse location')
 	parser.add_argument('-r','--reducedMemory', type=str, help='Show only transmission and aggregated distribution system results in dashboard')
-
+	parser.add_argument('-b','--batchDir', type=str, help='Directory where individual config files for batch processing can be found')
 
 	if len(sys.argv)==1:
 		print_help()
@@ -330,3 +349,5 @@ if __name__ == "__main__":
 			getconfig(args)
 		elif args.type=='info':
 			configHelp(args)
+		elif args.type=='batch':
+			batch(args)
