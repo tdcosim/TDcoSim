@@ -7,7 +7,11 @@ from setuptools.command.install import install
 
 
 def post_install():
-	baseDir=site.getsitepackages()
+	try:
+		baseDir=site.getsitepackages()
+	except AttributeError:
+		baseDir=[os.path.join(site.PREFIXES[0],'lib','site-packages')]
+
 	assert baseDir and 'site-packages'==baseDir[-1].split(os.path.sep)[-1]
 	baseDir=baseDir[-1]
 	tdcosimapp=os.path.join(baseDir,'tdcosim','tdcosimapp.py')
