@@ -138,6 +138,13 @@ def template(args):
 			res['simulationConfig']['simType']="static"
 			res['openDSSConfig'].pop('DEROdeSolver')
 			res['openDSSConfig']['manualFeederConfig']['nodes'].pop(0)
+		elif args.simType=='dynamic_detailed_der':
+			res=json.load(open(os.path.join(baseDir,'config','template_detailed_der.json')))
+			args.templatePath=os.path.abspath(args.templatePath)
+			res['simulationConfig'].pop('staticConfig')
+			res['simulationConfig']['protocol']="loose_coupling"
+			res['simulationConfig']['simType']="dynamic"
+			res['openDSSConfig']['manualFeederConfig']['nodes'].pop(-1)
 		else:
 			print('simType has to be either static or dynamic but {} was provided!!!!'.format(args.simType))
 			raise

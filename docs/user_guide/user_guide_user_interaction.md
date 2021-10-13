@@ -8,10 +8,17 @@ Example configuration files which can be used as a template can be generated usi
 tdcosim template --templatePath config.json --simType static
 ```
 
-Let us go over the above command. **template** specifies that the user is interested in using tdcosimapp to create configuration template. Next, **--templatePath config.json** specifies that the user wants to store the created configuration in the current working directory under the name config.json. Finally, the type of configuration is specified using **--simType static**. One can create the configuration template for a dynamic co-simulation using,
+Let us go over the above command. **template** specifies that the user is interested in using tdcosimapp to create configuration template. Next, **--templatePath config.json** specifies that the user wants to store the created configuration in the current working directory under the name config.json. Finally, the type of configuration is specified using **--simType static**. 
+
+Configuration template for a dynamic co-simulation using fast DER:
 
 ```
 tdcosim template --templatePath config.json --simType dynamic
+```
+Configuration template for a dynamic co-simulation using detailed DER:
+
+```
+tdcosim template --templatePath config.json --simType dynamic_detailed_der
 ```
 
 ## Configuration File Help
