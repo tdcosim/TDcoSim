@@ -6,8 +6,6 @@ import os
 import sys
 import inspect
 
-pssePath="C:\Program Files (x86)\PTI\PSSE33\PSSBIN"
-sys.path.append(pssePath)
 import psspy
 import dyntools
 import pandas as pd
