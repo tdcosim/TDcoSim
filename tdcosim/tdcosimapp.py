@@ -22,7 +22,7 @@ if '~' in installDir:
 def run(args):
 	try:
 		startTime = time.time()
-		assert args.config, "config should be set using -c option, got {}".format(args.config)
+		assert args.config, "config is not provided. You can specify this using -c --config"
 		if not os.path.exists(os.path.abspath(args.config)) and os.path.exists(os.path.join(baseDir,args.config)):
 			args.config=os.path.join(baseDir,args.config)
 		assert os.path.exists(args.config),'{} does not exist'.format(args.config)
@@ -122,7 +122,8 @@ def check_config(fpath):
 
 def template(args):
 	try:
-		assert args.templatePath, "templatePath not set"
+		assert args.templatePath, "templatePath is not provided. You can specify this using --templatePath"
+		assert args.simType, "simType is not provided. You can specify this using --simType"
 		res=json.load(open(os.path.join(baseDir,'config','template.json')))
 		args.templatePath=os.path.abspath(args.templatePath)
 		
@@ -148,7 +149,7 @@ def template(args):
 def dashboard(args):
 	try:
 		userPreference=json.load(open(os.path.join(baseDir,'config','user_preference.json')))
-		
+		assert args.outputPath,"outputPath is not provided. You can specify this using --outputPath"
 		if os.path.abspath(args.outputPath)!=args.outputPath and os.path.exists(os.path.abspath(args.outputPath)):
 			args.outputPath=os.path.abspath(args.outputPath)
 		elif os.path.abspath(args.outputPath)!=args.outputPath and not os.path.exists(os.path.abspath(args.outputPath)) and \
@@ -297,7 +298,8 @@ def getconfig(args):
 
 def batch(args):
 	try:
-		assert args.batchDir and os.path.exists(args.batchDir)
+		assert args.batchDir,"batchDir is not provided. You can specify this using -b --batchDir"
+		os.path.exists(args.batchDir),"batchDir directory does not exist"
 		pyExe=sys.executable.split('\\')[-1].replace('.exe','')
 
 		for thisConfPath in os.listdir(args.batchDir):

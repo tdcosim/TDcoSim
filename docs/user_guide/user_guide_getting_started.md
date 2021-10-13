@@ -5,7 +5,7 @@ In this section, we describe how you can get started with using **TDcoSim** to c
 ## 1. Setup TDcoSim
 Please install the software per installation instructions as the first step (Installation instructions for can be found [here](user_guide_installation.md#installation)). Make sure the system requirements are satisfied (System requirements can be found [here](user_guide_sys_requirements.md)). 
 
-### Invoking TDcoSim from command line
+### Invoking TDcoSim from command prompt
 Once TDcoSim has been successfully installed, we get access to the *tdcosimapp* from the command line. The *tdcosimapp* is to *TDcoSim* what *kubectl* is to *kubernetes*. The following functionalities are available through the *tdcosimapp*:
 
 1. Describe the location of folders containing logs, example configurations, T system models, D system models etc.: **tdcosim describe**
