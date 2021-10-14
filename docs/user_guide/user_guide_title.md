@@ -9,9 +9,9 @@ subtitle: |
    Office of Electricity \
    U.S. Department of Energy
 date: |
-   TDcoSim Version 1.1.0 \
-   August 26 2020 \
-   Copyright &copy; 2020, UChicago Argonne, LLC
+   TDcoSim Version 2.0.0 \
+   August 26 2021 \
+   Copyright &copy; 2021, UChicago Argonne, LLC
 fontsize: 12pt
 documentclass: scrartcl
 ---

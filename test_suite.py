@@ -10,22 +10,23 @@ from tests.model.opendss.model.pvderaggregation.model.test_pvder_model import Te
 
 
 def suite():
-    """Define a test suite.
-    TODO: Include the procedure test
-    """ 
-    
+	"""Define a test suite.
+	TODO: Include the procedure test
+	""" 
+	
 
-    suite = unittest.TestSuite()
-    
-    
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestPSSEModel))
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestOpenDSSInterface))
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestPVDERAggregatedModel))
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestPVDERModel))
-    
-                                               
-    return suite
+	suite = unittest.TestSuite()
+	
+	
+	suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestPSSEModel))
+	suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestOpenDSSInterface))
+	suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestPVDERAggregatedModel))
+	suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestPVDERModel))
+	
+											   
+	return suite
 
-if __name__ == '__main__':    
-    runner = unittest.TextTestRunner()
-    runner.run(suite())
+if __name__ == '__main__':
+		
+	runner = unittest.TextTestRunner()
+	runner.run(suite())

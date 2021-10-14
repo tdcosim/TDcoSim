@@ -1,16 +1,36 @@
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 from tdcosim.model.opendss.model.pvderaggregation.model.pvder_model import PVDERModel
-class PVDERProcedure:
-    def __init__(self):        
-        self._pvderModel = PVDERModel()        
+from tdcosim.global_data import GlobalData
 
-    def setup(self, nodeid, V0):
-        self._pvderModel.setup(nodeid, V0)        
 
-    def prerun(self, Va, Vb, Vc):
-        self._pvderModel.prerun(Va, Vb, Vc)
-        return None
+class PVDERProcedure(object):
+#===================================================================================================
+	def __init__(self):
+		try:
+			self._pvderModel = PVDERModel()
+		except:
+			GlobalData.log()
 
-    def postrun(self, sol,t):
-        S = self._pvderModel.postrun(sol,t)
-        return S
+#===================================================================================================
+	def setup(self, nodeid, V0):
+		try:
+			self._pvderModel.setup(nodeid, V0)
+		except:
+			GlobalData.log()
+
+#===================================================================================================
+	def prerun(self, Va, Vb, Vc):
+		try:
+			self._pvderModel.prerun(Va, Vb, Vc)
+		except:
+			GlobalData.log()
+
+#===================================================================================================
+	def postrun(self, sol,t):
+		try:
+			S = self._pvderModel.postrun(sol,t)
+			return S
+		except:
+			GlobalData.log()
+
+

@@ -1,6 +1,6 @@
 **Status:** Expect regular updates and bug fixes.
 
-**Technical support:** support.tdcosim@anl.gov
+*Technical support:** support.tdcosim@anl.gov
 
 # Utilitiy to perform Co-Simulation of Transmission, and Distribution systems with DER's
 
@@ -14,12 +14,20 @@ TDcoSim (T & D co-simulation tool) is a Python package that can be used to perfo
 * API Documentation: [API doc](docs/api-html/index.html)
 
 ## Installation
-You can install the module directly from github with following commands:
-```
-    git clone https://github.com/tdcosim/TDcoSim.git
-    cd
-    pip install -e .
-```
+You can install tdcosim by running the following command on command line.
+
+    pip install git+https://github.com/tdcosim/TDcoSim.git@master
+
+
+In the event you do not have git installed on your machine, you can alternatively run the following from command line.
+
+    pip install https://github.com/tdcosim/TDcoSim/archive/master.zip
+
+After installation open a new command prompt and run the following to set psse path,
+
+    tdcosim setconfig -p "path\to\psse_installation"  
+
+For example, something similar to, tdcosim setconfig -p "C:\Program Files\PTI\PSSE35\35.0\PSSPY37" 
 
 ### Dependencies:
 * External software: [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html), [OpenDSS](https://sourceforge.net/projects/electricdss/)
@@ -27,14 +35,16 @@ You can install the module directly from github with following commands:
 
 ## Quick start
 
-The [config.json file](config.json) provided in the repository can be used to do a co-simulation after editing in the path names (with any text editor). Then open a command line prompt within the folder containing the **tdcosimapp.py** file (for e.g. by typing Shift+C+M+D) and run the following script to start the co-simulation.
+The [config.json file](config.json) provided in the [examples folder](https://github.com/tdcosim/TDcoSim/tree/v2_test/examples) can be used to do a co-simulation after editing the path names (with any text editor). Then open a command line prompt and use the following  commands to to run a co-simulation. Note that *config_td.json* could be replaced by the name of any other configuration file.
 
 ```
-python tdcosimapp.py > log_file.txt
+   tdcosim run -c ".\examples\config_td.json"
 ```
-### Use cases:
-Following example use cases are provided:
-1. [118 bus T + 123 bus D + DER](docs/user_guide/examples/Example_1_system_state_initialization_test.md)
+To visualize the co-simulation results using the dashboard use the following commands. Note that *.\dashboard\vizsample*  can be replaced with the folder containing the co-simulation results.
+```
+   tdcosim dashboard -o ".\dashboard\vizsample"
+```
+Detailed documentation on running a co-simulation may be found within the [user guide](https://github.com/tdcosim/TDcoSim/blob/v2_test/docs/user_guide/user_guide_getting_started.md). Additional examples are available [here](https://github.com/tdcosim/TDcoSim/tree/v2_test/docs/user_guide/examples).
 
 ## Package details
 Technical information on the package can be found here:

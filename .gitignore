@@ -107,4 +107,6 @@ venv.bak/
 
 # app
 *.out
-tdcosim/app/**/out/
+tdcosim\app\**\out\
+*.xlsx
+tdcosim\appTDDERComparisonApp\config\config_ex*

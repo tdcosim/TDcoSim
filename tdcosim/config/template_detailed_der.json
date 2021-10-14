@@ -1,0 +1,86 @@
+{
+   "logging": {
+      "level": 20,
+      "saveSubprocessOutErr": true
+   },
+   "openDSSConfig": {
+      "DEROdeSolver": "scipy", 
+      "DEROdeMethod": "bdf",
+      "manualFeederConfig": {
+         "nodes": [
+            {
+               "nodenumber":0,
+               "filePath": [
+                  "data\\distribution\\123Bus\\case123.dss"
+               ],
+               "fractionAggregatedLoad": {
+                  "cmld": 0.0
+               },
+              "DERModelType": "ThreePhaseUnbalanced",
+               "solarFlag": 1,
+               "solarPenetration": 0.1,
+               "initializeWithActual": true, 
+               "DERFilePath": "config\\detailed_der_default.json",
+               "DERParameters": {
+                  "default": {
+                     "pvderScale": 1,
+                     "steadyStateInitialization": true, 
+                     "derId": "50"
+                  }
+               }
+            },
+            {
+					"nodenumber": 0, 
+					"filePath": [
+					   ""
+					]
+				 }
+         ]
+      }
+   },
+   "psseConfig": {
+      "installLocation": "",
+      "dyrFilePath": "data\\transmission\\68bus\\case68.dyr",
+      "rawFilePath": "data\\transmission\\68bus\\case68.raw",
+	   "der_a":{"busNo":{"flags":{},"params":{}}},
+	   "monitor":{"dera1":["vt_filt"]}
+   },
+   "simulationConfig": {
+      "defaultLoadType": "cmld",
+      "simType": "dynamic",
+      "staticConfig":{
+			"loadShape": [0.81518164,0.77456979,0.7,0.65,0.8,0.85,0.9,0.95]
+		},
+      "dynamicConfig": {
+         "events": {
+            "1": {
+               "faultImpedance": [
+                  0.0,
+                  -100000
+               ],
+               "type": "faultOn",
+               "faultBus": 0,
+               "time": 0.0
+            },
+            "2": {
+               "type": "faultOff",
+               "faultBus": 0,
+               "time": 0.0
+            },
+            "3": {
+               "type": "simEnd",
+               "time": 0.0
+            }
+         }
+      },
+      "memoryThreshold": 20480.0,
+      "protocol": "loose_coupling"
+   },
+   "outputConfig": {
+      "simID": "",
+      "type": "dataframe",
+      "outputDir": "tdcosim_output",
+      "outputfilename": "test",
+      "scenarioID": ""
+   }
+}
