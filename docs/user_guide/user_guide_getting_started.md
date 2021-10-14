@@ -10,11 +10,12 @@ Once TDcoSim has been successfully installed, we get access to the *tdcosimapp* 
 
 1. Describe the location of folders containing logs, example configurations, T system models, D system models etc.: **tdcosim describe**
 2. Run test configurations: **tdcosim test**
-3. Create configuration template: **tdcosim template**
+3. Create configuration template: **tdcosim template --templatePath "/path/to/save/template.json"**
 4. Validate user provided configuration, providing helpful hints to troubleshoot issues, if there are any.
-5. Provide information/help about any declaration used in configuration file: **tdcosim info**
-6. Run the co-simulation: **tdcosim run**
-7. Launch browser based dashboard to analyze the results: **tdcosim dashboard**
+6. Run the co-simulation: **tdcosim run -c "/path/to/config.json"**
+7. Launch browser based dashboard to analyze the results: **tdcosim dashboard -o "/path/to/df-pickle.pkl"**
+7. Provide information/help about any top level declaration used in configuration file: **tdcosim info --configHelp** *configtype* (**psseConfig, openDSSConfig, simulationConfig, outputConfig, logging**) 
+
 
 ***
 ***Note:*** The **tdcosimapp** can be invoked using the **tdcosim** command from the command line .
@@ -111,7 +112,7 @@ Outputs (from both transmission and distribution systems) are saved in the follo
 1. PSS/E channel output file (**.out**) for containing all the simulated quantities from PSS/E.
 2. A pickle (**df_pickle.pkl**) file containing the values of co-simulation variables from both PSS/E and OpenDSS. The co-simulated variables are stored as a data frame (as shown in Fig. 1). More information on the fields within the data frame is provided in [TDcoSim Data Visualization and Analytics](user_guide_visualization_analytics.md#TDcoSim-DataFrame ).
 3. An **options.jSON** file containing the configuration parameters for the co-simulation. 
-4. A CSV or an MS Excel file (**.xlsx**) with the same information as the **df_pickle.pkl** file.
+4. A **psse_progress_output.txt** file containing logging information from PSS/E.
 
 ![report example](images/report_example.png)
 <p align="center">
@@ -119,7 +120,7 @@ Outputs (from both transmission and distribution systems) are saved in the follo
 </p>
 
 ***
-***Note:*** The **.pkl**,**.JSON**, **.xlsx**, and **.out** files will be found in the folder specified by the user through the **output** field in the config file.
+***Note:*** The **.pkl**, **.JSON**, and **.out** files will be found in the folder specified by the user through the **output** field in the config file.
 
 ***
 
