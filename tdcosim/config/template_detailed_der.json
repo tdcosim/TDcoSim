@@ -5,7 +5,7 @@
    },
    "openDSSConfig": {
       "DEROdeSolver": "scipy", 
-      "DEROdeMethod": "bdf"
+      "DEROdeMethod": "bdf",
       "manualFeederConfig": {
          "nodes": [
             {
