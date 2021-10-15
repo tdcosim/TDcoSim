@@ -1,33 +1,55 @@
 # Release 2.0.0
 ## Highlights
-* Major changes to JSON configuration file.
-* Support for dynamic current injection models (**fast_der**) and high performance ODE solvers.
-* Support for **DER_A** model in PSS/E
-* Interactive dashboard for analytics  and additional methods for data analytics
-* Performance improvements
-* Release on PyPI
+* Major changes to JSON configuration file and full access to TDcoSim features using the **tdcosim** command.
+* Support for dynamic current injection models (**fast_der**) on the D side and **DER_A** model on T side.
+* Performance improvements and option to use high performance ODE solvers.
+* Interactive dashboard for visualizing results and additional methods for data analytics
+* Release on PyPI and updated user guide.
 
 ## Major Features and Improvements
 * Performance has been improved for post-processing and saving of data at the end of co-simulation.
+
 * Dynamic current injection models have been added. These models reduce solution time by 10X to 100X when compared to the detailed DER models. These can be used by specifying `fast_der` in the `DEROdeSolver` field of the config file. 
+
 * Option to use high performance ODE solvers available in [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl) has been added for detailed DER models. These solvers reduce time by almost 2 to 10X when compared to the **SciPy** ODE solvers for a given PV penetration level. These can be selected by selecting `diffeqpy` in the `DEROdeSolver` field.
-* Module `dashboard` for visualizing co-simulation data using an browser based interactive dashboard was created. The module can be launched through **app.py**.
-* Option to replace T side load with complex load models. This can be used by specifying `cmld` in the the `defaultLoadType`.
-* Option to log detailed error messages at feeder level. This can be enabled by setting `saveSubprocessOutErr` field to True.
-* Added **tdcosimapp.py** to generate configuration files using a template.
-* Added additional configurations in the examples folder: `config_fast_der.json`, `config_fast_der_118bus_full_td.json`, `config_fast_der_68bus_full_td.json`
+
+* All TDcoSim features can be accessed through the **tdcosim** *feature* command on command line.
+
+* Example **JSON** configuration files for static or dynamic co-simulation may be generated using the `template` feature.
+
+* Co-simulation may be started using the `run` feature
+
+* Co-simulation results may be visualized using a browser based interactive dashboard through the `dashboard` feature.
+
+* `defaultLoadType` field has been added to `simulationConfig` to replace the T side load. The available options are **ZIP** load (**zip**) and composite load models (**cmld**).
+
+* `cmldParameters` has been added to `psseConfig` to specify properties of composite load models.
+
+  `simID`, `outputDir`, and `scenarioID` fields have been added to `outputConfig`.
+
+* A `logs` field has been added to the config file. Logs generated during co-simulation will be stored in [/tdcosim/logs/](https://github.com/tdcosim/TDcoSim/tree/master/tdcosim/logs). Log level can be set using `level` (10, 20, 30, or 40). Error messages at feeder level can be enabled  by setting `saveSubprocessOutErr` to True.
+
+* `excludenode` filed has been added to `defaultFeederConfig`. It is used to specify the list of T side nodes that will be excluded from being connected with a distribution feeder model.
+
 * Added additional analysis methods in the `DataAnalytics` module: `compute_stability_time`, ` lag_finder`, `instances_of_violation`
+
 * Added additional plotting methods in the `DataAnalytics` module: `plot_omega`,  `plot_t_vmag`, `plot_t_delayed_voltage_recovery`
+
 * Support for additional detailed DER model types: `SolarPVDERThreePhaseNumba`, `SolarPVDERSinglePhaseConstantVdc`.
 ## Behavioral and Breaking Changes
+* **run_time_domain.py** and **run_qsts.py** are no longer supported for running co-simulation and were removed. The functionality has been replaced with `tdcosim run -c "config.json"`from command line.
+* The **examples** folder in root was relocated to [/tdcosim/examples](https://github.com/tdcosim/TDcoSim/tree/master/tdcosim/examples).  Older examples were removed and new examples were added.
+* The **SampleData** folder in root was relocated to [/tdcosim/data](https://github.com/tdcosim/TDcoSim/tree/master/tdcosim/data).  
+* The **output** folder in root was removed.  
+* The **der_config.json** was moved to [/tdcosim/config/detailed_der_default.json](https://github.com/tdcosim/TDcoSim/blob/master/tdcosim/config/detailed_der_default.json)
 * Default configuration will now correctly configure all the buses which were not specified through `manualFeederConfig` using  the configuration provided through  `defaultFeederConfig`.
-* Feeders won't be connected to T nodes which are not load buses.
+* If the T side node is not a load bus, distribution feeders won't be connected to it and an error will be produced.
 * The folder to store the results needs to be specified through the `output` and `simID` field in the configuration file.
 ## Bug Fixes
 * Fixed numerous bugs related to performance and logging.
 ## backward-incompatible Changes
 * Not compatible with **pvder 0.5.0.** and below.
-* Not compatible with configuration used in V1.2.0
+* Not compatible with configuration files used in V1.2.0
 
 ## Thanks to our Contributors
 
