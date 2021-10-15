@@ -56,7 +56,8 @@
 * Not compatible with configuration files used in V1.2.0
 
 ## Thanks to our Contributors
-
+This release contains contributions from Karthikeyan Balasubramaniam @karthikbalasu, Sang-iL Yim @yim0331, Siby Jose Plathottam @sibyjackgrove, Kumarsinh Jhala @Kumarsinh, and Shijia Zhao at Argonne National Laboratory.
+We thank suggestions from Ning Kang (INL), Rojan Bhattarai (INL), NERC System Planning Impacts from DER Working Group (SPIDERWG), and Reliability First Corporation.
 
 # Release 1.2.0
 ## Highlights
