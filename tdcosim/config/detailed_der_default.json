@@ -38,6 +38,26 @@
 "50_typeSZ":{"parent_config":"50",
 			"LVRT":{"config_id":"LVRT_1547cat3_revSZ"}
 	 },
+"50_instant_trip":{"parent_config":"50",
+                   "LVRT":{"config_id":"LVRT_instant_trip"}
+                  },
+"LVRT_instant_trip":{"config":{"1":{"V_threshold":0.88,
+                                       "t_threshold":0.001,
+                                       "t_min_ridethrough":0.001,
+                                       "mode":"momentary_cessation"
+                                   }
+                              }
+                    },
+"50_ridethrough":{"parent_config":"50",
+                      "LVRT":{"config_id":"LVRT_ridethrough"}
+                 },
+"LVRT_ridethrough":{"config":{"1":{"V_threshold":0.88,
+                                       "t_threshold":10.0,
+                                       "t_min_ridethrough":20.0,
+                                       "mode":"mandatory_operation"
+                                  }
+                             }
+                   },
 "VRT_delay_cat3":{"config":{"output_cessation_delay":0.01,
 							"output_restore_delay":0.1,
 							"restore_Vdc":false}

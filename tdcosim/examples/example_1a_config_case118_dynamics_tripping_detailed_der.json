@@ -1,0 +1,71 @@
+{
+   "openDSSConfig": {
+      "manualFeederConfig": {
+         "nodes": [
+            {
+               "nodenumber": 1, 
+               "filePath": [
+                  "data\\distribution\\123Bus\\case123ZIP.dss"
+               ], 
+               "DERModelType": "ThreePhaseUnbalanced", 
+               "solarFlag": 1, 
+               "solarPenetration": 0.1, 
+               "initializeWithActual": true, 
+               "DERFilePath": "config\\detailed_der_default.json", 
+               "DERParameters": {
+                  "default": {
+                     "pvderScale": 1, 
+                     "steadyStateInitialization": true, 
+                     "derId": "50_instant_trip"
+                  }
+               }
+            }
+         ]
+      }, 
+      "DEROdeSolver": "scipy", 
+      "DEROdeMethod": "bdf"
+   }, 
+   "simulationConfig": {
+      "protocol": "loose_coupling", 
+      "simType": "dynamic", 
+      "dynamicConfig": {
+         "events": {
+            "1": {
+               "faultImpedance": [
+                  0.0, 
+                  -100000
+               ], 
+               "type": "faultOn", 
+               "faultBus": 5, 
+               "time": 0.5
+            }, 
+            "3": {
+               "type": "simEnd", 
+               "time": 1.0
+            }, 
+            "2": {
+               "type": "faultOff", 
+               "faultBus": 5, 
+               "time": 0.6
+            }
+         }
+      }, 
+      "memoryThreshold": 20480.0, 
+      "defaultLoadType": "cmld"
+   }, 
+   "psseConfig": {
+      "dyrFilePath": "data\\transmission\\118bus\\case118.dyr",
+      "rawFilePath": "data\\transmission\\118bus\\case118.raw"
+   }, 
+   "logging": {
+      "saveSubprocessOutErr": true, 
+      "level": 20
+   }, 
+   "outputConfig": {
+      "simID": "case118_dynamics_tripping_detailed_der", 
+      "type": "dataframe", 
+      "outputDir": "output", 
+      "outputfilename": "test", 
+      "scenarioID": "der_trip"
+   }
+}
