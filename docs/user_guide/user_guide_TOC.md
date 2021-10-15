@@ -11,7 +11,9 @@
 8. [Using TDcoSim in Python scripts](user_guide_advanced_usage.md)
 9. [Software details](user_guide_software_details.md)
 10. [Performance guide](user_guide_performance.md)
-12. Appendix
+11. Examples:
+    1. [Example 1: DER trip and ride through (detailed DER)](examples/Example_1_DER_trip_and_ridethrough.md) 
+13. Appendix
      * [Installation](user_guide_installation.md)
      * [System requirements](user_guide_sys_requirements.md)
      * [References](user_guide_references.md)

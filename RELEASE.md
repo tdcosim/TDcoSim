@@ -2,8 +2,8 @@
 ## Highlights
 * Major changes to JSON configuration file and full access to TDcoSim features using the **tdcosim** command.
 * Support for dynamic current injection models (**fast_der**) on the D side and **DER_A** model on T side.
-* Performance improvements and option to use high performance ODE solvers.
-* Interactive dashboard for visualizing results and additional methods for data analytics
+* Performance improvements,  batch processing of simulation runs, and option to use high performance ODE solvers.
+* Dashboard for visualizing results and additional methods for data analytics
 * Release on PyPI and updated user guide.
 
 ## Major Features and Improvements
@@ -13,13 +13,15 @@
 
 * Option to use high performance ODE solvers available in [DifferentialEquations.jl](https://github.com/SciML/DifferentialEquations.jl) has been added for detailed DER models. These solvers reduce time by almost 2 to 10X when compared to the **SciPy** ODE solvers for a given PV penetration level. These can be selected by selecting `diffeqpy` in the `DEROdeSolver` field.
 
-* All TDcoSim features can be accessed through the **tdcosim** *feature* command on command line.
+* All TDcoSim user features (generate template, get template help, add user preferences, run simulation and launch dashboard) can be accessed through the **tdcosim** command line tool.
 
 * Example **JSON** configuration files for static or dynamic co-simulation may be generated using the `template` feature.
 
-* Co-simulation may be started using the `run` feature
+* Co-simulation may be started using the `run` feature.
 
 * Co-simulation results may be visualized using a browser based interactive dashboard through the `dashboard` feature.
+
+* Path to PSS/E installation may be set using `setconfig -p "path/to/psse"` 
 
 * `defaultLoadType` field has been added to `simulationConfig` to replace the T side load. The available options are **ZIP** load (**zip**) and composite load models (**cmld**).
 
@@ -36,6 +38,8 @@
 * Added additional plotting methods in the `DataAnalytics` module: `plot_omega`,  `plot_t_vmag`, `plot_t_delayed_voltage_recovery`
 
 * Support for additional detailed DER model types: `SolarPVDERThreePhaseNumba`, `SolarPVDERSinglePhaseConstantVdc`.
+
+* User guide has been updated and following new chapters have been added: [Using the configuration template](docs/user_guide/user_guide_configuration_template.md), [Data Visualization and Analytics](docs/user_guide/user_guide_visualization_analytics.md), and [Performance guide](docs/user_guide/user_guide_performance.md). Examples have been updated and config files for the examples are included in [/tdcosim/examples](https://github.com/tdcosim/TDcoSim/tree/master/tdcosim/examples).
 ## Behavioral and Breaking Changes
 * **run_time_domain.py** and **run_qsts.py** are no longer supported for running co-simulation and were removed. The functionality has been replaced with `tdcosim run -c "config.json"`from command line.
 * The **examples** folder in root was relocated to [/tdcosim/examples](https://github.com/tdcosim/TDcoSim/tree/master/tdcosim/examples).  Older examples were removed and new examples were added.

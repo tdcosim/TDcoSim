@@ -1,5 +1,5 @@
 
-# Example 1: DER Tripping and DER riding through fault
+# Example 1: DER Tripping and DER riding through fault (detailed DER)
 
 In this example, TDcosim is used to test the following scenarios on the same T+D+DER system.
 * DERs instantaneously tripping during a voltage anomaly caused by a T bus fault.
