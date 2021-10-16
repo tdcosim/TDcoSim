@@ -64,7 +64,7 @@ def create_tabs(objects,objID,children):
 def gather_objects():
 	# dropdown objects
 	objects['dropdown']=helper.filter_dropdown(columnFilter=['tnodeid','tnodesubid','dnodeid','property','scenario'],
-	multi=['tnodeid','tnodesubid','dnodeid'])
+	multi=['tnodeid','tnodesubid','dnodeid','scenario'])
 
 	objects['dropdown']['bubble_property']=dcc.Dropdown(id='bubble_property',\
 		options=[{'label':entry,'value':entry} for entry in ['VOLT']],value='',\
@@ -157,9 +157,8 @@ def update_plot(scenario,tnodeid,dnodeid,tnodesubid,prop):
 
 		if not isinstance(tnodeid,list):
 			tnodeid=[tnodeid]
-
-		if scenario:
-			df=df[df.scenario==scenario]
+		if not isinstance(scenario,list):
+			scenario=[scenario]
 
 		if tnodesubid:
 			df=df[df.tnodesubid==tnodesubid[0]]####
@@ -168,8 +167,9 @@ def update_plot(scenario,tnodeid,dnodeid,tnodesubid,prop):
 		if prop:
 			df=df[df.property==prop]
 			for thisTnodeid in tnodeid:
-				filterDF=df[df.tnodeid==thisTnodeid]
-				thisData.append({'x':filterDF.t, 'y':filterDF.value, 'type': 'chart','name':thisTnodeid})
+				for thisScenario in scenario:
+					filterDF=df[(df.tnodeid==thisTnodeid) & (df.scenario==thisScenario)]
+					thisData.append({'x':filterDF.t, 'y':filterDF.value, 'type': 'chart','name':thisTnodeid+'_'+thisScenario})
 			figure['data']=thisData
 			figure['layout']['title']='{}'.format(prop.capitalize())
 			figure['layout']['xaxis']={'title':'Time (s)'}
