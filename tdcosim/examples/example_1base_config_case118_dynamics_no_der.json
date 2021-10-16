@@ -1,0 +1,59 @@
+{
+   "openDSSConfig": {
+      "manualFeederConfig": {
+         "nodes": [
+            {
+               "solarFlag": 0, 
+               "solarPenetration": 0.0, 
+               "nodenumber": 1, 
+               "filePath": [
+                  "data\\distribution\\123Bus\\case123ZIP.dss"
+               ]
+            }
+         ]
+      }
+   }, 
+   "psseConfig": {
+      "dyrFilePath": "data\\transmission\\118bus\\case118.dyr", 
+      "rawFilePath": "data\\transmission\\118bus\\case118.raw"
+   }, 
+   "logging": {
+      "level": 20, 
+      "saveSubprocessOutErr": true
+   }, 
+   "outputConfig": {
+      "simID": "example_1_base_case118_dynamics_no_der", 
+      "type": "dataframe", 
+      "outputDir": "output", 
+      "outputfilename": "test", 
+      "scenarioID": "no_der"
+   }, 
+   "simulationConfig": {
+      "dynamicConfig": {
+         "events": {
+            "1": {
+               "faultImpedance": [
+                  0.0, 
+                  -100000
+               ], 
+               "type": "faultOn", 
+               "faultBus": 5, 
+               "time": 0.5
+            }, 
+            "3": {
+               "type": "simEnd", 
+               "time": 1.0
+            }, 
+            "2": {
+               "type": "faultOff", 
+               "faultBus": 5, 
+               "time": 0.6
+            }
+         }
+      }, 
+      "simType": "dynamic", 
+      "protocol": "loose_coupling", 
+      "memoryThreshold": 20480.0, 
+      "defaultLoadType": "cmld"
+   }
+}
