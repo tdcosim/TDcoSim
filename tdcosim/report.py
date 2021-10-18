@@ -244,10 +244,13 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			for thisEventTime in eventTimes:
 				indTemp=np.where(np.bitwise_and(t>=thisEventTime-1e-6,t<=thisEventTime+1e-6))[0].tolist()
 				if len(indFilt)==0:
-					indFilt+=ind[0:indTemp[0]:2].tolist()+indTemp
+					indFilt+=ind[0:indTemp[0]:stride].tolist()+indTemp
 				else:
-					indFilt+=ind[indFilt[-1]+1:indTemp[0]:2].tolist()+indTemp
-			indFilt+=ind[indFilt[-1]+1::2].tolist()
+					indFilt+=ind[indFilt[-1]+1:indTemp[0]:stride].tolist()+indTemp
+			if not indFilt:
+				indFilt=ind[0::stride].tolist()
+			else:
+				indFilt+=ind[indFilt[-1]+1::stride].tolist()
 			indFilt=np.array(indFilt)
 
 			symbols=[ch_id[entry] for entry in ch_id]
