@@ -4,20 +4,26 @@ The stable release of TDcoSim can be installed from PyPI. The version under deve
 You can install tdcosim by running the following command on command line.
 
 ```
-    pip install git+https://github.com/tdcosim/TDcoSim.git@master
+pip install git+https://github.com/tdcosim/TDcoSim.git@master
 ```
 
 In the event you do not have git installed on your machine, you can alternatively run the following from command line.
 
 ```
-    pip install https://github.com/tdcosim/TDcoSim/archive/master.zip
+pip install https://github.com/tdcosim/TDcoSim/archive/master.zip
 ```
 
 After installation open a new command prompt and run the following to set psse path,
 
-    tdcosim setconfig -p "path\to\psse_installation"  
+```
+tdcosim setconfig -p "path\to\psse_installation"  
+```
 
-For example, something similar to, tdcosim setconfig -p "C:\Program Files\PTI\PSSE35\35.0\PSSPY37" 
+For example, something similar to:
+
+```
+tdcosim setconfig -p "C:\Program Files\PTI\PSSE35\35.0\PSSPY37" 
+```
 
 ***
 ***Note:*** [Git](https://git-scm.com/) needs to installed  (incase it is not already available) before TDcoSim can be installed.

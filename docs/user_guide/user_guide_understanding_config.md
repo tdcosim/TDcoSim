@@ -6,9 +6,6 @@ The **config** file is the primary user interface for the TDcoSim package. Befor
 
 The config file can be divided into three sections. The purpose of each option in every section is explained below:
 
-### cosimHome
- **cosimHome (string):** Specify the directory containing config file, and models for T and D systems (e.g. "C:\\\project_folder).
-
 ### Logging configuration
 
 1. **level (int):** The logging level which can be either 10 (debug), 20 (info), 30 (warning) or 40 (error). Note that all log files will be saved in the **logs** folder.
@@ -17,9 +14,9 @@ The config file can be divided into three sections. The purpose of each option i
 ### PSSE configuration
 
 1. **psseConfig (dict):** configuration for the transmission system.
-   * ***installLocation (string)*** : full path for PSS/E transmission system python library location. If there isn't a specific location, system will look up the default installation path of PSS/E 33 (e.g. "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27")
-   * ***rawFilePath (string)*** : full path for the PSS/E transmission system loadflow case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\\\**case118.raw**").
-   * ***dyrFilePath (string)***: full path for the PSS/E transmission system dynamic case file (e.g. "C:\\\project_folder\\\data\\\TNetworks\\\118bus\\\**case118.dyr**").
+   * *installLocation (string)* : full path for PSS/E transmission system python library location. If there isn't a specific location, system will look up the default installation path of PSS/E 33 (e.g. "C:/Program Files/PTI/PSSE35/35.0/PSSPY27").
+   * *rawFilePath (string)* : full path for the PSS/E transmission system loadflow case file  (e.g. "C:/folder/data/TNetworks/118bus/case118.raw").
+   * *dyrFilePath (string)*: full path for the PSS/E transmission system dynamic case file (e.g. "C:/project_folder/data/TNetworks/118bus/case118.dyr").
 
 ### OpenDSS + DER configuration
 
@@ -30,7 +27,7 @@ The default feeder configuration is **defaultFeederConfig**, which automatically
 
 1. **openDSSConfig (dict):** Configuration for distribution feeders. The user can choose a default feeder configuration through defaultFeederConfig option or specify individual feeder for each transmission bus through manualFeederConfig option.
    * ***defaultFeederConfig (dict):*** Default feeder configuration that assigns identical distribution feeders to all the transmission buses.
-     * *filePath (string):* Specifies the path for the OpenDSS File (e.g. "C:\\\project_folder\\\data\\\DNetworks\\\123bus\\\\**case123ZIP.dss**").
+     * *filePath (string):* Specifies the path for the OpenDSS File (e.g. "C:/project_folder/data/DNetworks/123bus/case123ZIP.dss").
      
      * *solarFlag (Boolean):* Specifies presence or absence of PV-DERs in a feeder.
      
@@ -39,7 +36,7 @@ The default feeder configuration is **defaultFeederConfig**, which automatically
    * ***manualFeederConfig:*** Manually specify the distribution system configuration at the desired transmission bus.
      * *nodes (list of dict):* Specifies the configuration of the distribution system and DERs.
        * *nodenumber (integer)*: Specifies the transmission bus to which the distribution system will be connected.
-       * *filePath (string)*: Specifies the path for the OpenDSS File containing the distribution system model. (e.g. "C:\\\project_folder\\\data\\\DNetworks\\\123bus\\\\case123ZIP.dss")
+       * *filePath (string)*: Specifies the path for the OpenDSS File containing the distribution system model. (e.g. "C:/project_folder/data/DNetworks/123bus/case123ZIP.dss")
        * *solarFlag (bool):* Specifies presence or absence of PV-DERs in the distribution system.
        * *solarPenetration (float)*: Specifies the total rated capacity of PV-DERs as a percentage of the total feeder load in dynamic co-simulation (e.g. 0.1). It will only be used if *DERSetting* is *default*.
        * *fractionAggregatedLoad (dict):*  It specifies the type of load model used to model the load at the T node. The available options are: "cmld", "clod"
@@ -99,7 +96,7 @@ The default feeder configuration is **defaultFeederConfig**, which automatically
    * ***simID***: The main identifier string for the co-simulation. It will also be used to name the folder which will store the co-simulation results..
    * ***scenarioID***: An additional identifier string for the co-simulation. It will be included in the dataframe containing the co-simulation results.
    * ***outputDir (string):*** Main folder within which the results generated during co-simulation would be stored. There will be sub-folders corresponding to the **simID** within this folder.
-   * ***outputfilename (string):*** File names given to the **.pkl** file containing the co-simulation results.
+   * ***outputfilename (string):*** File name given to the **.out** file containing the result from PSS?E.
    * ***type (string):*** Format in which the results generated during simulation would be stored. Available options are: **dataframe**, **csv**.
 
 ## config.json example

@@ -21,7 +21,7 @@ Both the visualization and data analytics features available in TDcoSim uses the
 The visualization module provides an simple way to quickly visualize the co-simulation data without having to write code. Visualization is done through a browser based dashboard built using the [Dash](https://github.com/plotly/dash) framework. The plots within the visualization were created using [Plotly](https://github.com/plotly/plotly.py).
 
 ### Using the visualization dashboard
-Before the dashboard can be used the location of the filecontaining the co-simulation results (in the TDcoSim DataFrame format) should be known.  The dashboard can be launched using the following command on the command line interface. Note that *.\results.pkl*  should be replaced with the pickle file containing the TDcoSim DataFrame.
+Before the dashboard can be used the location of the filecontaining the co-simulation results (in the TDcoSim DataFrame format) should be known.  The dashboard can be launched using the following command on the command line interface. Note that **results.pkl**  should be replaced with the pickle file containing the TDcoSim DataFrame.
 
 ```
    tdcosim dashboard -o "path/to/results.pkl"

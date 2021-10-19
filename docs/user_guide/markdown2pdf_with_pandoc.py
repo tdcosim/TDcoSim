@@ -61,7 +61,8 @@ md2pdf_commandstring = 'pandoc '+ md_files_for_pdf_string +  ' -o ' + output_pdf
 print(f'Creating word document from Markdown files:{output_word_filename}')
 print(f'Command string:{md2word_commandstring}')
 os.system(md2word_commandstring)
-
+"""
 print(f'Creating pdf document from Markdown files:{output_pdf_filename}')
 print(f'Command string:{md2pdf_commandstring}')
 os.system(md2pdf_commandstring)
+"""
