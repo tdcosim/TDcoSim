@@ -2,7 +2,7 @@
 
 In this section, we describe how you can get started with using **TDcoSim** to conduct static or dynamic co-simulation studies for T & D systems with different DER penetration levels and various events.
 
-## 1. Setup TDcoSim
+## Setup TDcoSim
 Please install the software per installation instructions as the first step (Installation instructions for can be found [here](user_guide_installation.md#installation)). Make sure the system requirements are satisfied (System requirements can be found [here](user_guide_sys_requirements.md)). 
 
 ### Invoking TDcoSim from command prompt
@@ -22,9 +22,10 @@ Once TDcoSim has been successfully installed, we get access to the *tdcosimapp* 
 
 ***
 
-## 2. Information required by TDcoSim
+## Steps involved in a co-simulation
+### 1. Information required by TDcoSim
 1. Specify version of PSS/E (either PSS/E 33 or PSS/E 35)
-1. Specify parameters for the power system to be analyzed:
+2. Specify parameters for the power system to be analyzed:
    
    * Transmission system
         * Transmission system model (e.g. IEEE 118 bus system)
@@ -66,10 +67,10 @@ Once TDcoSim has been successfully installed, we get access to the *tdcosimapp* 
 
 ***
 
-## 2. Configure T & D & DER models and simulation scenarios
+### 2. Configure T & D & DER models and simulation scenarios
 The power system models and simulation scenarios defined in the previous section can be transferred to TDcoSim using the **TDcoSim config** file (detailed explanations for every entry in the **TDcoSim config** file is provided [here](user_guide_understanding_config.md#understanding-the-config-file)). 
 
-### Defining the TDcoSim config file
+#### Defining the TDcoSim config file
 
 The **TDcoSim config** file follows a specific template, and any deviations from the template will result in an error. The most streamlined way to make sure that the template is followed, is generate a sample config file and then manually populate the fields in this file. An example command for generating a sample config file for a dynamic co-simulation is given below:
 ```
@@ -86,7 +87,7 @@ A detailed description of the configuration template is provided in the [Using t
 
 ***
 
-## 2. Running the co-simulation
+### 3. Running the co-simulation
 
 Once the **config** file has been populated with the required entries, the user can start the co-simulation through the run command on command line as shown below:
 
@@ -106,7 +107,7 @@ Solution time: 9.066482067108154
 
 ***
 
-## 3.  Accessing the results
+### 4.  Accessing the results
 
 Outputs (from both transmission and distribution systems) are saved in the following formats within the user specified output folder at the end of the co-simulation: 
 1. PSS/E channel output file (**.out**) for containing all the simulated quantities from PSS/E.
@@ -124,7 +125,7 @@ Outputs (from both transmission and distribution systems) are saved in the follo
 
 ***
 
-## 4. Data visualization and analytics
+## Data visualization and analytics
 Modules for performing visualization and analytics are available as part of the TDcoSim package. The simplest way to visualize the data is using the **TDcoSim Dashboard** which may be launched using the command shown below.
 
 ```

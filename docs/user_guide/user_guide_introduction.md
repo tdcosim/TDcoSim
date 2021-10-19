@@ -111,4 +111,5 @@ Following capabilities are planned in be added in the future:
 The scale of the T & D system (including PV-DERs) to be co-simulated is limited only by the available memory (RAM) in the workstation where **TDcoSim** is installed. The solution time for the dynamic co-simulation depends on the number of distribution feeder instances, the number and type of DER instances, the type of ODE solver being used, and on the number of logical cores available in the workstation.
 
 [Continue to Getting Started](user_guide_getting_started.md)
+
 \pagebreak

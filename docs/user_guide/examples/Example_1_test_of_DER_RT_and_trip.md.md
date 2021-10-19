@@ -16,14 +16,7 @@ In this test, the TDcosim tool is tested for three different scenarios:
                                     "solarPenetration":0.0, 
                                     "powerRating": 50,
                                     "VrmsRating":174,
-                                 "LVRT":"1":{"V_threshold":0.88,
-                                             "t_threshold":0.016,
-                                             "mode":"momentary_cessation"
-                                             }
-                                         "2":{"V_threshold":0.7,
-                                             "t_threshold":0.016,
-                                             "mode":"momentary_cessation"
-                                             }
+                                 
                                             }
                                 }}
                             }

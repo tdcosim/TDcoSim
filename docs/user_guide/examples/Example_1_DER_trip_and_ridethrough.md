@@ -7,6 +7,7 @@ In this example, TDcosim is used to test the following scenarios on the same T+D
 * DERs riding through a voltage anomaly caused by a T bus fault
   * [Config file](https://github.com/tdcosim/TDcoSim/tree/master/tdcosim/examples/example_1b_config_case118_dynamics_ridethrough_detailed_der.json)
 
+## Co-simulation setup
 1. **T system:** 118 bus system
 
 ```json
@@ -69,7 +70,7 @@ In this example, TDcosim is used to test the following scenarios on the same T+D
                      }}
 ```
 
-#### Scenario A: Instantaneous trip
+### Scenario A: Instantaneous trip
 The DER trip setting used for this case is shown in Figure A below. The full configuration file is 
 
 ![Instant_trip_settings](C:/Users/splathottam/Box Sync/GitHub/TDcoSim/docs/user_guide/examples/use_case_results/study_1/Inst_trip_settings.png)
@@ -90,7 +91,7 @@ Figure A: DER operational settings curve for the instantaneous trip settings.
                         }
    }
 ```
-#### Scenario B: Ride through
+### Scenario B: Ride through
 
 The DER trip setting used for this case is shown in Figure B below.
 
