@@ -294,8 +294,17 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 		# updates for der_p_total and der_q_total
 		df=get_der_total_injection(df,GlobalData)
 		df=update_dera_nodes(df,GlobalData)
-		fpath=os.path.join(outputConfig['outputDir'],'df_pickle.pkl')
-		df.to_pickle(fpath)
+		fpath=os.path.join(outputConfig['outputDir'],'df_pickle')
+		
+		try:
+			print("Trying to save TDcoSim dataframe as a .pkl file")
+			df.to_pickle(fpath+".pkl")
+			fpath+='.pkl'
+		except MemoryError:
+			print("Saving to .CSV file due to .pkl memory error")
+			df.to_csv(fpath+".csv",index=False)
+			fpath+='.csv'
+		print("Successfully saved as {}...".format(fpath))
 
 		return df
 	except:
