@@ -217,7 +217,14 @@ if __name__ == '__main__':
 	from tdcosim.data_analytics import DataAnalytics
 
 	# # init
-	df=pd.read_pickle(sys.argv[1])
+	df_file = os.path.join(sys.argv[1])
+	print(df_file)
+	if '.pkl' in sys.argv[1]:
+		df=pd.read_pickle(sys.argv[1])
+	elif '.csv' in sys.argv[1]:
+		df=pd.read_csv(sys.argv[1])
+	else:
+		df=pd.read_pickle(sys.argv[1]) #Assume that df is saved as a pickle file by default.
 	if sys.argv[3].lower()=="true":# reduced memory
 		df=df[df.dfeederid.isna()]
 	da=DataAnalytics()
