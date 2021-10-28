@@ -91,13 +91,13 @@ def check_config(fpath):
 				'{}'.format(win32api.GetLongPathName(conf['openDSSConfig']['defaultFeederConfig']['filePath'][0]))
 			if 'defaultFeederConfig' in conf['openDSSConfig'] and \
 			'DERFilePath' in conf['openDSSConfig']['defaultFeederConfig']:
-				if not os.path.exists(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0]) and \
-				os.path.exists(os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0])):
-					conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0]=\
-					os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0])
-				items2check.append(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0])
-				conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0]=\
-				'{}'.format(win32api.GetLongPathName(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0]))
+				if not os.path.exists(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath']) and \
+				os.path.exists(os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'])):
+					conf['openDSSConfig']['defaultFeederConfig']['DERFilePath']=\
+					os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'])
+				items2check.append(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'])
+				conf['openDSSConfig']['defaultFeederConfig']['DERFilePath']=\
+				'{}'.format(win32api.GetLongPathName(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath']))
 			if 'manualFeederConfig' in conf['openDSSConfig'] and \
 			'nodes' in conf['openDSSConfig']['manualFeederConfig']:
 				for thisNode in conf['openDSSConfig']['manualFeederConfig']['nodes']:
