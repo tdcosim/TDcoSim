@@ -91,13 +91,13 @@ def check_config(fpath):
 				'{}'.format(win32api.GetLongPathName(conf['openDSSConfig']['defaultFeederConfig']['filePath'][0]))
 			if 'defaultFeederConfig' in conf['openDSSConfig'] and \
 			'DERFilePath' in conf['openDSSConfig']['defaultFeederConfig']:
-				if not os.path.exists(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath']) and \
-				os.path.exists(os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'])):
-					conf['openDSSConfig']['defaultFeederConfig']['DERFilePath']=\
-					os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'])
-				items2check.append(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'])
-				conf['openDSSConfig']['defaultFeederConfig']['DERFilePath']=\
-				'{}'.format(win32api.GetLongPathName(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath']))
+				if not os.path.exists(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0]) and \
+				os.path.exists(os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0])):
+					conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0]=\
+					os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0])
+				items2check.append(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0])
+				conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0]=\
+				'{}'.format(win32api.GetLongPathName(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'][0]))
 			if 'manualFeederConfig' in conf['openDSSConfig'] and \
 			'nodes' in conf['openDSSConfig']['manualFeederConfig']:
 				for thisNode in conf['openDSSConfig']['manualFeederConfig']['nodes']:
@@ -168,10 +168,14 @@ def dashboard(args):
 			args.reducedMemory=False
 		else:
 			args.reducedMemory=True
-
+		if args.useDask.lower()=='false' or args.useDask.lower()=='0':
+			args.useDask=False
+		else:
+			args.useDask=True
+		
 		appPath=os.path.join(baseDir,'dashboard','app.py')
 
-		os.system('python {} {} "{}" {}'.format(appPath,args.outputPath,args.pssePath,args.reducedMemory))
+		os.system('python {} {} "{}" {} {} {}'.format(appPath,args.outputPath,args.pssePath,args.reducedMemory,args.nFiles,args.useDask))
 	except:
 		raise
 
@@ -335,6 +339,8 @@ if __name__ == "__main__":
 	parser.add_argument('-p','--pssePath', type=str, help='psse location')
 	parser.add_argument('-r','--reducedMemory', type=str, help='Show only transmission and aggregated distribution system results in dashboard')
 	parser.add_argument('-b','--batchDir', type=str, help='Directory where individual config files for batch processing can be found')
+	parser.add_argument('-n','--nFiles', type=int,default=2, help='Number of simulation files to read for dashboard visualization')
+	parser.add_argument('-d','--useDask', type=str,default='false', help='Use Dask instead of Pandas for reading the results for dashboard visualization')
 
 	if len(sys.argv)==1:
 		print_help()
