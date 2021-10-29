@@ -20,14 +20,27 @@ Both the visualization and data analytics features available in TDcoSim uses the
 ## Visualization
 The visualization module provides an simple way to quickly visualize the co-simulation data without having to write code. Visualization is done through a browser based dashboard built using the [Dash](https://github.com/plotly/dash) framework. The plots within the visualization were created using [Plotly](https://github.com/plotly/plotly.py).
 
-### Using the visualization dashboard
-Before the dashboard can be used the location of the filecontaining the co-simulation results (in the TDcoSim DataFrame format) should be known.  The dashboard can be launched using the following command on the command line interface. Note that **results.pkl**  should be replaced with the pickle file containing the TDcoSim DataFrame.
+### Launching the TDcoSim dashboard
+Before the TDcosim dashboard (hereafter referred to as 'dashboard') can be launched the location of the co-simulation results (in the TDcoSim DataFrame format) should be known.  If we want to visualize the results from a single file,  we can specify the file name through the **-o** argument. The following command may be used on the command line interface. Note that **path/to/results.pkl**  should be replaced with the path to Pickle file or CSV file containing the TDcoSim DataFrame.
 
 ```
    tdcosim dashboard -o "path/to/results.pkl"
 ```
+If we want to visualize the results from multiple files within a folder,  we can again specify the folder path through the **-o** argument. Note that **path/to/results/folder**  should be replaced by the folder containing the individual simulation folders containing the TDcoSim DataFrame.
 
-This will result in the following output:
+```
+   tdcosim dashboard -o "path/to/results/folder"
+```
+By default, dashboard will read 2 files (CSV followed by Pickle). However, we can specify the number of files that dashboard reads using the **-n** argument. The command shown below will read maximum of 10 files from the simulation folders.
+```
+   tdcosim dashboard -n 10 -o "path/to/results/folder"
+```
+By default the dataframes are loaded onto the system memory using **Pandas**. Sometimes reading a large number of files will result in an out of memory error. In such circumstances, the user make use of the Dask by setting the **-d** flag to true.
+```
+   tdcosim dashboard -n 10 -d True -o "path/to/results/folder"
+```
+
+All the above commands will result in the following output:
 
 ![report example](images/starting_dashboard.png)
 <p align="center">
@@ -37,6 +50,10 @@ Copy and paste the web address (**http:/127.0.0.1:8050** in Fig. 1) into your br
 
 ***
 ***Note:*** Using the dashboard only requires TDcoSim to be installed. It does not require PSS/E or OpenDSS to be installed. So co-simulation results that were generated in another machine can be copied to a machine without PSS/E or OpenDSS and then visualized.
+
+***
+***
+***Note:*** Using the Dask option can result in slower visualization times compared to using Pandas. Hence it should only be used when large number of files need to be loaded onto dashboard.
 
 ***
 
@@ -68,7 +85,7 @@ The Table visualization tab displays the entire data frame as an interactive Tab
 </p>
 
 #### Plots
-The Plots visualization tab allows the user to visualize any co-simulation variable as interactive time-series plots as shown in Fig. 4. The fields provided correspond to the attributes of the [TDcoSim DataFrame](#TDcoSim-DataFrame) and desired quantities can be plotted by appropriately plotting the fields. The plots may also be downloaded as .PNG images.
+The Plots visualization tab allows the user to visualize any co-simulation variable as interactive time-series plots as shown in Fig. 4. The fields provided correspond to the attributes of the [TDcoSim DataFrame](#TDcoSim-DataFrame) and desired quantities can be plotted by appropriately plotting the fields. The plots may also be downloaded as .PNG images. You can filter the plots based on **scenario** and **tnodeid** for T side variables.
 
 ***
 ***Note:*** All the quantities being plotted should have the same property. For e.g. you can't have a plot with voltage and angle from one node.
