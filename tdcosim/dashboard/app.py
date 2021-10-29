@@ -14,8 +14,8 @@ import networkx as nx
 import numpy as np
 import dask.dataframe as dd
 import glob
+import six
 app = dash.Dash(__name__)
-
 
 #=======================================================================================================================
 def create_graphs(objects,objID,title,fontColor,xlabel,ylabel):
@@ -175,7 +175,11 @@ def update_plot(scenario,tnodeid,dnodeid,tnodesubid,prop):
 		
 		if tnodesubid:
 			df=df[df.tnodesubid==tnodesubid[0]]####
-		tic = time.clock()
+		
+		if six.PY3:
+			tic = time.perf_counter()
+		elif six.PY2:
+			tic = time.clock() 
 		thisData=[]
 		if prop:
 			if isinstance(df,dd.core.DataFrame):
@@ -194,7 +198,10 @@ def update_plot(scenario,tnodeid,dnodeid,tnodesubid,prop):
 			figure['layout']['title']='{}'.format(prop.capitalize())
 			figure['layout']['xaxis']={'title':'Time (s)'}
 			figure['layout']['yaxis']={'title':'{} (PU)'.format(prop.capitalize())}
-		toc = time.clock()
+		if six.PY3:
+			toc = time.perf_counter()
+		elif six.PY2:
+			toc = time.clock() 
 		print("Time taken to process dataframe:{:.2f} s".format(toc - tic))
 
 		return [figure,style]
@@ -242,7 +249,10 @@ if __name__ == '__main__':
 	nFiles = int(sys.argv[4])
 	useDask = sys.argv[5]
 	
-	tic = time.clock()
+	if six.PY3:
+		tic = time.perf_counter()
+	elif six.PY2:
+		tic = time.clock()
 	if os.path.isfile(sys.argv[1]):
 		print("{} is a file.".format(sys.argv[1]))
 		if '.pkl' in sys.argv[1]:
@@ -259,9 +269,8 @@ if __name__ == '__main__':
 		print('Directory:{} contains {} simulation folders'.format(sys.argv[1],len(simulationFolders)))
 		
 		_ = [csvFileNames.extend(glob.glob(os.path.join(sys.argv[1],simulationFolder,"df_pickle.csv"))) for simulationFolder in simulationFolders]
-		print("Directory:{} contains {} CSV files!".format(sys.argv[1],len(csvFileNames),sys.argv[4]))
 		_ = [pickleFileNames.extend(glob.glob(os.path.join(sys.argv[1],simulationFolder,"df_pickle.pkl"))) for simulationFolder in simulationFolders if "df_pickle.csv" not in os.listdir(os.path.join(sys.argv[1],simulationFolder))]
-		print("Directory:{} contains {} Pickle files with no corresponding CSV files!".format(sys.argv[1],len(pickleFileNames),sys.argv[4]))
+		print("Directory:{} contains total {} files ({} CSV files + {} Pickle files with no corresponding CSV files)".format(sys.argv[1],len(csvFileNames)+len(pickleFileNames),len(csvFileNames),len(pickleFileNames)))
 		
 		if csvFileNames + pickleFileNames:
 			if len(csvFileNames) < nFiles:
@@ -274,11 +283,10 @@ if __name__ == '__main__':
 			if useDask.lower()=="false" or not useDask: #Check if user wants to use Dask
 				if csvFileNames:
 					print("Concatenating {} CSV files into a single data frame using Pandas...".format(len(csvFileNames)))
-					#dfs.extend(pd.concat(map(pd.read_csv, csvFileNames), ignore_index=True))
 					dfs.append(pd.concat([pd.read_csv(csvFileName,dtype={'tnodesubid': 'object','tnodeid':'object','dfeederid':'object','dnodeid':'object','t':'float32','value':'float32'}) for csvFileName in csvFileNames],ignore_index=True))
 				if pickleFileNames:
 					print("Concatenating {} Pickle files into a single data frame using Pandas...".format(len(pickleFileNames)))
-					dfs.append(pd.concat([pd.read_pickle(pickleFileName,dtype={'tnodesubid': 'object','tnodeid':'object','dfeederid':'object','dnodeid':'object','t':'float32','value':'float32'}) for pickleFileName in pickleFileNames],ignore_index=True))
+					dfs.append(pd.concat(map(pd.read_pickle, pickleFileNames), ignore_index=True))
 				
 				df= pd.concat(dfs, ignore_index=True)
 				
@@ -296,10 +304,7 @@ if __name__ == '__main__':
 			raise NotImplementedError("No CSV or Pickle files were found!")
 	else:
 		raise ValueError("Only folder names or file names are accepted")
-	toc = time.clock()
-	print("Time taken to load CSV/Pickle files into dataframe:{:.2f} s".format(toc - tic))
 	
-	tic = time.clock()
 	if sys.argv[3].lower()=="true":# reduced memory
 		df=df[df.dfeederid.isna()]
 	da=DataAnalytics()
@@ -327,7 +332,10 @@ if __name__ == '__main__':
 	gather_objects()
 	app.layout=html.Div(objects['tabs']['main_tab'],
 	style={'width':'99vw','height':'98vh','background-color':'rgba(0,0,0,.8)'})
-	toc = time.clock()
-	print("Time taken to process dataframe:{:.2f} s".format(toc - tic))
+	if six.PY3:
+		toc = time.perf_counter()
+	elif six.PY2:
+		toc = time.clock()
+	print("Time taken to load and process dataframe:{:.2f} s".format(toc - tic))
 	# run
 	app.run_server(debug=False,use_reloader=False)
