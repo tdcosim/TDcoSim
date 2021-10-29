@@ -56,7 +56,7 @@ if platform.architecture()[0]=='64bit':
         'Programming Language :: Python :: 3.7',
       ],
       install_requires=['pywin32>=301','matplotlib>=2.0.2','numpy>=1.16.2','scipy>=1.2.1',
-      'xlsxwriter>=1.1.8','psutil>=5.7.0','pandas>=0.24.2','dash>=1.21.0','networkx','pvder'],
+      'xlsxwriter>=1.1.8','psutil>=5.7.0','pandas>=0.24.2','dash>=1.21.0','networkx','pvder','dask[dataframe]'],
       extras_require={'diffeqpy': ['diffeqpy>=1.1.0']},
       package_data={'tdcosim':['data/**/**/*','logs/.*','config/*','examples/*']},
       cmdclass={'install':PostInstall}

@@ -12,7 +12,7 @@ import plotly.express as px
 import pandas as pd
 import networkx as nx
 import numpy as np
-import dask.dataframe as dd
+import dask.dataframe as dd #< 1s overhead
 import glob
 import six
 app = dash.Dash(__name__)
@@ -176,10 +176,7 @@ def update_plot(scenario,tnodeid,dnodeid,tnodesubid,prop):
 		if tnodesubid:
 			df=df[df.tnodesubid==tnodesubid[0]]####
 		
-		if six.PY3:
-			tic = time.perf_counter()
-		elif six.PY2:
-			tic = time.clock() 
+		tic = time.time() 
 		thisData=[]
 		if prop:
 			if isinstance(df,dd.core.DataFrame):
@@ -198,10 +195,7 @@ def update_plot(scenario,tnodeid,dnodeid,tnodesubid,prop):
 			figure['layout']['title']='{}'.format(prop.capitalize())
 			figure['layout']['xaxis']={'title':'Time (s)'}
 			figure['layout']['yaxis']={'title':'{} (PU)'.format(prop.capitalize())}
-		if six.PY3:
-			toc = time.perf_counter()
-		elif six.PY2:
-			toc = time.clock() 
+		toc = time.time() 
 		print("Time taken to process dataframe:{:.2f} s".format(toc - tic))
 
 		return [figure,style]
@@ -245,14 +239,11 @@ if __name__ == '__main__':
 	from tdcosim.dashboard import Dashboard
 	from tdcosim.data_analytics import DataAnalytics
 
-	# # init	
+	# # init
 	nFiles = int(sys.argv[4])
 	useDask = sys.argv[5]
 	
-	if six.PY3:
-		tic = time.perf_counter()
-	elif six.PY2:
-		tic = time.clock()
+	tic = time.time()
 	if os.path.isfile(sys.argv[1]):
 		print("{} is a file.".format(sys.argv[1]))
 		if '.pkl' in sys.argv[1]:
@@ -292,6 +283,7 @@ if __name__ == '__main__':
 				
 				print("Dataframe shape:{}".format(df.shape))
 			else:
+				
 				if csvFileNames:
 					print("Concatenating {} CSV files into a single data frame using Dask...".format(len(csvFileNames)))
 					df = dd.read_csv(csvFileNames,dtype={'tnodesubid': 'object','tnodeid':'object','dfeederid':'object','dnodeid':'object','t':'float32','value':'float32'})
@@ -332,10 +324,7 @@ if __name__ == '__main__':
 	gather_objects()
 	app.layout=html.Div(objects['tabs']['main_tab'],
 	style={'width':'99vw','height':'98vh','background-color':'rgba(0,0,0,.8)'})
-	if six.PY3:
-		toc = time.perf_counter()
-	elif six.PY2:
-		toc = time.clock()
+	toc = time.time()
 	print("Time taken to load and process dataframe:{:.2f} s".format(toc - tic))
 	# run
 	app.run_server(debug=False,use_reloader=False)
