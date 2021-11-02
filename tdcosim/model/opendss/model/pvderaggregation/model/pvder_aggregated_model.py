@@ -44,10 +44,10 @@ class PVDERAggregatedModel(object):
 					tic = time.clock()
 				from diffeqpy import ode
 				from julia import Sundials
-				
+				#from julia import SteadyStateDiffEq
 				self.de = ode
 				self.sundials = Sundials
-				
+				#self.steadystatediffeq = SteadyStateDiffEq
 				#from diffeqpy import de
 				from julia import Main
 				from julia import LinearAlgebra
@@ -327,6 +327,10 @@ class PVDERAggregatedModel(object):
 				julia_f = self.de.ODEFunction(self.funcval_diffeqpy, jac=self.jac_diffeqpy)
 				diffeqpy_ode = self.de.ODEProblem(julia_f, y0, (t0, 1/120.),[])
 				self.integrator = self.de.init(diffeqpy_ode,solver_type,saveat=1/120.,abstol=1e-4,reltol=1e-4)#
+				#self.ss_problem = self.de.SteadyStateProblem(self.diffeqpy_ode)
+				#sol = self.de.solve(self.ss_problem,self.steadystatediffeq.DynamicSS(self.solver_type),tspan=60./120.,dt=0.001)
+				#OpenDSSData.log(level=10,msg="y0:{}".format(y0))
+				#OpenDSSData.log(level=10,msg="SS y0:{}".format(sol.u))
 			else:
 				raise ValueError("'{}' is not a valid DER model solver type - valid solvers are:scipy,diffeqpy".format(self.der_solver_type))
 			if six.PY3:
@@ -334,7 +338,7 @@ class PVDERAggregatedModel(object):
 			elif six.PY2:
 				toc = time.clock()
 			OpenDSSData.log(level=10,msg="{} integrator using {} method initialized at {:.3f} seconds in {:.3f} seconds".format(self.der_solver_type,self.ode_solver_method,toc,toc - tic))
-			"""
+			
 			tic = time.perf_counter()
 			if self.der_solver_type == "scipy":
 				y=self.integrator.integrate(self.integrator.t+1/120.)
@@ -342,7 +346,7 @@ class PVDERAggregatedModel(object):
 				self.de.step_b(self.integrator,1/120.,True)
 			toc = time.perf_counter()
 			OpenDSSData.log(level=10,msg="{} test integration completed at {:.3f} seconds in {:.3f} seconds".format(self.der_solver_type,toc,toc - tic))
-			"""
+			
 			return DNet['DER']['PVDERMap']
 		except:
 			OpenDSSData.log(msg="Failed Setup PVDERAGG")
@@ -539,14 +543,32 @@ class PVDERAggregatedModel(object):
 				Va = V[lowSideNode]['a']
 				Vb = V[lowSideNode]['b']
 				Vc = V[lowSideNode]['c']
-
+ 
 				nodeP=0; nodeQ=0
 				for pv in OpenDSSData.data['DNet']['DER']['PVDERMap'][node]:
 					if pv!='nSolar_at_this_node':
 						pvID=OpenDSSData.data['DNet']['DER']['PVDERMap'][node][pv]
 						thisPV=self._pvders[pvID]
 						thisPV.prerun(Va,Vb,Vc)
-
+						#if self.integrator.t == 0.0:
+						#	OpenDSSData.log(level=20,msg="Integrator time:{}".format(self.integrator.t))
+						#	thisPV._pvderModel.PV_model.steady_state_calc()
+			if self.integrator.t == 0.0:
+				if six.PY3:
+					tic = time.perf_counter()
+				elif six.PY2:
+					tic = time.clock()
+				for i in range(600):
+					self.de.step_b(self.integrator,dt,True)
+					if not self.de.check_error(self.integrator) == 'Success':
+						raise ValueError("Integration was not successul with return code:{}".format(self.de.check_error(self.integrator)))
+				#sol = self.de.solve(self.ss_problem,self.steadystatediffeq.DynamicSS(self.solver_type),tspan=1.0,dt=0.001)
+				OpenDSSData.log(level=20,msg="Integrator time after DynamicSS:{}".format(self.integrator.t))
+				if six.PY3:
+					toc = time.perf_counter()
+				elif six.PY2:
+					toc = time.clock()
+				OpenDSSData.log(level=10,msg="Time taken to do pre-run:{}".format(toc - tic))
 			# single large integrator for all pvder instances
 			if self.der_solver_type == "scipy":
 				y=self.integrator.integrate(self.integrator.t+dt)
