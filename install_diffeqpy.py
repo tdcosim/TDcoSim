@@ -9,22 +9,33 @@ import sys
 import time
 
 try:
-    import julia
+	import julia
 except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", 'julia'])
+	subprocess.check_call([sys.executable, "-m", "pip", "install", 'julia'])
 finally:
-    import julia
+	import julia
 
 julia.install()
 
 try:
-    import diffeqpy
+	import diffeqpy
 except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", 'diffeqpy'])
+	subprocess.check_call([sys.executable, "-m", "pip", "install", 'diffeqpy'])
 finally:
-    import diffeqpy
+	import diffeqpy
 
 diffeqpy.install()
+
+from julia import Pkg
+
+try:
+	from julia import Sundials
+except ImportError:
+	Pkg.add("Sundials")
+finally:
+	from julia import Sundials
+
+Pkg.update() #Update all Julia packages
 
 tic = time.perf_counter()
 from diffeqpy import de
