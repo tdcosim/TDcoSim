@@ -74,7 +74,7 @@ class OpenDSSProcedure(object):
 	def getLoads(self, pccName, t, dt):
 		try:
 			derX={}
-			OpenDSSData.log(level=20,msg="pccNAme:{}".format(pccName))
+			
 			if OpenDSSData.config['myconfig']['solarFlag']:
 				P,Q,Converged = self._opendssinterface.getS(pccName=pccName) #### get updated solution
 				V = self._opendssinterface.getVoltage(vtype='actual',busID=self._pvNodes)
