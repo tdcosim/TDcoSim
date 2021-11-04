@@ -42,13 +42,12 @@ class PVDERAggregatedModel(object):
 					tic = time.perf_counter()
 				elif six.PY2:
 					tic = time.clock()
-				from diffeqpy import ode
+				from diffeqpy import ode#,de
 				from julia import Sundials
-				#from julia import SteadyStateDiffEq
+				
 				self.de = ode
 				self.sundials = Sundials
-				#self.steadystatediffeq = SteadyStateDiffEq
-				#from diffeqpy import de
+				
 				from julia import Main
 				from julia import LinearAlgebra
 				
@@ -551,7 +550,7 @@ class PVDERAggregatedModel(object):
 						#	thisPV._pvderModel.PV_model.steady_state_calc() #Initialization is not perfect for some reason
 			if self.integrator.t == 0.0:
 				tic = time.time()
-				for i in range(200):
+				for i in range(600): #600 half-cycles = 5 s.
 					if self.der_solver_type == "scipy":
 						y=self.integrator.integrate(self.integrator.t+dt)
 						if not self.integrator.get_return_code() > 0:

@@ -27,7 +27,6 @@ class OpenDSSProcedure(object):
 		try:
 			derP = {}
 			derQ = {}
-			n_pre_run_steps = 600
 
 			if OpenDSSData.config['myconfig']['solarFlag']:
 				# Re-setup DER after reload the OpenDSS
@@ -36,29 +35,9 @@ class OpenDSSProcedure(object):
 				V0pu = self._opendssinterface.getVoltage(vtype='pu')
 				pvdermap = self._pvderAggProcedure.setup(S0, V0,V0pu=V0pu)
 				self._opendssinterface.setupDER(pvdermap)
-				#P, Q, convergedFlg,scale = self._opendssinterface.initialize(Vpcc, targetS, tol)
-				"""
-				derType=OpenDSSData.config['openDSSConfig']['DEROdeSolver']
-				OpenDSSData.log(level=20,msg="PV nodes:{}".format(self._pvNodes))
-				if derType.replace('_','').replace('-','').lower()!='fastder':
-					if six.PY3:
-						tic = time.perf_counter()
-					elif six.PY2:
-						tic = time.clock()
-					for n in range(n_pre_run_steps):# synchronize
-						V = self._opendssinterface.getVoltage(vtype='actual',busID=self._pvNodes) #self._opendssinterface.getVoltage(vtype='actual')
-						#Vpu = self._opendssinterface.getVoltage(vtype='pu')
-						derP,derQ,derX= self._pvderAggProcedure.run(V,Vpu={},t=0,dt=1/120.)
-						self._opendssinterface.pvderInjection(derP,derQ,busID=self._pvNodes) #self._opendssinterface.pvderInjection(derP, derQ)
-						#P,Q,Converged = self._opendssinterface.getS(pccName='Vsource.source')
-					if six.PY3:
-						toc = time.perf_counter()
-					elif six.PY2:
-						toc = time.clock()
-					OpenDSSData.log(level=10,msg="Completed {} steps pre-run at {:.3f} seconds in {:.3f} seconds".format(n_pre_run_steps,toc,toc - tic))
-			"""
+			
 			P, Q, convergedFlg,scale = self._opendssinterface.initialize(Vpcc, targetS, tol)
-			OpenDSSData.log(level=20,msg="Completed initialize for feeder after {} steps with P:{},Q:{},convergedFlg:{}".format(n_pre_run_steps,P,Q,convergedFlg))
+			OpenDSSData.log(level=20,msg="Completed initialize for feeder with P:{},Q:{},convergedFlg:{}".format(P,Q,convergedFlg))
 			return P, Q,convergedFlg,scale 
 		except:
 			OpenDSSData.log()
