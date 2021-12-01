@@ -3,6 +3,7 @@ import pdb
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 import dash_table
 import numpy as np
 import math
@@ -216,21 +217,164 @@ class Dashboard(object):
 		return unselectedchildren, selectedchildren, columnoptions
 
 #=======================================================================================================================
-	def filter_template(self, df, uniqueColumnID, selectednode):
-		unselectedchildren, selectedchildren, columnoptions = self.update_filter(df, uniqueColumnID, selectednode)
+	def filter_template(self, objects, tabkey, df, objid:str):
 
-		unselectednode = html.Select(multiple=True, id="unselectednodesel", children=unselectedchildren)
-		nodeaddbtn = html.Button("==>", id='addbtn')
-		noderemovebtn = html.Button("<==", id='removebtn')
-		selectednode = html.Select(multiple=True, id="selectednodesel", children=selectedchildren)
-		columndrop = dcc.Dropdown(id="columndrop",options=columnoptions)
-		div = html.Div([
-			unselectednode,
-			nodeaddbtn,
-			noderemovebtn,
-			selectednode,
-			columndrop
-			])
-		return div
+		columnFilter=['scenario','tnodeid','property']				
+		childrenform = []
+
+		objids = []
+		for x in columnFilter:			
+			objids.append(str(tabkey+objid+x))
+		
+		width='{}vw'.format(int((70/len(columnFilter))-1))
+
+		for thisFilter,thisID in zip(columnFilter,objids):
+			option = [{'label':entry,'value':entry} for entry in set(df[thisFilter][-self.currentDF[thisFilter].isna()])]
+
+			objects['analytics'][tabkey][thisID]=dcc.Dropdown(id=thisID,options=option,value='',
+					placeholder=thisFilter,multi=False,style={'display':'inline-block','width':width}) 			
+			childrenform.append(objects['analytics'][tabkey][thisID])
+
+		return childrenform
+
+#=======================================================================================================================
+	def analytics_template(self, objects, df):
+
+		cstab = self.compare_signals_template(objects, df)
+		sttab = self.stability_time_template(objects, df)
+		vctab = self.violation_count_template(objects, df)
+
+		title = html.H1(children="Data Analytics", style={'color':'white','fontWeight':'bold'})
+		tabs = dcc.Tabs(id="inner_analytics_tabs",children=[cstab, sttab, vctab])
+		layoutdiv = html.Div(id="analyticsTemplate", children=[title, tabs])
+		return layoutdiv
+
+#=======================================================================================================================
+	def compare_signals_template(self, objects, df):
+		objects['analytics']['cs']={}
+
+		s1filters=self.filter_template(objects, 'cs', df, 's1')			
+
+		s1tooltip = self.tooltip_template("Select Signal 1 that you want to compare", 
+			{'display':'inline-block', 'color':'white', 'marginRight':'5px'},
+			'css1tooltip'
+			)
+		s1title = html.H2(children="Signal 1:", style={'display':'inline-block', 'color':'white','fontWeight':'bold','marginRight':'20px'})		
+		s1children = [s1tooltip, s1title]
+		for x in s1filters:
+			s1children.append(x)
+
+		s1div = html.Div(children=s1children, style={'display':'block', 'marginTop': '10px', 'marginLeft': '10px', 'verticalAlign': 'middle'})
+
+		s2filters=self.filter_template(objects, 'cs', df, 's2')			
+
+		s2tooltip = self.tooltip_template("Select Signal 2 that you want to compare", 
+			{'display':'inline-block', 'color':'white', 'marginRight':'5px'},
+			'css2tooltip'
+			)
+		s2title = html.H2(children="Signal 2:", style={'display':'inline-block', 'color':'white','fontWeight':'bold','marginRight':'20px'})		
+		s2children = [s2tooltip, s2title]
+		for x in s2filters:
+			s2children.append(x)
+
+		s2div = html.Div(children=s2children, style={'display':'block', 'marginTop': '10px', 'marginLeft': '10px', 'verticalAlign': 'middle'})
 
 
+		err=dcc.Input(
+				id="cs_error",
+				type="number",
+				placeholder="Error threshold (%)",
+				style={'display':'inline-block', 'width': '20vw',}
+			)
+		objects['analytics']['cs']['err'] = err
+		errtooltip = self.tooltip_template("Error threshold for stability time calculations. Maximum allowed signal deviation after stability time", 
+				{'display':'inline-block', 'color':'white', 'marginRight':'5px'},
+				'cserrtooltip'
+			)
+		errtitle = html.H2(children="Error threshold (%):", style={'display':'inline-block', 'color':'white','fontWeight':'bold','marginRight':'20px'})		
+		errdiv = html.Div(children=[errtooltip,errtitle,err], style={'display':'block', 'marginTop': '10px', 'marginLeft': '10px', 'verticalAlign': 'middle'})
+
+		hr = html.Hr(style={'color':'white'})
+
+		lagtooltip = self.tooltip_template("Delay between signals 1 and 2", 
+				{'display':'inline-block', 'color':'white', 'marginRight':'5px'},
+				'cslagtooltip'
+			)
+		lagtitle = html.H2(children="Lag", style={'display':'inline-block', 'color':'white','fontWeight':'bold','marginRight':'20px'})		
+		lagresult = html.H2(id='cslagresult', children="0.00 ms", style={'display':'block', 'color':'white','fontWeight':'bold'})
+		objects['analytics']['cs']['lagresult'] = lagresult
+		lagdiv = html.Div(children=[lagtooltip,lagtitle,lagresult], style={'display':'block', 'marginTop': '10px', 'marginLeft': '10px', 'verticalAlign': 'middle'})
+
+		msetooltip = self.tooltip_template("Mean Square Error between signals 1 and 2", 
+				{'display':'inline-block', 'color':'white', 'marginRight':'5px'},
+				'csmsetooltip'
+			)
+		msetitle = html.H2(children="Mean square error", style={'display':'inline-block', 'color':'white','fontWeight':'bold','marginRight':'20px'})		
+		mseresult = html.H2(id='csmseresult', children="0.00", style={'display':'block', 'color':'white','fontWeight':'bold'})
+		objects['analytics']['cs']['mseresult'] = mseresult
+		msediv = html.Div(children=[msetooltip,msetitle,mseresult], style={'display':'block', 'marginTop': '10px', 'marginLeft': '10px', 'verticalAlign': 'middle'})
+
+		sb1tooltip = self.tooltip_template("Time it takes for the signal 1 to stabilize after disturbance", 
+				{'display':'inline-block', 'color':'white', 'marginRight':'5px'},
+				'cssb1tooltip'
+			)
+		sb1title = html.H2(children="Stability time for signal 1", style={'display':'inline-block', 'color':'white','fontWeight':'bold','marginRight':'20px'})		
+		sb1result = html.H2(id='sb1seresult', children="0.00 s", style={'display':'block', 'color':'white','fontWeight':'bold'})
+		objects['analytics']['cs']['sb1result'] = sb1result
+		sb1div = html.Div(children=[sb1tooltip,sb1title,sb1result], style={'display':'block', 'marginTop': '10px', 'marginLeft': '10px', 'verticalAlign': 'middle'})
+
+		sb2tooltip = self.tooltip_template("Time it takes for the signal 2 to stabilize after disturbance", 
+				{'display':'inline-block', 'color':'white', 'marginRight':'5px'},
+				'cssb2tooltip'
+			)
+		sb2title = html.H2(children="Stability time for signal 2", style={'display':'inline-block', 'color':'white','fontWeight':'bold','marginRight':'20px'})		
+		sb2result = html.H2(id='sb2seresult', children="0.00 ms", style={'display':'block', 'color':'white','fontWeight':'bold'})
+		objects['analytics']['cs']['sb2result'] = sb2result
+		sb2div = html.Div(children=[sb2tooltip,sb2title,sb2result], style={'display':'block', 'marginTop': '10px', 'marginLeft': '10px', 'verticalAlign': 'middle'})
+
+		graphobj = self.graph_template('csgraph')
+		graph = graphobj['csgraph']
+		graph.figure['layout']['title']='Compare Signals'
+		graph.figure['layout']['font']={'color':'white'}
+		graph.figure['layout']['xaxis']={'title':'Time (s)'}
+		graph.figure['layout']['yaxis']={'title':'TBD'}
+		objects['analytics']['cs']['graph'] = graph
+		
+		resultdiv = html.Div(children=[lagdiv, msediv, sb1div, sb2div,], style={'display':'inline-block', 'marginTop': '10px', 'marginLeft': '10px'})
+		graphdiv = html.Div(children=[graph], style={'display':'inline-block', 'marginTop': '10px','marginLeft': '10px', 'width':'60vw','height':'auto'})
+
+
+		tabcontents = html.Div(id="compare_signals_div", children=[s1div, s2div, errdiv, hr, resultdiv, graphdiv])
+		style={'backgroundColor':'rgba(0,0,0,.7)','color':'white','fontWeight':'bold','fontSize':'1em'}
+		selected_style={'backgroundColor':'grey','color':'white','fontWeight':'bold','fontSize':'1em'}
+		tab = dcc.Tab(id="compare_signals_tab",label="Compare Signals",style=style,selected_style=selected_style, children=[tabcontents])
+		return tab
+
+#=======================================================================================================================
+	def stability_time_template(self, objects, df):
+
+		tabcontents = html.Div(id="stability_time_div", children=[])
+		style={'backgroundColor':'rgba(0,0,0,.7)','color':'white','fontWeight':'bold','fontSize':'1em'}
+		selected_style={'backgroundColor':'grey','color':'white','fontWeight':'bold','fontSize':'1em'}
+		tab = dcc.Tab(id="stability_time_tab",label="Stability Time",style=style,selected_style=selected_style, children=[tabcontents])
+		return tab
+
+#=======================================================================================================================
+	def violation_count_template(self, objects, df):
+
+		tabcontents = html.Div(id="violation_count_div", children=[])
+		style={'backgroundColor':'rgba(0,0,0,.7)','color':'white','fontWeight':'bold','fontSize':'1em'}
+		selected_style={'backgroundColor':'grey','color':'white','fontWeight':'bold','fontSize':'1em'}
+		tab = dcc.Tab(id="violation_count_tab",label="Violation Count",style=style,selected_style=selected_style, children=[tabcontents])
+		return tab
+
+#=======================================================================================================================
+	def tooltip_template(self, text, styleobj, objid):
+		tooltip = html.Div(
+		    [
+		        html.I(className="fas fa-question-circle fa-lg", id=objid),
+		        dbc.Tooltip(text, target=objid),
+		    ],
+		    style=styleobj
+		)
+		return tooltip

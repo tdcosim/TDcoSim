@@ -6,6 +6,7 @@ import time
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 import dash_table
 import plotly.express as px
@@ -15,7 +16,10 @@ import numpy as np
 import dask.dataframe as dd #< 1s overhead
 import glob
 import six
-app = dash.Dash(__name__)
+import tdcosim.data_analytics as da
+FONT_AWESOME = "https://use.fontawesome.com/releases/v5.10.2/css/all.css"
+
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, FONT_AWESOME])
 
 #=======================================================================================================================
 def create_graphs(objects,objID,title,fontColor,xlabel,ylabel):
@@ -45,6 +49,13 @@ def create_filter(df, thisObjID):
 	objects['filter'] = {
 	 thisObjID : helper.filter_template(df, 'tnodeid', [])	
 	}
+
+#=======================================================================================================================
+def create_analytics(objects, df):
+	objects['analytics']={}
+	analyticstab = helper.analytics_template(objects, df)
+	layout = html.Div(id="analyticsdiv", children=[analyticstab])
+	return layout
 
 #=======================================================================================================================
 def create_tab(objects,objID,label,style=None,selected_style=None):
@@ -88,8 +99,8 @@ def gather_objects():
 	create_table(df, 'table')
 	create_graphs(objects,['vmag','freq'],['vmag','freq'],['white','white'],['Time (s)', 'Time (s)'],\
 	['Vmag (PU)','f (hz)'])
-	create_tab(objects,['gis','table','plots'],['GIS','Table','Plots'])
-	create_tabs(objects,'main_tab',[objects['tab']['gis'],objects['tab']['table'],objects['tab']['plots']])
+	create_tab(objects,['gis','table','plots', 'analytics'],['GIS','Table','Plots','Analytics'])
+	create_tabs(objects,'main_tab',[objects['tab']['gis'],objects['tab']['table'],objects['tab']['plots'],objects['tab']['analytics']])
 
 	# define tab objects
 	# gis
@@ -118,6 +129,10 @@ def gather_objects():
 			'justifyContent':'end','width':'99%','height':'auto','marginTop':'60px','marginLeft':'10px','marginRight':'5px'})
 		])
 	]
+
+	# Analytics
+	analyticsdiv = create_analytics(objects, df)
+	objects['tab']['analytics'].children=[analyticsdiv]
 
 #=======================================================================================================================
 @app.callback([Output('property', 'options'),Output('dnodeid', 'style'),Output('dnodeid', 'options')],\
@@ -228,6 +243,105 @@ def update_gis(bubble_property,bubble_color_property,bubble_size_property):
 	except:
 		raise
 
+#=======================================================================================================================
+@app.callback([Output('css1property', 'options')],[Input('css1tnodeid', 'value')])
+def update_compare_signal1_plot_filter(tnodeid):
+	try:		
+		if tnodeid:			
+			res=[]			
+			res=set(df[df.tnodeid==tnodeid].property)
+			property_options=[]
+			for entry in res:
+				property_options.append({'label':entry,'value':entry})
+		else:
+			property_options=objects['analytics']['cs']['css1property'].options
+
+		return [property_options]
+	except:
+		raise
+
+#=======================================================================================================================
+@app.callback([Output('css2property', 'options')],
+[Input('css2tnodeid', 'value')])
+def update_compare_signal2_plot_filter(tnodeid):
+	try:
+		if tnodeid:			
+			res=[]
+			res=set(df[df.tnodeid==tnodeid].property)
+			property_options=[]
+			for entry in res:
+				property_options.append({'label':entry,'value':entry})
+		else:
+			property_options=objects['analytics']['cs']['css2property'].options
+
+		return [property_options]
+	except:
+		raise
+
+#=======================================================================================================================
+@app.callback([Output('csgraph', 'figure'),Output('csgraph', 'style'),
+	Output('cslagresult', 'children'),Output('csmseresult', 'children'),Output('sb1seresult', 'children'),Output('sb2seresult', 'children')],
+[Input('css1scenario', 'value'),Input('css1tnodeid', 'value'),Input('css1property', 'value'),
+Input('css2scenario', 'value'),Input('css2tnodeid', 'value'),Input('css2property', 'value'),
+Input('cs_error', 'value')])
+def update_compare_signal_result(css1scenario,css1tnodeid,css1prop,css2scenario,css2tnodeid,css2prop, errorthreshhold):
+	try:		
+		figure=objects['analytics']['cs']['graph'].figure
+		style=objects['analytics']['cs']['graph'].style
+		lagresult = objects['analytics']['cs']['lagresult'].children
+		mseresult = objects['analytics']['cs']['mseresult'].children
+		sb1result = objects['analytics']['cs']['sb1result'].children
+		sb2result = objects['analytics']['cs']['sb2result'].children
+
+		if 'height' in figure['layout']:
+			figure['layout'].pop('height')
+		thisData=[]
+
+		df1=objects['df']
+		df1=df1[df1.t>=0]
+
+		if css1scenario:
+			df1=df1[df1.scenario==css1scenario]
+
+		if css1prop:
+			df1=df1[df1.property==css1prop]			
+			filterDF=df1[df1.tnodeid==css1tnodeid]
+			thisData.append({'x':filterDF.t, 'y':filterDF.value, 'type': 'chart','name':('Signal 1 ' + css1tnodeid)})
+			figure['data']=thisData
+			figure['layout']['title']='{}'.format(css1prop.capitalize())
+			figure['layout']['xaxis']={'title':'Time (s)'}
+			figure['layout']['yaxis']={'title':'{} (PU)'.format(css1prop.capitalize())}
+
+		df2=objects['df']
+		df2=df2[df2.t>=0]		
+		
+		if css2scenario:
+			df2=df2[df2.scenario==css2scenario]
+
+		if css2prop:
+			df2=df2[df2.property==css2prop]			
+			filterDF=df2[df2.tnodeid==css2tnodeid]
+			thisData.append({'x':filterDF.t, 'y':filterDF.value, 'type': 'chart','name':('Signal 2 ' + css2tnodeid)})
+			figure['data']=thisData
+			figure['layout']['title']='{}'.format(css2prop.capitalize())
+			figure['layout']['xaxis']={'title':'Time (s)'}
+			figure['layout']['yaxis']={'title':'{} (PU)'.format(css2prop.capitalize())}
+
+		try:
+			if errorthreshhold != None:
+				print("Call Compare Signals")				
+				result = da.compare_signals(css1tnodeid[0],css2tnodeid[0],df1[df1.tnodeid==css1tnodeid[0]],df2[df2.tnodeid==css2tnodeid[0]],errorthreshhold*0.01,0)				
+				lagresult = "{:.4f}".format(result[0]) + " ms"
+				mseresult = "{:.4f}".format(result[1])
+				sb1result = "{:.4f}".format(result[2][0]) + " s"
+				sb2result = "{:.4f}".format(result[3][0]) + " s"
+				print(result)
+		except:
+			raise
+
+		return [figure,style, lagresult, mseresult, sb1result, sb2result]
+	except:
+		raise
 
 #======================================================================================================================
 if __name__ == '__main__':	
