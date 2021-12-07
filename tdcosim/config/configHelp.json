@@ -1,0 +1,38 @@
+{
+   "logging": {
+      "help": "\nlogging\n-------\nControls logging information\n\nCheck:\nlogging.level\nlogging.saveSubprocessOutErr",
+      "level":{"help":""},
+      "saveSubprocessOutErr":{"help":""}
+   }, 
+   "cosimHome": {
+      "help": "\ncosimHome\n---------\nDirectory where TDcoSim can be found"
+   }, 
+   "openDSSConfig": {
+      "help": "\nopenDSSConfig\n-------------\nControls OpenDSS setup\n\nCheck:\nopenDSSConfig.DEROdeSolver\nopenDSSConfig.manualFeederConfig\nopenDSSConfig.defaultFeederConfig",
+      "DEROdeSolver":{"help":""},
+      "manualFeederConfig":{"help":""},
+      "defaultFeederConfig":{"help":""}
+   }, 
+   "psseConfig": {
+      "help": "\npsseConfig\n----------\nControls PSSE setup\n\nCheck:\npsseConfig.installLocation\npsseConfig.dyrFilePath\npsseConfig.rawFilePath",
+      "installLocation":{"help":""},
+      "dyrFilePath":{"help":"Path to dyrfile"},
+      "rawFilePath":{"help":"Path to rawfile"},
+      "monitor":{"help":"Additional machine/model data to be monitored"}
+   }, 
+   "simulationConfig": {
+      "help": "\nsimulationConfig\n----------------\nControls simulation setup\n\nCheck:\nsimulationConfig.defaultLoadType\nsimulationConfig.simType\nsimulationConfig.dynamicConfig\nsimulationConfig.staticConfig",
+      "defaultLoadType":{"help":""},
+      "simType":{"help":""},
+      "dynamicConfig":{"help":""},
+      "staticConfig":{"help":""}
+   }, 
+   "outputConfig": {
+      "help": "\noutputConfig\n------------\nOutput/results setup\n\nCheck:\noutputConfig.simID\noutputConfig.type\noutputConfig.outputDir\noutputConfig.outputfilename\noutputConfig.scenarioID",
+      "simID":{"help":"\noutputConfig.simID\n------------------\n\nSimulation ID. This ID will be used to create a folder of the same name placed under outputDir."},
+      "type":{"help":"\noutputConfig.type\n-----------------\n\nType of output. Default is dataframe."},
+      "outputDir":{"help":"\noutputConfig.outputDir\n----------------------\n\npath to directory that stores the simualtion output."},
+      "outputfilename":{"help":""},
+      "scenarioID":{"help":"\noutputConfig.outputDir\n-----------------------\n\nscenario ID to use in dataframe. Can be any string that helps describe the scenario."}
+   }
+}

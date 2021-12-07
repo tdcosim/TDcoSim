@@ -1,6 +1,6 @@
 # Introduction
 
-Argonne’s transmission and distribution systems  co-simulation tool (**TDcoSim**) is a powerful tool to conduct studies that capture short- and long-term interactions between transmission and distribution systems with and without distributed energy resources (DER). It is capable of both steady-state and dynamic simulations. Consideration of inverter-based DER dynamics along with its protection and controls are among the most salient features of this tool. **TDcoSim** is designed to be used in offline planning, operational, and control studies. Transmission system entities can use the tool to study high-penetration DER scenarios, which will assist in ensuring secure, reliable, and economic grid planning and operations.
+Argonne’s transmission and distribution systems  co-simulation tool (**TDcoSim**) is a tool to conduct studies that capture short- and long-term interactions between transmission and distribution systems with and without distributed energy resources (DER). It is capable of performing steady-state and dynamic simulations, as well as perfuming analytics on the results from the simulation . Consideration of inverter-based DER dynamics along with its protection and controls are among the most salient features of this tool.  Additionally, the tool is capable of efficiently simulating tens of thousands of individual DER models. **TDcoSim** is designed to be used in offline planning, operational, and control studies. Transmission system entities can use the tool to study high-penetration DER scenarios, which will assist in ensuring secure, reliable, and economic grid planning and operations.
 
 This manual intends to introduce users to **TDcoSim**, provide a step-by-step guide to its installation and use, and offer examples of its capabilities as a tool for conducting studies. A list of case studies possible with **TDcoSim** can be found [here](#types-of-studies) and a brochure with FAQ related to the project goals can found [here](https://www.wecc.org/Administrative/ANL-TD%20co-simulation%20tool%20informational%20brochure.pdf). 
 
@@ -16,6 +16,8 @@ Fig. 1. below illustrates the various components that currently can be simulated
 <p align="center">
   <strong>Fig. 1. </strong>Components that can be simulated using TDcoSim.
 </p>
+
+Note that **TDcoSim** can also simulate advanced models like DER_A, composite load model (CMLD), and complex load mode (CLOD) that available in PSS/E.
 
 ## How can I use it?
 
@@ -33,6 +35,8 @@ In order to run a co-simulation using **TDcoSim**, the user needs to provide the
 * DER penetration levels (required for dynamic co-simulation)
 * DER ratings and ride through settings (optional)
 * Simulation events (optional)
+* Presence of ZIP, Composite load model (CMLD), Composite load model (CLOD),
+* Presence of aggregate DER model (DER_A) (only available in PSS/E 35)
 
 Detailed description of each input can be found [here](user_guide_getting_started.md#getting-started-with TDcoSim).
 
@@ -104,7 +108,8 @@ Following capabilities are planned in be added in the future:
 
 ## Scalability and solution time
 
-The scale of the T & D system (including PV-DERs) to be co-simulated is limited only by the available memory (RAM) in the workstation where **TDcoSim** is installed. The solution time for the dynamic co-simulation depends on the number of distribution feeder instances and DER instances as well as on the number of logical cores available in the workstation.
+The scale of the T & D system (including PV-DERs) to be co-simulated is limited only by the available memory (RAM) in the workstation where **TDcoSim** is installed. The solution time for the dynamic co-simulation depends on the number of distribution feeder instances, the number and type of DER instances, the type of ODE solver being used, and on the number of logical cores available in the workstation.
 
 [Continue to Getting Started](user_guide_getting_started.md)
+
 \pagebreak

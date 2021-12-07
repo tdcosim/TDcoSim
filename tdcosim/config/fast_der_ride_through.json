@@ -1,0 +1,411 @@
+{
+	"ieee_1547_2018_cat_2_base_standard": {
+		"normal_operation": {
+		   "voltage_range": [
+			  0.88,
+			  1.1
+		   ]
+		},
+		"enter_service": {
+		   "intentional_delay": 120,
+		   "reconnection_window": 1
+		},
+		"lvrt": {
+		   "zone_1": {
+			  "voltage_range": [
+				 0.65,
+				 0.88
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 3
+		   },
+		   "zone_2": {
+			  "voltage_range": [
+				 0.45,
+				 0.65
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 0.32
+		   },
+		   "zone_3": {
+			  "voltage_range": [
+				 0.3,
+				 0.45
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 0.16
+		   },
+		   "zone_4": {
+			  "voltage_range": [
+				 0,
+				 0.3
+			  ],
+			  "action": "momentary_cessation",
+			  "minimum_ride_through_time": 0.16
+		   }
+		},
+		"hvrt": {
+		   "zone_1": {
+			  "voltage_range": [
+				 1.1,
+				 1.15
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 1
+		   },
+		   "zone_2": {
+			  "voltage_range": [
+				 1.15,
+				 1.175
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 0.5
+		   },
+		   "zone_3": {
+			  "voltage_range": [
+				 1.175,
+				 1.12
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 0.2
+		   },
+		   "zone_4": {
+			  "voltage_range": [
+				 1.2,
+				 10
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 0.16
+		   }
+		}
+	 },
+	 "ieee_1547_2003_base_standard": {
+		"normal_operation": {
+		   "voltage_range": [
+			  0.88,
+			  1.1
+		   ]
+		},
+		"enter_service": {
+		   "intentional_delay": 120,
+		   "reconnection_window": 1
+		},
+		"lvrt": {
+		   "zone_1": {
+			  "voltage_range": [
+				 0.5,
+				 0.88
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 2
+		   },
+		   "zone_2": {
+			  "voltage_range": [
+				 0.0,
+				 0.5
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 0.16
+		   }
+		},
+		"hvrt": {
+		   "zone_1": {
+			  "voltage_range": [
+				 1.1,
+				 1.2
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 1
+		   },
+		   "zone_2": {
+			  "voltage_range": [
+				 1.2,
+				 10.0
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 0.16
+		   }
+		}
+	 },
+	"ieee_2018_category_3": {
+	   "hvrt": {
+		  "zone_1": {
+			 "voltage_range": [
+				1.1,
+				1.2
+			 ],
+			 "action": "momentary_cessation",
+			 "minimum_ride_through_time": 12
+		  },
+		  "zone_2": {
+			 "voltage_range": [
+				1.2,
+				10
+			 ],
+			 "action": "momentary_cessation",
+			 "minimum_ride_through_time": 0.16
+		  }
+	   },
+	   "lvrt": {
+		  "zone_1": {
+			 "voltage_range": [
+				0.7,
+				0.88
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 20
+		  },
+		  "zone_2": {
+			 "voltage_range": [
+				0.5,
+				0.7
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 10
+		  },
+		  "zone_3": {
+			 "voltage_range": [
+				0,
+				0.5
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 1
+		  }
+	   },
+	   "normal_operation": {
+		  "voltage_range": [
+			 0.88,
+			 1.1
+		  ]
+	   },
+	   "enter_service": {
+		  "intentional_delay": 0,
+		  "reconnection_window": 1.0
+	   }
+	},
+	"ieee_2018_category_2": {
+	   "normal_operation": {
+		  "voltage_range": [
+			 0.88,
+			 1.1
+		  ]
+	   },
+	   "enter_service": {
+		  "intentional_delay": 0,
+		  "reconnection_window": 1
+	   },
+	   "lvrt": {
+		  "zone_1": {
+			 "voltage_range": [
+				0.65,
+				0.88
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 3
+		  },
+		  "zone_2": {
+			 "voltage_range": [
+				0.45,
+				0.65
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 0.32
+		  },
+		  "zone_3": {
+			 "voltage_range": [
+				0.3,
+				0.45
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 1.16
+		  },
+		  "zone_4": {
+			 "voltage_range": [
+				0,
+				0.3
+			 ],
+			 "action": "momentary_cessation",
+			 "minimum_ride_through_time": 1.16
+		  }
+	   },
+	   "hvrt": {
+		  "zone_1": {
+			 "voltage_range": [
+				1.1,
+				1.15
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 1
+		  },
+		  "zone_2": {
+			 "voltage_range": [
+				1.15,
+				1.175
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 0.5
+		  },
+		  "zone_3": {
+			 "voltage_range": [
+				1.175,
+				1.12
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 0.2
+		  },
+		  "zone_4": {
+			 "voltage_range": [
+				1.2,
+				10
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 0.16
+		  }
+	   }
+	},
+	"ieee_2018_category_1": {
+	   "normal_operation": {
+		  "voltage_range": [
+			 0.88,
+			 1.1
+		  ]
+	   },
+	   "enter_service": {
+		  "intentional_delay": 0,
+		  "reconnection_window": 1
+	   },
+	   "lvrt": {
+		  "zone_1": {
+			 "voltage_range": [
+				0.7,
+				0.88
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 0.7
+		  },
+		  "zone_2": {
+			 "voltage_range": [
+				0.5,
+				0.7
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 0.16
+		  },
+		  "zone_3": {
+			 "voltage_range": [
+				0,
+				0.5
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 0.16
+		  }
+	   },
+	   "hvrt": {
+		  "zone_1": {
+			 "voltage_range": [
+				1.1,
+				1.15
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 1
+		  },
+		  "zone_2": {
+			 "voltage_range": [
+				1.15,
+				1.175
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 0.5
+		  },
+		  "zone_3": {
+			 "voltage_range": [
+				1.175,
+				1.12
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 0.2
+		  },
+		  "zone_4": {
+			 "voltage_range": [
+				1.2,
+				10
+			 ],
+			 "action": "trip",
+			 "minimum_ride_through_time": 0.16
+		  }
+	   }
+	},
+	"ca_rule_21": {
+		"normal_operation": {
+		   "voltage_range": [
+			  0.88,
+			  1.1
+		   ]
+		},
+		"enter_service": {
+		   "intentional_delay": 0,
+		   "reconnection_window": 1
+		},
+		"lvrt": {
+		   "zone_1": {
+			  "voltage_range": [
+				 0.7,
+				 0.88
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 3.0
+		   },
+		   "zone_2": {
+			  "voltage_range": [
+				 0.49,
+				 0.7
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 1.5
+		   },
+		   "zone_3": {
+			  "voltage_range": [
+				 0.44,
+				 0.49
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 1.5
+		   },
+		   "zone_4": {
+			"voltage_range": [
+			   0.0,
+			   0.44
+			],
+			"action": "trip",
+			"minimum_ride_through_time": 1.5
+		 }
+		},
+		"hvrt": {
+		   "zone_1": {
+			  "voltage_range": [
+				 1.1,
+				 1.15
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 3
+		   },
+		   "zone_2": {
+			  "voltage_range": [
+				 1.15,
+				 1.2
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 1.5
+		   },
+		   "zone_3": {
+			  "voltage_range": [
+				 1.2,
+				 10.0
+			  ],
+			  "action": "trip",
+			  "minimum_ride_through_time": 1.5
+		   }
+		}
+	 }
+ }
+ 
