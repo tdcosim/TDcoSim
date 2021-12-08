@@ -6,8 +6,8 @@ import os
 import sys
 import inspect
 
-import psspy
-import dyntools
+#import psspy
+#import dyntools
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -159,13 +159,13 @@ class DataAnalytics(object):
 			elif simType=='cosim':
 				stride=2
 
-			psseVersion=psspy.psseversion()[1]
-			if psseVersion==33:
-				chnfobj = dyntools.CHNF(outfile,0)
-				_, ch_id, ch_data = chnfobj.get_data()
-			elif psseVersion==35:
-				chnfobj = dyntools.CHNF(outfile,outvrsn=0)
-				_, ch_id, ch_data = chnfobj.get_data()
+			# psseVersion=psspy.psseversion()[1]
+			# if psseVersion==33:
+			# 	chnfobj = dyntools.CHNF(outfile,0)
+			# 	_, ch_id, ch_data = chnfobj.get_data()
+			# elif psseVersion==35:
+			# 	chnfobj = dyntools.CHNF(outfile,outvrsn=0)
+			# 	_, ch_id, ch_data = chnfobj.get_data()
 
 			symbols=[ch_id[entry] for entry in ch_id]
 			properties=list(set([ch_id[entry].split(' ')[0] for entry in ch_id]))
