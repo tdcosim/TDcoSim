@@ -313,7 +313,7 @@ class PVDERAggregatedModel(object):
 					self.integrator=ode(self.funcval,self.jac).set_integrator('vode',method=self.ode_solver_method,rtol=1e-4,atol=1e-4)
 				self.integrator.set_initial_value(y0,t0)
 			elif self.der_solver_type == "diffeqpy":
-				if self.ode_solver_method in ['TRBDF2','KenCarp4']:
+				if self.ode_solver_method in ['TRBDF2','KenCarp4','FBDF','QNDF']:
 					solver_type = eval("self.de.{}()".format(self.ode_solver_method)) #self.de.TRBDF2()
 					
 				elif self.ode_solver_method in ['CVODE_BDF','ARKODE']:

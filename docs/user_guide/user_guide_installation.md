@@ -19,10 +19,15 @@ After installation open a new command prompt and run the following to set psse p
 tdcosim setconfig -p "path\to\psse_installation"  
 ```
 
-For example, something similar to:
+If PSSE 35 is being used the following may be used:
 
 ```
 tdcosim setconfig -p "C:\Program Files\PTI\PSSE35\35.0\PSSPY37" 
+```
+If PSSE 33 is being used the following may be used:
+
+```
+tdcosim setconfig -p "C:\Program Files (x86)\PTI\PSSE33\PSSBIN" 
 ```
 
 ***
@@ -65,13 +70,17 @@ The packages listed below must be installed separately:
 
 * For using the high performance ODE solver [diffeqpy, version >= 1.1.0](https://github.com/SciML/diffeqpy)
 
-  * Install tdcosim with the diffeqpy flag as shown below.
+  * Install tdcosim with the **diffeqpy** flag as shown below.
     ```
        pip install tdcosim[diffeqpy]
     ```
-  * Download and install Julia interpreter: [Julia, version >= 1.5](https://julialang.org/downloads/)
+  * After installation open a new command prompt and run the script **install_julia_diffeqpy.py** [available in the repository](https://github.com/tdcosim/TDcoSim/blob/v2.0.0rc2_dev/install_julia_diffeqpy.py). It will install Julia (if not already installed), all the required libraries, and setup a Julia environment linked to the Python environment.
+    ```
+       python install_julia_diffeqpy.py
+    ```
+  * Download and install Julia interpreter: [Julia, version >= 1.5](https://julialang.org/downloads/) (Optional)
 
-  * Add Julia to system PATH environment variables as shown [here](https://julialang.org/downloads/platform/) (Only for Windows OS).
+  * Add Julia to system PATH environment variables as shown [here](https://julialang.org/downloads/platform/) (Only for Windows OS) (Optional)
 
 ***
 ***Note:*** If co-simulations involving more than 10 detailed DER models are needed to be run, it is recommended to select *diffeqpy* as the ODE solver.
