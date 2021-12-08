@@ -343,6 +343,131 @@ def update_compare_signal_result(css1scenario,css1tnodeid,css1prop,css2scenario,
 	except:
 		raise
 
+#=======================================================================================================================
+@app.callback([Output('sts1property', 'options')],[Input('sts1tnodeid', 'value')])
+def update_stability_time_plot_filter(tnodeid):
+	try:		
+		if tnodeid:			
+			res=[]			
+			res=set(df[df.tnodeid==tnodeid].property)
+			property_options=[]
+			for entry in res:
+				property_options.append({'label':entry,'value':entry})
+		else:
+			property_options=objects['analytics']['st']['sts1property'].options
+
+		return [property_options]
+	except:
+		raise
+
+#=======================================================================================================================
+@app.callback([Output('stgraph', 'figure'),Output('stgraph', 'style'),
+	Output('stsb1seresult', 'children'),Output('stsb2seresult', 'children')],
+[Input('sts1scenario', 'value'),Input('sts1tnodeid', 'value'),Input('sts1property', 'value'),
+Input('st_error', 'value')])
+def update_stability_time_result(css1scenario,css1tnodeid,css1prop,errorthreshhold):
+	try:		
+		figure=objects['analytics']['st']['graph'].figure
+		style=objects['analytics']['st']['graph'].style		
+		sb1result = objects['analytics']['st']['sb1result'].children
+		sb2result = objects['analytics']['st']['sb2result'].children
+
+		if 'height' in figure['layout']:
+			figure['layout'].pop('height')
+		thisData=[]
+
+		df1=objects['df']
+		df1=df1[df1.t>=0]
+
+		if css1scenario:
+			df1=df1[df1.scenario==css1scenario]
+
+		if css1prop:
+			df1=df1[df1.property==css1prop]			
+			filterDF=df1[df1.tnodeid==css1tnodeid]
+			thisData.append({'x':filterDF.t, 'y':filterDF.value, 'type': 'chart','name':('Signal 1 ' + css1tnodeid)})
+			figure['data']=thisData
+			figure['layout']['title']='{}'.format(css1prop.capitalize())
+			figure['layout']['xaxis']={'title':'Time (s)'}
+			figure['layout']['yaxis']={'title':'{} (PU)'.format(css1prop.capitalize())}
+
+		try:
+			if errorthreshhold != None:
+				print("Call Stability Time")				
+				result = da.compute_stability_time(df1[df1.tnodeid==css1tnodeid[0]],errorthreshhold*0.01)								
+				print(result)
+				sb1result = "{:.4f}".format(result[0]) + " s"
+				sb2result = "{:.4f}".format(result[2]) + " s"
+				
+		except:
+			raise
+
+		return [figure,style, sb1result, sb2result]
+	except:
+		raise
+
+#=======================================================================================================================
+@app.callback([Output('vcgraph', 'figure'),Output('vcgraph', 'style'),
+	Output('vcsb1seresult', 'children')],
+[Input('vcs1scenario', 'value'),Input('vcs1tnodeid', 'value'),Input('vcs1property', 'value'),
+Input('vc_uplimit', 'value'), Input('vc_lowlimit', 'value')])
+def update_stability_time_result(css1scenario,css1tnodeid,css1prop, upperlimit, lowerlimit):
+	try:		
+		figure=objects['analytics']['vc']['graph'].figure
+		style=objects['analytics']['vc']['graph'].style		
+		sb1result = objects['analytics']['vc']['sb1result'].children		
+
+		if 'height' in figure['layout']:
+			figure['layout'].pop('height')
+		thisData=[]
+
+		df1=objects['df']
+		df1=df1[df1.t>=0]
+
+		if css1scenario:
+			df1=df1[df1.scenario==css1scenario]
+
+		if css1prop:
+			df1=df1[df1.property==css1prop]			
+			filterDF=df1[df1.tnodeid==css1tnodeid]
+			thisData.append({'x':filterDF.t, 'y':filterDF.value, 'type': 'chart','name':('Signal 1 ' + css1tnodeid)})
+			figure['data']=thisData
+			figure['layout']['title']='{}'.format(css1prop.capitalize())
+			figure['layout']['xaxis']={'title':'Time (s)'}
+			figure['layout']['yaxis']={'title':'{} (PU)'.format(css1prop.capitalize())}
+
+		try:
+			if upperlimit != None and lowerlimit != None:
+				print("Call Violation Count")				
+				result = da.instances_of_violation(df1[df1.tnodeid==css1tnodeid[0]],upperlimit, lowerlimit)								
+				print(result)
+				sb1result = "{:.4f}".format(result)
+				
+				
+		except:
+			raise
+
+		return [figure,style, sb1result]
+	except:
+		raise
+
+#=======================================================================================================================
+@app.callback([Output('vcs1property', 'options')],[Input('vcs1tnodeid', 'value')])
+def update_violation_count_plot_filter(tnodeid):
+	try:		
+		if tnodeid:			
+			res=[]			
+			res=set(df[df.tnodeid==tnodeid].property)
+			property_options=[]
+			for entry in res:
+				property_options.append({'label':entry,'value':entry})
+		else:
+			property_options=objects['analytics']['vc']['vcs1property'].options
+
+		return [property_options]
+	except:
+		raise
+
 #======================================================================================================================
 if __name__ == '__main__':	
 	# http://localhost:8050/
