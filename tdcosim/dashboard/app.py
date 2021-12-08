@@ -331,11 +331,18 @@ def update_compare_signal_result(css1scenario,css1tnodeid,css1prop,css2scenario,
 			if errorthreshhold != None:
 				print("Call Compare Signals")				
 				result = da.compare_signals(css1tnodeid[0],css2tnodeid[0],df1[df1.tnodeid==css1tnodeid[0]],df2[df2.tnodeid==css2tnodeid[0]],errorthreshhold*0.01,0)				
+				print(result)
 				lagresult = "{:.4f}".format(result[0]) + " ms"
 				mseresult = "{:.4f}".format(result[1])
-				sb1result = "{:.4f}".format(result[2][0]) + " s"
-				sb2result = "{:.4f}".format(result[3][0]) + " s"
-				print(result)
+				if result[2][0] <= 0:
+					sb1result = result[2][1]
+				else:
+					sb1result = "{:.4f}".format(result[2][0]) + " s"
+				if result[3][0] <= 0:
+					sb2result = result[3][1]
+				else:
+					sb2result = "{:.4f}".format(result[3][0]) + " s"								
+				
 		except:
 			raise
 
@@ -396,7 +403,10 @@ def update_stability_time_result(css1scenario,css1tnodeid,css1prop,errorthreshho
 				print("Call Stability Time")				
 				result = da.compute_stability_time(df1[df1.tnodeid==css1tnodeid[0]],errorthreshhold*0.01)								
 				print(result)
-				sb1result = "{:.4f}".format(result[0]) + " s"
+				if result[0] <= 0:
+					sb1result = result[1]
+				else:
+					sb1result = "{:.4f}".format(result[0]) + " s"
 				sb2result = "{:.4f}".format(result[2]) + " s"
 				
 		except:
