@@ -10,7 +10,7 @@ TDcoSim (T & D co-simulation tool) is a Python package that can be used to perfo
 
 ## Links
 * Source code repository: https://github.com/tdcosim/TDcoSim
-* User guide: [Markdown](docs/user_guide/user_guide_TOC.md), [PDF](docs/user_guide/TDcoSim_user_guide_version_1_1.pdf), [DOCX](docs/user_guide/TDcoSim_user_guide_version_1_1.docx)
+* User guide: [Markdown](docs/user_guide/user_guide_TOC.md), [PDF](docs/user_guide/TDcoSim_user_guide_version_2_0.pdf), [DOCX](docs/user_guide/TDcoSim_user_guide_version_2_0.docx)
 * API Documentation: [API doc](docs/api-html/index.html)
 
 ## Installation
@@ -27,7 +27,16 @@ After installation open a new command prompt and run the following to set psse p
 
     tdcosim setconfig -p "path\to\psse_installation"  
 
-For example, something similar to, tdcosim setconfig -p "C:\Program Files\PTI\PSSE35\35.0\PSSPY37" 
+If PSSE 35 is being used the following may be used:
+
+```
+tdcosim setconfig -p "C:\Program Files\PTI\PSSE35\35.0\PSSPY37" 
+```
+If PSSE 33 is being used the following may be used:
+
+```
+tdcosim setconfig -p "C:\Program Files (x86)\PTI\PSSE33\PSSBIN" 
+```
 
 ### Dependencies:
 * External software: [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html), [OpenDSS](https://sourceforge.net/projects/electricdss/)
