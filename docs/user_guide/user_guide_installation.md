@@ -91,3 +91,14 @@ The packages listed below must be installed separately:
 
 ***
 
+## Compatibility table:
+
+| PSS/E | OpenDSS | Python | diffeqpy/Julia    | Tested                |
+| ----- | ------- | ------ | ----------------- | --------------------- |
+| 35    | 8.6.1.1 | 2.7.3  | -                 | Yes                   |
+| 33    | 9.3.0.2 | 2.7.3  | -                 | Yes                   |
+| 35    | 8.6.1.1 | 3.7    | -                 | Yes                   |
+| 35    | 8.6.1.1 | 3.7    | 1.2 - Julia 1.5.3 | Yes (till 75 feeders) |
+| 35    | 8.6.1.1 | 3.7    | 1.2 - Julia 1.6.1 | Yes (till 50 feeders) |
+| 35    | 8.6.1.1 | 3.7    | 1.2 - Julia 1.7.0 | Yes (till 50 feeders) |
+
