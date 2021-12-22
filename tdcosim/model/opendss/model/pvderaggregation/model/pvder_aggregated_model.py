@@ -36,7 +36,8 @@ class PVDERAggregatedModel(object):
 		"""Import diffeqpy using lazy loading and creates an attribute so that loading happens only if required and loads in parallel.
 		"""
 		try:
-			if self.der_solver_type == "diffeqpy":
+			der_solver_type = "diffeqpy"
+			if der_solver_type == "diffeqpy":
 				DERModelType = OpenDSSData.config['myconfig']['DERModelType']
 				if six.PY3:
 					tic = time.perf_counter()
@@ -247,7 +248,28 @@ class PVDERAggregatedModel(object):
 			if six.PY3:
 				self.pvIDIndex=list(self.pvIDIndex)
 			self.pvIDIndex.sort()# sort the index and use this as the order
-
+			
+			y0=[]; t0=0.0
+			for n in range(len(self.pvIDIndex)):
+				y0.extend(self._pvders[self.pvIDIndex[n]].x)
+				self._nEqs[self.pvIDIndex[n]]=len(self._pvders[self.pvIDIndex[n]].x)
+			der_solver_type =  "diffeqpy" #"scipy"
+			if der_solver_type == 'scipy':
+				self.integrator=ode(self.funcval_fastder).set_integrator('vode',method='adams',rtol=1e-4,atol=1e-4)
+				self.integrator.set_initial_value(y0,t0)
+				OpenDSSData.log(level=10,msg="Integrator using Adams method initialized at {:.3f} seconds".format(time.time()))
+			elif der_solver_type == 'diffeqpy':
+				self.import_diffeqpy()
+				julia_f = self.de.ODEFunction(self.funcval_fastder_diffeqpy)
+				diffeqpy_ode = self.de.ODEProblem(julia_f, y0, (t0, 1/120.),[])
+				self.integrator = self.de.init(diffeqpy_ode,self.sundials.CVODE_Adams(),dt=1/120.,saveat=1/120.,abstol=1e-4,reltol=1e-4)#self.de.VCABM()
+				OpenDSSData.log(level=10,msg="Integrator using DiffEqPY CVODE_Adams method initialized at {:.3f} seconds".format(time.time()))
+			
+			#tic = time.time()
+			#if self.der_solver_type == "scipy":
+			#y=self.integrator.integrate(self.integrator.t+1/120.)#dt=1/120.
+			#toc = time.time()
+			
 			return DNet['DER']['PVDERMap']
 		except:
 			OpenDSSData.log()
@@ -388,13 +410,32 @@ class PVDERAggregatedModel(object):
 			OpenDSSData.log()
 
 #===================================================================================================
+	def funcval_fastder(self,t,y,nEqs=6):
+		try:
+			fvalue=[]
+			for n in range(len(self.pvIDIndex)):
+				nEqs = self._nEqs[self.pvIDIndex[n]]
+				fvalue.extend(self._pvders[self.pvIDIndex[n]].func_val_new(y[n*nEqs:(n+1)*nEqs],t))
+			self.funcCalls['f']+=1
+
+			return fvalue
+		except:
+			OpenDSSData.log()
+
+	def funcval_fastder_diffeqpy(self,dy,y,p,t):
+		try:
+			for n in range(len(self.pvIDIndex)):
+				dy[n*self._nEqs[n]:(n+1)*self._nEqs[n]] = self._pvders[self.pvIDIndex[n]].func_val_new(y[n*self._nEqs[n]:(n+1)*self._nEqs[n]],t)
+			return dy
+		except:
+			OpenDSSData.log()
+
+#===================================================================================================
 	def funcval(self,t,y,nEqs=23):
 		try:
 			fvalue=[]
 			for n in range(len(self.pvIDIndex)):
 				nEqs = self._nEqs[self.pvIDIndex[n]]
-				#fvalue.extend(self._pvders[self.pvIDIndex[n]]._pvderModel.sim.ODE_model(
-				#y[n*nEqs:(n+1)*nEqs],t))
 				fvalue.extend(self._pvders[self.pvIDIndex[n]]._pvderModel.sim.ODE_model(
 				y[n*nEqs:(n+1)*nEqs],t))
 			self.funcCalls['f']+=1
@@ -402,7 +443,6 @@ class PVDERAggregatedModel(object):
 			return fvalue
 		except:
 			OpenDSSData.log()
-
 #===================================================================================================
 	def numjac(self,ffunc,x,t,eps=1e-6):
 		try:
@@ -458,7 +498,8 @@ class PVDERAggregatedModel(object):
 	def run(self,V,Vpu,t,dt=1/120.,nEqs=23):
 		try:
 			if self.der_solver_type.replace('_','').replace('-','').lower()=='fastder':
-				P,Q,x=self._run_fast(V=V,Vpu=Vpu,t=t,dt=dt)
+				#P,Q,x=self._run_fast(V=V,Vpu=Vpu,t=t,dt=dt)
+				P,Q,x=self._run_fast_new(V=V,Vpu=Vpu,t=t,dt=dt)
 			else:
 				P,Q=self._run_detailed(V=V,Vpu=Vpu,nEqs=nEqs,t=t,dt=dt)
 				x={}
@@ -502,7 +543,7 @@ class PVDERAggregatedModel(object):
 
 						# update Voltage injection
 						thisPV.update_model(Va)
-
+						
 						# integrate
 						thisPV.integrate(dt=dt)
 						thisId=thisPV.x[2]
@@ -527,6 +568,81 @@ class PVDERAggregatedModel(object):
 		except:
 			OpenDSSData.log(msg="Failed run the fast pvder aggregated model")
 
+#===================================================================================================
+	def _run_fast_new(self,V,Vpu,t=None,dt=1/120.):
+		try:
+			P = {}
+			Q = {}
+			x={}
+			# prerun for all pvder instances at this node
+			for node in OpenDSSData.data['DNet']['DER']['PVDERMap']:# compute solar inj at each node
+				lowSideNode='{}_tfr'.format(node)
+
+				Va = Vpu[lowSideNode]['a']
+				Vb = Vpu[lowSideNode]['b']
+				Vc = Vpu[lowSideNode]['c']
+
+				nodeP=0; nodeQ=0
+				for pv in OpenDSSData.data['DNet']['DER']['PVDERMap'][node]:
+					nSolar_at_this_node=\
+					OpenDSSData.data['DNet']['DER']['PVDERMap'][node]['nSolar_at_this_node']
+					if pv!='nSolar_at_this_node':
+						pvID=OpenDSSData.data['DNet']['DER']['PVDERMap'][node][pv]
+						thisPV=self._pvders[pvID]
+						
+						# compute initial condition
+						thisT=thisPV._integrator_data['time_values'][-1]
+						if self.integrator.t==0.0:
+							thisConf={}
+							thisConf['vref']=abs(Va)
+							thisConf['vref_ang']=np.angle(Va)
+							thisConf['pref']=thisPV.data['config']['pref']
+							thisConf['qref']=thisPV.data['config']['qref']
+							thisPV.compute_initial_condition(thisConf['pref'],\
+							thisConf['qref'],thisConf['vref'],thisConf['vref_ang'])
+
+						# update Voltage injection
+						thisPV.update_model(Va)
+				
+				#integrate
+				der_solver_type =  "diffeqpy" #"scipy"
+				if der_solver_type == "scipy":
+					y=self.integrator.integrate(self.integrator.t+dt)
+					if not self.integrator.get_return_code() > 0:
+						raise ValueError("Integration was not successul with return code:{}".format(self.integrator.get_return_code()))
+				elif der_solver_type == "diffeqpy":
+					self.de.step_b(self.integrator,dt,True)
+					y = self.integrator.u
+					if not self.de.check_error(self.integrator) == 'Success':
+				 		raise ValueError("Integration was not successul with return code:{}".format(self.de.check_error(self.integrator)))
+				
+				for pv in OpenDSSData.data['DNet']['DER']['PVDERMap'][node]:
+					nSolar_at_this_node=\
+					OpenDSSData.data['DNet']['DER']['PVDERMap'][node]['nSolar_at_this_node']
+					if pv!='nSolar_at_this_node':
+						pvID=OpenDSSData.data['DNet']['DER']['PVDERMap'][node][pv]
+						thisPV=self._pvders[pvID]
+						thisId=thisPV.x[2]
+						thisIq=thisPV.x[5]
+						thisVd=thisPV.data['model']['vd']
+						thisVq=thisPV.data['model']['vq']
+						nodeP-=thisVd*thisId*thisPV.data['config']['sbase'] # -ve load => generation
+						nodeQ-=-thisVd*thisIq*thisPV.data['config']['sbase']
+						if node not in x:
+							x[node]={}
+						if pv not in x[node]:
+							x[node][pv]={}
+						x[node][pv]=copy.deepcopy(thisPV.x).tolist()
+
+				P[node]=nodeP
+				Q[node]=nodeQ
+				OpenDSSData.data['DNet']['DER']['PVDERData'][node]['Vmag']['a']=Va
+				OpenDSSData.data['DNet']['DER']['PVDERData'][node]['Vmag']['b']=Vb
+				OpenDSSData.data['DNet']['DER']['PVDERData'][node]['Vmag']['c']=Vc
+
+			return P,Q,x
+		except:
+			OpenDSSData.log(msg="Failed run the fast pvder aggregated model")
 
 #===================================================================================================
 	def _run_detailed(self,V,Vpu,nEqs=23,t=0,dt=1/120.):
