@@ -616,7 +616,7 @@ class DataAnalytics(object):
 			exit_token = 0
 			stability_time = 0
 			T1 = -1
-			for i in range(len(dV)-5):
+			for i in range(len(dV)*0.95):
 				if abs(dV[i]) >= error_threshold*V[0] and t0 == 0 and exit_token == 0:
 					t0 = i # index of first significant deviation
 					T0 = T[i] # # time of first significant deviation
