@@ -6,7 +6,6 @@ import time
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 import dash_table
 import plotly.express as px
@@ -18,8 +17,8 @@ import glob
 import six
 import tdcosim.data_analytics as da
 FONT_AWESOME = "https://use.fontawesome.com/releases/v5.10.2/css/all.css"
-
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, FONT_AWESOME])
+BOOTSTRAPCSS = "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+app = dash.Dash(__name__, external_stylesheets=[BOOTSTRAPCSS, FONT_AWESOME])
 
 #=======================================================================================================================
 def create_graphs(objects,objID,title,fontColor,xlabel,ylabel):

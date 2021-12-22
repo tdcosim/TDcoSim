@@ -3,7 +3,6 @@ import pdb
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import dash_bootstrap_components as dbc
 import dash_table
 import numpy as np
 import math
@@ -505,8 +504,7 @@ class Dashboard(object):
 	def tooltip_template(self, text, styleobj, objid):
 		tooltip = html.Div(
 		    [
-		        html.I(className="fas fa-question-circle fa-lg", id=objid),
-		        dbc.Tooltip(text, target=objid),
+		        html.I(className="fas fa-question-circle fa-lg", id=objid, title=text),
 		    ],
 		    style=styleobj
 		)

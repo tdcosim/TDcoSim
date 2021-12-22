@@ -5,4 +5,3 @@ xlsxwriter>=1.2.0
 psutil>=5.7.0
 pandas>=1.1.5
 dash>=1.21.0
-dash-bootstrap-components>=1.0.1
