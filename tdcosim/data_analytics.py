@@ -604,37 +604,44 @@ class DataAnalytics(object):
 #-------------------------------------------------------------------------------------------			
 	def compute_stability_time(self,df,error_threshold):
 		try:
+			comment = 'Stability is determined'
 			df=df.sort_values(by='t')
 			V =np.array(df.value)
 			T = np.array(df.t)
 			dV = []
 			for t in range(len(V)-1):
-				dV.append(V[t+1]-V[t])
-			t0 = 0
-			t2 = 0
+				dV.append(V[t+1]-V[t]) 	 # Compute difference function of signal values
+			t0 = 0 # Index of first sigificant deviation in signal value
+			t2 = 0	 # time index of stability 
 			exit_token = 0
 			stability_time = 0
 			T1 = -1
-			for i in range(len(dV)):
+			for i in range(len(dV)*0.95):
 				if abs(dV[i]) >= error_threshold*V[0] and t0 == 0 and exit_token == 0:
 					t0 = i # index of first significant deviation
 					T0 = T[i] # # time of first significant deviation
-				if t0 != 0 and abs((max(V[i:len(V)]) - min(V[i:len(V)]))/min(V[t2:len(V)]))<= error_threshold and exit_token == 0:
+				if t0 != 0 and abs((max(V[i:len(V)]) - min(V[i:len(V)]))/min(V[i:len(V)]))<= error_threshold and exit_token == 0:
 					exit_token = 1
 					T1 = T[i] # time of stability
 					t2 = i # time index of stability
 					stability_time = T1 - T0
 			if t0 == 0:
 				comment = 'System is always stable'
-				stability_time = 0
-			elif T1 == -1:
+				stability_time = -1
+				max_deviation = max(V[0:len(V)]) - min(V[0:len(V)])
+
+			elif t2 == 0:
 				comment = 'System does not Stabilize'
-				stability_time = max(T)
+				stability_time = -1
+				max_deviation = -1
+			elif t2 !=0:
+				max_deviation = max(V[t2:len(V)]) - min(V[t2:len(V)])
+
 			else:
 				comment = 'Stability could not be determined'
 				stability_time = -1
-			max_deviation = max(V[t2:len(V)]) - min(V[t2:len(V)])
-
+				max_deviation = -1
+			
 			return stability_time,comment,max_deviation
 		except:
 			raise
@@ -652,20 +659,22 @@ class DataAnalytics(object):
 #--------------------------------------------------------------	
 	def lag_finder(self,df1, df2):
 		try:
-			y1=np.array(df1.value)
-			y2=np.array(df2.value)
-			n = len(y1)
-			corr = []
+			delay = -1
+			if self.check_dataframes(df1, df2):
+				y1=np.array(df1.value)
+				y2=np.array(df2.value)
+				n = len(y1)
+				corr = []
 
-			if n%2:
-				delay_arr = range(int(-(n-1)/2), int((n-1)/2))
-			else:
-				delay_arr = range(int(-n/2),int(n/2))
+				if n%2:
+					delay_arr = range(int(-(n-1)/2), int((n-1)/2))
+				else:
+					delay_arr = range(int(-n/2),int(n/2))
 
-			for i in delay_arr:
-				y_temp = np.roll(y1,i)
-				corr.append(sum(y_temp*y2))
-			delay = delay_arr[np.argmax(corr)]
+				for i in delay_arr:
+					y_temp = np.roll(y1,i)
+					corr.append(sum(y_temp*y2))
+				delay = delay_arr[np.argmax(corr)]
 
 			return delay
 		except:
@@ -674,9 +683,11 @@ class DataAnalytics(object):
 	#-----------------------------------------------------------
 	def compute_mean_square_error(self,df1,df2):
 			try:
-				V1 =np.array(df1.value)
-				V2 =np.array(df2.value)
-				MSE = (((V1-V2)/V1)**2).mean(axis=None)
+				MSE = -1
+				if self.check_dataframes(df1, df2):
+					V1 =np.array(df1.value)
+					V2 =np.array(df2.value)
+					MSE = (((V1-V2)/V1)**2).mean(axis=None)
 				return MSE
 			except:
 				raise
@@ -686,77 +697,82 @@ class DataAnalytics(object):
 	def compare_signals(self,thisBusId1,thisBusId2,df1,df2,error_threshold,show_results):
 		try:
 			
-			V1 =np.array(df1.value)
-			T1 = np.array(df1.t)
-			V2 =np.array(df2.value)
-			T2 = np.array(df2.t)
-			
-			# Check if signals are essentially the same
-			MSE = (((V1-V2)/V1)**2).mean(axis=None)
-			lag = self.lag_finder(df1, df2)
-			status = 0
-			if MSE <= error_threshold**2:
-				status = 1
-				MSG = 'Both Signals are essentially the same'
-			else:
-			# If signals are not same and if there is a time shift, detect it and correct it
-				V2 = self.shift_array(V2, -lag)							# Leg correction
-				MSE = (((V1-V2)/V1)**2).mean(axis=None)					# Compute Mean Square Error after lag correction
+			lag = -1
+			MSE = -1
+			Stability_time_1 = (-1,"Failed to analyze stability",-1)
+			Stability_time_2 = (-1,"Failed to analyze stability",-1)
+			if self.check_dataframes(df1, df2):
+				V1 =np.array(df1.value)
+				T1 = np.array(df1.t)
+				V2 =np.array(df2.value)
+				T2 = np.array(df2.t)
+				
+				# Check if signals are essentially the same
+				MSE = (((V1-V2)/V1)**2).mean(axis=None)
+				lag = self.lag_finder(df1, df2)
+				status = 0
 				if MSE <= error_threshold**2:
-					status = 2
-					MSG = 'Both Signals are essentially the same after correcting the lag of ' + str(lag) +'.'
-				
-				# If signals are not same after bias corrections. Correct for measurement bias...
-				if status == 0:
-					V2 =np.array(df2.value)
-					M1 = np.mean(V1)
-					M2 = np.mean(V2)
-					V2 = V2 - (M2-M1)
-					MSE = (((V1-V2)/V1)**2).mean(axis=None)	
-			
-					if MSE <= error_threshold**2 and status == 0:
-						MSG = 'Both Signals are essentially the same after correcting the Bias of ' + str(M2-M1) + '.'
-						status = 3
-				
-				# If signals are not same after bias and lag corrections. try both...
-				if status == 0:
-					V2 =np.array(df2.value)
-					V2 = self.shift_array(V2, -lag)			# Leg correction
-					M1 = np.mean(V1)
-					M2 = np.mean(V2)
-					V2 = V2 - (M2-M1)
-					MSE = (((V1-V2)/V1)**2).mean(axis=None)	
+					status = 1
+					MSG = 'Both Signals are essentially the same'
+				else:
+				# If signals are not same and if there is a time shift, detect it and correct it
+					V2 = self.shift_array(V2, -lag)							# Leg correction
+					MSE = (((V1-V2)/V1)**2).mean(axis=None)					# Compute Mean Square Error after lag correction
 					if MSE <= error_threshold**2:
-						MSG = 'Both Signals are essentially the same after correcting the lag of ' + str(lag)+' and the Bias of ' + str(M2-M1) + '.'
-						status = 4
-					else:
-					# Both signals are not same
-						MSG = 'Both Signals are not same'
-						status = 5
+						status = 2
+						MSG = 'Both Signals are essentially the same after correcting the lag of ' + str(lag) +'.'
 					
-			V1 =np.array(df1.value)
-			T1 = np.array(df1.t)
-			V2 =np.array(df2.value)
-			T2 = np.array(df2.t)
-			
-			P1_min = np.min(V1)
-			P1_max = np.max(V1)
-			P2_min = np.min(V2)
-			P2_max = np.max(V2)
-			Stability_time_1 = self.compute_stability_time(df1,error_threshold)
-			Stability_time_2 = self.compute_stability_time(df2,error_threshold)
-	#Plot signals
-			if show_results ==1:
-				fig, axs = plt.subplots()
-				axs.plot(T1,V1, '-b', label = '%s' % thisBusId1)
-				axs.plot(T2,V2, '--r', label = '%s' % thisBusId2)
-				axs.set_title('Original Signals without Bias and Lag Corrections')
-				axs.legend()
-				plt.text(0.1, 0.05, 'Signal 1\nMin Value = %s\nMax Value = %s\nStability Time = %s' %(P1_min,P1_max,Stability_time_1) , transform=axs.transAxes)
-				plt.text(0.9, 0.05, 'Signal 2\nMin Value = %s\nMax Value = %s\nStability Time = %s' %(P2_min,P2_max,Stability_time_2) , transform=axs.transAxes)
-				plt.text(0.5, 0.05, 'Mean Square Error = %s\nLag between Signals = %s' %(MSE, lag) , transform=axs.transAxes)
-				plt.text(0.5, 0.95, '%s' %(MSG) , transform=axs.transAxes)
-				axs.grid(True)		
+					# If signals are not same after bias corrections. Correct for measurement bias...
+					if status == 0:
+						V2 =np.array(df2.value)
+						M1 = np.mean(V1)
+						M2 = np.mean(V2)
+						V2 = V2 - (M2-M1)
+						MSE = (((V1-V2)/V1)**2).mean(axis=None)	
+				
+						if MSE <= error_threshold**2 and status == 0:
+							MSG = 'Both Signals are essentially the same after correcting the Bias of ' + str(M2-M1) + '.'
+							status = 3
+					
+					# If signals are not same after bias and lag corrections. try both...
+					if status == 0:
+						V2 =np.array(df2.value)
+						V2 = self.shift_array(V2, -lag)			# Leg correction
+						M1 = np.mean(V1)
+						M2 = np.mean(V2)
+						V2 = V2 - (M2-M1)
+						MSE = (((V1-V2)/V1)**2).mean(axis=None)	
+						if MSE <= error_threshold**2:
+							MSG = 'Both Signals are essentially the same after correcting the lag of ' + str(lag)+' and the Bias of ' + str(M2-M1) + '.'
+							status = 4
+						else:
+						# Both signals are not same
+							MSG = 'Both Signals are not same'
+							status = 5
+						
+				V1 =np.array(df1.value)
+				T1 = np.array(df1.t)
+				V2 =np.array(df2.value)
+				T2 = np.array(df2.t)
+				
+				P1_min = np.min(V1)
+				P1_max = np.max(V1)
+				P2_min = np.min(V2)
+				P2_max = np.max(V2)
+				Stability_time_1 = self.compute_stability_time(df1,error_threshold)
+				Stability_time_2 = self.compute_stability_time(df2,error_threshold)
+		#Plot signals
+				if show_results ==1:
+					fig, axs = plt.subplots()
+					axs.plot(T1,V1, '-b', label = '%s' % thisBusId1)
+					axs.plot(T2,V2, '--r', label = '%s' % thisBusId2)
+					axs.set_title('Original Signals without Bias and Lag Corrections')
+					axs.legend()
+					plt.text(0.1, 0.05, 'Signal 1\nMin Value = %s\nMax Value = %s\nStability Time = %s' %(P1_min,P1_max,Stability_time_1) , transform=axs.transAxes)
+					plt.text(0.9, 0.05, 'Signal 2\nMin Value = %s\nMax Value = %s\nStability Time = %s' %(P2_min,P2_max,Stability_time_2) , transform=axs.transAxes)
+					plt.text(0.5, 0.05, 'Mean Square Error = %s\nLag between Signals = %s' %(MSE, lag) , transform=axs.transAxes)
+					plt.text(0.5, 0.95, '%s' %(MSG) , transform=axs.transAxes)
+					axs.grid(True)		
 			return lag,MSE,Stability_time_1,Stability_time_2
 		except:
 			raise
@@ -807,3 +823,15 @@ class DataAnalytics(object):
 			return res
 		except:
 			raise
+
+
+#-------------------------------------------------------------------	
+	def check_dataframes(self,df1, df2):
+		try:
+			flag = True
+			if (len(df1) != len(df2)):
+				flag = False
+			return flag
+		except:
+			raise
+

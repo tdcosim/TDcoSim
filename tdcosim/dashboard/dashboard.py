@@ -3,7 +3,6 @@ import pdb
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import dash_bootstrap_components as dbc
 import dash_table
 import numpy as np
 import math
@@ -178,23 +177,29 @@ class Dashboard(object):
 
 #=======================================================================================================================
 	def table_template(self, df):
+		totalrow = len(df.index)
+		pagesize = 20
+		pagecount = int(totalrow / pagesize) + 1
 		myTable = dash_table.DataTable(
 			id='myTable',
 			columns=[{"name": i, "id": i} for i in df.columns],
-			data=df.to_dict('records'),
+			# data=df.to_dict('records'),
 			editable=False,
-			filter_action="native",
-			sort_action="native",
-			sort_mode="multi",
+			filter_action='custom',
+			filter_query='',
+			sort_action='custom',
+			sort_mode='multi',
+			sort_by=[],
 			selected_columns=[],
 			selected_rows=[],
-			page_action="native",
+			page_action="custom",
 			page_current= 0,
-			page_size= 25,
+			page_size= pagesize,
+			page_count= pagecount,
 			style_data_conditional=[
 			{'if': {'row_index': 'odd'},'backgroundColor': 'rgb(248, 248, 248)'},
 			{'if': {'row_index': 'even'},'backgroundColor': 'grey','color':"white"}],
-			style_header={'backgroundColor': 'rgb(200, 200, 200)','fontWeight': 'bold','fontSize':20})
+			style_header={'backgroundColor': 'rgb(200, 200, 200)','fontWeight': 'bold','fontSize':20})		
 		return myTable
 
 #=======================================================================================================================
@@ -499,8 +504,7 @@ class Dashboard(object):
 	def tooltip_template(self, text, styleobj, objid):
 		tooltip = html.Div(
 		    [
-		        html.I(className="fas fa-question-circle fa-lg", id=objid),
-		        dbc.Tooltip(text, target=objid),
+		        html.I(className="fas fa-question-circle fa-lg", id=objid, title=text),
 		    ],
 		    style=styleobj
 		)
