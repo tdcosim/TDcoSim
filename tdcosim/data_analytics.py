@@ -604,6 +604,7 @@ class DataAnalytics(object):
 #-------------------------------------------------------------------------------------------			
 	def compute_stability_time(self,df,error_threshold):
 		try:
+			comment = 'Stability is determined'
 			df=df.sort_values(by='t')
 			V =np.array(df.value)
 			T = np.array(df.t)
@@ -698,8 +699,8 @@ class DataAnalytics(object):
 			
 			lag = -1
 			MSE = -1
-			Stability_time_1 = -1
-			Stability_time_2 = -1
+			Stability_time_1 = (-1,"Failed to analyze stability",-1)
+			Stability_time_2 = (-1,"Failed to analyze stability",-1)
 			if self.check_dataframes(df1, df2):
 				V1 =np.array(df1.value)
 				T1 = np.array(df1.t)
