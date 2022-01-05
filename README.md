@@ -53,6 +53,10 @@ To visualize the co-simulation results using the dashboard use the following com
 ```
    tdcosim dashboard -o ".\dashboard\vizsample"
 ```
+(comment: vizsample now not in \dashboard, suggest to guide to "Using data visualization and analytics" section)
+
+(comment: the viz and analytics section has been updated in recent discussions, do wewant to have an updated version for both Userguide and TDcosim paper?)
+
 Detailed documentation on running a co-simulation may be found within the [user guide](https://github.com/tdcosim/TDcoSim/blob/v2_test/docs/user_guide/user_guide_getting_started.md). Additional examples are available [here](https://github.com/tdcosim/TDcoSim/tree/v2_test/docs/user_guide/examples).
 
 ## Package details
