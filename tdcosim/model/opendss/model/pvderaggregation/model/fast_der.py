@@ -264,11 +264,10 @@ class FastDER(object):
 			raise
 
 #===================================================================================================
-	def func_val_new(self,x,t):
+	def func_val_combined(self,x,t):
 		try:
-			vmag=x[3]
-			self.ride_through_logic(vmag=vmag,dt=1/120.)
-			recompute_initial_condition= False #self.enter_service(dt=dt)
+			
+			recompute_initial_condition= False #self.enter_service(dt=1/120.)
 			flags=self._ride_through_flags
 			
 			if flags['momentary_cessation'] or flags['trip']:
@@ -279,21 +278,18 @@ class FastDER(object):
 				self.data['config']['pref']=0
 				self.data['config']['qref']=0
 				self.x=x*0.0 # will not integrate
-				# to sync with global time
-				#self._integrator_data['time_values'].append(self._integrator_data['time_values'][-1]+dt)
 				self._integrator_data['time_values'].append(t)
+				
 			else:
 				if recompute_initial_condition:
 					self.compute_initial_condition(self.data['config']['pref'],\
 					self.data['config']['qref'],self.data['model']['vt'],\
 					self.data['model']['vt_angle'])
-
-				#self.x=self.x+dt*self.func_val(self.x)
+				self.x=x
 				self.f = self.func_val(x)
-				#self._integrator_data['time_values'].append(self._integrator_data['time_values'][-1]+dt)
 				self._integrator_data['time_values'].append(t)
-			
-			return self.x
+				
+			return self.f
 		except:
 			raise
 
@@ -366,6 +362,7 @@ class FastDER(object):
 						flags[rts['lvrt'][thisZone]['action']]=True
 					if thisVmin<=vmag<thisVmax:
 						rts['lvrt'][thisZone]['time_in_zone']+=dt
+					
 			elif vmag>rts['normal_operation']['voltage_range'][1]:# abnormal HV operation
 				for thisZone in rts['hvrt']:
 					thisVmin,thisVmax=rts['lvrt'][thisZone]['voltage_range']
