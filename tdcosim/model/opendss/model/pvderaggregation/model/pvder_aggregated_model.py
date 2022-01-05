@@ -261,7 +261,7 @@ class PVDERAggregatedModel(object):
 				self.integrator=ode(self.funcval_fastder).set_integrator('vode',method='adams',max_step=1/240.,rtol=1e-4,atol=1e-4)
 				self.integrator.set_initial_value(y0,t0)
 				OpenDSSData.log(level=10,msg="FastDER model integrator using Adams method initialized at {:.3f} seconds".format(time.time()))
-				OpenDSSData.log(level=10,msg="FastDER model: initial ,y0:{}".format(y0))
+				
 			else:
 				OpenDSSData.log(level=10,msg="FastDER model integrator using {} initialized at {:.3f} seconds".format(self.ode_solver_method,time.time()))
 			
@@ -540,7 +540,7 @@ class PVDERAggregatedModel(object):
 
 						# update Voltage injection
 						thisPV.update_model(Va)
-						OpenDSSData.log(level=10,msg="FastDER model: updated steady state y0,{}:{}".format(pvID,thisPV.x))
+						
 						# integrate
 						thisPV.integrate(dt=dt)
 						thisId=thisPV.x[2]
@@ -554,7 +554,7 @@ class PVDERAggregatedModel(object):
 						if pv not in x[node]:
 							x[node][pv]={}
 						x[node][pv]=copy.deepcopy(thisPV.x).tolist()
-				OpenDSSData.log(level=10,msg="t:{},node: {} P:{}".format(thisT,node,nodeP))
+				
 				P[node]=nodeP
 				Q[node]=nodeQ
 				OpenDSSData.data['DNet']['DER']['PVDERData'][node]['Vmag']['a']=Va
