@@ -102,7 +102,7 @@ The following figure illustrates how **TDcoSim** can assist in T&D planning and 
 Following capabilities are planned in be added in the future:
 
 * Capability to include other types of DERs such as energy battery storage system.
-* Capability to introduce insolation change events. (comment: question on the "insolation" change events)
+* Capability to introduce insolation change events.
 * Capability to simulate generator tripping, line outages, load increase/decrease.
 * Capability to consider distribution system Under Frequency Load Shedding (UFLS) and Under Voltage Load Shedding (UVLS) schemes. 
 

@@ -4,14 +4,40 @@
 
 # Utilitiy to perform Co-Simulation of Transmission, and Distribution systems with DER's
 
-TDcoSim (T & D co-simulation tool) is a Python package that can be used to perform co-simulations containing a transmission system simulator (TSS), multiple distribution system simulator (DSS) instances, and multiple solar PV-DER instances. It is capable of both static and dynamic co-simulations for power systems models containing hundreds of transmission buses, distribution feeder nodes, and DER's.
+TDcoSim (T & D co-simulation tool) is a Python package that can be used to perform co-simulations containing a transmission system simulator (TSS), multiple distribution system simulator (DSS) instances, and multiple solar PV-DER instances. 
+
+For a more detailed introduction of TDcosim, please refer to [introduction flyer](docs/user_guide/TDcoSim_Flyer.pdf) and [introduction video](https://www.youtube.com/watch?v=6twEspWzTZw&t=53s).
+
+The key features include:
+* Transmission system modeling using PSS®E
+* Distribution system modeling using OpenDSS
+* Detailed dynamic DER modeling using PVDER
+* Support for static and dynamic simulation
+* Built-in data visualization and data analytics tools
+* Capable of simulating large interconnections (250K+  T&D nodes).
 
 ![schematic of TDcoSim](docs/user_guide/images/software_simple_block_diagram.png)
 
+It is capable of both static and dynamic co-simulations for power systems models containing hundreds of transmission buses, distribution feeder nodes, and DERs.
+
+The example cases include:
+* Study impact of aggregated DER model parameters
+* Study impact of DER penetration on T&D systems
+* Post-contingency analysis of faults involving DER
+* Study impact of DER interconnection standards
+
+***
+***Note:*** Energy storage based studies are currently possible for both QSTS and dynamics. 
+However, dynamics T+D case has a caveat. In PSSE, the DER_A model can be used to model both generator type DERs and energy storage, the only difference in setup being a single flag to switch between the two. 
+Since we are doing transient stability studies, it is not essential to model the energy storage SOC. Similar to what DER_A model does, the same approach can be used for T+D but it should be noted that we have not developed a separate energy storage model.
+***
+
 ## Links
-* Source code repository: https://github.com/tdcosim/TDcoSim
-* User guide: [Markdown](docs/user_guide/user_guide_TOC.md), [PDF](docs/user_guide/TDcoSim_user_guide_version_2_0.pdf), [DOCX](docs/user_guide/TDcoSim_user_guide_version_2_0.docx)
+* Source Code Repository: https://github.com/tdcosim/TDcoSim
+* User Guide: [Markdown](docs/user_guide/user_guide_TOC.md), [PDF](docs/user_guide/TDcoSim_user_guide_version_2_0.pdf), [DOCX](docs/user_guide/TDcoSim_user_guide_version_2_0.docx)
 * API Documentation: [API doc](docs/api-html/index.html)
+* Introduction Flyer: [Flyer PDF](docs/user_guide/TDcoSim_Flyer.pdf)
+* Introduction Video: [Youtube Link](https://www.youtube.com/watch?v=6twEspWzTZw&t=53s)
 
 ## Installation
 You can install tdcosim by running the following command on command line.
@@ -38,6 +64,9 @@ If PSSE 33 is being used the following may be used:
 tdcosim setconfig -p "C:\Program Files (x86)\PTI\PSSE33\PSSBIN" 
 ```
 
+Due to the embeded compatibility requirements between PSSE and Python, please refer to the following compatibility table when paring PSSE with Python.
+![Compatibility Table PSSE-Python](docs/user_guide/images/Compatibility_table_PSSE_Python.png)
+
 ### Dependencies:
 * External software: [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html), [OpenDSS](https://sourceforge.net/projects/electricdss/)
 * Python packages: [pvder](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility), SciPy, Numpy, Matlplotlib, PyWin
@@ -49,13 +78,7 @@ The [config.json file](config.json) provided in the [examples folder](https://gi
 ```
    tdcosim run -c ".\examples\config_td.json"
 ```
-To visualize the co-simulation results using the dashboard use the following commands. Note that *.\dashboard\vizsample*  can be replaced with the folder containing the co-simulation results.
-```
-   tdcosim dashboard -o ".\dashboard\vizsample"
-```
-(comment: vizsample now not in \dashboard, suggest to guide to "Using data visualization and analytics" section)
-
-(comment: the viz and analytics section has been updated in recent discussions, do wewant to have an updated version for both Userguide and TDcosim paper?)
+To visualize the co-simulation results using the dashboard, please refer to [visualization and analytics section](docs/user_guide/user_guide_visualization_analytics.md)
 
 Detailed documentation on running a co-simulation may be found within the [user guide](https://github.com/tdcosim/TDcoSim/blob/v2_test/docs/user_guide/user_guide_getting_started.md). Additional examples are available [here](https://github.com/tdcosim/TDcoSim/tree/v2_test/docs/user_guide/examples).
 

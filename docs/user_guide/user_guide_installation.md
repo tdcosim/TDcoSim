@@ -25,6 +25,9 @@ For example, something similar to:
 tdcosim setconfig -p "C:\Program Files\PTI\PSSE35\35.0\PSSPY37" 
 ```
 
+Due to the embeded compatibility requirements between PSSE and Python, please refer to the following compatibility table when paring PSSE with Python.
+![Compatibility Table PSSE-Python](images/Compatibility_table_PSSE_Python.png)
+
 ***
 ***Note:*** [Git](https://git-scm.com/) needs to installed  (incase it is not already available) before TDcoSim can be installed.
 
