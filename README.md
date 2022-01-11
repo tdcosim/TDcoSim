@@ -1,6 +1,6 @@
 **Status:** Expect regular updates and bug fixes.
 
-*Technical support:** support.tdcosim@anl.gov
+**Technical support:** support.tdcosim@anl.gov
 
 # Utilitiy to perform Co-Simulation of Transmission, and Distribution systems with DER's
 
@@ -65,6 +65,7 @@ tdcosim setconfig -p "C:\Program Files (x86)\PTI\PSSE33\PSSBIN"
 ```
 
 Due to the embeded compatibility requirements between PSSE and Python, please refer to the following compatibility table when paring PSSE with Python.
+
 ![Compatibility Table PSSE-Python](docs/user_guide/images/Compatibility_table_PSSE_Python.png)
 
 ### Dependencies:
