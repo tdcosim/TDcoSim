@@ -28,7 +28,7 @@ class Dashboard(object):
 	def graph_template(self,id,track=False,**kwargs):
 		try:
 			figure={'data': [{'x': [], 'y': [], 'type': 'chart'}],
-			'layout':{'height':'10vh','plot_bgcolor': "black",'paper_bgcolor': "black"}}
+			'layout':{'height':'10vh','plot_bgcolor': "white",'paper_bgcolor': "black"}}
 
 			if 'figure' in kwargs:
 				figure.update(kwargs['figure'])
@@ -222,7 +222,7 @@ class Dashboard(object):
 		return unselectedchildren, selectedchildren, columnoptions
 
 #=======================================================================================================================
-	def filter_template(self, objects, tabkey, df, objid:str):
+	def filter_template(self, objects, tabkey, df, objid):
 
 		columnFilter=['scenario','tnodeid','property']				
 		childrenform = []
