@@ -7,7 +7,7 @@ import inspect
 import tdcosim
 import numpy as np
 from scipy.optimize import fsolve
-
+from tdcosim.model.opendss.opendss_data import OpenDSSData
 
 class FastDER(object):
 	"""Sample call: 
@@ -252,7 +252,7 @@ class FastDER(object):
 			model['dw']=0
 
 			# init condition
-			self.x=[0,model['pref'],model['pref']/model['vt'],
+			self.x=[0.0,model['pref'],model['pref']/model['vt'],
 			model['vt'],-model['qref']/model['vt'],-model['qref']/model['vt']]
 			if model['modelname']=='m2':
 				self.x.append(model['pref'])
@@ -260,6 +260,36 @@ class FastDER(object):
 
 			# update model
 			self.update_model(vt*(np.cos(vt_ang)+1j*np.sin(vt_ang)))
+		except:
+			raise
+
+#===================================================================================================
+	def func_val_combined(self,x,t):
+		try:
+			
+			recompute_initial_condition= False #self.enter_service(dt=1/120.)
+			flags=self._ride_through_flags
+			
+			if flags['momentary_cessation'] or flags['trip']:
+				if not self.data['config']['pref_predisturbance']:
+					self.data['config']['pref_predisturbance']=self.data['config']['pref']
+				if not self.data['config']['qref_predisturbance']:
+					self.data['config']['qref_predisturbance']=self.data['config']['qref']
+				self.data['config']['pref']=0
+				self.data['config']['qref']=0
+				self.x=x*0.0 # will not integrate
+				self._integrator_data['time_values'].append(t)
+				
+			else:
+				if recompute_initial_condition:
+					self.compute_initial_condition(self.data['config']['pref'],\
+					self.data['config']['qref'],self.data['model']['vt'],\
+					self.data['model']['vt_angle'])
+				self.x=x
+				self.f = self.func_val(x)
+				self._integrator_data['time_values'].append(t)
+				
+			return self.f
 		except:
 			raise
 
@@ -332,6 +362,7 @@ class FastDER(object):
 						flags[rts['lvrt'][thisZone]['action']]=True
 					if thisVmin<=vmag<thisVmax:
 						rts['lvrt'][thisZone]['time_in_zone']+=dt
+					
 			elif vmag>rts['normal_operation']['voltage_range'][1]:# abnormal HV operation
 				for thisZone in rts['hvrt']:
 					thisVmin,thisVmax=rts['lvrt'][thisZone]['voltage_range']
