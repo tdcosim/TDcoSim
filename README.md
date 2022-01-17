@@ -59,10 +59,11 @@ If PSSE 33 is being used the following may be used:
 tdcosim setconfig -p "C:\Program Files (x86)\PTI\PSSE33\PSSBIN" 
 ```
 
-Due to the embeded compatibility requirements between PSSE and Python, 
-please refer to the following compatibility table when paring PSSE with Python.
-It should be noted that this table is a subset of all successful combinations, 
-and it is crucial to set the psse installation path properly so that the module PSSPY can be located. 
+Due to the embedded compatibility requirements between PSSE and Python, 
+please refer to the following compatibility table and the PSSE API document that located in the Doc folder on PSSE install location when paring PSSE with Python.
+
+It should be noted that the table below is a subset of all successful combinations from our team’s development environment, 
+and it is crucial to set the PSSE installation path properly so that the module PSSPY can be located. 
 
 ![Compatibility Table PSSE-Python](docs/user_guide/images/Compatibility_table_PSSE_Python.png)
 
