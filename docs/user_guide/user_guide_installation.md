@@ -25,7 +25,10 @@ For example, something similar to:
 tdcosim setconfig -p "C:\Program Files\PTI\PSSE35\35.0\PSSPY37" 
 ```
 
-Due to the embeded compatibility requirements between PSSE and Python, please refer to the following compatibility table when paring PSSE with Python.
+Due to the embeded compatibility requirements between PSSE and Python, 
+please refer to the following compatibility table when paring PSSE with Python.
+It should be noted that this table is a subset of all successful combinations, 
+and it is crucial to set the psse installation path properly so that the module PSSPY can be located. 
 
 ![Compatibility Table PSSE-Python](images/Compatibility_table_PSSE_Python.png)
 

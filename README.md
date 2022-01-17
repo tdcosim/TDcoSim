@@ -26,11 +26,6 @@ The example cases include:
 * Post-contingency analysis of faults involving DER
 * Study impact of DER interconnection standards
 
-***
-***Note:*** Energy storage based studies are currently possible for both QSTS and dynamics. 
-However, dynamics T+D case has a caveat. In PSSE, the DER_A model can be used to model both generator type DERs and energy storage, the only difference in setup being a single flag to switch between the two. 
-Since we are doing transient stability studies, it is not essential to model the energy storage SOC. Similar to what DER_A model does, the same approach can be used for T+D but it should be noted that we have not developed a separate energy storage model.
-***
 
 ## Links
 * Source Code Repository: https://github.com/tdcosim/TDcoSim
@@ -64,7 +59,10 @@ If PSSE 33 is being used the following may be used:
 tdcosim setconfig -p "C:\Program Files (x86)\PTI\PSSE33\PSSBIN" 
 ```
 
-Due to the embeded compatibility requirements between PSSE and Python, please refer to the following compatibility table when paring PSSE with Python.
+Due to the embeded compatibility requirements between PSSE and Python, 
+please refer to the following compatibility table when paring PSSE with Python.
+It should be noted that this table is a subset of all successful combinations, 
+and it is crucial to set the psse installation path properly so that the module PSSPY can be located. 
 
 ![Compatibility Table PSSE-Python](docs/user_guide/images/Compatibility_table_PSSE_Python.png)
 
