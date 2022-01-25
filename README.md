@@ -1,17 +1,38 @@
 **Status:** Expect regular updates and bug fixes.
 
-*Technical support:** support.tdcosim@anl.gov
+**Technical support:** support.tdcosim@anl.gov
 
 # Utilitiy to perform Co-Simulation of Transmission, and Distribution systems with DER's
 
-TDcoSim (T & D co-simulation tool) is a Python package that can be used to perform co-simulations containing a transmission system simulator (TSS), multiple distribution system simulator (DSS) instances, and multiple solar PV-DER instances. It is capable of both static and dynamic co-simulations for power systems models containing hundreds of transmission buses, distribution feeder nodes, and DER's.
+TDcoSim (T & D co-simulation tool) is a Python package that can be used to perform co-simulations containing a transmission system simulator (TSS), multiple distribution system simulator (DSS) instances, and multiple solar PV-DER instances. 
+
+For a more detailed introduction of TDcosim, please refer to [introduction flyer](docs/user_guide/TDcoSim_Flyer.pdf) and [introduction video](https://www.youtube.com/watch?v=6twEspWzTZw&t=53s).
+
+The key features include:
+* Transmission system modeling using PSS®E
+* Distribution system modeling using OpenDSS
+* Detailed dynamic DER modeling using PVDER
+* Support for static and dynamic simulation
+* Built-in data visualization and data analytics tools
+* Capable of simulating large interconnections (250K+  T&D nodes).
 
 ![schematic of TDcoSim](docs/user_guide/images/software_simple_block_diagram.png)
 
+It is capable of both static and dynamic co-simulations for power systems models containing hundreds of transmission buses, distribution feeder nodes, and DERs.
+
+The example cases include:
+* Study impact of aggregated DER model parameters
+* Study impact of DER penetration on T&D systems
+* Post-contingency analysis of faults involving DER
+* Study impact of DER interconnection standards
+
+
 ## Links
-* Source code repository: https://github.com/tdcosim/TDcoSim
-* User guide: [Markdown](docs/user_guide/user_guide_TOC.md), [PDF](docs/user_guide/TDcoSim_user_guide_version_1_1.pdf), [DOCX](docs/user_guide/TDcoSim_user_guide_version_1_1.docx)
+* Source Code Repository: https://github.com/tdcosim/TDcoSim
+* User Guide: [Markdown](docs/user_guide/user_guide_TOC.md), [PDF](docs/user_guide/TDcoSim_user_guide_version_2_0.pdf), [DOCX](docs/user_guide/TDcoSim_user_guide_version_2_0.docx)
 * API Documentation: [API doc](docs/api-html/index.html)
+* Introduction Flyer: [Flyer PDF](docs/user_guide/TDcoSim_Flyer.pdf)
+* Introduction Video: [Youtube Link](https://www.youtube.com/watch?v=6twEspWzTZw&t=53s)
 
 ## Installation
 You can install tdcosim by running the following command on command line.
@@ -27,7 +48,24 @@ After installation open a new command prompt and run the following to set psse p
 
     tdcosim setconfig -p "path\to\psse_installation"  
 
-For example, something similar to, tdcosim setconfig -p "C:\Program Files\PTI\PSSE35\35.0\PSSPY37" 
+If PSSE 35 is being used the following may be used:
+
+```
+tdcosim setconfig -p "C:\Program Files\PTI\PSSE35\35.0\PSSPY37" 
+```
+If PSSE 33 is being used the following may be used:
+
+```
+tdcosim setconfig -p "C:\Program Files (x86)\PTI\PSSE33\PSSBIN" 
+```
+
+Due to the embedded compatibility requirements between PSSE and Python, 
+please refer to the following compatibility table and the PSSE API document that located in the Doc folder on PSSE install location when paring PSSE with Python.
+
+It should be noted that the table below is a subset of all successful combinations from our team’s development environment, 
+and it is crucial to set the PSSE installation path properly so that the module PSSPY can be located. 
+
+![Compatibility Table PSSE-Python](docs/user_guide/images/Compatibility_table_PSSE_Python.png)
 
 ### Dependencies:
 * External software: [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html), [OpenDSS](https://sourceforge.net/projects/electricdss/)
@@ -40,10 +78,8 @@ The [config.json file](config.json) provided in the [examples folder](https://gi
 ```
    tdcosim run -c ".\examples\config_td.json"
 ```
-To visualize the co-simulation results using the dashboard use the following commands. Note that *.\dashboard\vizsample*  can be replaced with the folder containing the co-simulation results.
-```
-   tdcosim dashboard -o ".\dashboard\vizsample"
-```
+To visualize the co-simulation results using the dashboard, please refer to [visualization and analytics section](docs/user_guide/user_guide_visualization_analytics.md)
+
 Detailed documentation on running a co-simulation may be found within the [user guide](https://github.com/tdcosim/TDcoSim/blob/v2_test/docs/user_guide/user_guide_getting_started.md). Additional examples are available [here](https://github.com/tdcosim/TDcoSim/tree/v2_test/docs/user_guide/examples).
 
 ## Package details
