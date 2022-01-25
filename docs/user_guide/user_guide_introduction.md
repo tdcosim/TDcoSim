@@ -21,7 +21,7 @@ Note that **TDcoSim** can also simulate advanced models like DER_A, composite lo
 
 ## How can I use it?
 
-**TDcoSim** is available as an open source Python package and can be installed at no cost from its [GitHub repository](https://github.com/tdcosim/TDcoSim) . Additionally, the user needs to separately install  [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html) for simulating a transmission network, [OpenDSS](https://sourceforge.net/projects/electricdss/) for simulating distribution networks, and [Solar PV-DER simulation-utility](https://github.com/sibyjackgrove/SolarPV-DER-simulation-utility) for simulating dynamic PV-DERs. 
+**TDcoSim** is available as an open source Python package and can be installed at no cost from its [GitHub repository](https://github.com/tdcosim/TDcoSim) . Additionally, the user needs to separately install  [PSS®E](https://new.siemens.com/global/en/products/energy/services/transmission-distribution-smart-grid/consulting-and-planning/pss-software/pss-e.html) for simulating a transmission network, [OpenDSS](https://sourceforge.net/projects/electricdss/) for simulating distribution networks. 
 
 Detailed installation instructions and links to the requisite supporting software can be found [here](user_guide_installation.md#installation).
 
@@ -35,10 +35,10 @@ In order to run a co-simulation using **TDcoSim**, the user needs to provide the
 * DER penetration levels (required for dynamic co-simulation)
 * DER ratings and ride through settings (optional)
 * Simulation events (optional)
-* Presence of ZIP, Composite load model (CMLD), Composite load model (CLOD),
+* Presence of ZIP, Composite load model (CMLD), Complex load model (CLOD),
 * Presence of aggregate DER model (DER_A) (only available in PSS/E 35)
 
-Detailed description of each input can be found [here](user_guide_getting_started.md#getting-started-with TDcoSim).
+Detailed description of each input can be found [here](user_guide_getting_started.md).
 
 ## What are the outputs?
 
@@ -49,7 +49,7 @@ Detailed description of each input can be found [here](user_guide_getting_starte
 
 Please note that the output comes in an interval of half-a-cycle for dynamic simulations. For steady-state simulations, the output comes at an interval corresponding to the time step of users’ choice, which can range from seconds, minutes, hours, to years. 
 
-The output format is an Excel spreadsheet.
+The output format include Excel spreadsheet and more can be found in the dashboard visualization example.
 
 ## Types of studies
 
@@ -104,7 +104,7 @@ Following capabilities are planned in be added in the future:
 * Capability to include other types of DERs such as energy battery storage system.
 * Capability to introduce insolation change events.
 * Capability to simulate generator tripping, line outages, load increase/decrease.
-* Capability to consider distribution system UFLS and UVLS schemes. 
+* Capability to consider distribution system Under Frequency Load Shedding (UFLS) and Under Voltage Load Shedding (UVLS) schemes. 
 
 ## Scalability and solution time
 
