@@ -12,15 +12,14 @@
 9. [Software details](user_guide_software_details.md)
 10. [Performance guide](user_guide_performance.md)
 11. Examples:
-    1. [Example 1: DER trip and ride through with one bus containing DERs (detailed DER)](examples/Example_1_DER_trip_and_ridethrough.md) 
-    2. [Example 2: DER penetration and steady state initialization  (detailed DER and fast DER)](examples/Example_2_DER_penetration_and_steadystate.md)
-    3. [Example 3: DER trip and ride through  with two buses containing DERs (detailed DER)](examples/Example_3_DER_trip_and_ridethrough_2_der_feeders.md) 
+    1. [Example 1: DER trip and ride through (detailed DER)](examples/Example_1_DER_trip_and_ridethrough.md) 
+    2. [Example 2: DER penetration and steady state initialization  (detailed DER and fast DER)](examples/Example_2_DER_penetration_and_steadystate.md) 
 
 13. Appendix
      * [Installation](user_guide_installation.md)
      * [System requirements](user_guide_sys_requirements.md)
      * [References](user_guide_references.md)
-     * [References](user_guide_DER_parameters.md)
+     * [References of DER parameters](user_guide_DER_parameters.md)
      * [Software License](../../LICENSE.md)
 
 \pagebreak

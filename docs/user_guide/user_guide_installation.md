@@ -19,16 +19,19 @@ After installation open a new command prompt and run the following to set psse p
 tdcosim setconfig -p "path\to\psse_installation"  
 ```
 
-If PSSE 35 is being used the following may be used:
+For example, something similar to:
 
 ```
 tdcosim setconfig -p "C:\Program Files\PTI\PSSE35\35.0\PSSPY37" 
 ```
-If PSSE 33 is being used the following may be used:
 
-```
-tdcosim setconfig -p "C:\Program Files (x86)\PTI\PSSE33\PSSBIN" 
-```
+Due to the embedded compatibility requirements between PSSE and Python, 
+please refer to the following compatibility table and the PSSE API document that located in the Doc folder on PSSE install location when paring PSSE with Python.
+
+It should be noted that the table below is a subset of all successful combinations from our team’s development environment, 
+and it is crucial to set the PSSE installation path properly so that the module PSSPY can be located. 
+
+![Compatibility Table PSSE-Python](images/Compatibility_table_PSSE_Python.png)
 
 ***
 ***Note:*** [Git](https://git-scm.com/) needs to installed  (incase it is not already available) before TDcoSim can be installed.
@@ -70,17 +73,13 @@ The packages listed below must be installed separately:
 
 * For using the high performance ODE solver [diffeqpy, version >= 1.1.0](https://github.com/SciML/diffeqpy)
 
-  * Install tdcosim with the **diffeqpy** flag as shown below.
+  * Install tdcosim with the diffeqpy flag as shown below.
     ```
        pip install tdcosim[diffeqpy]
     ```
-  * After installation open a new command prompt and run the script **install_julia_diffeqpy.py** [available in the repository](https://github.com/tdcosim/TDcoSim/blob/v2.0.0rc2_dev/install_julia_diffeqpy.py). It will install Julia (if not already installed), all the required libraries, and setup a Julia environment linked to the Python environment.
-    ```
-       python install_julia_diffeqpy.py
-    ```
-  * Download and install Julia interpreter: [Julia, version >= 1.5](https://julialang.org/downloads/) (Optional)
+  * Download and install Julia interpreter: [Julia, version >= 1.5](https://julialang.org/downloads/)
 
-  * Add Julia to system PATH environment variables as shown [here](https://julialang.org/downloads/platform/) (Only for Windows OS) (Optional)
+  * Add Julia to system PATH environment variables as shown [here](https://julialang.org/downloads/platform/) (Only for Windows OS).
 
 ***
 ***Note:*** If co-simulations involving more than 10 detailed DER models are needed to be run, it is recommended to select *diffeqpy* as the ODE solver.
@@ -90,15 +89,4 @@ The packages listed below must be installed separately:
 ***Note:*** All Python packages can be installed with *pip* (e.g. *pip install scipy*)
 
 ***
-
-## Compatibility table:
-
-| PSS/E | OpenDSS | Python | diffeqpy/Julia    | Tested                |
-| ----- | ------- | ------ | ----------------- | --------------------- |
-| 35    | 8.6.1.1 | 2.7.3  | -                 | Yes                   |
-| 33    | 9.3.0.2 | 2.7.3  | -                 | Yes                   |
-| 35    | 8.6.1.1 | 3.7    | -                 | Yes                   |
-| 35    | 8.6.1.1 | 3.7    | 1.2 - Julia 1.5.3 | Yes (till 75 feeders) |
-| 35    | 8.6.1.1 | 3.7    | 1.2 - Julia 1.6.1 | Yes (till 50 feeders) |
-| 35    | 8.6.1.1 | 3.7    | 1.2 - Julia 1.7.0 | Yes (till 50 feeders) |
 
