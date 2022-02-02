@@ -20,6 +20,14 @@ FONT_AWESOME = "https://use.fontawesome.com/releases/v5.10.2/css/all.css"
 BOOTSTRAPCSS = "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
 app = dash.Dash(__name__, external_stylesheets=[BOOTSTRAPCSS, FONT_AWESOME])
 
+colortheme = 0
+colorobj = ['rgba(0,0,0,.8)', 'white', 'black']
+if colortheme == 0:
+	colorobj = ['rgba(0,0,0,.8)', 'white', 'black']
+elif colortheme == 1:
+	colorobj = ['rgba(225,225,225,.8)', 'black', 'white']
+
+
 #=======================================================================================================================
 def create_graphs(objects,objID,title,fontColor,xlabel,ylabel):
 	for thisObjID,thisTitle,thisFontColor,thisXlabel,thisYlabel in zip(objID,title,fontColor,xlabel,ylabel):
@@ -57,9 +65,9 @@ def create_analytics(objects, df):
 #=======================================================================================================================
 def create_tab(objects,objID,label,style=None,selected_style=None):
 	if not style:
-		style={'backgroundColor':'rgba(0,0,0,.7)','color':'white','fontWeight':'bold','fontSize':'1em'}
+		style={'backgroundColor':colorobj[2],'color':colorobj[1],'fontWeight':'bold','fontSize':'1em'}
 	if not selected_style:
-		selected_style={'backgroundColor':'grey','color':'white','fontWeight':'bold','fontSize':'1em'}
+		selected_style={'backgroundColor':'grey','color':colorobj[1],'fontWeight':'bold','fontSize':'1em'}
 
 	for thisObjID,thisLabel in zip(objID,label):
 		objects['tab'][thisObjID]=dcc.Tab(id=thisObjID,label=thisLabel,style=style,selected_style=selected_style)
@@ -94,7 +102,7 @@ def gather_objects():
 		df = objects['df_scenario'] #Only show one scenario in table when using Dask
 	
 	create_table(df, 'table')
-	create_graphs(objects,['vmag','freq'],['vmag','freq'],['white','white'],['Time (s)', 'Time (s)'],\
+	create_graphs(objects,['vmag','freq'],['vmag','freq'],[colorobj[1],colorobj[1]],['Time (s)', 'Time (s)'],\
 	['Vmag (PU)','f (hz)'])
 	create_tab(objects,['gis','table','plots', 'analytics'],['GIS','Table','Plots','Analytics'])
 	create_tabs(objects,'main_tab',[objects['tab']['gis'],objects['tab']['table'],objects['tab']['plots'],objects['tab']['analytics']])
@@ -624,6 +632,7 @@ if __name__ == '__main__':
 		df=df[df.dfeederid.isna()]
 	da=DataAnalytics()
 	helper=Dashboard()
+	helper.set_color(colortheme)
 	# setup objects
 	objects={'graph':{},'tab':{},'tabs':{},'upload':{},'textarea':{},'dropdown':{},'selection':{},'df':{}}
 	
@@ -646,7 +655,7 @@ if __name__ == '__main__':
 	# define layout
 	gather_objects()
 	app.layout=html.Div(objects['tabs']['main_tab'],
-	style={'width':'99vw','height':'98vh','background-color':'rgba(0,0,0,.8)'})
+	style={'width':'99vw','height':'98vh','background-color':colorobj[0]})
 	toc = time.time()
 	print("Time taken to load and process dataframe:{:.2f} s".format(toc - tic))
 	# run
