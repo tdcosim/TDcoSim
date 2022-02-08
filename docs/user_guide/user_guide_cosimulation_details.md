@@ -13,7 +13,7 @@ The state-of-the-art approach of studying DER impact on the bulk power system en
 ## Assumptions in current software version
 
 1. It is assumed that all the distribution feeders connected to the transmission system load bus have the same characteristics. Hence only one distribution feeder is simulated in an OpenDSS instance. The power output from the single feeder is then multiplied with a scaling factor (calculated automatically by TDcoSim) so that we can match the rated load at the transmission bus with the total load from all the feeders connected to the bus.
-2. No Sub-station is explicity added to the distribution network model by TDcoSim to interface the T bus with the distribution feeder. However if the user provided distribution network model comes with a sub-station, then it is used.
+2. No Sub-station is explicitly added to the distribution network model by TDcoSim to interface the T bus with the distribution feeder. However if the user provided distribution network model comes with a sub-station, then it is used.
 
 ## T&D interface
 The transmission system simulator (TSS) and distribution system simulator (DSS) are separate programs with their own solution methods. **TDcoSim** is responsible for exchanging data and synchronizing their runs.
@@ -63,7 +63,7 @@ The data exchange protocol for steady-state co-simulation in the current version
 
 The scaling factor (see [assumptions](#assumptions)) is calculated by dividing the total load at a transmission system load bus by the aggregated load of one distribution feeder.
 
-At every time step (one half-cycle), the steps 2 to 6 are repeated untill the end of simulation.
+At every time step (one half-cycle), the steps 2 to 6 are repeated until the end of simulation.
 
 ## Dynamic T&D co-simulation process
 The data exchange protocol for dynamic co-simulation in the current version of the software is loosely coupled. The initialization steps are:

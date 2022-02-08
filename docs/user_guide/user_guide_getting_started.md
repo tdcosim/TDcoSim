@@ -117,7 +117,7 @@ Outputs (from both transmission and distribution systems) are saved in the follo
 
 ![report example](images/report_example.png)
 <p align="center">
-  <strong>Fig. 1. </strong>Dataframe generated after Dynamic T&D co-simuation.
+  <strong>Fig. 1. </strong>Dataframe generated after Dynamic T&D co-simulation.
 </p>
 
 ***
@@ -132,7 +132,7 @@ Modules for performing visualization and analytics are available as part of the 
 tdcosim dashboard -o "path/to/results.pkl"
 ```
 
-Detailed intructions on the **TDcoSim Dashboard** and other analytic tools are included in the [TDcoSim Data Visualization and Analytics](user_guide_visualization_analytics.md) chapter.
+Detailed instructions on the **TDcoSim Dashboard** and other analytic tools are included in the [TDcoSim Data Visualization and Analytics](user_guide_visualization_analytics.md) chapter.
 
 ## Examples
 
