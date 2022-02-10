@@ -175,7 +175,7 @@ def dashboard(args):
 		
 		appPath=os.path.join(baseDir,'dashboard','app.py')
 
-		os.system('python {} {} "{}" {} {} {}'.format(appPath,args.outputPath,args.pssePath,args.reducedMemory,args.nFiles,args.useDask))
+		os.system('python {} {} "{}" {} {} {} {}'.format(appPath,args.outputPath,args.pssePath,args.reducedMemory,args.nFiles,args.useDask,args.portNumber))
 	except:
 		raise
 
@@ -341,7 +341,8 @@ if __name__ == "__main__":
 	parser.add_argument('-b','--batchDir', type=str, help='Directory where individual config files for batch processing can be found')
 	parser.add_argument('-n','--nFiles', type=int,default=2, help='Number of simulation files to read for dashboard visualization')
 	parser.add_argument('-d','--useDask', type=str,default='false', help='Use Dask instead of Pandas for reading the results for dashboard visualization')
-
+	parser.add_argument('-port','--portNumber', type=int,default=8050, help='Specify the port number for the dashboard server')
+	
 	if len(sys.argv)==1:
 		print_help()
 	else:
