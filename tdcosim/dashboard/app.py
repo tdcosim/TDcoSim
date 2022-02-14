@@ -573,6 +573,7 @@ if __name__ == '__main__':
 	# # init
 	nFiles = int(sys.argv[4])
 	useDask = sys.argv[5]
+	portNumber = int(sys.argv[6])
 	
 	tic = time.time()
 	if os.path.isfile(sys.argv[1]):
@@ -657,6 +658,6 @@ if __name__ == '__main__':
 	app.layout=html.Div(objects['tabs']['main_tab'],
 	style={'width':'99vw','height':'98vh','background-color':colorobj[0]})
 	toc = time.time()
-	print("Time taken to load and process dataframe:{:.2f} s".format(toc - tic))
+	print("Time taken to load and process dataframe on port:{}:{:.2f} s".format(portNumber,toc - tic))
 	# run
-	app.run_server(debug=False,use_reloader=False)
+	app.run_server(port=portNumber,debug=False,use_reloader=False)
