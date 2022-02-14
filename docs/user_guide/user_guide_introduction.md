@@ -97,7 +97,7 @@ The studies that can be conducted in the next version of the software are listed
 
 The following figure illustrates how **TDcoSim** can assist in T&D planning and operations coordination for future high-DER-penetration grid.
 
-![T & D planning and operationsl](images/TD_planning_operations.png)
+![T & D planning and operations](images/TD_planning_operations.png)
 
 Following capabilities are planned in be added in the future:
 

@@ -36,7 +36,7 @@ and it is crucial to set the PSSE installation path properly so that the module 
 ![Compatibility Table PSSE-Python](images/Compatibility_table_PSSE_Python.png)
 
 ***
-***Note:*** [Git](https://git-scm.com/) needs to installed  (incase it is not already available) before TDcoSim can be installed.
+***Note:*** [Git](https://git-scm.com/) needs to installed  (in case it is not already available) before TDcoSim can be installed.
 
 ***
 

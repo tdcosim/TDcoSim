@@ -110,11 +110,11 @@ All the methods take the TDcoSim DataFrame as input.
 The most useful methods available within the module are described below:
 
 
-> Entries below needs to be reveiwed before publishing 
+> Entries below needs to be reviewed before publishing 
 
 
 #### *compute_stability_time:*   Determines whether the co-simulation variables within the data frame reach steady state, and the time taken to reach steady state after a disturbance event has occurred. The DataFrame has at least two columns: 1) value and 2) t.
-* *Syntex:* stability_time, comment= compute_stability_time(df, error_threshold)
+* *Syntax:* stability_time, comment= compute_stability_time(df, error_threshold)
 * *Inputs:*
      - *df:* 			DataFrame with at least two columns: 1) value, and 2) t.
      - *error_threshold:* 	Error threshold for stability time calculations. Maximum allowed signal deviation after stability time
@@ -125,7 +125,7 @@ The most useful methods available within the module are described below:
 
 
 ####	*lag_finder:*        Calculate lag/delay between DataFrames df1 and df2 of the same length. Negative outputs show that signal df2.value lags behind df1.value and the positive output shows that df1.value lags behind df2.value. 
-* *Syntex:* delay = lag_finder(df1, df2)
+* *Syntax:* delay = lag_finder(df1, df2)
 * *Inputs:*
      - *df1:* 			DataFrame 1 with at least one column: value
      - *df2:* 			DataFrame 2 with at least one column: value
@@ -133,7 +133,7 @@ The most useful methods available within the module are described below:
      - *delay:* 		Delay between signals df1.value and df2.value
 
 ####	*compute_mean_square_error:*       Calculate the mean square error between DataFrames df1 and df2 of the same length. 
-* *Syntex:* MSE = compute_mean_square_error (df1, df2)
+* *Syntax:* MSE = compute_mean_square_error (df1, df2)
 * *Inputs:*
      - *df1:* 			DataFrame 1 with at least one column: value
      - *df2:* 			DataFrame 2 with at least one column: value
@@ -141,7 +141,7 @@ The most useful methods available within the module are described below:
      - *MSE:* 		Mean square error between signal df1.value and df2.value
 
 ####	*shift_array:*       Shifts array by n bit. Fills extra bits at the end of the vector by a copy of the last bit of the array. 
-* *Syntex:* x = shift_array(y, n)
+* *Syntax:* x = shift_array(y, n)
 * *Inputs:*
      - *y:* 			Signal (type: np.array)
      - *n:* 			Number of bits to shift the signal. Positive values of n shifts signal y to the right and negative values shift signals to the left.
@@ -149,7 +149,7 @@ The most useful methods available within the module are described below:
      - *x:* 		   Shifted signal
 
 ####	*instances_of_violation:*       Calculates the number of instances where the value of data frame violates upper and lower bounds set by minValue and maxValue.
-* *Syntex:* n = instances_of_violation(df,maxValue,minValue)
+* *Syntax:* n = instances_of_violation(df,maxValue,minValue)
 * *Inputs:*
      - *df:* 			      DataFrame with at least one property: df.value
      - *maxValue:* 			Upper threshold 
@@ -158,8 +158,8 @@ The most useful methods available within the module are described below:
      - *n:* 		         Number of instances when 'df.value' is outside the bounds of [minValue, maxValue]
 
 
-####	*exculde_value:*       Filter the given data frame based on >=toValue and <=fromValue conditions. For == condition use the same value for fromValue and toValue.
-* *Syntex:* excludedDF = exculde_value(df,fromValue,toValue)
+####	*exclude_value:*       Filter the given data frame based on >=toValue and <=fromValue conditions. For == condition use the same value for fromValue and toValue.
+* *Syntax:* excludedDF = exclude_value(df,fromValue,toValue)
 * *Inputs:*
      - *df:* 			      DataFrame with at least one property: df.value
      - *fromValue:* 			Upper threshold 
@@ -171,7 +171,7 @@ The most useful methods available within the module are described below:
 
 ####	*compare_signals:*       Compare and plot two signals in data frame df1 and df2 of the same length. Returns result in terms of stability time of both signals as well as lag and mean square error between them.
 
-* *Syntex:* lag,MSE,Stability_time_1,Stability_time_2 = compare_signals(thisBusId1,thisBusId2,df1,df2,error_threshold,show_results)
+* *Syntax:* lag,MSE,Stability_time_1,Stability_time_2 = compare_signals(thisBusId1,thisBusId2,df1,df2,error_threshold,show_results)
 * *Inputs:*
      - *thisBusId1:* 			      Bus ID of data frame 1
      - *thisBusId2:* 			      Bus ID of data frame 2
@@ -187,7 +187,7 @@ The most useful methods available within the module are described below:
 
 ####	*plot_vt_filt_fast_der:*  Plot the voltage signal at given transmission node and DERs in the connected distribution system.       
 
-* *Syntex:* plot_vt_filt_fast_der(df,tnodeid,legendDistNode,showPlot)
+* *Syntax:* plot_vt_filt_fast_der(df,tnodeid,legendDistNode,showPlot)
 * *Inputs:*
      - *df:* 			               Data Frame 
      - *tnodeid:* 			         Transmission node ID
@@ -197,7 +197,7 @@ The most useful methods available within the module are described below:
 
 ####	*plot_t_vmag:*  Plot the voltage signal at given transmission node. If no transmission node id is given, it will plot voltage at all transmission nodes. 
 
-* *Syntex:* plot_t_vmag(df,tnodeid,excludeNodes)
+* *Syntax:* plot_t_vmag(df,tnodeid,excludeNodes)
 * *Inputs:*
      - *df:* 			               Data Frame 
      - *tnodeid:* 			         Transmission node ID (Optional: if not specified set to none)
@@ -206,7 +206,7 @@ The most useful methods available within the module are described below:
 
 
 ####	*plot_omega:*  Plot time vs rotor speed at all transmission nodes except specified. 
-* *Syntex:* plot_omega(df,excludeNodes=None)
+* *Syntax:* plot_omega(df,excludeNodes=None)
 * *Inputs:*
      - *df:* 		Data Frame 	               
      - *excludeNodes:* 	Nodes to be excluded from the plot (Optional: if not specified set to none)		   
@@ -215,21 +215,21 @@ The most useful methods available within the module are described below:
 
 
 ####	*plot_distribution_der_data:*  Plots the time series plots for active and reactive power output from each DER.
-* *Syntex:* plot_distribution_der_data(df,tnodeid=None,plotDerTotal=True)
+* *Syntax:* plot_distribution_der_data(df,tnodeid=None,plotDerTotal=True)
 * *Inputs:*
      - *df:* 		                  Data Frame 	               
      - *tnodeid:* 			         Transmission node ID
      - *plotDerTotal:* 	Set true to plot total P and Q of distribution DERs  		   
 
 ####	*show_plot:*  Generate plot with time as x-axis and ylable as y-axis
-* *Syntex:* show_plot(ylabel,title)
+* *Syntax:* show_plot(ylabel,title)
 * *Inputs:*
      - *ylabel:* 			         Y-axis label 
      - *title:* 			         Plot title
      
 
 ####	*clear_plot:*  Clear the plot
-* *Syntex:* clear_plot()
+* *Syntax:* clear_plot()
 
 [Continue to Understanding the config file](user_guide_understanding_config.md)
 

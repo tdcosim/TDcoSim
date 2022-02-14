@@ -76,7 +76,7 @@ The **TDcoSim config** file follows a specific template, and any deviations from
 ```
 tdcosim template --templatePath config_dynamic_example.json --simType dynamic
 ```
-A detailed description of the configuration template is provided in the [Using the configuration template](user_guide_user_interaction.md) chapter.
+A detailed description of the configuration template is provided in the [Using the configuration template](user_guide_configuration_template.md) chapter.
 ***
 ***Note:*** The **config** file can be edited with Notepad++.
 

@@ -80,7 +80,7 @@ The data exchange protocol for steady-state co-simulation in the current version
 5. Run power flow in OpenDSS, get P and Q requirement for DNetworks.
 6. Scale P & Q using scaling factor and set as input to T bus.
 
-The scaling factor (see [assumptions](#assumptions)) is calculated by dividing the total load at a transmission system load bus by the aggregated load of one distribution feeder.
+The scaling factor (see [assumptions](user_guide_capability_and_limitations.md)) is calculated by dividing the total load at a transmission system load bus by the aggregated load of one distribution feeder.
 
 At every time step (one half-cycle), the steps 2 to 6 are repeated until the end of simulation.
 
