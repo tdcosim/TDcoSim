@@ -11,10 +11,10 @@
 * Memory (RAM): 64.0 GB
 
 ***
-***Note:*** Capability to run on a cluster  will be added in the future.
+***Note:*** Capability to run on a cluster will be added in the future.
 
 ***
 ***
-***Note:*** Solution time is influenced by the number of logical cores in CPU.
+***Note:*** Solution time is influenced by the number of logical cores in the CPU.
 
 ***
