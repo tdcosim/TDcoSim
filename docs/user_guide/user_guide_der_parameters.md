@@ -34,17 +34,17 @@ The Fast DER is based on the DER_A model developed by EPRI and made available th
   * *Id_min (float):* Minimum allowed active current.
   * *Id_min (float):* Minimum allowed active current.
   * *db_dw_up/db_dw_down (float):* Dead band in active power - frequency control.
-  * *db_v_up/db_v_down (float):* Dead band in voltage - reactive power contol.
+  * *db_v_up/db_v_down (float):* Dead band in voltage - reactive power control.
 
 * **Controller gains**
   * *Kp (float):* **Need to be added**
   * *Ki (float):* **Need to be added**
-  * *Kpp/Kip (float):* Active power controller propotional/integral gain.
-  * *Kpq/Kiq (float):* Reactive power controller propotional/integral gain. 
+  * *Kpp/Kip (float):* Active power controller proportional/integral gain.
+  * *Kpq/Kiq (float):* Reactive power controller proportional/integral gain. 
   * *Kfv (float):* **Need to be added**
 
 ## Detailed DER
-The Detailed DER is based on the Dynamic Phasor modell developed by ANL. It is available through the [pvder](https://github.com/tdcosim/SolarPV-DER-simulation-tool) Python package. The model parameters for detailed DER are described [here](user_guide_understanding_DER_config).
+The Detailed DER is based on the Dynamic Phasor model developed by ANL. It is available through the [pvder](https://github.com/tdcosim/SolarPV-DER-simulation-tool) Python package. The model parameters for detailed DER are described [here](user_guide_understanding_DER_config.md).
 
 ## Comparing DER parameters
 

@@ -11,8 +11,8 @@ The **DER config** file exposes the parameters of the DER. It allows user to dev
       
       * **model_type (dict):** The type of model this configuration is meant for. Valid options are: "ThreePhaseUnbalanced","ThreePhaseBalanced","ThreePhaseUnbalancedConstantVdc".
    *   **module_parameters (dict):** The parameters of the solar PV module.
-      * *Np (int):* The numper of parallely connected cells.
-      * *Ns (int):* The numper of series connected cells.
+      * *Np (int):* The number of cells in parallel connection.
+      * *Ns (int):* The number of cells in series connection.
    *   **inverter_ratings (dict):** The parameters defining the power electronic inverter.
       * *Srated (float):* The rated capacity of the inverter (kVA).
       * *Vdcrated (float):* The rated DC link voltage of the inverter (V).

@@ -9,20 +9,20 @@ The config file can be divided into three sections. The purpose of each option i
 ### Logging configuration
 
 1. **level (int):** The logging level which can be either 10 (debug), 20 (info), 30 (warning) or 40 (error). Note that all log files will be saved in the **logs** folder.
-2. **saveSubprocessOutErr (boolean):** Enable logging of error output corresponding to a T node  in seperate ***.err** file.
+2. **saveSubprocessOutErr (boolean):** Enable logging of error output corresponding to a T node  in separate ***.err** file.
 
 ### PSSE configuration
 
 1. **psseConfig (dict):** configuration for the transmission system.
    * *installLocation (string)* : full path for PSS/E transmission system python library location. If there isn't a specific location, system will look up the default installation path of PSS/E 33 (e.g. "C:/Program Files/PTI/PSSE35/35.0/PSSPY27").
-   * *rawFilePath (string)* : full path for the PSS/E transmission system loadflow case file  (e.g. "C:/folder/data/TNetworks/118bus/case118.raw").
+   * *rawFilePath (string)* : full path for the PSS/E transmission system load flow case file  (e.g. "C:/folder/data/TNetworks/118bus/case118.raw").
    * *dyrFilePath (string)*: full path for the PSS/E transmission system dynamic case file (e.g. "C:/project_folder/data/TNetworks/118bus/case118.dyr").
 
 ### OpenDSS + DER configuration
 
 The default feeder configuration is **defaultFeederConfig**, which automatically assigns the same feeder to all the transmission system buses unless otherwise configured using **manualFeederConfig**.
 
-1. **DEROdeSolver (string):**  If fast DER models, specify **fast_der** since they always use the forward euler solver implimented in TDcoSim. If detailed DER models are being used, specify the solver (either **scipy** or **diffeqpy**).
+1. **DEROdeSolver (string):**  If fast DER models, specify **fast_der** since they always use the forward euler solver implemented in TDcoSim. If detailed DER models are being used, specify the solver (either **scipy** or **diffeqpy**).
 2. **DEROdeMethod (string):**  It is **not applicable** for fast DER models. It is used to specify the solver method for detailed DER models. The available options are **bdf** and **adams** for **scipy**, **CVODE_BDF** and **TRBDF2**for **diffeqpy**.
 
 1. **openDSSConfig (dict):** Configuration for distribution feeders. The user can choose a default feeder configuration through defaultFeederConfig option or specify individual feeder for each transmission bus through manualFeederConfig option.
