@@ -1,19 +1,19 @@
 # Installation
-The stable release of TDcoSim can be installed from PyPI. The version under development can be installed from [GitHub](https://github.com/tdcosim/TDcoSim). The commands to be executed in the Windows command line interface for both options are included below:
+The stable release of TDcoSim can be installed from PyPI. The version under development can be installed from [GitHub](https://github.com/tdcosim/TDcoSim). The commands to be executed in the Windows command-line interface for both options are included below:
 
-You can install tdcosim by running the following command on command line.
+You can install tdcosim by running the following command on the command line.
 
 ```
 pip install git+https://github.com/tdcosim/TDcoSim.git@master
 ```
 
-In the event you do not have git installed on your machine, you can alternatively run the following from command line.
+In the event you do not have git installed on your machine, you can alternatively run the following from the command line.
 
 ```
 pip install https://github.com/tdcosim/TDcoSim/archive/master.zip
 ```
 
-After installation open a new command prompt and run the following to set psse path,
+After installation open a new command prompt and run the following to set PSSE path,
 
 ```
 tdcosim setconfig -p "path\to\psse_installation"  
@@ -26,7 +26,7 @@ tdcosim setconfig -p "C:\Program Files\PTI\PSSE35\35.0\PSSPY37"
 ```
 
 Due to the embedded compatibility requirements between PSSE and Python, 
-please refer to the following compatibility table and the PSSE API document that located in the Doc folder on PSSE install location when paring PSSE with Python.
+please refer to the following compatibility table and the PSSE API document located in the Doc folder on PSSE install location when paring PSSE with Python.
 
 It should be noted that the table below is a subset of all successful combinations from our team’s development environment, 
 and it is crucial to set the PSSE installation path properly so that the module PSSPY can be located. 
@@ -34,7 +34,7 @@ and it is crucial to set the PSSE installation path properly so that the module 
 ![Compatibility Table PSSE-Python](images/Compatibility_table_PSSE_Python.png)
 
 ***
-***Note:*** [Git](https://git-scm.com/) needs to installed  (incase it is not already available) before TDcoSim can be installed.
+***Note:*** [Git](https://git-scm.com/) needs to be installed  (in case it is not already available) before TDcoSim can be installed.
 
 ***
 
@@ -62,11 +62,11 @@ The packages listed below must be installed separately:
 * Python packages for visualization: Dash, Plotly
 
 ***
-***Note:*** Either demo (limited to 50 buses) or full version of PSS/E can be used.  OpenDSS is an open source software and can be installed for free.
+***Note:*** Either demo (limited to 50 buses) or full version of PSS/E can be used.  OpenDSS is open-source software and can be installed for free.
 
 ***
 ***
-***Note:*** PSS/E 35.0.0  and above support will support both 32 and 64 bit versions of Python.
+***Note:*** PSS/E 35.0.0  and above support will support both 32 and 64-bit versions of Python.
 ***
 
 ### Optional
