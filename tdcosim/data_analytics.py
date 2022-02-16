@@ -592,7 +592,7 @@ class DataAnalytics(object):
 
 
 #===================================================================================================
-	def exculde_value(self,df,fromValue,toValue):
+	def exclude_value(self,df,fromValue,toValue):
 		"""Filter the given data frame based on >= and <= condition. For == condition use the same
 		value for fromValue and toValue."""
 		try:
