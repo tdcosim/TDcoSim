@@ -13,7 +13,7 @@
 10. [Performance guide](user_guide_performance.md)
 11. Examples:
     1. [Example 1: DER trip and ride through (detailed DER)](examples/Example_1_DER_trip_and_ridethrough.md)
-    2. [Example 2: DER penetration and steady state initialization  (detailed DER and fast DER)](examples/Example_2_system_state_initialization_test.md)
+    2. [Example 2: DER penetration and steady state initialization  (detailed DER and fast DER)](examples/Example_2_DER_penetration_and_steadystate.md)
     3. [Example 3: DER trip and ride through with two buses containing DERs (detailed DER)](examples/Example_3_DER_trip_and_ridethrough_2_der_feeders.md)
 
 13. Appendix
