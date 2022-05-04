@@ -1,0 +1,31 @@
+body{
+	background-color:rgba(45, 45, 45, 1);
+}
+
+.rootDiv{
+	margin:"0px 0px 0px 0px";
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.flexDiv{
+	margin:"0px 0px 0px 0px";
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	height:calc(40vh - 4px);
+}
+
+.ddContainer{
+	margin:"0px 0px 0px 0px";
+	display: flex;
+	flex-direction: row;
+	justify-content: end;
+	align-items: center;
+	flex-wrap: wrap;
+}

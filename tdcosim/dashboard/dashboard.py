@@ -1,6 +1,8 @@
+import  os
+import json
+import io
 import pdb
 
-import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
@@ -8,6 +10,8 @@ import numpy as np
 import math
 import plotly.express as px
 import pandas as pd
+
+from indexer import Indexer
 
 
 class Dashboard(object):
@@ -17,6 +21,8 @@ class Dashboard(object):
 		self._obj={}
 		self.colortheme = 0
 		self.colorobj = ['rgba(0,0,0,.8)', 'white', 'black']
+		self.indexer=Indexer()
+
 #=======================================================================================================================
 	def set_color(self, flag):
 		self.colortheme = flag
@@ -137,14 +143,14 @@ class Dashboard(object):
 #=======================================================================================================================
 	def build_map_df(self,df,prop='VOLT'):
 		res={'tnodeid':[],'lat':[],'lon':[],'min_value':[],'max_value':[],'deviation_value':[]}
-		df=df[df.property==prop]
+		df=df[df.property==prop] #### tag_filter
 		for thisTnode in set(df.tnodeid):
 			res['tnodeid'].append(thisTnode)
-			res['lat'].append(df[df.tnodeid==thisTnode].lat.values[0])
-			res['lon'].append(df[df.tnodeid==thisTnode].lon.values[0])
-			thisMin=df[df.tnodeid==thisTnode].value.min()
+			res['lat'].append(df[df.tnodeid==thisTnode].lat.values[0]) #### tag_filter
+			res['lon'].append(df[df.tnodeid==thisTnode].lon.values[0]) #### tag_filter
+			thisMin=df[df.tnodeid==thisTnode].value.min() #### tag_filter
 			res['min_value'].append(thisMin)
-			thisMax=df[df.tnodeid==thisTnode].value.max()
+			thisMax=df[df.tnodeid==thisTnode].value.max() #### tag_filter
 			res['max_value'].append(thisMax)
 			res['deviation_value'].append(thisMax-thisMin)
 		newDF=pd.DataFrame(res)
@@ -518,3 +524,25 @@ class Dashboard(object):
 		    style=styleobj
 		)
 		return tooltip
+
+#=======================================================================================================================
+	def get_scenario_info(self, rootDir):
+		scenario=[]
+		for thisRoot, dirs, files in os.walk(rootDir):
+			if 'df_pickle.csv' in files and 'index.json' in files:
+				scenario.append([os.path.join(thisRoot,'df_pickle.csv'),os.path.join(thisRoot,'index.json')])
+
+		res={'scenario':{},'tnodeid':[],'property':[]}
+		for entry in scenario:
+			thisInd=json.load(open(entry[1]))
+			dtype={'dfeederid':'object','dnodeid':'object','property':'object','scenario':'object','t':'float64','tnodeid':'object','tnodesubid':'object','value':'float64'}
+			thisDf=pd.read_csv(io.StringIO(\
+			self.indexer._get_data(entry[0],thisInd['pointer'],1,3).decode()),dtype=dtype)
+			res['scenario'][list(set(thisDf.scenario))[0]]={'csvPath':entry[0],'indexPath':entry[1]}
+			res['tnodeid'].extend(list(thisInd['tnodeid'].keys()))
+			res['property'].extend(list(thisInd['property'].keys()))
+
+		res['tnodeid']=list(set(res['tnodeid']))
+		res['property']=list(set(res['property']))
+
+		return res
