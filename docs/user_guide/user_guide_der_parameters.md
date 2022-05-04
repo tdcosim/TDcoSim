@@ -48,7 +48,7 @@ The Detailed DER is based on the Dynamic Phasor model developed by ANL. It is av
 
 ## Comparing DER parameters
 
-| Parameter                       | Fast DER | Detailed DER          |
+| Parameter                       | Fast DER | Detailed DER       |
 | ------------------------------- | -------- | --------------------- |
 | Rated power                     | Pmax     | Srated, Np, Ns        |
 | Rated voltage                   | vref     | Vrmsrated             |
@@ -56,6 +56,7 @@ The Detailed DER is based on the Dynamic Phasor model developed by ANL. It is av
 | Current controller gains        |          | Kp_GCC,Ki_GCC         |
 | Active power controller gains   |    Kpp/Kip      | Kp_P,Ki_P,Kp_DC,Ki_DC |
 | Reactive power controller gains | Kpq/Kiq | Kp_Q,Ki_Q             |
+| Voltage transducer time constant | Trv | Tfilter_Vrms |
 
 ## Composite model parameters
 If the composite model is connected to a T node, it is parameterized using the default values found [here] (https://github.com/tdcosim/TDcoSim/blob/v2_test/config/composite_load_model_rating.json). Note that the default values can be edited by the user.
