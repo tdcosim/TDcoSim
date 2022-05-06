@@ -11,8 +11,7 @@ import dash_table
 import plotly.express as px
 import pandas as pd
 
-# from tdcosim.dashboard import Dashboard
-from dashboard import Dashboard
+from tdcosim.dashboard import Dashboard
 
 helper=Dashboard()
 app = dash.Dash(__name__,assets_folder='assets',include_assets_files=True)

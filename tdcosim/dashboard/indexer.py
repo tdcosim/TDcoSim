@@ -92,6 +92,7 @@ class Indexer(object):
 				for thisBinInd in binInd:
 					if tree[thisBinInd+1]:
 						qryInd+=range(tree[thisBinInd+1][0],tree[thisBinInd+1][1])
+			qryInd=list(qryInd)
 			qryInd.sort()
 
 			dtype={'dfeederid':'object','dnodeid':'object','property':'object','scenario':'object',

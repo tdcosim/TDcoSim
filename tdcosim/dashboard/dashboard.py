@@ -1,11 +1,17 @@
-import  os
+import os
+import sys
 import json
 import io
 import pdb
 
-import dash_core_components as dcc
-import dash_html_components as html
-import dash_table
+if sys.version_info.major==2:
+	import dash_core_components as dcc
+	import dash_html_components as html
+	import dash_table
+else:
+	from dash import dcc
+	from dash import html
+	from dash import dash_table
 import numpy as np
 import math
 import plotly.express as px
