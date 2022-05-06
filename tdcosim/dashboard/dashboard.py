@@ -537,7 +537,7 @@ class Dashboard(object):
 			thisInd=json.load(open(entry[1]))
 			dtype={'dfeederid':'object','dnodeid':'object','property':'object','scenario':'object','t':'float64','tnodeid':'object','tnodesubid':'object','value':'float64'}
 			thisDf=pd.read_csv(io.StringIO(\
-			self.indexer._get_data(entry[0],thisInd['pointer'],1,3).decode()),dtype=dtype)
+			self.indexer._get_data(entry[0],thisInd['pointer'],1,3)),dtype=dtype)
 			res['scenario'][list(set(thisDf.scenario))[0]]={'csvPath':entry[0],'indexPath':entry[1]}
 			res['tnodeid'].extend(list(thisInd['tnodeid'].keys()))
 			res['property'].extend(list(thisInd['property'].keys()))

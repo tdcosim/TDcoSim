@@ -28,6 +28,8 @@ def create_query_bar(fpath):
 	ddData['index']={}
 	for entry in ddData['scenario']:
 		ddData['index'][entry]=json.load(open(ddData['scenario'][entry]['indexPath']))
+		if not isinstance(ddData['index'][entry]['pointer'],np.ndarray):
+			ddData['index'][entry]['pointer']=np.cumsum(ddData['index'][entry]['pointer'])
 
 	# ddOptions=[{'label':'apple','value':'apple'},{'label':'google','value':'google'}]
 	dd1=dcc.Dropdown(id='dd1',options=ddScenarios,value='',placeholder='scenarios',multi=True,

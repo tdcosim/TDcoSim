@@ -1,5 +1,6 @@
 from __future__ import division
 import os
+import sys
 import json
 import pickle
 import io
@@ -95,7 +96,7 @@ class Indexer(object):
 
 			dtype={'dfeederid':'object','dnodeid':'object','property':'object','scenario':'object',
 			't':'float64','tnodeid':'object','tnodesubid':'object','value':'float64'}
-			thisDf=pd.read_csv(io.StringIO(self._get_data(fpath,ind['pointer'],qryInd[0]+1,qryInd[-1]+1).decode()),dtype=dtype)
+			thisDf=pd.read_csv(io.StringIO(self._get_data(fpath,ind['pointer'],qryInd[0]+1,qryInd[-1]+1)),dtype=dtype)
 
 			#### TODO: Need to run the result through pandas once to ensure correctness of result. Small overhead
 			#### as the data size is small.
@@ -120,14 +121,16 @@ class Indexer(object):
 
 	def _get_data(self,fpath,res,startInd,endInd):
 		if not isinstance(res,np.ndarray):
-			res=np.array(res)
-		res=np.cumsum(res)
+			res=np.cumsum(res)
+
 		assert endInd>=startInd
 		f=open(fpath)
 		header=f.read(res[0]-1)
 		f.seek(res[startInd])
 		data=header+f.read(res[endInd-1]-res[startInd-1]-(endInd-(startInd-1))-1)
 		f.close()
+		if isinstance(data,str) and sys.version_info.major==2:
+			data=data.decode()
 		return data
 
 	def add_index_to_results_folder(self,folderPath,df=None):
