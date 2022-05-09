@@ -289,6 +289,7 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 		elif GlobalData.config['simulationConfig']['simType']=='static':
 			data['dfeederid']=['1']*len(data['t'])
 			data['tnodesubid']=['']*len(data['t'])
+			data['scenario']=[scenario]*len(data['t'])
 			df=pd.DataFrame(data)
 
 		# updates for der_p_total and der_q_total
