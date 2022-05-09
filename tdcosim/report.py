@@ -193,6 +193,7 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			t=list(t)
 		t.sort()
 		data={'t':[],'tnodeid':[],'tnodesubid':[],'dfeederid':[],'dnodeid':[],'property':[],'value':[]}
+		dataStr='t,scenario,tnodeid,tnodesubid,dfeederid,dnodeid,property,value\n'
 		for thisTime in t:
 			for thisTDInterface in monData[thisTime]:
 				for thisProp in monData[thisTime][thisTDInterface]:
@@ -203,6 +204,8 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 							data['dnodeid'].append(thisNodeID)
 							data['property'].append(thisProp+'_'+thisSubProp)
 							data['value'].append(monData[thisTime][thisTDInterface][thisProp][thisNodeID][thisSubProp])
+							dataStr+='{},{},{},{},{},{},{},{}\n'.format(scenario,thisTime,thisTDInterface,'','',thisNodeID,\
+							thisProp+'_'+thisSubProp,monData[thisTime][thisTDInterface][thisProp][thisNodeID][thisSubProp])
 
 		outputConfig=GlobalData.config['outputConfig']
 		if 'Dynamic' in GlobalData.data['TNet']:
@@ -216,6 +219,8 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 						data['dnodeid'].append(thisDnodeid)
 						data['property'].append('vt_filt_fast_der')
 						data['value'].append(vt_filt_val)
+						dataStr+='{},{},{},{},{},{},{},{}\n'.format(scenario,thisTime,thisTnodeid,'','',thisDnodeid,\
+						'vt_filt_fast_der',vt_filt_val)
 			data['scenario']=[scenario]*len(data['t'])
 			data['dfeederid']=['1']*len(data['t'])
 			data['tnodesubid']=['']*len(data['t'])
@@ -285,18 +290,33 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			'value'])
 			df['t'],df['tnodeid'],df['tnodesubid'],df['property'],df['value']=t_all,tnodeid,tnodesubid,props,value
 			df['scenario']=[scenario]*len(t_all)
-			df=df.append(df_monitorData,ignore_index=True,sort=True)
+			df=df.append(df_monitorData,ignore_index=True,sort=False)
+
+			dataStr+='\n'.join([','.join([str(item) for item in entry]) for entry in zip([scenario]*len(t_all),t_all,tnodeid,tnodesubid,['']*len(t_all),['']*len(t_all),props,value)])
+
 		elif GlobalData.config['simulationConfig']['simType']=='static':
 			data['dfeederid']=['1']*len(data['t'])
 			data['tnodesubid']=['']*len(data['t'])
 			data['scenario']=[scenario]*len(data['t'])
 			df=pd.DataFrame(data)
+			
+			dataStr+='\n'.join([','.join([str(item) for item in entry]) for entry in zip(data['scenario'],data['t'],
+			data['tnodeid'],data['tnodesubid'],data['dfeederid'],data['dnodeid'],data['property'],data['value'])])
 
 		# updates for der_p_total and der_q_total
-		df=get_der_total_injection(df,GlobalData)
+		df,data_der=get_der_total_injection(df,GlobalData)
+		if data_der:
+			dataStr+='\n'.join([','.join([str(item) for item in entry]) for entry in zip(data_der['scenario'],
+			data_der['t'],data_der['tnodeid'],data_der['tnodesubid'],data_der['dfeederid'],
+			data_der['dnodeid'],data_der['property'],data_der['value'])])
+
 		df=update_dera_nodes(df,GlobalData)
 		fpath=os.path.join(outputConfig['outputDir'],'df_pickle')
-		
+
+		f=open(os.path.join(outputConfig['outputDir'],'df.csv'),'w')
+		f.write(dataStr)
+		f.close()
+
 		try:
 			print("Trying to save TDcoSim dataframe as a .pkl file")
 			df.to_pickle(fpath+".pkl")
@@ -315,6 +335,7 @@ def get_der_total_injection(df,GlobalData):
 	try:
 		for thisProp in ['der_P','der_Q']:
 			res=df[df.property==thisProp]
+			data={}
 			if not res.empty:
 				data={'dfeederid':[],'dnodeid':[],'property':[],'scenario':[],'t':[],
 				'tnodeid':[],'tnodesubid':[],'value':[]}
@@ -343,10 +364,10 @@ def get_der_total_injection(df,GlobalData):
 
 				df_new=pd.DataFrame(data)
 				if not df_new.empty: 
-					df=df.append(df_new,ignore_index=True)
+					df=df.append(df_new,ignore_index=True,sort=False)
 					df.reindex()
 
-		return df
+		return df,data
 	except:
 		raise
 
