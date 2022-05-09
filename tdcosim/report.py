@@ -6,6 +6,7 @@ import uuid
 import pdb
 import re
 import time
+import copy
 
 import six
 import xlsxwriter
@@ -193,7 +194,7 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			t=list(t)
 		t.sort()
 		data={'t':[],'tnodeid':[],'tnodesubid':[],'dfeederid':[],'dnodeid':[],'property':[],'value':[]}
-		dataStr='t,scenario,tnodeid,tnodesubid,dfeederid,dnodeid,property,value\n'
+		dataStr='scenario,t,tnodeid,tnodesubid,dfeederid,dnodeid,property,value\n'
 		for thisTime in t:
 			for thisTDInterface in monData[thisTime]:
 				for thisProp in monData[thisTime][thisTDInterface]:
@@ -294,6 +295,23 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 
 			dataStr+='\n'.join([','.join([str(item) for item in entry]) for entry in zip([scenario]*len(t_all),t_all,tnodeid,tnodesubid,['']*len(t_all),['']*len(t_all),props,value)])
 
+			# updates for der_p_total and der_q_total
+			df,data_der_PQ=get_der_total_injection(df,GlobalData)
+			if data_der_PQ['der_P']:
+				for thisProp in data_der_PQ:
+					data_der=data_der_PQ[thisProp]
+					dataStr+='\n'
+					dataStr+='\n'.join([','.join([str(item) for item in entry]) for entry in zip(data_der['scenario'],
+					data_der['t'],data_der['tnodeid'],data_der['tnodesubid'],data_der['dfeederid'],
+					data_der['dnodeid'],data_der['property'],data_der['value'])])
+
+			df,deraNodes=update_dera_nodes(df,GlobalData)
+
+			for node in deraNodes:
+				node=str(node)
+				dataStr=re.sub(r'([\w]{1,},[\d.]{1,},[\d.]{1,},[\w\d]{0,},[\w\d]{0,}),'+node+',POWR',r'\1,'+node+',der_p_total',dataStr)
+				dataStr=re.sub(r'([\w]{1,},[\d.]{1,},[\d.]{1,},[\w\d]{0,},[\w\d]{0,}),'+node+',VARS',r'\1,'+node+',der_q_total',dataStr)
+
 		elif GlobalData.config['simulationConfig']['simType']=='static':
 			data['dfeederid']=['1']*len(data['t'])
 			data['tnodesubid']=['']*len(data['t'])
@@ -303,20 +321,11 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			dataStr+='\n'.join([','.join([str(item) for item in entry]) for entry in zip(data['scenario'],data['t'],
 			data['tnodeid'],data['tnodesubid'],data['dfeederid'],data['dnodeid'],data['property'],data['value'])])
 
-		# updates for der_p_total and der_q_total
-		df,data_der=get_der_total_injection(df,GlobalData)
-		if data_der:
-			dataStr+='\n'.join([','.join([str(item) for item in entry]) for entry in zip(data_der['scenario'],
-			data_der['t'],data_der['tnodeid'],data_der['tnodesubid'],data_der['dfeederid'],
-			data_der['dnodeid'],data_der['property'],data_der['value'])])
-
-		df=update_dera_nodes(df,GlobalData)
-		fpath=os.path.join(outputConfig['outputDir'],'df_pickle')
-
 		f=open(os.path.join(outputConfig['outputDir'],'df.csv'),'w')
 		f.write(dataStr)
 		f.close()
 
+		fpath=os.path.join(outputConfig['outputDir'],'df_pickle')
 		try:
 			print("Trying to save TDcoSim dataframe as a .pkl file")
 			df.to_pickle(fpath+".pkl")
@@ -333,6 +342,7 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 
 def get_der_total_injection(df,GlobalData):
 	try:
+		data4csv={}
 		for thisProp in ['der_P','der_Q']:
 			res=df[df.property==thisProp]
 			data={}
@@ -362,12 +372,14 @@ def get_der_total_injection(df,GlobalData):
 				data['dnodeid']=['']*len(data['value'])
 				data['tnodesubid']=['']*len(data['value'])
 
+				data4csv[thisProp]=copy.deepcopy(data)
+
 				df_new=pd.DataFrame(data)
 				if not df_new.empty: 
 					df=df.append(df_new,ignore_index=True,sort=False)
 					df.reindex()
 
-		return df,data
+		return df,data4csv
 	except:
 		raise
 
@@ -383,6 +395,6 @@ def update_dera_nodes(df,GlobalData):
 			df.loc[(df.tnodeid==node)&(df.property=='POWR'),'property']='der_p_total'
 			df.loc[(df.tnodeid==node)&(df.property=='VARS'),'property']='der_q_total'
 
-		return df
+		return df,deraNodes
 	except:
 		raise
