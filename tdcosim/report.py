@@ -13,6 +13,10 @@ import xlsxwriter
 import pandas as pd
 import numpy as np
 
+from tdcosim.dashboard.indexer import Indexer
+
+indHelper=Indexer()
+
 
 def generate_output(GlobalData,excel=True,dataframe=True,config=True):
 	try:
@@ -321,19 +325,12 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			dataStr+='\n'.join([','.join([str(item) for item in entry]) for entry in zip(data['scenario'],data['t'],
 			data['tnodeid'],data['tnodesubid'],data['dfeederid'],data['dnodeid'],data['property'],data['value'])])
 
-		f=open(os.path.join(outputConfig['outputDir'],'df.csv'),'w')
+		fpath=os.path.join(outputConfig['outputDir'],'df.csv')
+		f=open(fpath,'w')
 		f.write(dataStr)
 		f.close()
 
-		fpath=os.path.join(outputConfig['outputDir'],'df_pickle')
-		try:
-			print("Trying to save TDcoSim dataframe as a .pkl file")
-			df.to_pickle(fpath+".pkl")
-			fpath+='.pkl'
-		except MemoryError:
-			print("Saving to .CSV file due to .pkl memory error")
-			df.to_csv(fpath+".csv",index=False)
-			fpath+='.csv'
+		indHelper.save_indexer_info(fpath,os.path.join(outputConfig['outputDir'],'index.json'))
 		print("Successfully saved as {}...".format(fpath))
 
 		return df
