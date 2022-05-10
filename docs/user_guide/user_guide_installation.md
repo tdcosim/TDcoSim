@@ -104,6 +104,7 @@ The packages listed below must be installed separately:
 | ----- | ------- | ------ | ----------------- | ---------------------  |
 | 33    | 9.4.1.1 | 2.7    | Fast DER          | Yes (till 100 feeders?)|
 | 35    | 8.6.1.1 | 3.7    | Fast DER          | Yes (till 100 feeders?)|
+| 33    | 9.4.1.1 | 2.7    | Detailed DER      | Yes (till 100 feeders?)|
 | 35    | 8.6.1.1 | 3.7    | Detailed DER      | Yes (till 75 feeders)  |
 
 
