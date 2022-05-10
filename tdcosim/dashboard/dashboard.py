@@ -149,14 +149,14 @@ class Dashboard(object):
 #=======================================================================================================================
 	def build_map_df(self,df,prop='VOLT'):
 		res={'tnodeid':[],'lat':[],'lon':[],'min_value':[],'max_value':[],'deviation_value':[]}
-		df=df[df.property==prop] #### tag_filter
+		df=df[df.property==prop]
 		for thisTnode in set(df.tnodeid):
 			res['tnodeid'].append(thisTnode)
-			res['lat'].append(df[df.tnodeid==thisTnode].lat.values[0]) #### tag_filter
-			res['lon'].append(df[df.tnodeid==thisTnode].lon.values[0]) #### tag_filter
-			thisMin=df[df.tnodeid==thisTnode].value.min() #### tag_filter
+			res['lat'].append(df[df.tnodeid==thisTnode].lat.values[0])
+			res['lon'].append(df[df.tnodeid==thisTnode].lon.values[0])
+			thisMin=df[df.tnodeid==thisTnode].value.min()
 			res['min_value'].append(thisMin)
-			thisMax=df[df.tnodeid==thisTnode].value.max() #### tag_filter
+			thisMax=df[df.tnodeid==thisTnode].value.max()
 			res['max_value'].append(thisMax)
 			res['deviation_value'].append(thisMax-thisMin)
 		newDF=pd.DataFrame(res)

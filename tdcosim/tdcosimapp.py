@@ -3,21 +3,14 @@ import sys
 import time
 import argparse
 import json
-import pdb
-import inspect
 
 import win32api
-
-import tdcosim
-from tdcosim.global_data import GlobalData
-from tdcosim.procedure.procedure import Procedure
 
 baseDir=os.path.dirname(os.path.abspath(__file__))
 if '~' in baseDir:
 	baseDir=win32api.GetLongPathName(baseDir)
-installDir=os.path.dirname(inspect.getfile(tdcosim))
-if '~' in installDir:
-	installDir=win32api.GetLongPathName(installDir)
+installDir=baseDir
+
 
 def run(args):
 	try:
@@ -326,7 +319,6 @@ def batch(args):
 
 
 if __name__ == "__main__":
-	startTime = time.time()
 	parser = argparse.ArgumentParser()
 	parser.add_argument('type', type=str)	
 	parser.add_argument('-c','--config', type=str, help='The configfile location')
@@ -349,21 +341,25 @@ if __name__ == "__main__":
 		args = parser.parse_args()
 		if args.configHelp:
 			configHelp(args)
-		elif args.type=='run':
-			run(args)
+		elif args.type=='run' or args.type=='test' or args.type=='dashboard' or args.type=='batch':
+			# lazy import
+			from tdcosim.global_data import GlobalData
+			from tdcosim.procedure.procedure import Procedure
+			if args.type=='run':
+				run(args)
+			elif args.type=='test':
+				test(args)
+			elif args.type=='dashboard':
+				dashboard(args)
+			elif args.type=='batch':
+				batch(args)
 		elif args.type=='template':
 			template(args)
-		elif args.type=='dashboard':
-			dashboard(args)
 		elif args.type=='describe':
 			describe(args)
-		elif args.type=='test':
-			test(args)
 		elif args.type.lower()=='setconfig':
 			setconfig(args)
 		elif args.type.lower()=='getconfig':
 			getconfig(args)
 		elif args.type=='info':
 			configHelp(args)
-		elif args.type=='batch':
-			batch(args)
