@@ -100,6 +100,14 @@ The packages listed below must be installed separately:
 
 ## Tested configurations :
 
+| PSS/E | OpenDSS | Python | Type of DER       | Tested                 |
+| ----- | ------- | ------ | ----------------- | ---------------------  |
+| 33    | 9.4.1.1 | 2.7    | Fast DER          | Yes (till 100 feeders?)|
+| 35    | 8.6.1.1 | 3.7    | Fast DER          | Yes (till 100 feeders?)|
+| 35    | 8.6.1.1 | 3.7    | Detailed DER      | Yes (till 75 feeders)  |
+
+
+
 | PSS/E | OpenDSS | Python | diffeqpy/Julia    | Tested                |
 | ----- | ------- | ------ | ----------------- | --------------------- |
 | 35    | 8.6.1.1 | 2.7.3  | -                 | Yes                   |
