@@ -40,7 +40,7 @@ class OpenDSSInterface(object):
 				OpenDSSData.log(level=50,msg="DSS Failed to Connect")
 				exit(1)
 		except:
-			OpenDSSData.log()
+			OpenDSSData.log(40,"init failed")
 
 #===================================================================================================
 	def __enumerations(self):
@@ -54,7 +54,7 @@ class OpenDSSInterface(object):
 			for n in range(0,len(modes)):
 				mode[modes[n]]=n
 		except:
-			OpenDSSData.log("Failed Enumeration")
+			OpenDSSData.log(40,"Failed Enumeration")
 
 #===================================================================================================
 	def setup(self):
@@ -69,7 +69,7 @@ class OpenDSSInterface(object):
 			# once loaded find the base load			
 			self.S0=self.getLoads()	
 		except:
-			OpenDSSData.log ("Failed to setup OpenDSS")
+			OpenDSSData.log(40,"Failed to setup OpenDSS")
 
 #===================================================================================================
 	def setupDER(self, pvdermap):	
@@ -123,7 +123,7 @@ class OpenDSSInterface(object):
 			for n in range(0,self.Circuit.NumBuses):
 				self.busname2ind[self.Circuit.Buses(n).Name]=n
 		except:
-			OpenDSSData.log("Failed setupDER in OpenDSS Interface")
+			OpenDSSData.log(40,"Failed setupDER in OpenDSS Interface")
 
 #===================================================================================================
 	def getLoads(self):
@@ -141,7 +141,7 @@ class OpenDSSInterface(object):
 
 			return S
 		except:
-			OpenDSSData.log ("Failed Get Loads in OpenDSS Interface")
+			OpenDSSData.log (40,"Failed Get Loads in OpenDSS Interface")
 
 #===================================================================================================
 	def getVoltage(self,vtype='actual',busID=None):
@@ -184,7 +184,7 @@ class OpenDSSInterface(object):
 
 			return Voltage
 		except:
-			OpenDSSData.log('Failed Get Voltage in OpenDSS Interface')
+			OpenDSSData.log(40,'Failed Get Voltage in OpenDSS Interface')
 
 #===================================================================================================
 	def _changeObj(self,objData):
@@ -213,7 +213,7 @@ class OpenDSSInterface(object):
 				elif entry[-1]=='get':
 					entry[2]=self.CktElement.Properties(entry[1]).Val
 		except:
-			OpenDSSData.log("Failed changeobj")
+			OpenDSSData.log(40,"Failed changeobj")
 
 #===================================================================================================
 	def initialize(self, Vpcc, targetS, tol): 
@@ -272,14 +272,14 @@ class OpenDSSInterface(object):
 			return self.K*P*self.unitConversion,self.K*Q*self.unitConversion, convergedFlg,\
 			self.K*self.unitConversion
 		except:
-			OpenDSSData.log("Failed initialSolve in OpenDSS Interface")
+			OpenDSSData.log(40,"Failed initialSolve in OpenDSS Interface")
 
 #===================================================================================================
 	def setVoltage(self,Vpu,Vang=0,pccName='Vsource.source'):
 		try:
 			self._changeObj([[pccName,'pu',Vpu,'set'],[pccName,'angle',Vang,'set']])
 		except:
-			OpenDSSData.log('Failed to Set Voltage to OpenDSS')
+			OpenDSSData.log(40,'Failed to Set Voltage to OpenDSS')
 
 #===================================================================================================
 	def getS(self, pccName='Vsource.source'):
@@ -299,7 +299,7 @@ class OpenDSSInterface(object):
 
 			return P,Q,self.Solution.Converged
 		except:
-			OpenDSSData.log('Failed to get S from OpenDSS')
+			OpenDSSData.log(40,'Failed to get S from OpenDSS')
 
 #===================================================================================================
 	def pvderInjection(self, derP, derQ, busID=None):
@@ -330,7 +330,7 @@ class OpenDSSInterface(object):
 			OpenDSSData.data['DNet']['DER']['PVDERData']['P']=P_pv
 			OpenDSSData.data['DNet']['DER']['PVDERData']['Q']=Q_pv
 		except:
-			OpenDSSData.log('Failed to pvderInjection from OpenDSS Interface')
+			OpenDSSData.log(40,'Failed to pvderInjection from OpenDSS Interface')
 
 #===================================================================================================
 	def scaleLoad(self,scale):
@@ -346,10 +346,10 @@ class OpenDSSInterface(object):
 				self.Loads.kvar=self.S0['Q'][self.Loads.Name]*scale
 				self.Loads.Next # move to the next load in the system
 		except:
-			OpenDSSData.log('Failed to complete scaleload from OpenDSS Interface')
+			OpenDSSData.log(40,'Failed to complete scaleload from OpenDSS Interface')
 
 #===================================================================================================
-	def monitor(self,varName):
+	def monitor(self,varName,fid,t):
 		try:
 			res={}
 			if 'voltage' in varName:
@@ -361,6 +361,8 @@ class OpenDSSInterface(object):
 					for phase in V[node]:
 						Vmag[node][phase]=np.abs(V[node][phase])
 						Vang[node][phase]=np.angle(V[node][phase])
+						fid.write('$1,{},$3,$4,$5,{},{},{}\n'.format(t,node,'Vmag_{}'.format(phase),np.abs(V[node][phase])))
+						fid.write('$1,{},$3,$4,$5,{},{},{}\n'.format(t,node,'Vang_{}'.format(phase),np.angle(V[node][phase])))
 				res['Vmag']=Vmag; res['Vang']=Vang
 			if 'der' in varName or 'DER' in varName:
 				res['der']={}
@@ -372,6 +374,10 @@ class OpenDSSInterface(object):
 					self._changeObj(qry)
 					res['der'][node]['P']=-float(qry[0][2])#-ve load => gen
 					res['der'][node]['Q']=-float(qry[1][2])#-ve load => gen
+					fid.write(\
+					'$1,{},$3,$4,$5,{},{},{}\n'.format(t,node,'der_P',-float(qry[0][2])))
+					fid.write(\
+					'$1,{},$3,$4,$5,{},{},{}\n'.format(t,node,'der_Q',-float(qry[1][2])))
 			if 'voltage_der' in varName or 'DER' in varName:
 				busID=OpenDSSData.data['DNet']['DER']['PVDERMap'].keys()
 				if six.PY3:
@@ -385,10 +391,15 @@ class OpenDSSInterface(object):
 						for phase in V[node]:
 							Vmag[node][phase]=np.abs(V[node][phase])
 							Vang[node][phase]=np.angle(V[node][phase])
+							fid.write(\
+							'$1,{},$3,$4,$5,{},{},{}\n'.format(t,node,'Vmag_{}'.format(phase),np.abs(V[node][phase])))
+							fid.write(\
+							'$1,{},$3,$4,$5,{},{},{}\n'.format(t,node,'Vang_{}'.format(phase),np.angle(V[node][phase])))
+
 					res['Vmag']=Vmag; res['Vang']=Vang
 
 			return res
 		except:
-			OpenDSSData.log('Failed to complete scaleload from OpenDSS Interface')
+			OpenDSSData.log(40,'Failed to complete scaleload from OpenDSS Interface')
 
 

@@ -57,6 +57,7 @@ if __name__=="__main__":
 					c.send(json.dumps({"shutdown":1}))# reply back to handler
 				elif six.PY3:
 					c.send(json.dumps({"shutdown":1}).encode())# reply back to handler
+				tempOutputF.close()
 				c.shutdown(0)
 				c.close() # close comm with server
 				OpenDSSData.log(level=20,msg="Open DSS Client {} is ended".format(nodeid))
@@ -66,6 +67,8 @@ if __name__=="__main__":
 				OpenDSSData.config['myconfig'] = findConfig(nodeid)
 				dssProcedure.setup()
 				replyMsg = {'response': nodeid}
+				tempOutputF=open(os.path.join(OpenDSSData.config['outputConfig']['outputDir'],\
+				'{}_temp.csv'.format(nodeid)),'w')
 			elif msg['method'].lower()=='initialize':
 				replyMsg['P'],replyMsg['Q'],replyMsg['convergedFlag'],replyMsg['scale']=\
 				dssProcedure.initialize(targetS=msg['targetS'],Vpcc=msg['Vpcc'],tol=msg['tol'])
@@ -78,7 +81,7 @@ if __name__=="__main__":
 			elif msg['method'].lower()=='scaleload':
 				dssProcedure.scaleLoad(scale=msg['scale'])
 			elif msg['method'].lower()=='monitor':
-				replyMsg=dssProcedure.monitor(msg=msg['varName'])
+				replyMsg=dssProcedure.monitor(msg['varName'],tempOutputF,msg['info']['t'])
 			
 			OpenDSSData.logger.debug('replyMsg={}'.format(msg))
 			if six.PY2:

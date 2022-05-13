@@ -17,7 +17,7 @@ import math
 import plotly.express as px
 import pandas as pd
 
-from indexer import Indexer
+from tdcosim.dashboard.indexer import Indexer
 
 
 class Dashboard(object):

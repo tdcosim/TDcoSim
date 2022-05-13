@@ -1,6 +1,6 @@
 import os
 import sys
-import pdb
+import time
 import inspect
 
 import tdcosim
@@ -40,5 +40,3 @@ class Procedure(DefaultProcedure):
 				generate_output(GlobalData,excel=False,dataframe=True)
 		except:
 			GlobalData.log()
-
-			
