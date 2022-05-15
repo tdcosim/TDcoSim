@@ -1,5 +1,7 @@
+from __future__ import division
 from __future__ import print_function
 import sys
+import os
 import psutil
 import json
 import pdb
@@ -12,6 +14,9 @@ from tdcosim.procedure.default_procedure import DefaultProcedure
 from tdcosim.model.psse.psse_model import PSSEModel
 from tdcosim.model.opendss.opendss_model import OpenDSSModel
 from tdcosim.report import generate_excel_report
+from tdcosim.dashboard.indexer import Indexer
+
+indHelper=Indexer()
 
 
 class DefaultDynamicProcedure(DefaultProcedure):
@@ -44,6 +49,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
 #===================================================================================================
 	def run(self):
 		try:
+			GlobalData.data['monitorDataCsv']={}
 			GlobalData.data['monitorData']={}
 			GlobalData.data['TNet']['Dynamic'] = {}
 			maxIter=1
@@ -74,9 +80,10 @@ class DefaultDynamicProcedure(DefaultProcedure):
 			self._dnet_model.setVoltage(Vpcc)
 			S = self._dnet_model.getLoad(t=t,dt=dt)
 			
-			msg={'varName':{}}
+			msg={'varName':{},'info':{}}
 			for node in Vpcc:
 				msg['varName'][node]=['voltage_der','der']
+				msg['info'][node]={'t':t}
 
 			GlobalData.data['monitorData'][t]=self._dnet_model.monitor(msg)
 			GlobalData.data['TNet']['Dynamic'][t] = {'V': Vpcc,'S': S}
@@ -102,11 +109,12 @@ class DefaultDynamicProcedure(DefaultProcedure):
 						self._tnet_model.setLoad(S)
 
 						# collect data and store
-						msg={'varName':{}}
+						msg={'varName':{},'info':{}}
 						for node in Vpcc:
 							msg['varName'][node]=['voltage_der','der']
+							msg['info'][node]={'t':t}
 
-						GlobalData.data['monitorData'][t]=self._dnet_model.monitor(msg)
+						GlobalData.data['monitorData'][t]=self._dnet_model.monitor(msg) #### tag_reformat
 						GlobalData.data['TNet']['Dynamic'][t] = {'V': Vpcc,'S': S}
 
 						# write to disk if running low on memory based on memory threshold
@@ -119,7 +127,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
 								memUseRate=1
 							stepThreshold=int(memory_threshold/memUseRate)
 							GlobalData.log(level=10,msg="Step Threshhold: " + str(stepThreshold))
-						elif stepCount>1 and stepCount%stepThreshold==0:
+						elif stepCount>1 and stepCount%stepThreshold==0:####
 							ffullpath = str(GlobalData.config["outputPath"]+\
 							"\\report{}.xlsx".format(nPart))
 							stype = str(GlobalData.config['simulationConfig']['simType'])
@@ -165,6 +173,37 @@ class DefaultDynamicProcedure(DefaultProcedure):
 			ack=self._dnet_model.close()
 			GlobalData.log(level=20,msg=json.dumps(ack))
 			ierr=self._tnet_model._psspy.pssehalt_2(); assert ierr==0
+
+			# process output data
+			dataStr=''
+			indObj={'tnodeid':{},'dnodeid':{},'ineq':{},'dfLen':0,'property':{},'pointer':[]}
+			for node in Vpcc:
+				thisFPath=os.path.join(GlobalData.config['outputConfig']['outputDir'],'{}_temp.csv'.format(node))
+				f=open(thisFPath)
+				data=f.read(); f.close()
+				scenarioID=GlobalData.config['outputConfig']['scenarioID']
+				data=data.replace('$1',scenarioID).replace('$3','{}'.format(node)).replace(\
+				'$4','').replace('$5','').splitlines()
+				for stride in range(len(data)):
+					if float(data[stride].split(',')[1])>=dt_default-1e-6 and \
+					float(data[stride].split(',')[1])<=dt_default+1e-6:
+						break
+				dataStrLen=len(dataStr.splitlines())
+				for offset in range(stride):
+					if offset==0:
+						strideOffset=len(data[offset::stride])
+					indHelper.get_index_from_string(indObj,data[offset],strideOffset,dataStrLen)
+					dataStr+='\n'.join(data[offset::stride])+'\n'
+					dataStrLen+=strideOffset
+
+				os.system('del {}'.format(thisFPath))
+
+			f=open(os.path.join(GlobalData.config['outputConfig']['outputDir'],'df.csv'),'w')
+			f.write(dataStr)
+			f.close()
+
+			indObj['pointer']=[len(entry) for entry in dataStr.splitlines()]
+			json.dump(indObj,open(os.path.join(GlobalData.config['outputConfig']['outputDir'],'index.json'),'w'))
 		except:
 			GlobalData.log()
 

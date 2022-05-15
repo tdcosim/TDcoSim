@@ -57,6 +57,7 @@ class OpenDSSServer(object):
 			msg={}
 			msg['method']='setup'
 			msg['config'] = GlobalData.config
+			msg['config']['nodeid']=nodeid
 			if six.PY2:
 				GlobalData.data['DNet']['Nodes'][nodeid]['conn'][0].send(json.dumps(msg))# send msg
 				reply=json.loads(GlobalData.data['DNet']['Nodes'][nodeid]['conn'][0].recv(
@@ -191,6 +192,9 @@ class OpenDSSServer(object):
 				thisMsg={}
 				thisMsg['method']='monitor'
 				thisMsg['varName']=msg['varName'][entry]
+				if 'info' in msg:
+					thisMsg['info']=msg['info'][entry]
+
 				if six.PY2:
 					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(thisMsg))# send msg
 				elif six.PY3:

@@ -6,11 +6,16 @@ import uuid
 import pdb
 import re
 import time
+import copy
 
 import six
 import xlsxwriter
 import pandas as pd
 import numpy as np
+
+from tdcosim.dashboard.indexer import Indexer
+
+indHelper=Indexer()
 
 
 def generate_output(GlobalData,excel=True,dataframe=True,config=True):
@@ -186,23 +191,14 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 		if not scenario:
 			scenario=uuid.uuid4().hex
 
+		dataStr='scenario,t,tnodeid,tnodesubid,dfeederid,dnodeid,property,value\n'
+		
 		monData=GlobalData.data['monitorData']
 
 		t=monData.keys()
 		if six.PY3:
 			t=list(t)
 		t.sort()
-		data={'t':[],'tnodeid':[],'tnodesubid':[],'dfeederid':[],'dnodeid':[],'property':[],'value':[]}
-		for thisTime in t:
-			for thisTDInterface in monData[thisTime]:
-				for thisProp in monData[thisTime][thisTDInterface]:
-					for thisNodeID in monData[thisTime][thisTDInterface][thisProp]:
-						for thisSubProp in monData[thisTime][thisTDInterface][thisProp][thisNodeID]:
-							data['t'].append(thisTime)
-							data['tnodeid'].append(str(thisTDInterface))
-							data['dnodeid'].append(thisNodeID)
-							data['property'].append(thisProp+'_'+thisSubProp)
-							data['value'].append(monData[thisTime][thisTDInterface][thisProp][thisNodeID][thisSubProp])
 
 		outputConfig=GlobalData.config['outputConfig']
 		if 'Dynamic' in GlobalData.data['TNet']:
@@ -211,15 +207,8 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 					for thisDnodeid in GlobalData.data['TNet']['Dynamic'][thisTime]['S'][thisTnodeid]['derX']:
 						thisDerX=GlobalData.data['TNet']['Dynamic'][thisTime]['S'][thisTnodeid]['derX'][thisDnodeid]['0']####only use one PV to reduce data size
 						vt_filt_val=thisDerX[3]
-						data['t'].append(thisTime)
-						data['tnodeid'].append(str(thisTnodeid))
-						data['dnodeid'].append(thisDnodeid)
-						data['property'].append('vt_filt_fast_der')
-						data['value'].append(vt_filt_val)
-			data['scenario']=[scenario]*len(data['t'])
-			data['dfeederid']=['1']*len(data['t'])
-			data['tnodesubid']=['']*len(data['t'])
-			df_monitorData=pd.DataFrame(data)
+						dataStr+='{},{},{},{},{},{},{},{}\n'.format(scenario,thisTime,thisTnodeid,'','',thisDnodeid,\
+						'vt_filt_fast_der',vt_filt_val)
 
 		if GlobalData.config['simulationConfig']['simType']=='dynamic':
 			stride=2
@@ -281,40 +270,51 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 			t_all=[]
 			t_all.extend(t[indFilt].tolist()*count)
 
-			df=pd.DataFrame(columns=['scenario','t','tnodeid','tnodesubid','dfeederid','dnodeid','property',
-			'value'])
-			df['t'],df['tnodeid'],df['tnodesubid'],df['property'],df['value']=t_all,tnodeid,tnodesubid,props,value
-			df['scenario']=[scenario]*len(t_all)
-			df=df.append(df_monitorData,ignore_index=True,sort=True)
-		elif GlobalData.config['simulationConfig']['simType']=='static':
-			data['dfeederid']=['1']*len(data['t'])
-			data['tnodesubid']=['']*len(data['t'])
-			data['scenario']=[scenario]*len(data['t'])
-			df=pd.DataFrame(data)
+			dataStr+='\n'.join([','.join(entry) for entry in zip([scenario]*len(t_all),\
+			[str(thisT) for thisT in t_all],tnodeid,tnodesubid,['']*len(t_all),['']*len(t_all),props,[str(thisVal) for thisVal in value])])
+			dataStr+='\n'
 
-		# updates for der_p_total and der_q_total
-		df=get_der_total_injection(df,GlobalData)
-		df=update_dera_nodes(df,GlobalData)
-		fpath=os.path.join(outputConfig['outputDir'],'df_pickle')
-		
-		try:
-			print("Trying to save TDcoSim dataframe as a .pkl file")
-			df.to_pickle(fpath+".pkl")
-			fpath+='.pkl'
-		except MemoryError:
-			print("Saving to .CSV file due to .pkl memory error")
-			df.to_csv(fpath+".csv",index=False)
-			fpath+='.csv'
-		print("Successfully saved as {}...".format(fpath))
+		# 	# updates for der_p_total and der_q_total
+		# 	df,data_der_PQ=get_der_total_injection(df,GlobalData)
+		# 	if data_der_PQ['der_P']:
+		# 		for thisProp in data_der_PQ:
+		# 			data_der=data_der_PQ[thisProp]
+		# 			dataStr+='\n'
+		# 			dataStr+='\n'.join([','.join([str(item) for item in entry]) for entry in zip(data_der['scenario'],
+		# 			data_der['t'],data_der['tnodeid'],data_der['tnodesubid'],data_der['dfeederid'],
+		# 			data_der['dnodeid'],data_der['property'],data_der['value'])])
 
-		return df
+			deraNodes=update_dera_nodes(GlobalData)
+			for node in deraNodes:
+				node=str(node)
+				dataStr=re.sub(r'([\w]{1,},[\d.]{1,},[\d.]{1,},[\w\d]{0,},[\w\d]{0,}),'+node+',POWR',r'\1,'+node+',der_p_total',dataStr)
+				dataStr=re.sub(r'([\w]{1,},[\d.]{1,},[\d.]{1,},[\w\d]{0,},[\w\d]{0,}),'+node+',VARS',r'\1,'+node+',der_q_total',dataStr)
+
+		# elif GlobalData.config['simulationConfig']['simType']=='static':
+		# 	data['dfeederid']=['1']*len(data['t'])
+		# 	data['tnodesubid']=['']*len(data['t'])
+		# 	data['scenario']=[scenario]*len(data['t'])
+		# 	dataStr+='\n'.join([','.join([str(item) for item in entry]) for entry in zip(data['scenario'],data['t'],\
+		# 	data['tnodeid'],data['tnodesubid'],data['dfeederid'],data['dnodeid'],data['property'],data['value'])])
+
+		fpath=os.path.join(outputConfig['outputDir'],'df.csv')
+		f=open(fpath); data=f.read(); f.close()
+		dataStr+=data
+
+		f=open(fpath,'w')
+		f.write(dataStr)
+		f.close()
+
+		print("Successfully saved as {}".format(fpath))
 	except:
 		raise
 
 def get_der_total_injection(df,GlobalData):
 	try:
+		data4csv={}
 		for thisProp in ['der_P','der_Q']:
 			res=df[df.property==thisProp]
+			data={}
 			if not res.empty:
 				data={'dfeederid':[],'dnodeid':[],'property':[],'scenario':[],'t':[],
 				'tnodeid':[],'tnodesubid':[],'value':[]}
@@ -341,27 +341,29 @@ def get_der_total_injection(df,GlobalData):
 				data['dnodeid']=['']*len(data['value'])
 				data['tnodesubid']=['']*len(data['value'])
 
+				data4csv[thisProp]=copy.deepcopy(data)
+
 				df_new=pd.DataFrame(data)
 				if not df_new.empty: 
-					df=df.append(df_new,ignore_index=True)
+					df=df.append(df_new,ignore_index=True,sort=False)
 					df.reindex()
 
-		return df
+		return df,data4csv
 	except:
 		raise
 
-def update_dera_nodes(df,GlobalData):
+def update_dera_nodes(GlobalData):
 	try:
 		deraNodes=[]
 		if 'dera' in GlobalData.config['simulationConfig']:
 			for entry in GlobalData.config['simulationConfig']['dera']:
 				deraNodes.extend(GlobalData.config['simulationConfig']['dera'][entry])
 		
-		for node in deraNodes:
-			node=str(node)
-			df.loc[(df.tnodeid==node)&(df.property=='POWR'),'property']='der_p_total'
-			df.loc[(df.tnodeid==node)&(df.property=='VARS'),'property']='der_q_total'
+		# for node in deraNodes:
+		# 	node=str(node)
+		# 	df.loc[(df.tnodeid==node)&(df.property=='POWR'),'property']='der_p_total'
+		# 	df.loc[(df.tnodeid==node)&(df.property=='VARS'),'property']='der_q_total'
 
-		return df
+		return deraNodes
 	except:
 		raise

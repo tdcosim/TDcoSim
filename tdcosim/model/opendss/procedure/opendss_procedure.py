@@ -77,9 +77,9 @@ class OpenDSSProcedure(object):
 			OpenDSSData.log()
 
 #===================================================================================================
-	def monitor(self,msg):
+	def monitor(self,msg,fid,t):
 		try:
-			res=self._opendssinterface.monitor(msg)
+			res=self._opendssinterface.monitor(msg,fid,t)
 			return res
 		except:
 			OpenDSSData.log()

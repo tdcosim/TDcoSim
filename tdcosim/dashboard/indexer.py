@@ -14,6 +14,29 @@ import numpy as np
 
 class Indexer(object):
 
+	def get_index_from_string(self,indObj,dataStr,stride,dfRowOffset):
+		cols=dataStr.split(',')
+		if cols[2] not in indObj['tnodeid']:
+			indObj['tnodeid'][cols[2]]=[]
+		if indObj['tnodeid'][cols[2]] and indObj['tnodeid'][cols[2]][-1][1]==dfRowOffset-1:
+			indObj['tnodeid'][cols[2]][-1][1]=dfRowOffset+stride-1
+		else:
+			indObj['tnodeid'][cols[2]].append([dfRowOffset,dfRowOffset+stride-1])
+
+		if cols[5] not in indObj['dnodeid']:
+			indObj['dnodeid'][cols[5]]=[]
+		if indObj['dnodeid'][cols[5]] and indObj['dnodeid'][cols[5]][-1][1]==dfRowOffset-1:
+			indObj['dnodeid'][cols[5]][-1][1]=dfRowOffset+stride-1
+		else:
+			indObj['dnodeid'][cols[5]].append([dfRowOffset,dfRowOffset+stride-1])
+
+		if cols[6] not in indObj['property']:
+			indObj['property'][cols[6]]=[]
+		if indObj['property'][cols[6]] and indObj['property'][cols[6]][-1][1]==dfRowOffset-1:
+			indObj['property'][cols[6]][-1][1]=dfRowOffset+stride-1
+		else:
+			indObj['property'][cols[6]].append([dfRowOffset,dfRowOffset+stride-1])
+
 	def _get_continous_ind(self,ind):
 		diff=ind[1::]-ind[:-1:]
 		indJump=np.asarray(diff!=1).nonzero()[0]+1
