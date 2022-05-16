@@ -50,7 +50,7 @@ class OpenDSSProcedure(object):
 			OpenDSSData.log()
 
 #===================================================================================================
-	def getLoads(self, pccName, t, dt):
+	def getLoad(self, pccName, t, dt):
 		try:
 			derX={}
 			

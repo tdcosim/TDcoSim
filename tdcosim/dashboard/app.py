@@ -30,7 +30,6 @@ def create_query_bar(fpath):
 		if not isinstance(ddData['index'][entry]['pointer'],np.ndarray):
 			ddData['index'][entry]['pointer']=np.cumsum(ddData['index'][entry]['pointer'])
 
-	# ddOptions=[{'label':'apple','value':'apple'},{'label':'google','value':'google'}]
 	dd1=dcc.Dropdown(id='dd1',options=ddScenarios,value='',placeholder='scenarios',multi=True,
 	style={'minWidth':'200px','backgroundColor':'#ada9a9','border':'1px solid black','borderRadius':'2px'})
 	dd2=dcc.Dropdown(id='dd2',options=ddTnodeid,value='',placeholder='tnodeid',multi=True,

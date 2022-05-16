@@ -127,6 +127,14 @@ class OpenDSSModel(object):
 			OpenDSSData.log()
 
 #===================================================================================================
+	def computeStep(self,Vpu,monitor,pccName='Vsource.source',t=None,dt=1/120.):
+		try:
+			S,monData=self._opendss_server.computeStep(Vpu=Vpu,monitor=monitor,pccName=pccName,t=t,dt=dt)
+			return S,monData
+		except:
+			OpenDSSData.log()
+
+#===================================================================================================
 	def is_float(self, n):
 		try:
 			float(n)# Type-casting the string to `float`.

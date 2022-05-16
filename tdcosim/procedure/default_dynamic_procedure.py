@@ -104,17 +104,17 @@ class DefaultDynamicProcedure(DefaultProcedure):
 						' {}%({}s/{}s)'.format((t/simEnd)*100,t,simEnd),end='\r')
 						GlobalData.log(level=10,msg="Sim time: " + str(t))
 						Vpcc = self._tnet_model.getVoltage()
-						self._dnet_model.setVoltage(Vpcc)
-						S = self._dnet_model.getLoad(t=t,dt=dt)
-						self._tnet_model.setLoad(S)
 
 						# collect data and store
-						msg={'varName':{},'info':{}}
+						monitor={'varName':{},'info':{}}
 						for node in Vpcc:
-							msg['varName'][node]=['voltage_der','der']
-							msg['info'][node]={'t':t}
+							monitor['varName'][node]=['voltage_der','der']
+							monitor['info'][node]={'t':t}
 
-						GlobalData.data['monitorData'][t]=self._dnet_model.monitor(msg) #### tag_reformat
+						S,monData=self._dnet_model.computeStep(Vpu=Vpcc,t=t,dt=dt,monitor=monitor)
+						GlobalData.data['monitorData'][t]=monData
+
+						self._tnet_model.setLoad(S)
 						GlobalData.data['TNet']['Dynamic'][t] = {'V': Vpcc,'S': S}
 
 						# write to disk if running low on memory based on memory threshold
@@ -138,8 +138,8 @@ class DefaultDynamicProcedure(DefaultProcedure):
 							nPart+=1; lastWriteInd=stepCount
 						stepCount+=1
 
-						#mismatch=Vprev-V ##TODO: Need to update mismatch
-						#TODO: tight_coupling isn't implemented
+						#mismatch=Vprev-V ####TODO: Need to update mismatch
+						####TODO: tight_coupling isn't implemented
 						if GlobalData.config['simulationConfig']['protocol'].lower()==\
 						'tight_coupling' and mismatch>tol:
 							GlobalData.log(level=50,msg="Tight Couping is not implemented")

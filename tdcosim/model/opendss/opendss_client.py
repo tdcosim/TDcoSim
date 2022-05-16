@@ -77,12 +77,19 @@ if __name__=="__main__":
 				replyMsg = {"AckNode":nodeid}
 			elif msg['method'].lower()=='getload':
 				replyMsg['P'],replyMsg['Q'],replyMsg['convergenceFlg'],replyMsg['derX']=\
-				dssProcedure.getLoads(pccName=msg['pccName'],t=msg['t'],dt=msg['dt'])
+				dssProcedure.getLoad(pccName=msg['pccName'],t=msg['t'],dt=msg['dt'])
 			elif msg['method'].lower()=='scaleload':
 				dssProcedure.scaleLoad(scale=msg['scale'])
 			elif msg['method'].lower()=='monitor':
 				replyMsg=dssProcedure.monitor(msg['varName'],tempOutputF,msg['info']['t'])
-			
+			elif msg['method'].lower()=='computestep':
+				replyMsg={'S':{}}
+				dssProcedure.setVoltage(Vpu=msg['Vpu'],Vang=msg['Vang'],pccName=msg['pccName'])
+				replyMsg["AckNode"]=nodeid
+				replyMsg['S']['P'],replyMsg['S']['Q'],replyMsg['S']['convergenceFlg'],replyMsg['S']['derX']=\
+				dssProcedure.getLoad(pccName=msg['pccName'],t=msg['t'],dt=msg['dt'])
+				replyMsg['monData']=dssProcedure.monitor(msg['varName'],tempOutputF,msg['info']['t'])
+
 			OpenDSSData.logger.debug('replyMsg={}'.format(msg))
 			if six.PY2:
 				c.send(json.dumps(replyMsg))# reply back to handler
