@@ -214,6 +214,52 @@ class OpenDSSServer(object):
 			OpenDSSData.log()
 
 #===================================================================================================
+	def computeStep(self,Vpu,monitor,pccName='Vsource.source',t=None,dt=1/120.):
+		"""msg should be a dictionary whose keys are T-D interface node and value is a list
+		containing the variables requested.There should also be a method key with value 'computeStep'"""
+		try:
+			assert not set(GlobalData.data['DNet']['Nodes'].keys()).difference(Vpu.keys()),"Vpu key mismatch with dnet nodes"
+			for entry in GlobalData.data['DNet']['Nodes'].keys():
+				thisMsg={}
+				thisMsg['method']='computeStep'
+				# setVoltage
+				thisMsg['Vpu']=Vpu[entry]
+				thisMsg['Vang']=0
+				thisMsg['pccName']=pccName
+
+				# getLoad
+				thisMsg['pccName']=pccName
+				thisMsg['dt']=dt
+				thisMsg['t']=t
+
+				# monitor
+				thisMsg['varName']=monitor['varName'][entry]
+				if 'info' in monitor:
+					thisMsg['info']=monitor['info'][entry]
+
+				if six.PY2:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(thisMsg))# send msg
+				elif six.PY3:
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(thisMsg).encode())# send msg
+
+			S={}
+			monData={}
+			for entry in GlobalData.data['DNet']['Nodes'].keys():
+				if six.PY2:
+					thisReply=json.loads(\
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(self._BUFFER_SIZE))
+				elif six.PY3:
+					thisReply=json.loads(\
+					GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(self._BUFFER_SIZE).decode('ascii'))
+				S[entry]=thisReply['S']
+				monData[entry]=thisReply['monData']
+
+			return S,monData
+
+		except:
+			OpenDSSData.log()
+
+#===================================================================================================
 	def close(self):
 		try:
 			# first send to all to allow computation to be run concurrently
