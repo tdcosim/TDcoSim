@@ -47,8 +47,14 @@ class OpenDSSServer(object):
 				fout=open(os.devnull,'w')
 				ferr=open(os.devnull,'w')
 			openDSSClientPath = os.path.join(baseDir,'model','opendss','opendss_client.py')
+			if 'opendssEngine' in GlobalData.config['openDSSConfig'] and GlobalData.config['openDSSConfig']['opendssEngine']:
+				opendssEngine=GlobalData.config['openDSSConfig']['opendssEngine']
+			else:
+				opendssEngine='dss_python'
 			GlobalData.data['DNet']['Nodes'][nodeid]['proc']=subprocess.Popen(shlex.split("python "
-			+ '"'+openDSSClientPath+'"'+" {}".format(nodeid)),shell=True,stdout=fout,stderr=ferr)
+			+ '"'+openDSSClientPath+'"'+" {} {}".format(nodeid,opendssEngine)),shell=True,stdout=fout,stderr=ferr)
+
+			OpenDSSData.log(20,"python "+ '"'+openDSSClientPath+'"'+" {} {}".format(nodeid,opendssEngine))
 
 			#accept connection from worker
 			# process is connecting.

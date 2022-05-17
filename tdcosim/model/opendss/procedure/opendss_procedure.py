@@ -7,9 +7,9 @@ import six
 
 
 class OpenDSSProcedure(object):
-	def __init__(self):
+	def __init__(self,opendssEngine='dss_python'):
 		try:
-			self._opendssinterface = OpenDSSInterface()
+			self._opendssinterface = OpenDSSInterface(opendssEngine=opendssEngine)
 			self._pvderAggProcedure = PVDERAggregatedProcedure()
 			self._pvNodes=None
 		except:
@@ -61,9 +61,7 @@ class OpenDSSProcedure(object):
 				derP,derQ,derX = self._pvderAggProcedure.run(V=V,Vpu=Vpu,t=t,dt=dt)
 				if not self._pvNodes:
 					self._pvNodes=[entry+'_tfr' for entry in derP.keys()]
-				OpenDSSData.log(20,"starting pvder")
 				self._opendssinterface.pvderInjection(derP,derQ,busID=self._pvNodes)
-				OpenDSSData.log(20,"completed pvder")
 			P,Q,Converged = self._opendssinterface.getS(pccName=pccName)
 		
 			return P,Q,Converged,derX

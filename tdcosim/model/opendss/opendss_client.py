@@ -34,8 +34,12 @@ if __name__=="__main__":
 		nodeid = "-1"
 		if len(sys.argv)>1:
 			nodeid = sys.argv[1]
+		if len(sys.argv)>2:
+			opendssEngine=sys.argv[2]
+		else:
+			opendssEngine='dss_python'
 
-		dssProcedure=OpenDSSProcedure()
+		dssProcedure=OpenDSSProcedure(opendssEngine)
 
 		BUFFER_SIZE = 1024*1024*16
 		c = socket.socket(socket.AF_INET,socket.SOCK_STREAM)

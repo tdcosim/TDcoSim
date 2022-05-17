@@ -7,20 +7,27 @@ import copy
 
 import six
 import numpy as np
-import win32com.client
 
 from tdcosim.model.opendss.opendss_data import OpenDSSData
 
 
 class OpenDSSInterface(object):
-	def __init__(self):
+	def __init__(self,opendssEngine='dss_python'):
 		try:
-			startingDir=os.getcwd()
-			self._engine = win32com.client.Dispatch("OpenDSSEngine.DSS")
-			os.chdir(startingDir)  
+			if opendssEngine=='dss_python':
+				import dss # lazy import
+				self._engine=dss.DSS
+				OpenDSSData.log(20,"using dss_python interace for opendss")
+			else:
+				import win32com.client # lazy import
+				startingDir=os.getcwd()
+				self._engine = win32com.client.Dispatch("OpenDSSEngine.DSS")
+				os.chdir(startingDir)
+				OpenDSSData.log(20,"using com interace for opendss")
+
 			self.busname2ind={}
 			self._stats={'getVoltage':0,'getS':0,'setVoltage':0}
-			if self._engine.Start("0") == True:#DSS started OK
+			if self._engine.Start(0) == True:#DSS started OK
 				self.flg_startComm=1 # pass
 				self.Circuit=self._engine.ActiveCircuit
 
@@ -38,8 +45,6 @@ class OpenDSSInterface(object):
 				self.__enumerations()# populate enumerations
 				self.K=1 # initial scaling is 1
 				self.unitConversion=1 # initial unit conversion is 1
-				self.VoltageMap=None####
-				self.thisV=None####
 			else:
 				OpenDSSData.log(level=50,msg="DSS Failed to Connect")
 				exit(1)

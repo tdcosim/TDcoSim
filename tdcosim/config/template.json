@@ -4,6 +4,7 @@
       "saveSubprocessOutErr": true
    },
    "openDSSConfig": {
+		"opendssEngine":"dss_python",
       "DEROdeSolver": "fast_der",
       "manualFeederConfig": {
          "nodes": [
