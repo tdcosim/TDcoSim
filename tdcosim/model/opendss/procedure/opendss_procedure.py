@@ -61,7 +61,9 @@ class OpenDSSProcedure(object):
 				derP,derQ,derX = self._pvderAggProcedure.run(V=V,Vpu=Vpu,t=t,dt=dt)
 				if not self._pvNodes:
 					self._pvNodes=[entry+'_tfr' for entry in derP.keys()]
+				OpenDSSData.log(20,"starting pvder")
 				self._opendssinterface.pvderInjection(derP,derQ,busID=self._pvNodes)
+				OpenDSSData.log(20,"completed pvder")
 			P,Q,Converged = self._opendssinterface.getS(pccName=pccName)
 		
 			return P,Q,Converged,derX
@@ -77,9 +79,9 @@ class OpenDSSProcedure(object):
 			OpenDSSData.log()
 
 #===================================================================================================
-	def monitor(self,msg,fid,t):
+	def monitor(self,msg,t):
 		try:
-			res=self._opendssinterface.monitor(msg,fid,t)
+			res=self._opendssinterface.monitor(msg,t)
 			return res
 		except:
 			OpenDSSData.log()

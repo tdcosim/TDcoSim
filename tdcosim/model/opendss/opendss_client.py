@@ -80,15 +80,22 @@ if __name__=="__main__":
 				dssProcedure.getLoad(pccName=msg['pccName'],t=msg['t'],dt=msg['dt'])
 			elif msg['method'].lower()=='scaleload':
 				dssProcedure.scaleLoad(scale=msg['scale'])
-			elif msg['method'].lower()=='monitor':
-				replyMsg=dssProcedure.monitor(msg['varName'],tempOutputF,msg['info']['t'])
+			# elif msg['method'].lower()=='monitor':
+			# 	buffer=dssProcedure.monitor(msg['varName'],msg['info']['t'])
 			elif msg['method'].lower()=='computestep':
 				replyMsg={'S':{}}
+				OpenDSSData.logger.debug('starting setVoltage')
 				dssProcedure.setVoltage(Vpu=msg['Vpu'],Vang=msg['Vang'],pccName=msg['pccName'])
 				replyMsg["AckNode"]=nodeid
+				OpenDSSData.logger.debug('completed setVoltage')
+				OpenDSSData.logger.debug('starting getLoad')
 				replyMsg['S']['P'],replyMsg['S']['Q'],replyMsg['S']['convergenceFlg'],replyMsg['S']['derX']=\
 				dssProcedure.getLoad(pccName=msg['pccName'],t=msg['t'],dt=msg['dt'])
-				replyMsg['monData']=dssProcedure.monitor(msg['varName'],tempOutputF,msg['info']['t'])
+				OpenDSSData.logger.debug('completed getLoad')
+				# OpenDSSData.logger.debug('starting monitor')
+				# buffer=dssProcedure.monitor(msg['varName'],msg['info']['t'])
+				# OpenDSSData.logger.debug('completed monitor')
+				replyMsg['monData']={}
 
 			OpenDSSData.logger.debug('replyMsg={}'.format(msg))
 			if six.PY2:
@@ -96,6 +103,12 @@ if __name__=="__main__":
 			elif six.PY3:
 				c.send(json.dumps(replyMsg).encode())# reply back to handler
 			OpenDSSData.logger.debug('sent reply to server')
+
+			if msg['method'].lower()=='computestep' or msg['method'].lower()=='monitor':# write to disk after sending reply
+				OpenDSSData.logger.debug('starting monitor')
+				buffer=dssProcedure.monitor(msg['varName'],msg['info']['t'])
+				OpenDSSData.logger.debug('completed monitor')
+				tempOutputF.write(buffer)
 	except:
 		OpenDSSData.log(40,"Error in OpenDSS Client {}".format(nodeid))
 

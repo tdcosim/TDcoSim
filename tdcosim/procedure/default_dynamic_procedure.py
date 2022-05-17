@@ -90,6 +90,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
 
 			for event in events:
 				while t<eventData[event]['time']:
+					GlobalData.log(20,'started processing t:{}'.format(t))
 					iteration=0
 					mismatch=100.
 					while mismatch>tol and iteration<maxIter:
@@ -99,11 +100,16 @@ class DefaultDynamicProcedure(DefaultProcedure):
 						t+=dt
 					
 						iteration+=1
+						GlobalData.log(20,'runDynamic t:{}'.format(t))
 						self._tnet_model.runDynamic(t)
+						GlobalData.log(20,'finished runDynamic t:{}'.format(t))
 						print('Simulation Progress : ='+'='*int((updateBins-1)*(t/simEnd))+'>'+\
 						' {}%({}s/{}s)'.format((t/simEnd)*100,t,simEnd),end='\r')
 						GlobalData.log(level=10,msg="Sim time: " + str(t))
+						GlobalData.log(20,'getVoltage t:{}'.format(t))
 						Vpcc = self._tnet_model.getVoltage()
+						GlobalData.log(20,'finished getVoltage t:{}'.format(t))
+
 
 						# collect data and store
 						monitor={'varName':{},'info':{}}
@@ -111,10 +117,13 @@ class DefaultDynamicProcedure(DefaultProcedure):
 							monitor['varName'][node]=['voltage_der','der']
 							monitor['info'][node]={'t':t}
 
+						GlobalData.log(20,'computeStep t:{}'.format(t))
 						S,monData=self._dnet_model.computeStep(Vpu=Vpcc,t=t,dt=dt,monitor=monitor)
-						GlobalData.data['monitorData'][t]=monData
+						GlobalData.log(20,'finished computeStep t:{}'.format(t))
 
+						GlobalData.log(20,'setLoad t:{}'.format(t))
 						self._tnet_model.setLoad(S)
+						GlobalData.log(20,'finished setLoad t:{}'.format(t))
 						GlobalData.data['TNet']['Dynamic'][t] = {'V': Vpcc,'S': S}
 
 						# write to disk if running low on memory based on memory threshold
@@ -168,6 +177,8 @@ class DefaultDynamicProcedure(DefaultProcedure):
 							resetFlag=True
 						else:
 							dt=dt_default
+					GlobalData.log(20,'finished processing t:{}'.format(t))
+
 			# close
 			print('')# for newline
 			ack=self._dnet_model.close()
@@ -175,9 +186,11 @@ class DefaultDynamicProcedure(DefaultProcedure):
 			ierr=self._tnet_model._psspy.pssehalt_2(); assert ierr==0
 
 			# process output data
-			dataStr=''
 			indObj={'tnodeid':{},'dnodeid':{},'ineq':{},'dfLen':0,'property':{},'pointer':[]}
+			f=open(os.path.join(GlobalData.config['outputConfig']['outputDir'],'df.csv'),'w')# empty file
+			f.close()
 			for node in Vpcc:
+				dataStr=''
 				thisFPath=os.path.join(GlobalData.config['outputConfig']['outputDir'],'{}_temp.csv'.format(node))
 				f=open(thisFPath)
 				data=f.read(); f.close()
@@ -198,9 +211,9 @@ class DefaultDynamicProcedure(DefaultProcedure):
 
 				os.system('del {}'.format(thisFPath))
 
-			f=open(os.path.join(GlobalData.config['outputConfig']['outputDir'],'df.csv'),'w')
-			f.write(dataStr)
-			f.close()
+				f=open(os.path.join(GlobalData.config['outputConfig']['outputDir'],'df.csv'),'a')
+				f.write(dataStr)
+				f.close()
 
 			indObj['pointer']=[len(entry) for entry in dataStr.splitlines()]
 			json.dump(indObj,open(os.path.join(GlobalData.config['outputConfig']['outputDir'],'index.json'),'w'))
