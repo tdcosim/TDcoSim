@@ -28,16 +28,23 @@ class OpenDSSModel(object):
 
 			if 'defaultFeederConfig' in openDSSConfig:
 				openDSSConfig['manualFeederConfig']={'nodes':[]}
+				if 'includenode' in openDSSConfig['defaultFeederConfig']:
+					for thisNode in set(TNet['LoadBusNumber']).intersection(\
+						openDSSConfig['defaultFeederConfig']['includenode']):
+						thisEntry={'nodenumber':thisNode}
+						for item in openDSSConfig['defaultFeederConfig']:
+							thisEntry[item]=openDSSConfig['defaultFeederConfig'][item]
+						openDSSConfig['manualFeederConfig']['nodes'].append(thisEntry)
+				else:
+					if 'excludenode' not in openDSSConfig['defaultFeederConfig']:
+						openDSSConfig['defaultFeederConfig']['excludenode']=[]
 
-				if 'excludenode' not in openDSSConfig['defaultFeederConfig']:
-					openDSSConfig['defaultFeederConfig']['excludenode']=[]
-
-				for thisNode in set(TNet['LoadBusNumber']).difference(\
-				openDSSConfig['defaultFeederConfig']['excludenode']):
-					thisEntry={'nodenumber':thisNode}
-					for item in openDSSConfig['defaultFeederConfig']:
-						thisEntry[item]=openDSSConfig['defaultFeederConfig'][item]
-					openDSSConfig['manualFeederConfig']['nodes'].append(thisEntry)
+					for thisNode in set(TNet['LoadBusNumber']).difference(\
+					openDSSConfig['defaultFeederConfig']['excludenode']):
+						thisEntry={'nodenumber':thisNode}
+						for item in openDSSConfig['defaultFeederConfig']:
+							thisEntry[item]=openDSSConfig['defaultFeederConfig'][item]
+						openDSSConfig['manualFeederConfig']['nodes'].append(thisEntry)
 
 			if 'manualFeederConfig' in openDSSConfig and \
 			'nodes' in openDSSConfig['manualFeederConfig'] and \

@@ -193,27 +193,29 @@ class DefaultDynamicProcedure(DefaultProcedure):
 				dataStr=''
 				thisFPath=os.path.join(GlobalData.config['outputConfig']['outputDir'],'{}_temp.csv'.format(node))
 				f=open(thisFPath)
-				data=f.read(); f.close()
-				scenarioID=GlobalData.config['outputConfig']['scenarioID']
-				data=data.replace('$1',scenarioID).replace('$3','{}'.format(node)).replace(\
-				'$4','').replace('$5','').splitlines()
-				for stride in range(len(data)):
-					if float(data[stride].split(',')[1])>=dt_default-1e-6 and \
-					float(data[stride].split(',')[1])<=dt_default+1e-6:
-						break
-				dataStrLen=len(dataStr.splitlines())
-				for offset in range(stride):
-					if offset==0:
-						strideOffset=len(data[offset::stride])
-					indHelper.get_index_from_string(indObj,data[offset],strideOffset,dataStrLen)
-					dataStr+='\n'.join(data[offset::stride])+'\n'
-					dataStrLen+=strideOffset
-
-				os.system('del {}'.format(thisFPath))
-
-				f=open(os.path.join(GlobalData.config['outputConfig']['outputDir'],'df.csv'),'a')
-				f.write(dataStr)
+				data=f.read()
 				f.close()
+				if len(data)>0:
+					scenarioID=GlobalData.config['outputConfig']['scenarioID']
+					data=data.replace('$1',scenarioID).replace('$3','{}'.format(node)).replace(\
+					'$4','').replace('$5','').splitlines()
+					for stride in range(len(data)):
+						if float(data[stride].split(',')[1])>=dt_default-1e-6 and \
+						float(data[stride].split(',')[1])<=dt_default+1e-6:
+							break
+					dataStrLen=len(dataStr.splitlines())
+					for offset in range(stride):
+						if offset==0:
+							strideOffset=len(data[offset::stride])
+						indHelper.get_index_from_string(indObj,data[offset],strideOffset,dataStrLen)
+						dataStr+='\n'.join(data[offset::stride])+'\n'
+						dataStrLen+=strideOffset
+
+					os.system('del {}'.format(thisFPath))
+
+					f=open(os.path.join(GlobalData.config['outputConfig']['outputDir'],'df.csv'),'a')
+					f.write(dataStr)
+					f.close()
 
 			indObj['pointer']=[len(entry) for entry in dataStr.splitlines()]
 			json.dump(indObj,open(os.path.join(GlobalData.config['outputConfig']['outputDir'],'index.json'),'w'))
