@@ -290,20 +290,27 @@ def generate_dataframe(GlobalData,scenario=None,saveFile=True):
 				dataStr=re.sub(r'([\w]{1,},[\d.]{1,},[\d.]{1,},[\w\d]{0,},[\w\d]{0,}),'+node+',POWR',r'\1,'+node+',der_p_total',dataStr)
 				dataStr=re.sub(r'([\w]{1,},[\d.]{1,},[\d.]{1,},[\w\d]{0,},[\w\d]{0,}),'+node+',VARS',r'\1,'+node+',der_q_total',dataStr)
 
-		# elif GlobalData.config['simulationConfig']['simType']=='static':
-		# 	data['dfeederid']=['1']*len(data['t'])
-		# 	data['tnodesubid']=['']*len(data['t'])
-		# 	data['scenario']=[scenario]*len(data['t'])
-		# 	dataStr+='\n'.join([','.join([str(item) for item in entry]) for entry in zip(data['scenario'],data['t'],\
-		# 	data['tnodeid'],data['tnodesubid'],data['dfeederid'],data['dnodeid'],data['property'],data['value'])])
+			fpath=os.path.join(outputConfig['outputDir'],'df.csv')
+			f=open(fpath); data=f.read(); f.close()
+			dataStr+=data
 
-		fpath=os.path.join(outputConfig['outputDir'],'df.csv')
-		f=open(fpath); data=f.read(); f.close()
-		dataStr+=data
+			f=open(fpath,'w')
+			f.write(dataStr)
+			f.close()
 
-		f=open(fpath,'w')
-		f.write(dataStr)
-		f.close()
+		elif GlobalData.config['simulationConfig']['simType']=='static':
+			data=GlobalData.data['static']
+			for t in data:
+				for tnodeid in data[t]['V']:
+					dataStr+=f'{scenario},{t},{tnodeid},,,,"feeder_v",{data[t]["V"][tnodeid]}\n'
+				for tnodeid in data[t]['S']:
+					dataStr+=f'{scenario},{t},{tnodeid},,,,"feeder_p",{data[t]["S"][tnodeid]["P"]}\n'
+					dataStr+=f'{scenario},{t},{tnodeid},,,,"feeder_q",{data[t]["S"][tnodeid]["Q"]}\n'
+
+			fpath=os.path.join(outputConfig['outputDir'],'df.csv')
+			f=open(fpath,'w')
+			f.write(dataStr)
+			f.close()
 
 		print("Successfully saved as {}".format(fpath))
 	except:

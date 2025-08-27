@@ -74,10 +74,13 @@ class DefaultStaticProcedure(DefaultProcedure):
 				GlobalData.log(20,'Loadshape {} Converged in {} iterations with mismatch {}'.format(scale,iteration,max(abs(np.abs(Vcheck[:,0]-Vcheck[:,1])))))
 
 				# collect data and store
-				msg={}
-				msg['varName']={}
+				msg={'varName':{},'info':{}}
+				# msg['varName']={}
 				for node in Vpcc:
 					msg['varName'][node]=['voltage']
+					msg['info'][node]={'t':count}
+
+				GlobalData.log(20,f'msg::::{msg}::::Vpcc::::{Vpcc}')
 				GlobalData.data['monitorData'][count]=self._dnet_model.monitor(msg)
 
 				GlobalData.data['static'][count]['V'] = Vpcc

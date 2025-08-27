@@ -109,7 +109,7 @@ if __name__=="__main__":
 			OpenDSSData.logger.debug('sent reply to server')
 
 			if msg['method'].lower()=='computestep' or msg['method'].lower()=='monitor':# write to disk after sending reply
-				OpenDSSData.logger.debug('starting monitor')
+				OpenDSSData.logger.info(f'starting monitor::::{msg}')
 				buffer=dssProcedure.monitor(msg['varName'],msg['info']['t'])
 				OpenDSSData.logger.debug('completed monitor')
 				tempOutputF.write(buffer)
