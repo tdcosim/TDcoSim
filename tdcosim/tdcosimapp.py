@@ -31,8 +31,8 @@ def run(config):
 
 	startTime = time.time()
 	# assert args.config, "config is not provided. You can specify this using -c --config"
-	if not os.path.exists(os.path.abspath(config)) and os.path.exists(os.path.join(baseDir,config)):
-		config=os.path.join(baseDir,config)
+	if not os.path.exists(os.path.abspath(config)) and os.path.exists(os.path.join(baseDir,'examples',config)):
+		config=os.path.join(baseDir,'examples',config)
 	assert os.path.exists(config),'{} does not exist'.format(config)
 
 	# check if the config is valid
