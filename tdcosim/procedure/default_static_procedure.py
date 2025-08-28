@@ -3,6 +3,7 @@ import json
 import pdb
 
 import numpy as np
+from tqdm import tqdm
 
 from tdcosim.global_data import GlobalData
 from tdcosim.procedure.default_procedure import DefaultProcedure
@@ -46,6 +47,7 @@ class DefaultStaticProcedure(DefaultProcedure):
 			loadShape = GlobalData.config['simulationConfig']['staticConfig']['loadShape']
 			GlobalData.data['monitorData']={}
 			updateBins=20
+			progressBar = tqdm(total=len(loadShape))
 
 			for scale in loadShape:
 				GlobalData.log(20,'Running dispatch with loadshape {}'.format(scale))
@@ -69,8 +71,9 @@ class DefaultStaticProcedure(DefaultProcedure):
 					Vcheck[:,1]=np.array(f(Vpcc))
 					iteration+=1
 				
-				print('Simulation Progress : ='+'='*int((updateBins-1)*(count/len(loadShape)))+'>'+\
-				' {}%({} dispatches/{} dispatches)'.format(((count+1)/len(loadShape))*100,count+1,len(loadShape)),end='\r')
+				# print('Simulation Progress : ='+'='*int((updateBins-1)*(count/len(loadShape)))+'>'+\
+				# ' {}%({} dispatches/{} dispatches)'.format(((count+1)/len(loadShape))*100,count+1,len(loadShape)),end='\r')
+				progressBar.update(1)
 				GlobalData.log(20,'Loadshape {} Converged in {} iterations with mismatch {}'.format(scale,iteration,max(abs(np.abs(Vcheck[:,0]-Vcheck[:,1])))))
 
 				# collect data and store
@@ -89,7 +92,8 @@ class DefaultStaticProcedure(DefaultProcedure):
 				count+=1
 
 			# close
-			print('')# for newline
+			# print('')# for newline
+			progressBar.close()
 			ack=self._dnet_model.close()
 			GlobalData.log(level=20,msg=json.dumps(ack))
 			ierr=self._tnet_model._psspy.pssehalt_2(); assert ierr==0

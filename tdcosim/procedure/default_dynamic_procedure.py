@@ -8,6 +8,7 @@ import pdb
 import time
 
 import six
+from tqdm import tqdm
 
 from tdcosim.global_data import GlobalData
 from tdcosim.procedure.default_procedure import DefaultProcedure
@@ -74,6 +75,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
 			updateBins=20
 			eventFlag=False
 			resetFlag=False
+			progressBar = tqdm(total=simEnd/dt)
 
 			# t0
 			Vpcc = self._tnet_model.getVoltage()
@@ -103,13 +105,11 @@ class DefaultDynamicProcedure(DefaultProcedure):
 						GlobalData.log(20,'runDynamic t:{}'.format(t))
 						self._tnet_model.runDynamic(t)
 						GlobalData.log(20,'finished runDynamic t:{}'.format(t))
-						print('Simulation Progress : ='+'='*int((updateBins-1)*(t/simEnd))+'>'+\
-						' {}%({}s/{}s)'.format((t/simEnd)*100,t,simEnd),end='\r')
+						progressBar.update(1)
 						GlobalData.log(level=10,msg="Sim time: " + str(t))
 						GlobalData.log(20,'getVoltage t:{}'.format(t))
 						Vpcc = self._tnet_model.getVoltage()
 						GlobalData.log(20,'finished getVoltage t:{}'.format(t))
-
 
 						# collect data and store
 						monitor={'varName':{},'info':{}}
@@ -180,7 +180,7 @@ class DefaultDynamicProcedure(DefaultProcedure):
 					GlobalData.log(20,'finished processing t:{}'.format(t))
 
 			# close
-			print('')# for newline
+			progressBar.close()
 			ack=self._dnet_model.close()
 			GlobalData.log(level=20,msg=json.dumps(ack))
 			ierr=self._tnet_model._psspy.pssehalt_2(); assert ierr==0
