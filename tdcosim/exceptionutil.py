@@ -32,7 +32,7 @@ class ExceptionUtil(object):
 #===================================================================================================
 	def __init__(self):
 		super(ExceptionUtil,self).__init__()
-		self._defaultFormatterStr='%(asctime)s::%(name)s::%(filename)s::%(funcName)s::'+\
+		self._defaultFormatterStr='%(asctime)s::%(name)s::%(filename)s::%(funcName)s::%(lineno)d::'+\
 		'%(levelname)s::%(message)s::%(threadName)s::%(process)d'
 		self._defaultFormatterStrSep='::'
 		self._formatterStr=None
