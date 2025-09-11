@@ -81,6 +81,12 @@ def check_config(fpath):
 	os.path.exists(os.path.join(installDir,conf['psseConfig']['rawFilePath'])):
 		conf['psseConfig']['rawFilePath']=os.path.join(installDir,conf['psseConfig']['rawFilePath'])
 	
+	# tonly
+	if 'tonly' not in conf['simulationConfig']:
+		conf['simulationConfig']['tonly']=False
+	if not conf['openDSSConfig']:
+		conf['simulationConfig']['tonly']=True
+
 	items2check.extend([conf['psseConfig']['dyrFilePath'],conf['psseConfig']['rawFilePath']])
 	conf['psseConfig']['dyrFilePath']='{}'.format(win32api.GetLongPathName(conf['psseConfig']['dyrFilePath']))
 	conf['psseConfig']['rawFilePath']='{}'.format(win32api.GetLongPathName(conf['psseConfig']['rawFilePath']))

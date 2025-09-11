@@ -216,9 +216,9 @@ class DefaultDynamicProcedure(DefaultProcedure):
 					f=open(os.path.join(GlobalData.config['outputConfig']['outputDir'],'df.csv'),'a')
 					f.write(dataStr)
 					f.close()
-
-			indObj['pointer']=[len(entry) for entry in dataStr.splitlines()]
-			json.dump(indObj,open(os.path.join(GlobalData.config['outputConfig']['outputDir'],'index.json'),'w'))
+			if GlobalData.config['openDSSConfig']:
+				indObj['pointer']=[len(entry) for entry in dataStr.splitlines()]
+				json.dump(indObj,open(os.path.join(GlobalData.config['outputConfig']['outputDir'],'index.json'),'w'))
 		except:
 			GlobalData.log()
 

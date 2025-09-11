@@ -29,7 +29,7 @@ class PSSEModel(Dera):
 
 			# psse
 			self._psspy=psspy
-			ierr=self._psspy.psseinit(0)
+			ierr=self._psspy.psseinit(200000)
 			assert ierr==0, f'{self.get_error_info_from_psse("psseinit",ierr)}'
 			ierr=self._psspy.report_output(6,'',[]); assert ierr==0
 			outputFilePath=os.path.join(GlobalData.config['outputConfig']['outputDir'],'psse_progress_output.txt')
@@ -229,20 +229,31 @@ class PSSEModel(Dera):
 #===================================================================================================
 	def dynamicInitialize(self,adjustOpPoint=True):
 		try:
+			tonly=False
+			if 'tonly' in GlobalData.config['simulationConfig'] and \
+				GlobalData.config['simulationConfig']['tonly']:
+				tonly=True
 			if 'defaultLoadType' in GlobalData.config['simulationConfig']:
 				defaultLoadType=GlobalData.config['simulationConfig']['defaultLoadType']
 			else:
 				defaultLoadType='zip'
-			if adjustOpPoint:
+
+			if adjustOpPoint and not tonly:
 				S = self._adjustSystemOperatingPoint(defaultLoadType=defaultLoadType)
 			else:
-				ierr=self._psspy.dyre_new([1,1,1,1],self.config['psseConfig']['dyrFilePath'].encode("ascii",
+				ierr=self._psspy.dyre_new([1,1,1,1],GlobalData.config['psseConfig']['dyrFilePath'].encode("ascii",
 				"ignore"))
 				assert ierr==0, f'{self.get_error_info_from_psse("dyre_new",ierr)}'
+				ierr,S=self._psspy.alodbuscplx(string='MVAACT')
+				assert ierr==0, f'{self.get_error_info_from_psse("alodbuscplx",ierr)}'
 				self.convert_loads(loadType=defaultLoadType)
 
 			# run power flow
-			ierr=self._psspy.fnsl()
+			if 'fnslParameters' in GlobalData.config['psseConfig'] and \
+				GlobalData.config['psseConfig']['fnslParameters']:
+				ierr=self._psspy.fnsl(options=GlobalData.config['psseConfig']['fnslParameters'])
+			else:
+				ierr=self._psspy.fnsl()
 			assert ierr==0, f'{self.get_error_info_from_psse("fnsl",ierr)}'
 			Vpcc=self.getVoltage()
 
@@ -691,7 +702,11 @@ class PSSEModel(Dera):
 #===================================================================================================
 	def runPFLOW(self):
 		try:
-			ierr=self._psspy.fnsl()
+			if 'fnslParameters' in GlobalData.config['psseConfig'] and \
+				GlobalData.config['psseConfig']['fnslParameters']:
+				ierr=self._psspy.fnsl(options=GlobalData.config['psseConfig']['fnslParameters'])
+			else:
+				ierr=self._psspy.fnsl()
 			assert ierr==0, f'{self.get_error_info_from_psse("fnsl",ierr)}'
 		except:
 			GlobalData.log()
