@@ -61,6 +61,12 @@ def check_config(fpath):
 	if 'binLocation' in conf['psseConfig'] and not conf['psseConfig']['binLocation'] and 'psseConfig' in userPreference and 'binLocation' in userPreference['psseConfig']:
 		conf['psseConfig']['binLocation']=userPreference['psseConfig']['binLocation']
 
+	if 'importStatement' not in conf['psseConfig'] and 'psseConfig' in userPreference and 'importStatement' in userPreference['psseConfig']:
+		conf['psseConfig']['importStatement']=userPreference['psseConfig']['importStatement']
+
+	if 'importStatement' in conf['psseConfig'] and not conf['psseConfig']['importStatement'] and 'psseConfig' in userPreference and 'importStatement' in userPreference['psseConfig']:
+		conf['psseConfig']['importStatement']=userPreference['psseConfig']['importStatement']
+
 	assert conf['psseConfig']['installLocation'],"psseConfig->installLocation not provided in configuration"
 
 	if 'outputDir' not in conf['outputConfig'] and 'outputConfig' in userPreference and 'outputDir' in userPreference['outputConfig']:
@@ -284,7 +290,8 @@ def test():
 @click.option("-o","--output_root_dir", required=False, default=None, help="Root directory to store results")
 @click.option("-p","--psse_path", required=False, default=None, help="psse location")
 @click.option("-b","--bin_path", required=False, default=None, help="psse bin location")
-def setconfig(output_root_dir,psse_path,bin_path):
+@click.option("-i","--import_statement", required=False, default=None, help="special import statement,such as psse3603")
+def setconfig(output_root_dir,psse_path,bin_path,import_statement):
 	conf=json.load(open(os.path.join(baseDir,'config','user_preference.json')))
 	if output_root_dir:
 		conf['outputConfig']={'outputDir':output_root_dir}
@@ -292,6 +299,8 @@ def setconfig(output_root_dir,psse_path,bin_path):
 		conf['psseConfig']['installLocation']=psse_path
 	if bin_path:
 		conf['psseConfig']['binLocation']=bin_path
+	if import_statement:
+		conf['psseConfig']['importStatement']=import_statement
 	json.dump(conf,open(os.path.join(baseDir,'config','user_preference.json'),'w'),indent=3)
 
 
