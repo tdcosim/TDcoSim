@@ -24,6 +24,9 @@ class PSSEModel(Dera):
 			os.path.exists(os.path.join(GlobalData.config['psseConfig']['installLocation'],'psspy.pyc')):
 				pssePath = GlobalData.config['psseConfig']['installLocation']
 			sys.path.insert(0,pssePath)
+			if GlobalData.config['psseConfig']['binLocation'] and \
+				os.path.exists(GlobalData.config['psseConfig']['binLocation']):
+					sys.path.insert(0,GlobalData.config['psseConfig']['binLocation'])
 			os.environ['PATH']+=';'+pssePath
 			import psspy
 

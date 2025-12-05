@@ -55,6 +55,12 @@ def check_config(fpath):
 	if 'installLocation' in conf['psseConfig'] and not conf['psseConfig']['installLocation'] and 'psseConfig' in userPreference and 'installLocation' in userPreference['psseConfig']:
 		conf['psseConfig']['installLocation']=userPreference['psseConfig']['installLocation']
 
+	if 'binLocation' not in conf['psseConfig'] and 'psseConfig' in userPreference and 'binLocation' in userPreference['psseConfig']:
+		conf['psseConfig']['binLocation']=userPreference['psseConfig']['binLocation']
+
+	if 'binLocation' in conf['psseConfig'] and not conf['psseConfig']['binLocation'] and 'psseConfig' in userPreference and 'binLocation' in userPreference['psseConfig']:
+		conf['psseConfig']['binLocation']=userPreference['psseConfig']['binLocation']
+
 	assert conf['psseConfig']['installLocation'],"psseConfig->installLocation not provided in configuration"
 
 	if 'outputDir' not in conf['outputConfig'] and 'outputConfig' in userPreference and 'outputDir' in userPreference['outputConfig']:
@@ -277,12 +283,15 @@ def test():
 @main.command(name="setconfig")
 @click.option("-o","--output_root_dir", required=False, default=None, help="Root directory to store results")
 @click.option("-p","--psse_path", required=False, default=None, help="psse location")
-def setconfig(output_root_dir,psse_path):
+@click.option("-b","--bin_path", required=False, default=None, help="psse bin location")
+def setconfig(output_root_dir,psse_path,bin_path):
 	conf=json.load(open(os.path.join(baseDir,'config','user_preference.json')))
 	if output_root_dir:
 		conf['outputConfig']={'outputDir':output_root_dir}
 	if psse_path:
-		conf['psseConfig']={'installLocation':psse_path}
+		conf['psseConfig']['installLocation']=psse_path
+	if bin_path:
+		conf['psseConfig']['binLocation']=bin_path
 	json.dump(conf,open(os.path.join(baseDir,'config','user_preference.json'),'w'),indent=3)
 
 

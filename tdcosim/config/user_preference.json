@@ -1,5 +1,6 @@
 {
    "psseConfig": {
-      "installLocation": ""
+      "installLocation": "",
+      "binLocation": ""
    }
 }
