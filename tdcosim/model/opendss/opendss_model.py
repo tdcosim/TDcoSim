@@ -155,7 +155,8 @@ class OpenDSSModel(object):
 	def setDERParameter(self, entry, nodenumber):
 		try:
 			baseDir=os.path.dirname(inspect.getfile(tdcosim))
-			defaults=json.load(open(os.path.join(baseDir,'config','der_defaults.json')))
+			with open(os.path.join(baseDir,'config','der_defaults.json'),'r') as f:
+				defaults=json.load(f)
 			DNet=GlobalData.data['DNet']
 			
 			for item in defaults:

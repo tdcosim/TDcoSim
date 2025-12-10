@@ -55,12 +55,12 @@ class PSSEModel(Dera):
 			self.faultmap = {}
 			self.faultindex = 1
 			baseDir=os.path.dirname(inspect.getfile(tdcosim))
-			self.__cmld_rating_default=json.load(open(os.path.join(baseDir,'config',\
-			'composite_load_model_rating.json')))
-			self.__dera_rating_default=json.load(open(os.path.join(baseDir,'config',\
-			'dera_rating.json')))
-			self.__model_state_var_ind=json.load(open(os.path.join(baseDir,'config',\
-			'psse_machine_state_var_ind.json')))
+			with open(os.path.join(baseDir,'config','composite_load_model_rating.json'),'r') as f:
+				self.__cmld_rating_default=json.load(f)
+			with open(os.path.join(baseDir,'config','dera_rating.json'),'r') as f:
+				self.__dera_rating_default=json.load(f)
+			with open(os.path.join(baseDir,'config','psse_machine_state_var_ind.json'),'r') as f:
+				self.__model_state_var_ind=json.load(f)
 			self.__model_state_var_ind['outputFilePath']=outputFilePath
 		except:
 			GlobalData.log()
@@ -391,7 +391,7 @@ class PSSEModel(Dera):
 				if line[-1]==r'/':
 					line=line[0:-1]
 				if "," not in line:
-					line=re.sub('\s{1,}',',',line)
+					line=re.sub(r'\s{1,}',',',line)
 				entry=line.split(',')
 				for item in ind:
 					if entry[1]=="'{}'".format(item):
@@ -1054,7 +1054,7 @@ class PSSEModel(Dera):
 			res={}
 			if os.path.exists(outputFilePath):
 				f=open(outputFilePath); data=f.read(); f.close()
-				res=re.findall('NEXT AVAILABLE ADDRESSES ARE:\n[\s\w]{1,}\n[\s]{0,}[\s\d]{1,}',data)
+				res=re.findall(r'NEXT AVAILABLE ADDRESSES ARE:\n[\s\w]{1,}\n[\s]{0,}[\s\d]{1,}',data)
 				if res:
 					res=res[-1].split('\n')[2].strip().split()# use the latest value
 				res={'nCon':int(res[0]),'nState':int(res[1]),'nVar':int(res[2]),'nIcon':int(res[3])}
@@ -1068,7 +1068,7 @@ class PSSEModel(Dera):
 			res={}
 			if os.path.exists(outputFilePath):
 				f=open(outputFilePath); data=f.read(); f.close()
-				res=re.findall('Machine "[\d]{1,}" at bus [\d]{1,} \[[\d\s\w.]{1,}\][\s\w.:]{1,}',data)
+				res=re.findall(r'Machine "[\d]{1,}" at bus [\d]{1,} \[[\d\s\w.]{1,}\][\s\w.:]{1,}',data)
 				processingOrder=[]#[busID,machineID]
 				if res:
 					for entry in res:
