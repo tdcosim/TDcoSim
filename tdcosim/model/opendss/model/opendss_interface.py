@@ -281,8 +281,8 @@ class OpenDSSInterface(object):
 			P,Q,convergedFlg=self.getS() # override pvder dynamic model
 
 			if convergedFlg:
-				targetPF=np.cos(np.angle(np.complex(targetS[0],targetS[1])))
-				currentPF=np.cos(np.angle(np.complex(P,Q)))
+				targetPF=np.cos(np.angle(complex(targetS[0],targetS[1])))
+				currentPF=np.cos(np.angle(complex(P,Q)))
 
 			while abs(currentPF-targetPF)>tol and iterCount<maxIter and convergedFlg:
 
@@ -298,7 +298,7 @@ class OpenDSSInterface(object):
 					self.Loads.Next # move to the next load in the system
 				P,Q,convergedFlg=self.getS()
 				if convergedFlg:
-					currentPFNew=np.cos(np.angle(np.complex(P,Q)))
+					currentPFNew=np.cos(np.angle(complex(P,Q)))
 					dQChange=abs(currentPF-currentPFNew)
 					currentPF=currentPFNew
 					iterCount+=1	  
