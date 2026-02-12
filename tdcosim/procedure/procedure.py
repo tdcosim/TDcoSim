@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import pdb
 import inspect
 
@@ -40,5 +41,3 @@ class Procedure(DefaultProcedure):
 				generate_output(GlobalData,excel=False,dataframe=True)
 		except:
 			GlobalData.log()
-
-			

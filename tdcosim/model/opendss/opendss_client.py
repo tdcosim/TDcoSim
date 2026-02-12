@@ -34,8 +34,12 @@ if __name__=="__main__":
 		nodeid = "-1"
 		if len(sys.argv)>1:
 			nodeid = sys.argv[1]
+		if len(sys.argv)>2:
+			opendssEngine=sys.argv[2]
+		else:
+			opendssEngine='dss_python'
 
-		dssProcedure=OpenDSSProcedure()
+		dssProcedure=OpenDSSProcedure(opendssEngine)
 
 		BUFFER_SIZE = 1024*1024*16
 		c = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -57,6 +61,7 @@ if __name__=="__main__":
 					c.send(json.dumps({"shutdown":1}))# reply back to handler
 				elif six.PY3:
 					c.send(json.dumps({"shutdown":1}).encode())# reply back to handler
+				tempOutputF.close()
 				c.shutdown(0)
 				c.close() # close comm with server
 				OpenDSSData.log(level=20,msg="Open DSS Client {} is ended".format(nodeid))
@@ -66,6 +71,8 @@ if __name__=="__main__":
 				OpenDSSData.config['myconfig'] = findConfig(nodeid)
 				dssProcedure.setup()
 				replyMsg = {'response': nodeid}
+				tempOutputF=open(os.path.join(OpenDSSData.config['outputConfig']['outputDir'],\
+				'{}_temp.csv'.format(nodeid)),'w')
 			elif msg['method'].lower()=='initialize':
 				replyMsg['P'],replyMsg['Q'],replyMsg['convergedFlag'],replyMsg['scale']=\
 				dssProcedure.initialize(targetS=msg['targetS'],Vpcc=msg['Vpcc'],tol=msg['tol'])
@@ -74,18 +81,38 @@ if __name__=="__main__":
 				replyMsg = {"AckNode":nodeid}
 			elif msg['method'].lower()=='getload':
 				replyMsg['P'],replyMsg['Q'],replyMsg['convergenceFlg'],replyMsg['derX']=\
-				dssProcedure.getLoads(pccName=msg['pccName'],t=msg['t'],dt=msg['dt'])
+				dssProcedure.getLoad(pccName=msg['pccName'],t=msg['t'],dt=msg['dt'])
 			elif msg['method'].lower()=='scaleload':
 				dssProcedure.scaleLoad(scale=msg['scale'])
-			elif msg['method'].lower()=='monitor':
-				replyMsg=dssProcedure.monitor(msg=msg['varName'])
-			
+			# elif msg['method'].lower()=='monitor':
+			# 	buffer=dssProcedure.monitor(msg['varName'],msg['info']['t'])
+			elif msg['method'].lower()=='computestep':
+				replyMsg={'S':{}}
+				OpenDSSData.logger.debug('starting setVoltage')
+				dssProcedure.setVoltage(Vpu=msg['Vpu'],Vang=msg['Vang'],pccName=msg['pccName'])
+				replyMsg["AckNode"]=nodeid
+				OpenDSSData.logger.debug('completed setVoltage')
+				OpenDSSData.logger.debug('starting getLoad')
+				replyMsg['S']['P'],replyMsg['S']['Q'],replyMsg['S']['convergenceFlg'],replyMsg['S']['derX']=\
+				dssProcedure.getLoad(pccName=msg['pccName'],t=msg['t'],dt=msg['dt'])
+				OpenDSSData.logger.debug('completed getLoad')
+				# OpenDSSData.logger.debug('starting monitor')
+				# buffer=dssProcedure.monitor(msg['varName'],msg['info']['t'])
+				# OpenDSSData.logger.debug('completed monitor')
+				replyMsg['monData']={}
+
 			OpenDSSData.logger.debug('replyMsg={}'.format(msg))
 			if six.PY2:
 				c.send(json.dumps(replyMsg))# reply back to handler
 			elif six.PY3:
 				c.send(json.dumps(replyMsg).encode())# reply back to handler
 			OpenDSSData.logger.debug('sent reply to server')
+
+			if msg['method'].lower()=='computestep' or msg['method'].lower()=='monitor':# write to disk after sending reply
+				OpenDSSData.logger.info(f'starting monitor::::{msg}')
+				buffer=dssProcedure.monitor(msg['varName'],msg['info']['t'])
+				OpenDSSData.logger.debug('completed monitor')
+				tempOutputF.write(buffer)
 	except:
 		OpenDSSData.log(40,"Error in OpenDSS Client {}".format(nodeid))
 

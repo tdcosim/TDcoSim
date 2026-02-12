@@ -1,107 +1,59 @@
 
-# Example 3: Test Example with Two Distribution System comparing the impact of DER Tripping with DER riding through fault.
+# Example 3: Impact of DERs in two Distribution Systems tripping and riding through fault.
 
-In this test, the TDcosim tool is tested for three different scenarios:
-1. With distribution system connected to Bus 2 and Bus 3 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system TRIP instantaneously below level "0" voltage threshold. The DER configuration used for this case is shown below (for bus number 2):
+* DERs trip instantaneously below level "0" voltage threshold.
+* DERs ride through during the voltage anomaly
 
-                ```json
-                "manualFeederConfig":{
-                        "nodes": [
-                            {
-                                "nodenumber": 1,
-                                "filePath": ["\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                                "solarFlag":1,                
-                                "DERParameters":{
-                                "default":{
-                                    "solarPenetration":0.1, 
-                                    "powerRating": 50,
-                                    "VrmsRating":174,
-                                 "LVRT":"0":{"V_threshold":0.88,
-                                             "t_threshold":2.0,
-                                             "mode":"mandatory_operation"
-                                             },
-                                        "1":{"V_threshold":0.7,
-                                             "t_threshold":1.0,
-                                             "mode":"mandatory_operation"
-                                             }
-                                            }
-                                }}
-                            }
-                        ]
-                    }
-                ```
-            
-
-Same configuration was used for DERs in bus number 3.
-
-2. With distribution system connected to Bus 2 and Bus 3 of 118 bus system where the DER penetration level is 10% of distribution system load and the DERs connected in the distribution system Ride Through the fault causing voltage sag below level "0" voltage threshold. The DER configuration used for this case is shown below (for bus number 3):
-
+## Co-simulation setup
+1. **T system:** 118 bus system
+The configuration is same as that of Example 1.
+2. **D + DER system:** 123 node feeder connected to bus 2 and bus 3 of 118 bus system.
+   * DER penetration: 10% of distribution system load
+   * DER model type: Detailed DER model
+      * DER model sub-type:Three Phase Unbalanced
 
 ```json
 "manualFeederConfig":{
-        "nodes": [
-            {
-                "nodenumber": 1,
-                "filePath": ["\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                "solarFlag":1,                
-                "DERParameters":{
-                "default":{
-                    "solarPenetration":0.1, 
-                    "powerRating": 50,
-                    "VrmsRating":174,
-                 "LVRT":"0":{"V_threshold":0.88,
-                             "t_threshold":2.0,
-                             "mode":"mandatory_operation"
-                             },
-                        "1":{"V_threshold":0.7,
-                             "t_threshold":1.0,
-                             "mode":"mandatory_operation"
-                             }
+                        "nodes": [
+                            {
+                                "nodenumber": 2,
+                                "filePath": ["\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                                "solarFlag":1,
+                                "DERModelType": "ThreePhaseUnbalanced",
+                                "solarPenetration": 0.1,
+                                "DERFilePath": "config\\detailed_der_default.json", 
+                                "DERParameters":{
+                                "default":{
+                                     "pvderScale": 1,
+                                     "derId": "50_instant_trip"        
+                                          }
+                                               }
+                            },
+                            {
+                                "nodenumber": 3,
+                                "filePath": ["\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
+                                "solarFlag":1,
+                                "DERModelType": "ThreePhaseUnbalanced",
+                                "solarPenetration": 0.1,
+                                "DERFilePath": "config\\detailed_der_default.json", 
+                                "DERParameters":{
+                                "default":{
+                                     "pvderScale": 1,
+                                     "derId": "50_instant_trip"        
+                                          }
+                                               }
                             }
-                }}
-            }
-        ]
-    }
+                        ]
+                    }
 ```
 
-Same configuration was used for DERs in bus number 2.
+2. With distribution system connected to Bus 2 and Bus 3 of 118 bus system where the DER penetration level is 10% of distribution system load.
 
-3. With distribution system connected to Bus 2 and Bus 3 of 118 bus system without any DERs on the distribution system. The DER configuration used for this case is shown below:
-
-
-```json
-    "manualFeederConfig":{
-        "nodes": [
-            {
-                "nodenumber": 2,
-                "filePath": ["\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                "solarFlag":1,                
-                "DERParameters":{
-                "default":{
-                    "solarPenetration":0.0, 
-                          }
-                }}
-            },
-            {
-                "nodenumber": 3,
-                "filePath": ["\\SampleData\\DNetworks\\123Bus\\case123ZIP.dss"],
-                "solarFlag":1,                
-                "DERParameters":{
-                "default":{
-                    "solarPenetration":0.0, 
-                          }
-                }}
-            }
-        ]
-    }
-```
-
-
-
+3. distribution system Ride Through the fault causing voltage sag below level "0" voltage threshold. The DER configuration for bus 2 and bus 3 is same as that in example 1a.
 
 The disturbance applied in this case is the fault on bus 5. The simulation configuration to apply fault on bus 5 is shown below.
 
-
+```json
         "simulationConfig":{
         "simType":"dynamic",
         "dynamicConfig":{
@@ -133,14 +85,17 @@ The disturbance applied in this case is the fault on bus 5. The simulation confi
         "type": "csv"
     }
 }
+```
+![Pload comparison](.\use_case_results\example_3\example_3_pload_bus2.png)
 
-![Pload comparison](C:/Users/splathottam/Box Sync/GitHub/TDcoSim/docs/user_guide/examples/use_case_results/study_3/bus_2_plod.png)
 Figure 1: Active component of load as observed at the T-bus ‘2’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
-![Pload comparison](C:/Users/splathottam/Box Sync/GitHub/TDcoSim/docs/user_guide/examples/use_case_results/study_3/bus_3_plod.png)
+![Pload comparison](.\use_case_results\example_3\example_3_pload_bus3.png)
+
 Figure 2: Active component of load as observed at the T-bus ‘3’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
-![Pload comparison](C:/Users/splathottam/Box Sync/GitHub/TDcoSim/docs/user_guide/examples/use_case_results/study_3/bus_1_plod.png)
+![Pload comparison](.\use_case_results\example_3\example_3_pload_bus1.png)
+
 Figure 3: Active component of load as observed at the T-bus ‘1’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
 Figure 1 and 2 above compares the active power component of the load observed in the T-bus (2 and 3 where the DER connected distribution system is modelled) for the three cases considered. It can be observed that case B, without DER on the DS starts off with higher initial net load. Case A and Case C has a lower initial net load due to the DER connected in the distribution system masking the portion of total load in the system. A fault is applied in bus 5 of the T-system which causes a lower voltage sag in the D-system connected in bus 2 and bus 3. For the DER trip case, Case C, it can be observed that the net load observed in the bus increases to a value equal to the case without any DERs in the system, which is an expected response of the system. 
@@ -151,22 +106,25 @@ Figure 3 compares the active power component of the load observed in bus 1 of th
 
 A similar response can be observed in Figure 6 for reactive power component of net load connected at bus ‘1’ as no distribution system was connected in bus 1.
 
-![Qload comparison](C:/Users/splathottam/Box Sync/GitHub/TDcoSim/docs/user_guide/examples/use_case_results/study_3/bus_2_qlod.png)
+![Qload comparison](.\use_case_results\example_3\example_3_qload_bus2.png)
 
 Figure 4: Reactive component of load as observed at the T-bus ‘2’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
-![Qload comparison](C:/Users/splathottam/Box Sync/GitHub/TDcoSim/docs/user_guide/examples/use_case_results/study_3/bus_3_qlod.png)
+![Qload comparison](.\use_case_results\example_3\example_3_qload_bus3.png)
+
 Figure 5: Reactive component of load as observed at the T-bus ‘3’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
-![Qload comparison](C:/Users/splathottam/Box Sync/GitHub/TDcoSim/docs/user_guide/examples/use_case_results/study_3/bus_1_qlod.png)
+![Qload comparison](.\use_case_results\example_3\example_3_qload_bus1.png)
+
 Figure 6: Reactive component of load as observed at the T-bus ‘1’ for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
 
-![volt comparison](C:/Users/splathottam/Box Sync/GitHub/TDcoSim/docs/user_guide/examples/use_case_results/study_3/bus_2_volt.png)
+![volt comparison](.\use_case_results\example_3\example_3_volt_bus2.png)
 
 Figure 7: Voltage of bus 2 for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
-![volt comparison](C:/Users/splathottam/Box Sync/GitHub/TDcoSim/docs/user_guide/examples/use_case_results/study_3/bus_3_volt.png)
+![volt comparison](.\use_case_results\example_3\example_3_volt_bus3.png)
+
 Figure 8: Voltage of bus 3 for the cases considered. (A): 10% DER penetration with DER RT Settings, (B): 0% DER penetration and (C) 10% DER penetration with DER TRIP Settings.
 
 Figure 7 and Figure 8 shows the transmission bus voltage for bus 2 and bus 3 respectively, for the three cases considered. It can be observed that the voltage at bus 2 and bus 3 is almost the same for all the cases considered which could be associated with the low DER penetration and effect of nearby synchronous machine’s voltage regulation. 

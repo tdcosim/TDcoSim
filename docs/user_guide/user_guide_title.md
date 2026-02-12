@@ -10,7 +10,7 @@ subtitle: |
    U.S. Department of Energy
 date: |
    TDcoSim Version 2.0.0 \
-   August 26 2021 \
+   October 2021 \
    Copyright &copy; 2021, UChicago Argonne, LLC
 fontsize: 12pt
 documentclass: scrartcl
@@ -30,6 +30,8 @@ Karthikeyan Balasubramaniam \
 **Co-developers:** \
 Sang-il Yim \
 Siby Jose Plathottam \
+Kumarsinh Jhala\
+Zhao, Shijia\
 \
 **Project repository:**\
 *https://github.com/tdcosim/TDcoSim*

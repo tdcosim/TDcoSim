@@ -1,1 +1,7 @@
-{}
+{
+   "psseConfig": {
+      "installLocation": "",
+      "binLocation": "",
+      "importStatement":""
+   }
+}

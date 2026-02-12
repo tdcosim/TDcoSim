@@ -56,7 +56,7 @@
 * Not compatible with configuration files used in V1.2.0
 
 ## Thanks to our Contributors
-This release contains contributions from Karthikeyan Balasubramaniam @karthikbalasu, Sang-iL Yim @yim0331, Siby Jose Plathottam @sibyjackgrove, Kumarsinh Jhala @Kumarsinh, and Shijia Zhao at Argonne National Laboratory.
+This release contains contributions from Karthikeyan Balasubramaniam @karthikbalasu, Sang-iL Yim @yim0331, Siby Jose Plathottam @sibyjackgrove, Kumarsinh Jhala @Kumarsinh, and Shijia Zhao @zsjjames at Argonne National Laboratory.
 We thank suggestions from Ning Kang (INL), Rojan Bhattarai (INL), NERC System Planning Impacts from DER Working Group (SPIDERWG), and Reliability First Corporation.
 
 # Release 1.2.0
@@ -70,11 +70,11 @@ We thank suggestions from Ning Kang (INL), Rojan Bhattarai (INL), NERC System Pl
 ```json
 "psseConfig": {"installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY27"}
 ```
-* Support for following DER model types has been added: ```SolarPVDERThreePhase```, ```SolarPVDERThreePhaseBalanced```,  and ```SolarPVDERThreePhaseConstantVdc``` which can be selected through the [DER configuration file](\examples\config_der.json) as shown below:
+* Support for following DER model types has been added: ```SolarPVDERThreePhase```, ```SolarPVDERThreePhaseBalanced```,  and ```SolarPVDERThreePhaseConstantVdc``` which can be selected through the [DER configuration file](tdcosim/config/detailed_der_default.json) as shown below:
 ```json
 "basic_specs":{"model_type":"SolarPVDERThreePhase"}
 ```
-* Support for fully customizing the DER model parameters through the [DER configuration file](\examples\config_der.json) as shown below:
+* Support for fully customizing the DER model parameters through the [DER configuration file](tdcosim/config/detailed_der_default.json) as shown below:
 ```json
 "basic_options":{"Sinsol":100.0},
 "module_parameters":{"Np":11,"Ns":735,"Vdcmpp0":550.0,"Vdcmpp_min": 525.0,"Vdcmpp_max": 650.0},

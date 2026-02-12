@@ -35,9 +35,9 @@ It is Python utility than can simulate dynamics of grid connected solar PV-DER s
 ## Software architecture
 A schematic showing the software architecture of the TDcoSim package is shown in the Fig. 1.
 
-![highlevel software architecture](images/highlevel_software_architecture.png)
+![high-level software architecture](images/highlevel_software_architecture.png)
 <p align="center">
-  <strong>Fig. 1.</strong> Highlevel software architecture
+  <strong>Fig. 1.</strong> High-level software architecture
 </p>
 
 TDcoSim runs with multiple processes. The main process runs the transmission network simulation with PSSE and generates a report of the simulation. Each sub-processes runs the distribution network simulation with OpenDSS and PV-DER. The tool uses the TCP sockets to exchange the data between main and sub-processes. The detailed simulation architecture is shown in the Fig.2.

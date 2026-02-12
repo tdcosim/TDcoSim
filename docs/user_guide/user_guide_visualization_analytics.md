@@ -20,14 +20,27 @@ Both the visualization and data analytics features available in TDcoSim uses the
 ## Visualization
 The visualization module provides an simple way to quickly visualize the co-simulation data without having to write code. Visualization is done through a browser based dashboard built using the [Dash](https://github.com/plotly/dash) framework. The plots within the visualization were created using [Plotly](https://github.com/plotly/plotly.py).
 
-### Using the visualization dashboard
-Before the dashboard can be used the location of the filecontaining the co-simulation results (in the TDcoSim DataFrame format) should be known.  The dashboard can be launched using the following command on the command line interface. Note that *.\results.pkl*  should be replaced with the pickle file containing the TDcoSim DataFrame.
+### Launching the TDcoSim dashboard
+Before the TDcosim dashboard (hereafter referred to as 'dashboard') can be launched the location of the co-simulation results (in the TDcoSim DataFrame format) should be known.  If we want to visualize the results from a single file,  we can specify the file name through the **-o** argument. The following command may be used on the command line interface. Note that **path/to/results.pkl**  should be replaced with the path to Pickle file or CSV file containing the TDcoSim DataFrame.
 
 ```
    tdcosim dashboard -o "path/to/results.pkl"
 ```
+If we want to visualize the results from multiple files within a folder,  we can again specify the folder path through the **-o** argument. Note that **path/to/results/folder**  should be replaced by the folder containing the individual simulation folders containing the TDcoSim DataFrame.
 
-This will result in the following output:
+```
+   tdcosim dashboard -o "path/to/results/folder"
+```
+By default, dashboard will read 2 files (CSV followed by Pickle). However, we can specify the number of files that dashboard reads using the **-n** argument. The command shown below will read maximum of 10 files from the simulation folders.
+```
+   tdcosim dashboard -n 10 -o "path/to/results/folder"
+```
+By default the dataframes are loaded onto the system memory using **Pandas**. Sometimes reading a large number of files will result in an out of memory error. In such circumstances, the user make use of the Dask by setting the **-d** flag to true.
+```
+   tdcosim dashboard -n 10 -d True -o "path/to/results/folder"
+```
+
+All the above commands will result in the following output:
 
 ![report example](images/starting_dashboard.png)
 <p align="center">
@@ -37,6 +50,10 @@ Copy and paste the web address (**http:/127.0.0.1:8050** in Fig. 1) into your br
 
 ***
 ***Note:*** Using the dashboard only requires TDcoSim to be installed. It does not require PSS/E or OpenDSS to be installed. So co-simulation results that were generated in another machine can be copied to a machine without PSS/E or OpenDSS and then visualized.
+
+***
+***
+***Note:*** Using the Dask option can result in slower visualization times compared to using Pandas. Hence it should only be used when large number of files need to be loaded onto dashboard.
 
 ***
 
@@ -68,7 +85,7 @@ The Table visualization tab displays the entire data frame as an interactive Tab
 </p>
 
 #### Plots
-The Plots visualization tab allows the user to visualize any co-simulation variable as interactive time-series plots as shown in Fig. 4. The fields provided correspond to the attributes of the [TDcoSim DataFrame](#TDcoSim-DataFrame) and desired quantities can be plotted by appropriately plotting the fields. The plots may also be downloaded as .PNG images.
+The Plots visualization tab allows the user to visualize any co-simulation variable as interactive time-series plots as shown in Fig. 4. The fields provided correspond to the attributes of the [TDcoSim DataFrame](#TDcoSim-DataFrame) and desired quantities can be plotted by appropriately plotting the fields. The plots may also be downloaded as .PNG images. You can filter the plots based on **scenario** and **tnodeid** for T side variables.
 
 ***
 ***Note:*** All the quantities being plotted should have the same property. For e.g. you can't have a plot with voltage and angle from one node.
@@ -93,11 +110,11 @@ All the methods take the TDcoSim DataFrame as input.
 The most useful methods available within the module are described below:
 
 
-> Entries below needs to be reveiwed before publishing 
+> Entries below needs to be reviewed before publishing 
 
 
 #### *compute_stability_time:*   Determines whether the co-simulation variables within the data frame reach steady state, and the time taken to reach steady state after a disturbance event has occurred. The DataFrame has at least two columns: 1) value and 2) t.
-* *Syntex:* stability_time, comment= compute_stability_time(df, error_threshold)
+* *Syntax:* stability_time, comment= compute_stability_time(df, error_threshold)
 * *Inputs:*
      - *df:* 			DataFrame with at least two columns: 1) value, and 2) t.
      - *error_threshold:* 	Error threshold for stability time calculations. Maximum allowed signal deviation after stability time
@@ -108,7 +125,7 @@ The most useful methods available within the module are described below:
 
 
 ####	*lag_finder:*        Calculate lag/delay between DataFrames df1 and df2 of the same length. Negative outputs show that signal df2.value lags behind df1.value and the positive output shows that df1.value lags behind df2.value. 
-* *Syntex:* delay = lag_finder(df1, df2)
+* *Syntax:* delay = lag_finder(df1, df2)
 * *Inputs:*
      - *df1:* 			DataFrame 1 with at least one column: value
      - *df2:* 			DataFrame 2 with at least one column: value
@@ -116,7 +133,7 @@ The most useful methods available within the module are described below:
      - *delay:* 		Delay between signals df1.value and df2.value
 
 ####	*compute_mean_square_error:*       Calculate the mean square error between DataFrames df1 and df2 of the same length. 
-* *Syntex:* MSE = compute_mean_square_error (df1, df2)
+* *Syntax:* MSE = compute_mean_square_error (df1, df2)
 * *Inputs:*
      - *df1:* 			DataFrame 1 with at least one column: value
      - *df2:* 			DataFrame 2 with at least one column: value
@@ -124,7 +141,7 @@ The most useful methods available within the module are described below:
      - *MSE:* 		Mean square error between signal df1.value and df2.value
 
 ####	*shift_array:*       Shifts array by n bit. Fills extra bits at the end of the vector by a copy of the last bit of the array. 
-* *Syntex:* x = shift_array(y, n)
+* *Syntax:* x = shift_array(y, n)
 * *Inputs:*
      - *y:* 			Signal (type: np.array)
      - *n:* 			Number of bits to shift the signal. Positive values of n shifts signal y to the right and negative values shift signals to the left.
@@ -132,7 +149,7 @@ The most useful methods available within the module are described below:
      - *x:* 		   Shifted signal
 
 ####	*instances_of_violation:*       Calculates the number of instances where the value of data frame violates upper and lower bounds set by minValue and maxValue.
-* *Syntex:* n = instances_of_violation(df,maxValue,minValue)
+* *Syntax:* n = instances_of_violation(df,maxValue,minValue)
 * *Inputs:*
      - *df:* 			      DataFrame with at least one property: df.value
      - *maxValue:* 			Upper threshold 
@@ -141,8 +158,8 @@ The most useful methods available within the module are described below:
      - *n:* 		         Number of instances when 'df.value' is outside the bounds of [minValue, maxValue]
 
 
-####	*exculde_value:*       Filter the given data frame based on >=toValue and <=fromValue conditions. For == condition use the same value for fromValue and toValue.
-* *Syntex:* excludedDF = exculde_value(df,fromValue,toValue)
+####	*exclude_value:*       Filter the given data frame based on >=toValue and <=fromValue conditions. For == condition use the same value for fromValue and toValue.
+* *Syntax:* excludedDF = exclude_value(df,fromValue,toValue)
 * *Inputs:*
      - *df:* 			      DataFrame with at least one property: df.value
      - *fromValue:* 			Upper threshold 
@@ -154,7 +171,7 @@ The most useful methods available within the module are described below:
 
 ####	*compare_signals:*       Compare and plot two signals in data frame df1 and df2 of the same length. Returns result in terms of stability time of both signals as well as lag and mean square error between them.
 
-* *Syntex:* lag,MSE,Stability_time_1,Stability_time_2 = compare_signals(thisBusId1,thisBusId2,df1,df2,error_threshold,show_results)
+* *Syntax:* lag,MSE,Stability_time_1,Stability_time_2 = compare_signals(thisBusId1,thisBusId2,df1,df2,error_threshold,show_results)
 * *Inputs:*
      - *thisBusId1:* 			      Bus ID of data frame 1
      - *thisBusId2:* 			      Bus ID of data frame 2
@@ -170,7 +187,7 @@ The most useful methods available within the module are described below:
 
 ####	*plot_vt_filt_fast_der:*  Plot the voltage signal at given transmission node and DERs in the connected distribution system.       
 
-* *Syntex:* plot_vt_filt_fast_der(df,tnodeid,legendDistNode,showPlot)
+* *Syntax:* plot_vt_filt_fast_der(df,tnodeid,legendDistNode,showPlot)
 * *Inputs:*
      - *df:* 			               Data Frame 
      - *tnodeid:* 			         Transmission node ID
@@ -180,7 +197,7 @@ The most useful methods available within the module are described below:
 
 ####	*plot_t_vmag:*  Plot the voltage signal at given transmission node. If no transmission node id is given, it will plot voltage at all transmission nodes. 
 
-* *Syntex:* plot_t_vmag(df,tnodeid,excludeNodes)
+* *Syntax:* plot_t_vmag(df,tnodeid,excludeNodes)
 * *Inputs:*
      - *df:* 			               Data Frame 
      - *tnodeid:* 			         Transmission node ID (Optional: if not specified set to none)
@@ -189,7 +206,7 @@ The most useful methods available within the module are described below:
 
 
 ####	*plot_omega:*  Plot time vs rotor speed at all transmission nodes except specified. 
-* *Syntex:* plot_omega(df,excludeNodes=None)
+* *Syntax:* plot_omega(df,excludeNodes=None)
 * *Inputs:*
      - *df:* 		Data Frame 	               
      - *excludeNodes:* 	Nodes to be excluded from the plot (Optional: if not specified set to none)		   
@@ -198,21 +215,21 @@ The most useful methods available within the module are described below:
 
 
 ####	*plot_distribution_der_data:*  Plots the time series plots for active and reactive power output from each DER.
-* *Syntex:* plot_distribution_der_data(df,tnodeid=None,plotDerTotal=True)
+* *Syntax:* plot_distribution_der_data(df,tnodeid=None,plotDerTotal=True)
 * *Inputs:*
      - *df:* 		                  Data Frame 	               
      - *tnodeid:* 			         Transmission node ID
      - *plotDerTotal:* 	Set true to plot total P and Q of distribution DERs  		   
 
 ####	*show_plot:*  Generate plot with time as x-axis and ylable as y-axis
-* *Syntex:* show_plot(ylabel,title)
+* *Syntax:* show_plot(ylabel,title)
 * *Inputs:*
      - *ylabel:* 			         Y-axis label 
      - *title:* 			         Plot title
      
 
 ####	*clear_plot:*  Clear the plot
-* *Syntex:* clear_plot()
+* *Syntax:* clear_plot()
 
 [Continue to Understanding the config file](user_guide_understanding_config.md)
 

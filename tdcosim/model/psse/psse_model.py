@@ -24,32 +24,43 @@ class PSSEModel(Dera):
 			os.path.exists(os.path.join(GlobalData.config['psseConfig']['installLocation'],'psspy.pyc')):
 				pssePath = GlobalData.config['psseConfig']['installLocation']
 			sys.path.insert(0,pssePath)
+			if GlobalData.config['psseConfig']['binLocation'] and \
+				os.path.exists(GlobalData.config['psseConfig']['binLocation']):
+					sys.path.insert(0,GlobalData.config['psseConfig']['binLocation'])
 			os.environ['PATH']+=';'+pssePath
+			if GlobalData.config['psseConfig']['importStatement']:
+				import importlib
+				importlib.import_module(GlobalData.config['psseConfig']['importStatement'])
 			import psspy
 
 			# psse
 			self._psspy=psspy
-			ierr=self._psspy.psseinit(0); assert ierr==0
+			ierr=self._psspy.psseinit(200000)
+			assert ierr==0, f'{self.get_error_info_from_psse("psseinit",ierr)}'
 			ierr=self._psspy.report_output(6,'',[]); assert ierr==0
 			outputFilePath=os.path.join(GlobalData.config['outputConfig']['outputDir'],'psse_progress_output.txt')
 			psseConfig=GlobalData.config['psseConfig']
 			if 'monitor' in psseConfig and 'dera1' in psseConfig['monitor']:
-				ierr=self._psspy.progress_output(2,outputFilePath,0); assert ierr==0
+				ierr=self._psspy.progress_output(2,outputFilePath,0)
+				assert ierr==0, f'{self.get_error_info_from_psse("progress_output",ierr)}'
 			else:
-				ierr=self._psspy.progress_output(6,'',[]); assert ierr==0
+				ierr=self._psspy.progress_output(6,'',[])
+				assert ierr==0, f'{self.get_error_info_from_psse("progress_output",ierr)}'
 
-			ierr=self._psspy.alert_output(6,'',[]); assert ierr==0
-			ierr=self._psspy.prompt_output(6,'',[]); assert ierr==0
+			ierr=self._psspy.alert_output(6,'',[])
+			assert ierr==0, f'{self.get_error_info_from_psse("alert_output",ierr)}'
+			ierr=self._psspy.prompt_output(6,'',[])
+			assert ierr==0, f'{self.get_error_info_from_psse("prompt_output",ierr)}'
 
 			self.faultmap = {}
 			self.faultindex = 1
 			baseDir=os.path.dirname(inspect.getfile(tdcosim))
-			self.__cmld_rating_default=json.load(open(os.path.join(baseDir,'config',\
-			'composite_load_model_rating.json')))
-			self.__dera_rating_default=json.load(open(os.path.join(baseDir,'config',\
-			'dera_rating.json')))
-			self.__model_state_var_ind=json.load(open(os.path.join(baseDir,'config',\
-			'psse_machine_state_var_ind.json')))
+			with open(os.path.join(baseDir,'config','composite_load_model_rating.json'),'r') as f:
+				self.__cmld_rating_default=json.load(f)
+			with open(os.path.join(baseDir,'config','dera_rating.json'),'r') as f:
+				self.__dera_rating_default=json.load(f)
+			with open(os.path.join(baseDir,'config','psse_machine_state_var_ind.json'),'r') as f:
+				self.__model_state_var_ind=json.load(f)
 			self.__model_state_var_ind['outputFilePath']=outputFilePath
 		except:
 			GlobalData.log()
@@ -75,13 +86,13 @@ class PSSEModel(Dera):
 			# load psse case
 			ierr = self._psspy.read(0,GlobalData.config['psseConfig']['rawFilePath'].encode("ascii",
 			"ignore"))
-			assert ierr==0,"Reading raw file failed with error {}".format(ierr)
+			assert ierr==0, f'{self.get_error_info_from_psse("read",ierr)}'
 			ierr, nLoads = self._psspy.alodbuscount()
-			assert ierr==0,"load bus count failed with error {}".format(ierr)
+			assert ierr==0, f'{self.get_error_info_from_psse("alodbuscount",ierr)}'
 			GlobalData.data['TNet']['LoadBusCount'] = nLoads
 			# default. Will connect dist syst feeder to all load buses
 			ierr, loadBusNumber = self._psspy.alodbusint(string='NUMBER')
-			assert ierr==0,"load bus number failed with error {}".format(ierr)
+			assert ierr==0, f'{self.get_error_info_from_psse("alodbusint",ierr)}'
 			GlobalData.data['TNet']['LoadBusNumber'] = loadBusNumber[0]
 
 			if adjustOpPoint:# need to adjust operation point
@@ -90,7 +101,7 @@ class PSSEModel(Dera):
 				GlobalData.data['TNet']['BusRealPowerLoad'] = {}
 			
 				ierr,S = self._psspy.alodbuscplx(string='MVAACT')
-				assert ierr==0,"Reading bus complex load failed with error {}".format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("alodbuscplx",ierr)}'
 
 				for entry,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S[0]):
 					GlobalData.data['TNet']['TotalRealPowerLoad'] += val.real
@@ -112,20 +123,20 @@ class PSSEModel(Dera):
 					conf={'conl':{'all':1,'apiopt':1,'status':[0,0],'loadin':[.3,.4,.3,.4]}}
 				assert 'conl' in conf
 				ierr,_=self._psspy.conl(**conf['conl'])# initialize
-				assert ierr==0,"psspy.conl failed with error {}".format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("conl",ierr)}'
 
 				conf['conl'].update({'apiopt':2})
 				ierr,_=self._psspy.conl(**conf['conl'])# convert
-				assert ierr==0,"psspy.conl failed with error {}".format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("conl",ierr)}'
 
 				conf['conl'].update({'apiopt':3})
 				ierr,_=self._psspy.conl(**conf['conl'])# convert
-				assert ierr==0,"psspy.conl failed with error {}".format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("conl",ierr)}'
 
 			elif loadType.lower()=='complex_load' or loadType.lower()=='complexload':
 				# get load info
 				ierr,loadBusNumber=self._psspy.aloadint(-1,1,'NUMBER')
-				assert ierr==0,'psspy.aloadint failed with error {}'.format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("aloadint",ierr)}'
 				loadBusNumber=loadBusNumber[0]
 				defaultVal=[.2,.2,.2,.2,.1,2,.04,.08]
 			
@@ -151,14 +162,14 @@ class PSSEModel(Dera):
 
 				# load cmld file
 				ierr=self._psspy.dyre_add(dyrefile=tempCMLDDyrFile.encode("ascii", "ignore"))
-				assert ierr==0,"Adding dyr file failed with error {}".format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("dyre_add",ierr)}'
 				os.system('del {}'.format(tempCMLDDyrFile))
 
 			elif loadType.lower()=='composite_load' or loadType.lower()=='compositeload' \
 			or loadType.lower()=='cmld':
 				# get load info
 				ierr,loadBusNumber=self._psspy.aloadint(-1,1,'NUMBER')
-				assert ierr==0,'psspy.aloadint failed with error {}'.format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("aloadint",ierr)}'
 				loadBusNumber=loadBusNumber[0]
 				default=self.__cmld_rating_default['default']
 				if 'cmldParameters' in GlobalData.config['psseConfig'] and GlobalData.config['psseConfig']['cmldParameters']:
@@ -192,16 +203,16 @@ class PSSEModel(Dera):
 					
 						# copy load from high side to low side bus and remove high side load
 						ierr,thisBusS=self._psspy.loddt2(ibus=thisBus, id='1', string1='TOTAL', string2='ACT')
-						assert ierr==0, 'error is {}'.format(ierr)
+						assert ierr==0, f'{self.get_error_info_from_psse("loddt2",ierr)}'
 
 						# zero out loads
 						ierr=self._psspy.load_chng_4(thisBus,'1',realar=[0]*6)
-						assert ierr==0,"load change failed with error {}".format(ierr)
+						assert ierr==0, f'{self.get_error_info_from_psse("load_chng_4",ierr)}'
 
 						# change mapping and set loads on low side
 						thisBus=old2newBusIDMap[thisBus]
 						ierr=self._psspy.load_data_4(thisBus,'1',realar1=thisBusS.real,realar2=thisBusS.imag)
-						assert ierr==0,"load data failed with error {}".format(ierr)
+						assert ierr==0, f'{self.get_error_info_from_psse("load_data_4",ierr)}'
 
 					thisData=[thisBus]+prefix+defaultVal
 					thisStr=''; thisLineLen=0
@@ -216,7 +227,7 @@ class PSSEModel(Dera):
 
 				# load cmld file
 				ierr=self._psspy.dyre_add(dyrefile=tempCMLDDyrFile.encode("ascii", "ignore"))
-				assert ierr==0,"Adding dyr file failed with error {}".format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("dyre_add",ierr)}'
 				os.system('del {}'.format(tempCMLDDyrFile))
 		except:
 			GlobalData.log()
@@ -224,45 +235,62 @@ class PSSEModel(Dera):
 #===================================================================================================
 	def dynamicInitialize(self,adjustOpPoint=True):
 		try:
+			tonly=False
+			if 'tonly' in GlobalData.config['simulationConfig'] and \
+				GlobalData.config['simulationConfig']['tonly']:
+				tonly=True
 			if 'defaultLoadType' in GlobalData.config['simulationConfig']:
 				defaultLoadType=GlobalData.config['simulationConfig']['defaultLoadType']
 			else:
 				defaultLoadType='zip'
-			if adjustOpPoint:
+
+			if adjustOpPoint and not tonly:
 				S = self._adjustSystemOperatingPoint(defaultLoadType=defaultLoadType)
 			else:
-				ierr=self._psspy.dyre_new([1,1,1,1],self.config['psseConfig']['dyrFilePath'].encode("ascii",
+				ierr=self._psspy.dyre_new([1,1,1,1],GlobalData.config['psseConfig']['dyrFilePath'].encode("ascii",
 				"ignore"))
-				assert ierr==0,"psspy.dyre_new failed with error {}".format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("dyre_new",ierr)}'
+				ierr,S=self._psspy.alodbuscplx(string='MVAACT')
+				assert ierr==0, f'{self.get_error_info_from_psse("alodbuscplx",ierr)}'
 				self.convert_loads(loadType=defaultLoadType)
 
 			# run power flow
-			ierr=self._psspy.fnsl()
-			assert ierr==0,"fnsl with error {}".format(ierr)
+			if 'fnslParameters' in GlobalData.config['psseConfig'] and \
+				GlobalData.config['psseConfig']['fnslParameters']:
+				ierr=self._psspy.fnsl(options=GlobalData.config['psseConfig']['fnslParameters'])
+			else:
+				ierr=self._psspy.fnsl()
+			assert ierr==0, f'{self.get_error_info_from_psse("fnsl",ierr)}'
 			Vpcc=self.getVoltage()
 
 			ierr=self._psspy.cong(1); assert ierr==0
 			GlobalData.data['dynamic']['channel'] = {}
 			nMonVars=0
-			ierr,nGenBus=self._psspy.agenbuscount(-1,1); assert ierr==0
-			ierr,nBus=self._psspy.abuscount(-1,1); assert ierr==0
-			ierr,nLoad=self._psspy.aloadcount(-1,1); assert ierr==0
-			ierr,genBusNumber=self._psspy.agenbusint(-1,1,'NUMBER'); assert ierr==0
+			ierr,nGenBus=self._psspy.agenbuscount(-1,1)
+			assert ierr==0, f'{self.get_error_info_from_psse("agenbuscount",ierr)}'
+			ierr,nBus=self._psspy.abuscount(-1,1)
+			assert ierr==0, f'{self.get_error_info_from_psse("abuscount",ierr)}'
+			ierr,nLoad=self._psspy.aloadcount(-1,1)
+			assert ierr==0, f'{self.get_error_info_from_psse("aloadcount",ierr)}'
+			ierr,genBusNumber=self._psspy.agenbusint(-1,1,'NUMBER')
+			assert ierr==0, f'{self.get_error_info_from_psse("agenbusint",ierr)}'
 			genBusNumber=genBusNumber[0]
-			ierr,busNumber=self._psspy.abusint(string='NUMBER'); assert ierr==0
+			ierr,busNumber=self._psspy.abusint(string='NUMBER')
+			assert ierr==0, f'{self.get_error_info_from_psse("abusint",ierr)}'
 			busNumber=busNumber[0]
-			ierr,loadBusNumber=self._psspy.aloadint(-1,1,'NUMBER'); assert ierr==0
+			ierr,loadBusNumber=self._psspy.aloadint(-1,1,'NUMBER')
+			assert ierr==0, f'{self.get_error_info_from_psse("aloadint",ierr)}'
 			loadBusNumber=loadBusNumber[0]
 			for item in ['angle','speed','pelec','qelec','pmech']:
 				ierr=self._psspy.chsb(sid=0,all=1,status=[-1,-1,-1,1,self._monitorID[item],0])
-				assert ierr==0
+				assert ierr==0, f'{self.get_error_info_from_psse("chsb",ierr)}'
 				GlobalData.data['dynamic']['channel'][item]={}
 				for channelID,node in zip(range(nMonVars+1,nMonVars+1+nGenBus),genBusNumber):# psse uses 1 ind
 					GlobalData.data['dynamic']['channel'][item][channelID]=node
 				nMonVars+=nGenBus
 
 			ierr=self._psspy.chsb(sid=0,all=1,status=[-1,-1,-1,1,self._monitorID['volt'],0])
-			assert ierr==0
+			assert ierr==0, f'{self.get_error_info_from_psse("chsb",ierr)}'
 			GlobalData.data['dynamic']['channel']['volt']={}
 			for channelID,node in zip(range(nMonVars+1,nMonVars+1+nBus),busNumber):# psse uses 1 ind
 				GlobalData.data['dynamic']['channel']['volt'][channelID]=node
@@ -270,7 +298,7 @@ class PSSEModel(Dera):
 
 			for item in ['pload','qload']:
 				ierr=self._psspy.chsb(sid=0,all=1,status=[-1,-1,-1,1,self._monitorID[item],0])
-				assert ierr==0
+				assert ierr==0, f'{self.get_error_info_from_psse("chsb",ierr)}'
 				GlobalData.data['dynamic']['channel'][item]={}
 				for channelID,node in zip(range(nMonVars+1,nMonVars+1+nLoad),loadBusNumber):# psse uses 1 ind
 					GlobalData.data['dynamic']['channel'][item][channelID]=node
@@ -292,7 +320,7 @@ class PSSEModel(Dera):
 			GlobalData.logger.log(10,'outfile:{}'.format(outfile))
 
 			ierr=self._psspy.strt(outfile=outfile)
-			assert ierr==0,"psspy.strt failed with error {}".format(ierr)
+			assert ierr==0, f'{self.get_error_info_from_psse("strt",ierr)}'
 
 			targetS={}
 			for entry,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S[0]):
@@ -308,7 +336,7 @@ class PSSEModel(Dera):
 							# if more than one load identifier is present, then feeder will
 							# be interfaced by default to load identifier "1"
 							ierr,val=self._psspy.loddt2(entry['nodenumber'],'1','TOTAL','ACT')
-							assert ierr==0,"loddt2 failed with error {}".format(ierr)
+							assert ierr==0, f'{self.get_error_info_from_psse("loddt2",ierr)}'
 							if six.PY2:
 								thisAggregatedLoadType=entry['fractionAggregatedLoad'].keys()[0]
 							elif six.PY3:
@@ -318,6 +346,21 @@ class PSSEModel(Dera):
 			return targetS,Vpcc
 		except:
 			GlobalData.log()
+
+
+#===================================================================================================
+	def get_error_info_from_psse(self,funcName,ierr,printError=False):
+		"""Gets error code info from psse docstring"""
+		doc=self._psspy.__dict__[funcName].__doc__
+		doc=doc[doc.find('Integer IERR Error code')::]
+		startInd=doc.find(f'= {ierr},')
+		endInd=doc.find('\n',startInd)
+		data=doc[startInd:endInd].replace(f'= {ierr},','').strip()
+		data=f"error flag {ierr} while running {funcName}. Info={data}"
+		if printError:
+			print(data)
+		return data
+
 
 #===================================================================================================
 	def _adjustSystemOperatingPoint(self,defaultLoadType='complex_load'):
@@ -348,7 +391,7 @@ class PSSEModel(Dera):
 				if line[-1]==r'/':
 					line=line[0:-1]
 				if "," not in line:
-					line=re.sub('\s{1,}',',',line)
+					line=re.sub(r'\s{1,}',',',line)
 				entry=line.split(',')
 				for item in ind:
 					if entry[1]=="'{}'".format(item):
@@ -373,14 +416,15 @@ class PSSEModel(Dera):
 			
 			readFlg=False
 			for line in rawFileData:
-				if "END OF GENERATOR DATA" in line:
-					readFlg=False
-				if readFlg:
-					entry=line.split(',')
-					Zr[int(entry[0])]=float(entry[9])
-					Zx[int(entry[0])]=float(entry[10])
-				if "BEGIN GENERATOR DATA" in line:
-					readFlg=True
+				if not '@!' in line:
+					if "END OF GENERATOR DATA" in line:
+						readFlg=False
+					if readFlg:
+						entry=line.split(',')
+						Zr[int(entry[0])]=float(entry[9])
+						Zx[int(entry[0])]=float(entry[10])
+					if "BEGIN GENERATOR DATA" in line:
+						readFlg=True
 
 			# make changes in machine data through psse internal data structure
 			m=macVarMap={}
@@ -394,7 +438,7 @@ class PSSEModel(Dera):
 
 			# read dyr file
 			ierr=self._psspy.dyre_new([1,1,1,1],tempDyrPath)
-			assert ierr==0
+			assert ierr==0, f'{self.get_error_info_from_psse("dyre_new",ierr)}'
 			GlobalData.log(level=20,msg='read modified dyr file {}'.format(tempDyrPath))
 
 			if '~' in tempDyrPath:
@@ -410,10 +454,10 @@ class PSSEModel(Dera):
 			macVarData={}
 			for entry in macVarMap:
 				ierr,macVarData[entry]=self._psspy.amachreal(sid=-1, flag=1, string=entry)# get data
-				assert ierr==0,"reading machine data failed with error {}".format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("amachreal",ierr)}'
 
 			ierr,genBusNumber=self._psspy.agenbusint(-1,1,'NUMBER') # get gen bus number
-			assert ierr==0
+			assert ierr==0, f'{self.get_error_info_from_psse("agenbusint",ierr)}'
 			genBusNumber=genBusNumber[0]
 
 			# change machine data
@@ -428,7 +472,7 @@ class PSSEModel(Dera):
 				macVarDataNew[7]=np.round(Zr[genBusNumber[n]],5)
 				macVarDataNew[8]=np.round(Zx[genBusNumber[n]],5)
 				ierr=self._psspy.machine_chng_2(genBusNumber[n], realar=macVarDataNew)# change machine data
-				assert ierr==0,"machine_chng_2 failed with error {}".format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("machine_chng_2",ierr)}'
 
 			# add der_a, if configured
 			conf=None
@@ -449,7 +493,7 @@ class PSSEModel(Dera):
 
 			# adjust load data
 			ierr,S=self._psspy.alodbuscplx(string='MVAACT')
-			assert ierr==0,"reading complex load failed with error {}".format(ierr)
+			assert ierr==0, f'{self.get_error_info_from_psse("alodbuscplx",ierr)}'
 			S=S[0]
 
 			# convert all loads to given load type
@@ -457,7 +501,7 @@ class PSSEModel(Dera):
 
 			# add new loads, if configured
 			ierr, systemBuses = self._psspy.abusint(sid=-1, flag=2, string='NUMBER')
-			assert ierr==0,"abusint failed with error {}".format(ierr)
+			assert ierr==0, f'{self.get_error_info_from_psse("abusint",ierr)}'
 			systemBuses=systemBuses[0]
 
 			busIDToAddComplexLoad={}; busIDToAddCompositeLoad={}
@@ -490,10 +534,12 @@ class PSSEModel(Dera):
 
 			if busIDToAddComplexLoad or busIDToAddCompositeLoad:
 				ierr,S=self._psspy.aloadcplx(sid=-1, flag=4, string='MVAACT')
-				assert ierr==0,"aloadcplx failed with error {}".format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("aloadcplx",ierr)}'
+
 				S=S[0]
 				ierr,loadBusID=self._psspy.aloadint(sid=-1, flag=4, string='NUMBER')
-				assert ierr==0,"aloadint failed with error {}".format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("aloadint",ierr)}'
+
 				loadBusID=loadBusID[0]
 				bus2SMapping={thisLoadBusID:thisS for thisLoadBusID,thisS in zip(loadBusID,S)}
 
@@ -553,10 +599,11 @@ class PSSEModel(Dera):
 					loadVal[loadType*2],loadVal[loadType*2+1]=\
 					val.real*(1-reductionPercent),val.imag*(1-reductionPercent)
 					ierr=self._psspy.load_chng_4(busID,'1',[1,1,1,1,1,0],loadVal)
-					assert ierr==0,"load change failed with error {}".format(ierr)
+					assert ierr==0, f'{self.get_error_info_from_psse("load_chng_4",ierr)}'
+
 
 			ierr,S=self._psspy.alodbuscplx(string='MVAACT')
-			assert ierr==0,"reading complex load failed with error {}".format(ierr)
+			assert ierr==0, f'{self.get_error_info_from_psse("alodbuscplx",ierr)}'
 
 			return S
 		except:
@@ -574,7 +621,7 @@ class PSSEModel(Dera):
 
 			for thisBusID,thisRealar,thisLoadID in zip(busID,realar,loadID):
 				ierr=self._psspy.load_data_4(thisBusID,thisLoadID,realar=thisRealar)
-				assert ierr==0,"load_data_4 failed with error {}".format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("load_data_4",ierr)}'
 		except:
 			GlobalData.log()
 
@@ -586,7 +633,7 @@ class PSSEModel(Dera):
 			# scale feeder
 			targetS={}
 			ierr,S=self._psspy.alodbuscplx(string='MVAACT')
-			assert ierr==0,"Reading load bus complex power failed with error {}".format(ierr)
+			assert ierr==0, f'{self.get_error_info_from_psse("alodbuscplx",ierr)}'
 
 			for entry,val in zip(GlobalData.data['TNet']['LoadBusNumber'],S[0]):
 				if entry in GlobalData.data['DNet']['Nodes']:
@@ -603,14 +650,16 @@ class PSSEModel(Dera):
 			Vpcc={}
 			# dist syst interfaced at all load buses
 			if GlobalData.data['TNet']['LoadBusCount']==len(GlobalData.data['TNet']['LoadBusNumber']):
-				ierr,loadBusVPU=self._psspy.alodbusreal(string='PU'); assert ierr==0
+				ierr,loadBusVPU=self._psspy.alodbusreal(string='PU')
+				assert ierr==0, f'{self.get_error_info_from_psse("alodbusreal",ierr)}'
 				loadBusVPU = loadBusVPU[0]
 				for entry,val in zip(GlobalData.data['TNet']['LoadBusNumber'],loadBusVPU):# efficient
 					if entry in GlobalData.data['DNet']['Nodes']:
 						Vpcc[entry]=val
 			else:# subset of loadbuses interfaced as dist syst
 				for entry in GlobalData.data['TNet']['LoadBusNumber']:# not as efficient for large cases
-					ierr,Vpcc[entry]=self._psspy.busdat(entry,'PU'); assert ierr==0
+					ierr,Vpcc[entry]=self._psspy.busdat(entry,'PU')
+					assert ierr==0, f'{self.get_error_info_from_psse("busdat",ierr)}'
 			return Vpcc
 		except:
 			GlobalData.log(msg='Failed to getVoltage from PSSEModel')
@@ -652,15 +701,19 @@ class PSSEModel(Dera):
 					YQshunt = -Qshunt/(Vpcc[node]*Vpcc[node])
 					# Add the remaining as fixed compensating shunt
 					ierr = self._psspy.shunt_data(node,'1 ',1,[YPshunt,YQshunt])
-					assert ierr==0,"Adding shunt failed with error {}".format(ierr)
+					assert ierr==0, f'{self.get_error_info_from_psse("shunt_data",ierr)}'
 		except:
 			GlobalData.log(msg='Failed to shunt from PSSEModel')
 
 #===================================================================================================
 	def runPFLOW(self):
 		try:
-			ierr=self._psspy.fnsl()
-			assert ierr==0,"psspy.fnsl failed with error: {}".format(ierr)
+			if 'fnslParameters' in GlobalData.config['psseConfig'] and \
+				GlobalData.config['psseConfig']['fnslParameters']:
+				ierr=self._psspy.fnsl(options=GlobalData.config['psseConfig']['fnslParameters'])
+			else:
+				ierr=self._psspy.fnsl()
+			assert ierr==0, f'{self.get_error_info_from_psse("fnsl",ierr)}'
 		except:
 			GlobalData.log()
 
@@ -668,7 +721,7 @@ class PSSEModel(Dera):
 	def runDynamic(self, tpause):
 		try:
 			ierr=self._psspy.run(tpause=tpause)
-			assert ierr==0,"psspy.run failed with error: {}".format(ierr)
+			assert ierr==0, f'{self.get_error_info_from_psse("run",ierr)}'
 		except:
 			GlobalData.log()
 
@@ -676,7 +729,7 @@ class PSSEModel(Dera):
 	def faultOn(self, faultBus, faultImpedance):
 		try:
 			ierr=self._psspy.dist_bus_fault(faultBus,1,0.0,faultImpedance)
-			assert ierr==0
+			assert ierr==0, f'{self.get_error_info_from_psse("dist_bus_fault",ierr)}'
 			self.faultmap[faultBus] = self.faultindex
 			self.faultindex = self.faultindex + 1
 		except:
@@ -687,7 +740,7 @@ class PSSEModel(Dera):
 		try:
 			if faultBus in self.faultmap:
 				ierr=self._psspy.dist_clear_fault(self.faultmap[faultBus])
-				assert ierr==0
+				assert ierr==0, f'{self.get_error_info_from_psse("dist_clear_fault",ierr)}'
 			else:
 				GlobalData.log(level=30,
 				msg="Failed Fault Off, Fault was not applied to the Bus Number: {}".format(faultBus))
@@ -712,13 +765,13 @@ class PSSEModel(Dera):
 					'Updating conf to use {} for all load buses as solarPercentage>0'.format(list(conf.keys())[0]))
 				# get load info
 				ierr,loadBusNumberAll=self._psspy.aloadint(-1,1,'NUMBER')
-				assert ierr==0,'psspy.aloadint failed with error {}'.format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("aloadint",ierr)}'
 				loadBusNumberAll=loadBusNumberAll[0]
 				ierr,genBusNumber=self._psspy.agenbusint(-1,1,'NUMBER')
-				assert ierr==0,'psspy.agenbusint failed with error {}'.format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("agenbusint",ierr)}'
 				genBusNumber=genBusNumber[0]
 				ierr,SAll=self._psspy.alodbuscplx(string='MVAACT')
-				assert ierr==0,"reading complex load failed with error {}".format(ierr)
+				assert ierr==0, f'{self.get_error_info_from_psse("alodbuscplx",ierr)}'
 				SAll=SAll[0]
 
 				# only non-gen buses
@@ -857,12 +910,12 @@ class PSSEModel(Dera):
 					else:
 						thisID='1'
 					ierr=self._psspy.bus_data_2(thisBusID,intgar1=2)
-					assert ierr==0, 'bus_data_2 failed with error code {}'.format(ierr)
+					assert ierr==0, f'{self.get_error_info_from_psse("bus_data_2",ierr)}'
 					ierr=self._psspy.plant_data(ibus=thisBusID)
-					assert ierr==0, 'plant_data failed with error code {}'.format(ierr)
+					assert ierr==0, f'{self.get_error_info_from_psse("plant_data",ierr)}'
 					realar=[thisRealarData[ind2name[str(n)]] for n in range(len(thisRealarData))]
 					ierr=self._psspy.machine_data_2(thisBusID,id=thisID,intgar6=1,realar=realar)
-					assert ierr==0,'machine_data_2 failed with error code {} and realar is {}'.format(ierr,thisRealarData)
+					assert ierr==0, f'{self.get_error_info_from_psse("machine_data_2",ierr)}'
 			else:# model transformer
 				ierr, busNo = self._psspy.abusint(-1, 2, string='number')
 				busNumberOffset=busNo[0][-1]
@@ -891,23 +944,24 @@ class PSSEModel(Dera):
 						GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]=\
 						GlobalData.config['simulationConfig']["deraTransformer"].pop(str(thisBusID))
 
-					ierr,toBusBaseKV=self._psspy.busdat(thisBusID,string='BASE'); assert ierr==0
+					ierr,toBusBaseKV=self._psspy.busdat(thisBusID,string='BASE')
+					assert ierr==0, f'{self.get_error_info_from_psse("busdat",ierr)}'
 					fromBusBaseKV=12.5
 					ierr=self._psspy.bus_data_2(thisNewBusID,intgar1=2,realar1=fromBusBaseKV)# new bus
-					assert ierr==0, 'bus_data_2 failed with error code {}'.format(ierr)
+					assert ierr==0, f'{self.get_error_info_from_psse("bus_data_2",ierr)}'
 					
 					thisR=GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]['r']
 					thisX=GlobalData.config['simulationConfig']["deraTransformer"][thisNewBusID]['x']
 					ierr,rx=self._psspy.two_winding_data_4(thisNewBusID,thisBusID,realari1=thisR,realari2=thisX,\
 					realari5=fromBusBaseKV)
-					assert ierr==0, 'two_winding_data_4 failed with error code {}'.format(ierr)
+					assert ierr==0, f'{self.get_error_info_from_psse("two_winding_data_4",ierr)}'
 
 					ierr=self._psspy.plant_data(ibus=thisNewBusID)
-					assert ierr==0, 'plant_data failed with error code {}'.format(ierr)
+					assert ierr==0, f'{self.get_error_info_from_psse("plant_data",ierr)}'
 
 					realar=[thisRealarData[ind2name[str(n)]] for n in range(len(thisRealarData))]
 					ierr=self._psspy.machine_data_2(thisNewBusID,id=thisID,intgar6=1,realar=realar)
-					assert ierr==0,'machine_data_2 failed with error code {}'.format(ierr)
+					assert ierr==0, f'{self.get_error_info_from_psse("machine_data_2",ierr)}'
 
 				for thisConfKey in thisConfKeys:
 					if isinstance(thisConfKey,str):
@@ -945,10 +999,12 @@ class PSSEModel(Dera):
 				# psse allocates indices based on busID and then macID and not based on
 				# the order in which the data is defined in dyr/dya file. Hence, find processing order.
 				processingOrder=self.parse_progress_output_dera_order(outputFilePath)
-			ierr=self._psspy.dyre_add(dyrefile=additionalDyrFilePath); assert ierr==0
+			ierr=self._psspy.dyre_add(dyrefile=additionalDyrFilePath)
+			assert ierr==0, f'{self.get_error_info_from_psse("dyre_add",ierr)}'
 
 			if 'monitor' in psseConfig and 'dera1' in psseConfig['monitor']:
-				ierr=self._psspy.report_output(6,'',[]); assert ierr==0
+				ierr=self._psspy.report_output(6,'',[])
+				assert ierr==0, f'{self.get_error_info_from_psse("report_output",ierr)}'
 				os.system('del {}'.format(outputFilePath))
 				monitorItems={}
 				monitorItems['state']=set(psseConfig['monitor']['dera1']).intersection(self.__model_state_var_ind['dera1']['state']['name2ind'])
@@ -975,11 +1031,13 @@ class PSSEModel(Dera):
 									break
 							if thisMonitorItem=='state':
 								ierr=self._psspy.state_channel([-1,res['nState']+(n*modelOffset)+idOffset],\
-								'{} {}[]1'.format(thisItem,idStr)); assert ierr==0
+								'{} {}[]1'.format(thisItem,idStr))
+								assert ierr==0, f'{self.get_error_info_from_psse("state_channel",ierr)}'
 								thisProcessingOrder.pop(0)
 							elif thisMonitorItem=='var':
 								ierr=self._psspy.var_channel([-1,res['nVar']+(n*modelOffset)+idOffset],\
-								'{} {}[]1'.format(thisItem,idStr)); assert ierr==0
+								'{} {}[]1'.format(thisItem,idStr))
+								assert ierr==0, f'{self.get_error_info_from_psse("var_channel",ierr)}'
 								thisProcessingOrder.pop(0)
 
 			# cleanup
@@ -996,7 +1054,7 @@ class PSSEModel(Dera):
 			res={}
 			if os.path.exists(outputFilePath):
 				f=open(outputFilePath); data=f.read(); f.close()
-				res=re.findall('NEXT AVAILABLE ADDRESSES ARE:\n[\s\w]{1,}\n[\s]{0,}[\s\d]{1,}',data)
+				res=re.findall(r'NEXT AVAILABLE ADDRESSES ARE:\n[\s\w]{1,}\n[\s]{0,}[\s\d]{1,}',data)
 				if res:
 					res=res[-1].split('\n')[2].strip().split()# use the latest value
 				res={'nCon':int(res[0]),'nState':int(res[1]),'nVar':int(res[2]),'nIcon':int(res[3])}
@@ -1010,7 +1068,7 @@ class PSSEModel(Dera):
 			res={}
 			if os.path.exists(outputFilePath):
 				f=open(outputFilePath); data=f.read(); f.close()
-				res=re.findall('Machine "[\d]{1,}" at bus [\d]{1,} \[[\d\s\w.]{1,}\][\s\w.:]{1,}',data)
+				res=re.findall(r'Machine "[\d]{1,}" at bus [\d]{1,} \[[\d\s\w.]{1,}\][\s\w.:]{1,}',data)
 				processingOrder=[]#[busID,machineID]
 				if res:
 					for entry in res:

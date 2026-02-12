@@ -6,7 +6,7 @@
 * Memory (RAM): 16.0 GB
 
 ## Recommended requirements:
-* OS: Windows
+* OS: Windows 10
 * Processor: Intel Core i9, 4.4 GHz, 8 cores
 * Memory (RAM): 64.0 GB
 

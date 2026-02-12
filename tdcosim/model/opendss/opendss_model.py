@@ -28,16 +28,23 @@ class OpenDSSModel(object):
 
 			if 'defaultFeederConfig' in openDSSConfig:
 				openDSSConfig['manualFeederConfig']={'nodes':[]}
+				if 'includenode' in openDSSConfig['defaultFeederConfig']:
+					for thisNode in set(TNet['LoadBusNumber']).intersection(\
+						openDSSConfig['defaultFeederConfig']['includenode']):
+						thisEntry={'nodenumber':thisNode}
+						for item in openDSSConfig['defaultFeederConfig']:
+							thisEntry[item]=openDSSConfig['defaultFeederConfig'][item]
+						openDSSConfig['manualFeederConfig']['nodes'].append(thisEntry)
+				else:
+					if 'excludenode' not in openDSSConfig['defaultFeederConfig']:
+						openDSSConfig['defaultFeederConfig']['excludenode']=[]
 
-				if 'excludenode' not in openDSSConfig['defaultFeederConfig']:
-					openDSSConfig['defaultFeederConfig']['excludenode']=[]
-
-				for thisNode in set(TNet['LoadBusNumber']).difference(\
-				openDSSConfig['defaultFeederConfig']['excludenode']):
-					thisEntry={'nodenumber':thisNode}
-					for item in openDSSConfig['defaultFeederConfig']:
-						thisEntry[item]=openDSSConfig['defaultFeederConfig'][item]
-					openDSSConfig['manualFeederConfig']['nodes'].append(thisEntry)
+					for thisNode in set(TNet['LoadBusNumber']).difference(\
+					openDSSConfig['defaultFeederConfig']['excludenode']):
+						thisEntry={'nodenumber':thisNode}
+						for item in openDSSConfig['defaultFeederConfig']:
+							thisEntry[item]=openDSSConfig['defaultFeederConfig'][item]
+						openDSSConfig['manualFeederConfig']['nodes'].append(thisEntry)
 
 			if 'manualFeederConfig' in openDSSConfig and \
 			'nodes' in openDSSConfig['manualFeederConfig'] and \
@@ -127,6 +134,14 @@ class OpenDSSModel(object):
 			OpenDSSData.log()
 
 #===================================================================================================
+	def computeStep(self,Vpu,monitor,pccName='Vsource.source',t=None,dt=1/120.):
+		try:
+			S,monData=self._opendss_server.computeStep(Vpu=Vpu,monitor=monitor,pccName=pccName,t=t,dt=dt)
+			return S,monData
+		except:
+			OpenDSSData.log()
+
+#===================================================================================================
 	def is_float(self, n):
 		try:
 			float(n)# Type-casting the string to `float`.
@@ -140,7 +155,8 @@ class OpenDSSModel(object):
 	def setDERParameter(self, entry, nodenumber):
 		try:
 			baseDir=os.path.dirname(inspect.getfile(tdcosim))
-			defaults=json.load(open(os.path.join(baseDir,'config','der_defaults.json')))
+			with open(os.path.join(baseDir,'config','der_defaults.json'),'r') as f:
+				defaults=json.load(f)
 			DNet=GlobalData.data['DNet']
 			
 			for item in defaults:
