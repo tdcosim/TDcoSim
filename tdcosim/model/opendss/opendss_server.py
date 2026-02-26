@@ -5,6 +5,7 @@ import socket
 import os
 import subprocess
 import inspect
+import pdb
 
 import six
 
@@ -34,7 +35,7 @@ class OpenDSSServer(object):
 			OpenDSSData.log("Unable to open OpenDSS Connect Server")
 
 #===================================================================================================
-	def connect_opendssclient(self, nodeid):
+	def connect_opendssclient(self, nodeid,usePVDER):
 		try:
 			# start a subprocess asynchronously, one at a time
 			baseDir=os.path.dirname(inspect.getfile(tdcosim))
@@ -51,8 +52,8 @@ class OpenDSSServer(object):
 				opendssEngine=GlobalData.config['openDSSConfig']['opendssEngine']
 			else:
 				opendssEngine='dss_python'
-			GlobalData.data['DNet']['Nodes'][nodeid]['proc']=subprocess.Popen(shlex.split("python "
-			+ '"'+openDSSClientPath+'"'+" {} {}".format(nodeid,opendssEngine)),shell=True,stdout=fout,stderr=ferr)
+			GlobalData.data['DNet']['Nodes'][nodeid]['proc']=subprocess.Popen("python "
+			+ '"'+openDSSClientPath+'"'+" -n {} -o {} -p {}".format(nodeid,opendssEngine,usePVDER),shell=True,stdout=fout,stderr=ferr)
 
 			OpenDSSData.log(20,"python "+ '"'+openDSSClientPath+'"'+" {} {}".format(nodeid,opendssEngine))
 

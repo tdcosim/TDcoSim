@@ -5,6 +5,7 @@ import socket
 import pdb
 import json
 import time
+import argparse
 
 import six
 
@@ -31,15 +32,17 @@ def findConfig(nodeid):
 #===================================================================================================
 if __name__=="__main__":
 	try:
-		nodeid = "-1"
-		if len(sys.argv)>1:
-			nodeid = sys.argv[1]
-		if len(sys.argv)>2:
-			opendssEngine=sys.argv[2]
-		else:
-			opendssEngine='dss_python'
+		parser=argparse.ArgumentParser()
+		parser.add_argument('-n','--nodeid',help='node id',required=True)
+		parser.add_argument('-p','--pvder',help='use pvder',required=True)
+		parser.add_argument('-o','--opendssengine',help='opendssEngine',default='dss_python',required=False)
+		args=parser.parse_args()
 
-		dssProcedure=OpenDSSProcedure(opendssEngine)
+		nodeid=args.nodeid
+		opendssEngine=args.opendssengine
+		usePVDER=False if args.pvder.lower()=='false' else True
+
+		dssProcedure=OpenDSSProcedure(opendssEngine,usePVDER)
 
 		BUFFER_SIZE = 1024*1024*16
 		c = socket.socket(socket.AF_INET,socket.SOCK_STREAM)

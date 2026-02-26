@@ -7,8 +7,8 @@ import inspect
 import tdcosim
 from tdcosim.global_data import GlobalData
 from tdcosim.procedure.default_procedure import DefaultProcedure
-from tdcosim.procedure.default_dynamic_procedure import DefaultDynamicProcedure
 from tdcosim.procedure.default_static_procedure import DefaultStaticProcedure
+from tdcosim.procedure.default_dynamic_procedure import DefaultDynamicProcedure
 from tdcosim.report import generate_output
 
 
@@ -35,9 +35,9 @@ class Procedure(DefaultProcedure):
 			self._procedure.setup()
 			self._procedure.initialize()
 			self._procedure.run()
-			if GlobalData.config['simulationConfig']['simType']=='dynamic':
-				generate_output(GlobalData,excel=False)
-			elif GlobalData.config['simulationConfig']['simType']=='static':
-				generate_output(GlobalData,excel=False,dataframe=True)
+####			if GlobalData.config['simulationConfig']['simType']=='dynamic':
+####				generate_output(GlobalData,excel=False)
+####			elif GlobalData.config['simulationConfig']['simType']=='static':
+####				generate_output(GlobalData,excel=False,dataframe=True)
 		except:
 			GlobalData.log()

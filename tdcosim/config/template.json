@@ -47,6 +47,10 @@
 	   "der_a":{"busNo":{"flags":{},"params":{}}},
 	   "monitor":{"dera1":["vt_filt"]}
    },
+   "matpowerConfig": {
+      "filePath": "",
+      "installLocation": ""
+   },
    "simulationConfig": {
       "defaultLoadType": "cmld",
       "simType": "dynamic",

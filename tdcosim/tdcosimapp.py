@@ -4,14 +4,20 @@ import time
 import argparse
 import json
 import pdb
+import platform
+from pathlib import Path
 
-import win32api
 import click
 
 
+def GetLongPathName(inputPath):
+	return str(Path(inputPath).resolve())
+
+
 baseDir=os.path.dirname(os.path.abspath(__file__))
-if '~' in baseDir:
-	baseDir=win32api.GetLongPathName(baseDir)
+if platform.system().lower()=='windows':
+	if '~' in baseDir:
+		baseDir=GetLongPathName(baseDir)
 installDir=baseDir
 
 userPreference=json.load(open(os.path.join(baseDir,'config','user_preference.json')))
@@ -69,6 +75,17 @@ def check_config(fpath):
 
 	assert conf['psseConfig']['installLocation'],"psseConfig->installLocation not provided in configuration"
 
+	# matpower config
+	if 'matpowerConfig' in conf and 'matpowerConfig' in userPreference \
+		and 'matpowerInstallLocation' in userPreference['matpowerConfig']:
+		conf['matpowerConfig']['matpowerInstallLocation']=\
+			userPreference['matpowerConfig']['matpowerInstallLocation']
+
+	if 'matpowerConfig' in conf and not os.path.exists(conf['matpowerConfig']['filePath']) and \
+		os.path.exists(os.path.join(installDir,conf['matpowerConfig']['filePath'])):
+		conf['matpowerConfig']['filePath']=os.path.join(installDir,conf['matpowerConfig']['filePath'])
+
+	# output
 	if 'outputDir' not in conf['outputConfig'] and 'outputConfig' in userPreference and 'outputDir' in userPreference['outputConfig']:
 		conf['outputConfig']['outputDir']=userPreference['outputConfig']['outputDir']
 
@@ -80,10 +97,13 @@ def check_config(fpath):
 
 	if not os.path.exists(conf['outputConfig']['outputDir']):
 		os.system('mkdir "{}"'.format(conf['outputConfig']['outputDir']))
-	conf['outputConfig']['outputDir']='{}'.format(win32api.GetLongPathName(conf['outputConfig']['outputDir']))
+	conf['outputConfig']['outputDir']='{}'.format(GetLongPathName(conf['outputConfig']['outputDir']))
 
 	# check if files exist
-	items2check=[conf['psseConfig']['installLocation']]
+	if platform.system().lower()=='windows':
+		items2check=[conf['psseConfig']['installLocation']]
+	else:
+		items2check=[]
 
 	if not os.path.exists(conf['psseConfig']['dyrFilePath']) and \
 	os.path.exists(os.path.join(installDir,conf['psseConfig']['dyrFilePath'])):
@@ -100,8 +120,8 @@ def check_config(fpath):
 		conf['simulationConfig']['tonly']=True
 
 	items2check.extend([conf['psseConfig']['dyrFilePath'],conf['psseConfig']['rawFilePath']])
-	conf['psseConfig']['dyrFilePath']='{}'.format(win32api.GetLongPathName(conf['psseConfig']['dyrFilePath']))
-	conf['psseConfig']['rawFilePath']='{}'.format(win32api.GetLongPathName(conf['psseConfig']['rawFilePath']))
+	conf['psseConfig']['dyrFilePath']='{}'.format(GetLongPathName(conf['psseConfig']['dyrFilePath']))
+	conf['psseConfig']['rawFilePath']='{}'.format(GetLongPathName(conf['psseConfig']['rawFilePath']))
 
 	if conf['openDSSConfig']:
 		if 'defaultFeederConfig' in conf['openDSSConfig'] and \
@@ -112,7 +132,7 @@ def check_config(fpath):
 				os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['filePath'][0])
 			items2check.append(conf['openDSSConfig']['defaultFeederConfig']['filePath'][0])
 			conf['openDSSConfig']['defaultFeederConfig']['filePath'][0]=\
-			'{}'.format(win32api.GetLongPathName(conf['openDSSConfig']['defaultFeederConfig']['filePath'][0]))
+			'{}'.format(GetLongPathName(conf['openDSSConfig']['defaultFeederConfig']['filePath'][0]))
 		if 'defaultFeederConfig' in conf['openDSSConfig'] and \
 		'DERFilePath' in conf['openDSSConfig']['defaultFeederConfig']:
 			if not os.path.exists(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath']) and \
@@ -121,7 +141,7 @@ def check_config(fpath):
 				os.path.join(installDir,conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'])
 			items2check.append(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath'])
 			conf['openDSSConfig']['defaultFeederConfig']['DERFilePath']=\
-			'{}'.format(win32api.GetLongPathName(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath']))
+			'{}'.format(GetLongPathName(conf['openDSSConfig']['defaultFeederConfig']['DERFilePath']))
 		if 'manualFeederConfig' in conf['openDSSConfig'] and \
 		'nodes' in conf['openDSSConfig']['manualFeederConfig']:
 			for thisNode in conf['openDSSConfig']['manualFeederConfig']['nodes']:
@@ -129,12 +149,12 @@ def check_config(fpath):
 					if not os.path.exists(thisNode['filePath'][0]) and os.path.exists(os.path.join(installDir,thisNode['filePath'][0])):
 						thisNode['filePath'][0]=os.path.join(installDir,thisNode['filePath'][0])
 					items2check.append(thisNode['filePath'][0])
-					thisNode['filePath'][0]='{}'.format(win32api.GetLongPathName(thisNode['filePath'][0]))
+					thisNode['filePath'][0]='{}'.format(GetLongPathName(thisNode['filePath'][0]))
 				if 'DERFilePath' in thisNode:
 					if not os.path.exists(thisNode['DERFilePath']) and os.path.exists(os.path.join(installDir,thisNode['DERFilePath'])):
 						thisNode['DERFilePath']=os.path.join(installDir,thisNode['DERFilePath'])
 					items2check.append(thisNode['DERFilePath'])
-					thisNode['DERFilePath']='{}'.format(win32api.GetLongPathName(thisNode['DERFilePath']))
+					thisNode['DERFilePath']='{}'.format(GetLongPathName(thisNode['DERFilePath']))
 
 	for entry in items2check:
 		assert os.path.exists(entry),'{} does not exist'.format(entry)
@@ -253,7 +273,7 @@ def test():
 	json.dump(data,open(os.path.join(baseDir,'examples','config_case68_dynamics.json'),'w'),indent=3)
 	tdcosimappPath=os.path.abspath(__file__)
 	if '~' in tdcosimappPath:
-		tdcosimappPath=win32api.GetLongPathName(tdcosimappPath)
+		tdcosimappPath=GetLongPathName(tdcosimappPath)
 	directive='{} "{}" run -c examples{}config_case68_dynamics.json'.format(pyExe,tdcosimappPath,os.path.sep)
 	os.system(directive)
 	mtime=time.time()-os.path.getmtime(\

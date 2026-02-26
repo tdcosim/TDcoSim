@@ -2,6 +2,10 @@
    "psseConfig": {
       "installLocation": "",
       "binLocation": "",
-      "importStatement":""
+      "importStatement": ""
+   },
+   "matpowerConfig":{
+      "matpowerInstallLocation":""
    }
 }
+

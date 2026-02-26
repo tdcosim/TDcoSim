@@ -7,7 +7,7 @@ f=open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'README.md'))
 README=f.read()
 f.close()
 
-if platform.architecture()[0]=='64bit':
+if platform.architecture()[0]=='64bit' and platform.system().lower()=='windows':
 	setup(name='tdcosim',
       version=open("tdcosim/_version.py").readlines()[-1].split()[-1].strip("\"'"),
       packages=find_packages(),
@@ -33,7 +33,7 @@ if platform.architecture()[0]=='64bit':
       package_data={'tdcosim':['data/**/**/*','logs/.*','config/*','examples/*','dashboard/assets/*']},
       entry_points={'console_scripts': ['tdcosimcli = tdcosim.tdcosimapp:main']}
       )
-else:
+elif platform.architecture()[0]=='32bit' and platform.system().lower()=='windows':
 	setup(name='tdcosim',
       version=open("tdcosim/_version.py").readlines()[-1].split()[-1].strip("\"'"),
       packages=find_packages(),
@@ -56,6 +56,31 @@ else:
       install_requires=['pywin32==224','dss_python','matplotlib>=2.0.2','numpy>=1.16.2','scipy>=1.2.1',
       'xlsxwriter==1.1.8','psutil==5.7.0','pandas>=0.24.2','dash>=1.21.0','pvder==0.5.0','click','tqdm','numba'],
       extras_require={'diffeqpy': ['diffeqpy>=1.1.0','jill>=0.10.1']},
+      package_data={'tdcosim':['data/**/**/*','logs/.*','config/*','examples/*','dashboard/assets/*']},
+      entry_points={'console_scripts': ['tdcosimcli = tdcosim.tdcosimapp:main']}
+      )
+elif platform.system().lower()=='linux':
+	setup(name='tdcosim',
+      version=open("tdcosim/_version.py").readlines()[-1].split()[-1].strip("\"'"),
+      packages=find_packages(),
+      include_package_data=True,
+      description='Transmission and Distribution Network co-Simulation for Power System',
+      long_description=README,
+      long_description_content_type="text/markdown",
+      url ='https://github.com/tdcosim/TDcoSim',
+      author = 'TDcoSim Team',
+      author_email='yim@anl.gov',
+      license= 'LICENSE.txt',
+      classifiers=[
+        'License :: OSI Approved :: BSD License',
+        'Intended Audience :: Science/Research',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.7',
+      ],
+      install_requires=['dss_python','matplotlib>=2.0.2','numpy>=1.16.2','scipy>=1.2.1',
+      'psutil==5.7.0','pandas>=0.24.2','click','tqdm','xlsxwriter','pvder==0.5.0','oct2py','flask','requests'],
       package_data={'tdcosim':['data/**/**/*','logs/.*','config/*','examples/*','dashboard/assets/*']},
       entry_points={'console_scripts': ['tdcosimcli = tdcosim.tdcosimapp:main']}
       )

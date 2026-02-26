@@ -1,5 +1,6 @@
 from __future__ import print_function
 import json
+import platform
 import pdb
 
 import numpy as np
@@ -7,15 +8,17 @@ from tqdm import tqdm
 
 from tdcosim.global_data import GlobalData
 from tdcosim.procedure.default_procedure import DefaultProcedure
-from tdcosim.model.psse.psse_model import PSSEModel
 from tdcosim.model.opendss.opendss_model import OpenDSSModel
-
+if platform.system().lower()=='windows':
+	from tdcosim.model.psse.psse_model import PSSEModel as TModel
+elif platform.system().lower()=='linux':
+	from tdcosim.model.matpower.matpower_model import MatpowerModel as TModel
 
 class DefaultStaticProcedure(DefaultProcedure):
 #===================================================================================================
 	def __init__(self):
 		try:
-			self._tnet_model = PSSEModel()
+			self._tnet_model = TModel()
 			self._dnet_model = OpenDSSModel()
 		except:
 			GlobalData.log()
@@ -91,7 +94,10 @@ class DefaultStaticProcedure(DefaultProcedure):
 			progressBar.close()
 			ack=self._dnet_model.close()
 			GlobalData.log(level=20,msg=json.dumps(ack))
-			ierr=self._tnet_model._psspy.pssehalt_2(); assert ierr==0
+			if platform.system().lower()=='windows':
+				ierr=self._tnet_model._psspy.pssehalt_2(); assert ierr==0
+			else:
+				self._tnet_model.finalize()
 		except:
 			GlobalData.log()
 

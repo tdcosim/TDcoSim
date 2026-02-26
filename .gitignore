@@ -111,3 +111,5 @@ tdcosim\app\**\out\
 *.xlsx
 tdcosim\appTDDERComparisonApp\config\config_ex*
 tdcosim\config\user_preference.json
+tdcosim\output
+tdcosim/output/

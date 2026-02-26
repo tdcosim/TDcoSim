@@ -9,15 +9,22 @@
             {
                "nodenumber": 41,
                "filePath": [
-                  "data\\distribution\\123Bus\\case123ZIP.dss"
+                  "data/distribution/123Bus/case123ZIP.dss"
                ]
             }
          ]
       }
    },
    "psseConfig": {
-	   "dyrFilePath": "data\\transmission\\68bus\\case68.dyr", 
-	   "rawFilePath": "data\\transmission\\68bus\\case68.raw"
+      "dyrFilePath": "data/transmission/68bus/case68.dyr",
+      "rawFilePath": "data/transmission/68bus/case68.raw",
+      "installLocation": "C:\\Program Files\\PTI\\PSSE35\\35.0\\PSSPY37",
+      "binLocation": "",
+      "importStatement": ""
+   },
+   "matpowerConfig": {
+      "filePath": "data/transmission/matpower/case118.m",
+      "matpowerInstallLocation": ""
    },
    "simulationConfig": {
       "defaultLoadType": "cmld",
@@ -25,17 +32,12 @@
       "staticConfig": {
          "loadShape": [
             0.81518164,
-            0.77456979,
-            0.7,
-            0.65,
-            0.8,
-            0.85,
-            0.9,
-            0.95
+            0.77456979
          ]
       },
       "memoryThreshold": 20480.0,
-      "protocol": "tight_coupling"
+      "protocol": "tight_coupling",
+      "tonly": false
    },
    "outputConfig": {
       "simID": "case68_qsts_b19f4c5a2cbf4ab0a3c1d1ba30a31442",

@@ -4,8 +4,10 @@ import pprint
 import logging
 import pdb
 import inspect
+import platform
 
-import win32api
+if platform.system().lower()=='windows':
+	import win32api
 
 import tdcosim
 from tdcosim.global_data import GlobalData
@@ -35,7 +37,8 @@ class OpenDSSData(ExceptionUtil):
 #===================================================================================================
 	def set_config(self,filepath):
 		try:
-			filepath = win32api.GetLongPathName(os.path.abspath(inputfile))
+			if platform.system().lower()=='windows':
+				filepath = win32api.GetLongPathName(os.path.abspath(filepath))
 			self.config = json.load(open(filepath))
 		except:
 			raise

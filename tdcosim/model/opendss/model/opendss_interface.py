@@ -69,7 +69,7 @@ class OpenDSSInterface(object):
 	def setup(self):
 		try:
 			# Always a good idea to clear the DSS before loading a new circuit
-			self._engine.ClearAll()			
+			self._engine.ClearAll()
 
 			#			self.Text.Command = "compile [" + self.fname + "]"
 			self.Text.Command = "Redirect [" + OpenDSSData.config['myconfig']['filePath'][0] + "]"

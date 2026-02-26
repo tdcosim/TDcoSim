@@ -7,11 +7,20 @@ import pdb
 import time
 import inspect
 
-import win32api
+import platform
 import six
+if platform.system().lower()=='windows':
+	import win32api
 
 import tdcosim
 from tdcosim.exceptionutil import ExceptionUtil
+
+
+def GetLongPathName(inputPath):
+	if platform.system().lower()=='windows':
+		return win32api.GetLongPathName(inputPath)
+	else:
+		return inputPath
 
 
 class GlobalData(ExceptionUtil):
@@ -27,7 +36,7 @@ class GlobalData(ExceptionUtil):
 	def set_config(self, inputfile):
 		try:
 			# check
-			filepath = win32api.GetLongPathName(os.path.abspath(inputfile))
+			filepath = GetLongPathName(os.path.abspath(inputfile))
 			assert os.path.exists(filepath),"config file {} does not exist".format(filepath)
 			self.config = json.load(open(filepath))
 
@@ -38,11 +47,11 @@ class GlobalData(ExceptionUtil):
 				GlobalData.setOutLocation()
 				self.config['outputConfig']['outputDir'] = GlobalData.config["outputPath"]
 			try:
-				win32api.GetLongPathName(os.path.abspath(self.config['outputConfig']['outputDir']))
+				GetLongPathName(os.path.abspath(self.config['outputConfig']['outputDir']))
 			except:
 				os.system('mkdir "{}"'.format(os.path.abspath(self.config['outputConfig']['outputDir'])))
 			self.config['outputConfig']['outputDir']=os.path.join(
-			win32api.GetLongPathName(os.path.abspath(self.config['outputConfig']['outputDir'])),
+			GetLongPathName(os.path.abspath(self.config['outputConfig']['outputDir'])),
 			self.config['outputConfig']['simID'])
 
 			if not os.path.exists(self.config['outputConfig']['outputDir']):

@@ -25,6 +25,7 @@ class OpenDSSModel(object):
 			DNet['Nodes'] = {}
 			TNet=GlobalData.data['TNet']
 			openDSSConfig=GlobalData.config['openDSSConfig']
+			usePVDER=False if GlobalData.config['simulationConfig']['simType']=='static' else True
 
 			if 'defaultFeederConfig' in openDSSConfig:
 				openDSSConfig['manualFeederConfig']={'nodes':[]}
@@ -93,7 +94,7 @@ class OpenDSSModel(object):
 					'dss_err_{}.txt'.format(entry)),'w')
 				else:
 					DNet['Nodes'][entry]['f_out']=DNet['Nodes'][entry]['f_err']=open(os.devnull,'w')
-				self._opendss_server.connect_opendssclient(entry)
+				self._opendss_server.connect_opendssclient(entry,usePVDER)
 		except:
 			OpenDSSData.log()
 

@@ -6,16 +6,18 @@ import psutil
 import json
 import pdb
 import time
+import platform
 
 import six
 from tqdm import tqdm
 
 from tdcosim.global_data import GlobalData
 from tdcosim.procedure.default_procedure import DefaultProcedure
-from tdcosim.model.psse.psse_model import PSSEModel
 from tdcosim.model.opendss.opendss_model import OpenDSSModel
 from tdcosim.report import generate_excel_report
 from tdcosim.dashboard.indexer import Indexer
+if platform.system().lower()=='windows':
+	from tdcosim.model.psse.psse_model import PSSEModel
 
 indHelper=Indexer()
 
