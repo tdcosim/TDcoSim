@@ -1,0 +1,158 @@
+{
+   "logging": {
+      "level": 20,
+      "saveSubprocessOutErr": true
+   },
+   "openDSSConfig": {
+      "manualFeederConfig": {
+         "nodes": [
+            {
+               "nodenumber": 30,
+               "filePath": [
+                  "data/distribution/123Bus/case123ZIP.dss"
+               ]
+            }
+         ]
+      }
+   },
+   "psseConfig": {
+   },
+   "matpowerConfig": {
+      "filePath": "data/transmission/matpower/case118.m",
+      "matpowerInstallLocation": ""
+   },
+   "simulationConfig": {
+      "defaultLoadType": "",
+      "simType": "static",
+      "staticConfig": {
+         "loadShape": [
+            1,
+            1,
+            1
+         ]
+      },
+      "memoryThreshold": 20480.0,
+      "protocol": "tight_coupling",
+      "tonly": false
+   },
+   "outputConfig": {
+      "simID": "case118_qsts_b19f4c5a2cbf4ab0a3c1d1ba30a31442",
+      "type": "dataframe",
+      "outputDir": "output",
+      "outputfilename": "test",
+      "scenarioID": ""
+   },
+   "costadmg_interface": {
+      "distribution": {
+         "30": {
+            "set": [
+               {
+                  "time": 1,
+                  "data": {
+                     "asset": [
+                        "Line.sw1",
+                        "Line.sw2",
+                        "Line.sw3",
+                        "Line.sw4",
+                        "Line.sw5",
+                        "Line.sw6",
+                        "Line.sw7",
+                        "Line.sw8"
+                     ],
+                     "property": [
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled"
+                     ],
+                     "value": [
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true
+                     ]
+                  }
+               },
+               {
+                  "time": 2,
+                  "data": {
+                     "asset": [
+                        "Line.sw1",
+                        "Line.sw2",
+                        "Line.sw3",
+                        "Line.sw4",
+                        "Line.sw5",
+                        "Line.sw6",
+                        "Line.sw7",
+                        "Line.sw8"
+                     ],
+                     "property": [
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled"
+                     ],
+                     "value": [
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true
+                     ]
+                  }
+               },
+               {
+                  "time": 3,
+                  "data": {
+                     "asset": [
+                        "Line.sw1",
+                        "Line.sw2",
+                        "Line.sw3",
+                        "Line.sw4",
+                        "Line.sw5",
+                        "Line.sw6",
+                        "Line.sw7",
+                        "Line.sw8"
+                     ],
+                     "property": [
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled",
+                        "Enabled"
+                     ],
+                     "value": [
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true
+                     ]
+                  }
+               }
+            ]
+         }
+      }
+   }
+}

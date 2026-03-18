@@ -205,5 +205,7 @@ class OpenDSSModel(object):
 		except:
 			OpenDSSData.log()
 
-
+#===================================================================================================
+	def setter(self,data):
+		return self._opendss_server.setter(data=data)
 

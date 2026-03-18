@@ -435,3 +435,15 @@ class OpenDSSInterface(object):
 			OpenDSSData.log(40,'Failed to complete scaleload from OpenDSS Interface')
 
 
+#===================================================================================================
+	def setter(self,data):
+		success=True
+		for asset,prop,val in zip(data['asset'],data['property'],data['value']):
+			idx=self.Circuit.SetActiveElement(asset)
+			if idx>=0:
+				self.CktElement.Properties(prop).Val=val
+			else:
+				success=False
+				break
+		return success
+

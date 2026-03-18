@@ -90,4 +90,7 @@ class OpenDSSProcedure(object):
 		except:
 			OpenDSSData.log()
 
+#===================================================================================================
+	def setter(self,data):
+		return self._opendssinterface.setter(data)
 

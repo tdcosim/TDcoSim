@@ -1,5 +1,6 @@
 import os
 import pdb
+import time
 
 import numpy as np
 import oct2py
@@ -10,6 +11,7 @@ from tdcosim.global_data import GlobalData
 class MatpowerModel:
 
 	def __init__(self,octavePath=None):
+		startTime=time.time()
 		# check for config
 		assert 'matpowerConfig' in GlobalData.config,'matpowerConfig is not provided'
 		self.config=GlobalData.config['matpowerConfig']
@@ -43,7 +45,6 @@ class MatpowerModel:
 		GlobalData.data['TNet']['BusRealPowerLoad'] = \
 			{int(bus):float(pd) for bus,pd in zip(self.casedata['bus_id'],self.casedata['pd'])}
 
-
 #=======================================================================================================================
 	def staticInitialize(self):
 		s,v={},{}
@@ -60,34 +61,30 @@ class MatpowerModel:
 		self.casedata['interfacedBusesInd']=np.array(self.casedata['interfacedBusesInd'])
 		return s,v
 
-
 #=======================================================================================================================
 	def getVoltage(self):
-		try:
-			"""Get PCC voltage from MATPOWER."""
-			V=self._get_voltage(returnAsList=False)
-			interfaceBusId=self.casedata['interfacedBuses']
-			interfaceBusInd=self.casedata['interfacedBusesInd']
+		"""Get PCC voltage from MATPOWER."""
+		V=self._get_voltage(returnAsList=False)
+		interfaceBusId=self.casedata['interfacedBuses']
+		interfaceBusInd=self.casedata['interfacedBusesInd']
 
-			# subset of loadbuses interfaced as dist syst
-			Vpcc={int(busId):float(V[busInd]) for busId,busInd in zip(interfaceBusId,interfaceBusInd)}
+		# subset of loadbuses interfaced as dist syst
+		Vpcc={int(busId):float(V[busInd]) for busId,busInd in zip(interfaceBusId,interfaceBusInd)}
 
-			return Vpcc
-		except:
-			GlobalData.log(msg='Failed to getVoltage from PSSEModel')
-
+		return Vpcc
 
 #=======================================================================================================================
 	def _get_voltage(self,returnAsList=True):
+		startTime=time.time()
 		vm=self.oc.get_mpc('bus','vm');
 		vm=vm.flatten()
 		if returnAsList:
 			vm=vm.tolist()
 		return vm
 
-
 #=======================================================================================================================
 	def setLoad(self,S):
+		startTime=time.time()
 		busInd,p,q=[],[],[]
 		for entry in S:
 			assert S[entry]['convergenceFlg'],f'T-D interface {entry} convergence failed'
@@ -96,14 +93,13 @@ class MatpowerModel:
 			q.append(S[entry]['Q'])
 		self._set_loads(busInd,p,q)
 
-
 #=======================================================================================================================
 	def runPFLOW(self):
 		self.run('runpf')
 
-
 #=======================================================================================================================
 	def load_case(self,casename:str):
+		startTime=time.time()
 		res=self.oc.load_mpc(casename); assert res['success']
 		self.casedata['bus_id']=self.oc.get_mpc('bus','bus_id')
 		assert not isinstance(self.casedata['bus_id'],type(None))
@@ -121,23 +117,20 @@ class MatpowerModel:
 
 		return True if self.casedata['busind2id'] else False
 
-
 #=======================================================================================================================
 	def _set_loads(self,busInd,p,q):
-		"""
-		"""
-		res=self.oc.set_mpc('bus','pd',p,busInd); assert res['success']
-		res=self.oc.set_mpc('bus','qd',q,busInd); assert res['success']
+		startTime=time.time()
+		res=self.oc.set_mpc('bus','pd',p,busInd);assert res['success']
+		res=self.oc.set_mpc('bus','qd',q,busInd);assert res['success']
 
 #=======================================================================================================================
 	def run(self,alg):
 		assert alg in self.availableAlgorithms
-		res=self.oc.run_mpc(alg); assert res['success']
+		startTime=time.time()
+		res=self.oc.run_mpc(alg);assert res['success']
 		return res
-
 
 #=======================================================================================================================
 	def finalize(self):
 		self.oc.exit()
-
 

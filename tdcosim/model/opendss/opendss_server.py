@@ -290,5 +290,25 @@ class OpenDSSServer(object):
 		except:
 			OpenDSSData.log()
 
+#===================================================================================================
+	def setter(self,data):
+		for entry in GlobalData.data['DNet']['Nodes'].keys():
+			msg={'method':'setter'}
+			msg['data']=data[entry]
+			if six.PY2:
+				GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg))# send msg
+			elif six.PY3:
+				GlobalData.data['DNet']['Nodes'][entry]['conn'][0].send(json.dumps(msg).encode())# send msg
+
+		replyMsg={}
+		for entry in GlobalData.data['DNet']['Nodes'].keys():# now receive replies
+			if six.PY2:
+				replyMsg[entry]=json.loads(GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(
+				self._BUFFER_SIZE))
+			elif six.PY3:
+				replyMsg[entry]=json.loads(GlobalData.data['DNet']['Nodes'][entry]['conn'][0].recv(
+				self._BUFFER_SIZE).decode('ascii'))
+
+		return replyMsg
 
 

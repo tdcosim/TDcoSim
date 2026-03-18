@@ -73,7 +73,8 @@ def check_config(fpath):
 	if 'importStatement' in conf['psseConfig'] and not conf['psseConfig']['importStatement'] and 'psseConfig' in userPreference and 'importStatement' in userPreference['psseConfig']:
 		conf['psseConfig']['importStatement']=userPreference['psseConfig']['importStatement']
 
-	assert conf['psseConfig']['installLocation'],"psseConfig->installLocation not provided in configuration"
+	if conf['simulationConfig']['simType']=='dynamic' or platform.system().lower()=='windows':
+		assert conf['psseConfig']['installLocation'],"psseConfig->installLocation not provided in configuration"
 
 	# matpower config
 	if 'matpowerConfig' in conf and 'matpowerConfig' in userPreference \
@@ -105,23 +106,25 @@ def check_config(fpath):
 	else:
 		items2check=[]
 
-	if not os.path.exists(conf['psseConfig']['dyrFilePath']) and \
-	os.path.exists(os.path.join(installDir,conf['psseConfig']['dyrFilePath'])):
-		conf['psseConfig']['dyrFilePath']=os.path.join(installDir,conf['psseConfig']['dyrFilePath'])
+	if conf['simulationConfig']['simType']=='dynamic':
+		if not os.path.exists(conf['psseConfig']['dyrFilePath']) and \
+		os.path.exists(os.path.join(installDir,conf['psseConfig']['dyrFilePath'])):
+			conf['psseConfig']['dyrFilePath']=os.path.join(installDir,conf['psseConfig']['dyrFilePath'])
 
-	if not os.path.exists(conf['psseConfig']['rawFilePath']) and \
-	os.path.exists(os.path.join(installDir,conf['psseConfig']['rawFilePath'])):
-		conf['psseConfig']['rawFilePath']=os.path.join(installDir,conf['psseConfig']['rawFilePath'])
-	
+		if not os.path.exists(conf['psseConfig']['rawFilePath']) and \
+		os.path.exists(os.path.join(installDir,conf['psseConfig']['rawFilePath'])):
+			conf['psseConfig']['rawFilePath']=os.path.join(installDir,conf['psseConfig']['rawFilePath'])
+
+		conf['psseConfig']['dyrFilePath']='{}'.format(GetLongPathName(conf['psseConfig']['dyrFilePath']))
+		conf['psseConfig']['rawFilePath']='{}'.format(GetLongPathName(conf['psseConfig']['rawFilePath']))
+		items2check.extend([conf['psseConfig']['dyrFilePath'],conf['psseConfig']['rawFilePath']])
+
 	# tonly
 	if 'tonly' not in conf['simulationConfig']:
 		conf['simulationConfig']['tonly']=False
 	if not conf['openDSSConfig']:
 		conf['simulationConfig']['tonly']=True
 
-	items2check.extend([conf['psseConfig']['dyrFilePath'],conf['psseConfig']['rawFilePath']])
-	conf['psseConfig']['dyrFilePath']='{}'.format(GetLongPathName(conf['psseConfig']['dyrFilePath']))
-	conf['psseConfig']['rawFilePath']='{}'.format(GetLongPathName(conf['psseConfig']['rawFilePath']))
 
 	if conf['openDSSConfig']:
 		if 'defaultFeederConfig' in conf['openDSSConfig'] and \

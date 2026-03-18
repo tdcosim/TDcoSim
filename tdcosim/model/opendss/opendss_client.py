@@ -87,8 +87,9 @@ if __name__=="__main__":
 				dssProcedure.getLoad(pccName=msg['pccName'],t=msg['t'],dt=msg['dt'])
 			elif msg['method'].lower()=='scaleload':
 				dssProcedure.scaleLoad(scale=msg['scale'])
-			# elif msg['method'].lower()=='monitor':
-			# 	buffer=dssProcedure.monitor(msg['varName'],msg['info']['t'])
+			elif msg['method'].lower()=='setter':
+				replyMsg={}
+				replyMsg['success']=dssProcedure.setter(data=msg['data'])
 			elif msg['method'].lower()=='computestep':
 				replyMsg={'S':{}}
 				OpenDSSData.logger.debug('starting setVoltage')
@@ -99,9 +100,6 @@ if __name__=="__main__":
 				replyMsg['S']['P'],replyMsg['S']['Q'],replyMsg['S']['convergenceFlg'],replyMsg['S']['derX']=\
 				dssProcedure.getLoad(pccName=msg['pccName'],t=msg['t'],dt=msg['dt'])
 				OpenDSSData.logger.debug('completed getLoad')
-				# OpenDSSData.logger.debug('starting monitor')
-				# buffer=dssProcedure.monitor(msg['varName'],msg['info']['t'])
-				# OpenDSSData.logger.debug('completed monitor')
 				replyMsg['monData']={}
 
 			OpenDSSData.logger.debug('replyMsg={}'.format(msg))
@@ -111,7 +109,8 @@ if __name__=="__main__":
 				c.send(json.dumps(replyMsg).encode())# reply back to handler
 			OpenDSSData.logger.debug('sent reply to server')
 
-			if msg['method'].lower()=='computestep' or msg['method'].lower()=='monitor':# write to disk after sending reply
+			# write to disk after sending reply
+			if msg['method'].lower()=='computestep' or msg['method'].lower()=='monitor':
 				OpenDSSData.logger.info(f'starting monitor::::{msg}')
 				buffer=dssProcedure.monitor(msg['varName'],msg['info']['t'])
 				OpenDSSData.logger.debug('completed monitor')

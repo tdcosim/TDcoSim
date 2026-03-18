@@ -35,9 +35,6 @@ class Procedure(DefaultProcedure):
 			self._procedure.setup()
 			self._procedure.initialize()
 			self._procedure.run()
-####			if GlobalData.config['simulationConfig']['simType']=='dynamic':
-####				generate_output(GlobalData,excel=False)
-####			elif GlobalData.config['simulationConfig']['simType']=='static':
-####				generate_output(GlobalData,excel=False,dataframe=True)
+			#### TODO: update generate_output
 		except:
 			GlobalData.log()
