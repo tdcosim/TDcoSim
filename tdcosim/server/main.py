@@ -11,39 +11,21 @@ from flask import Flask,Response,request
 procMap={}
 
 
-def process_costadmg_interface_data(switchStatus):
-	res={}
-	for entry in switchStatus:
-		switchId=entry['ArSwitch.Switch'].replace('switch::','Line.').replace("'","")
-		for item in entry['AnalysisResultData.Curve']['AnalysisResultCurve.CurveDatas']:
-			if not item['ArCurveData.xvalue'] in res:
-				res[int(item['ArCurveData.xvalue'])]=[]
-			res[int(item['ArCurveData.xvalue'])].append([switchId,'Enabled',item['ArCurveData.DataValues']['AvSwitch.open']])
-
-	costadmgInterfaceData=[]
-	for t in res:
-		timestepData={'time':t,'data':{'asset':[],'property':[],'value':[]}}
-		for item in res[t]:
-			timestepData['data']['asset'].append(item[0])
-			timestepData['data']['property'].append(item[1])
-			timestepData['data']['value'].append(item[2])
-		costadmgInterfaceData.append(timestepData)
-
-	return costadmgInterfaceData
-
-
 #=======================================================================================================================
 def run():
 	data=request.json
 	runUUID=uuid.uuid4().hex
 	if data:
 		config=data['config']
-		switchStatus=data['switch_status']
+		ravensData=data['solution']
 		config['costadmg_interface']={'distribution':{}}
 
-		for busId in switchStatus:
+		for busId in data['td_interface']:
 			config['costadmg_interface']['distribution'][busId]=\
-				{'set':process_costadmg_interface_data(switchStatus[busId])}
+				{'set':ravens2tdcosim(ravensData,busId)}
+
+		nDis=len(config['costadmg_interface']['distribution'][busId]['set'])
+		config['simulationConfig']['staticConfig']['loadShape']=[1]*nDis
 
 		fpath=f'/tmp/{runUUID}.json'
 		config['outputConfig']['outputDir']='/tmp'
@@ -58,6 +40,62 @@ def run():
 	res.mimetype='application/json'
 	res.response=json.dumps({"success":True,"uuid":runUUID})
 	return res
+
+
+#=======================================================================================================================
+def get_ravens_switch_status_data(ravensData):
+	inputData=ravensData['OptimalPowerFlow']['OperationsResult.Switches']
+	data={e['ArSwitch.Switch'].replace('Switch::','').replace("'",''):e for e in inputData}
+
+	res={}
+	for loadId in data:
+		for item in data[loadId]['AnalysisResultData.Curve']['AnalysisResultCurve.CurveDatas']:
+			t=item['ArCurveData.xvalue']
+			if t not in res:
+				res[t]={'asset':[],'property':[],'value':[]}
+			res[t]['asset'].append(f'Line.{loadId}')
+			res[t]['property'].append('Enabled')
+			res[t]['value'].append(not item['ArCurveData.DataValues']['AvSwitch.open'])
+
+	return res
+
+
+#=======================================================================================================================
+def get_ravens_loadshed_data(ravensData):
+	inputData=ravensData['OptimalPowerFlow']['OperationsResult.Statuses']
+	data={e['ArStatus.ConductingEquipment'].replace('EnergyConsumer::','').replace("'",''):e for e in inputData \
+		if 'EnergyConsumer' in e['ArStatus.ConductingEquipment']}
+
+	res={}
+	for loadId in data:
+		for item in data[loadId]['AnalysisResultData.Curve']['AnalysisResultCurve.CurveDatas']:
+			t=item['ArCurveData.xvalue']
+			if t not in res:
+				res[t]={'asset':[],'property':[],'value':[]}
+			res[t]['asset'].append(f'Load.{loadId}')
+			res[t]['property'].append('Enabled')
+			res[t]['value'].append(item['ArCurveData.DataValues']['AvStatus.inService'])
+
+	return res
+
+
+#=======================================================================================================================
+def ravens2tdcosim(ravensData,busId):
+	res_switch=get_ravens_switch_status_data(ravensData)
+	res_loadshed=get_ravens_loadshed_data(ravensData)
+
+	res={}
+	for t in res_switch:
+		res[t]={'asset':[],'property':[],'value':[]}
+		for entry in res[t]:
+			res[t][entry].extend(res_switch[t][entry])
+			res[t][entry].extend(res_loadshed[t][entry])
+
+	t=list(res.keys())
+	t.sort()
+	reply=[{'time':timestep,'data':res[timestep]} for timestep in t]
+
+	return reply
 
 
 #=======================================================================================================================

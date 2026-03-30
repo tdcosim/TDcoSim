@@ -149,7 +149,6 @@ class DefaultDynamicProcedure(DefaultProcedure):
 							nPart+=1; lastWriteInd=stepCount
 						stepCount+=1
 
-						#mismatch=Vprev-V ####TODO: Need to update mismatch
 						####TODO: tight_coupling isn't implemented
 						if GlobalData.config['simulationConfig']['protocol'].lower()==\
 						'tight_coupling' and mismatch>tol:

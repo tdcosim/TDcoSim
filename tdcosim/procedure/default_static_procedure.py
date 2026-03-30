@@ -111,6 +111,7 @@ class DefaultStaticProcedure(DefaultProcedure):
 					success=self.costadmg_interface_distribution_handler(count)
 					assert success,'costadmg interface failed to set values'
 				S = self._dnet_model.getLoad()# get complex power injection
+				print(S,Vpcc)
 
 				self._tnet_model.setLoad(S)# set complex power injection as seen from T side
 				Vcheck[:,0]=Vcheck[:,1]#iterate for tight coupling
