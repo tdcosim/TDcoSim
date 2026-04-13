@@ -1,12 +1,23 @@
+import os
+import sys
 import json
 import uuid
 from http import HTTPStatus
 import subprocess
 import shlex
+import logging
 
 import psutil
 from flask import Flask,Response,request
 
+formatStr='%(asctime)s::%(name)s::%(filename)s::%(funcName)s::'+\
+	'%(levelname)s::%(message)s::%(threadName)s::%(process)d'
+logging.basicConfig(stream=sys.stdout,level=logging.INFO,format=formatStr)
+logger=logging.getLogger(__name__)
+
+baseDir=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+transmissionDataDir=os.path.join(baseDir,'data','transmission','matpower')
+distributionDataDir=os.path.join(baseDir,'data','distribution')
 
 procMap={}
 
@@ -15,19 +26,47 @@ procMap={}
 def run():
 	data=request.json
 	runUUID=uuid.uuid4().hex
+	logger.info(f'runUUID:{runUUID}')
 	if data:
 		config=data['config']
 		ravensData=data['solution']
 		config['costadmg_interface']={'distribution':{}}
+		updateTransmissionFile=True if 'transmission_file_data' in data and data['transmission_file_data'] else False
+		updateDistributionFile=True if 'distribution_file_data' in data and data['distribution_file_data'] else False
 
 		for busId in data['td_interface']:
 			config['costadmg_interface']['distribution'][busId]=\
 				{'set':ravens2tdcosim(ravensData,busId)}
 
+		if updateTransmissionFile:
+			transmissionDir=os.path.join(transmissionDataDir,runUUID)
+			os.system(f'mkdir {transmissionDir}')
+			casename=data['transmission_file_data']['casename']
+			if '.m' not in casename:
+				casename+='.m'
+			transmissionFilePath=os.path.join(transmissionDir,casename)
+			f=open(transmissionFilePath,'w')
+			f.write(data['transmission_file_data']['file'])
+			f.close()
+			config['matpowerConfig']['filePath']=transmissionFilePath
+
+		if updateDistributionFile:
+			nodeConfig=config['openDSSConfig']['manualFeederConfig']['nodes']=[]
+			for node in data['distribution_file_data']:
+				entrypoint=data['distribution_file_data'][node]['entrypoint']
+				distributionDir=os.path.join(distributionDataDir,runUUID)
+				os.system(f'mkdir {distributionDir}')
+				for dssFile in data['distribution_file_data'][node]['files']:
+					f=open(os.path.join(distributionDir,dssFile),'w')
+					f.write(data['distribution_file_data'][node]['files'][dssFile])
+					f.close()
+				nodeConfig.append({'nodenumber':int(node),'filePath':[os.path.join(distributionDir,entrypoint)]})
+
 		nDis=len(config['costadmg_interface']['distribution'][busId]['set'])
 		config['simulationConfig']['staticConfig']['loadShape']=[1]*nDis
 
 		fpath=f'/tmp/{runUUID}.json'
+		logger.info(f'config path:{fpath}')
 		config['outputConfig']['outputDir']='/tmp'
 		config['outputConfig']['simID']=runUUID
 		json.dump(config,open(fpath,'w'))

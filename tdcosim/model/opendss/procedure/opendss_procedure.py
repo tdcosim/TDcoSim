@@ -94,3 +94,7 @@ class OpenDSSProcedure(object):
 	def setter(self,data):
 		return self._opendssinterface.setter(data)
 
+#===================================================================================================
+	def post_checker(self):
+		return self._opendssinterface.post_checker()
+

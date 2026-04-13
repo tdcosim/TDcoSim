@@ -74,6 +74,16 @@ class MatpowerModel:
 		return Vpcc
 
 #=======================================================================================================================
+	def post_checker(self,vmin=0.9,vmax=1.1):
+		success=True
+		vm=self._get_voltage(returnAsList=False)
+		violation=np.where((vm < vmin) | (vm > vmax))
+		if violation[0].shape[0]>0:
+			GlobalData.log(20,f'violation:{vm[violation[0]]}')
+			success=False
+		return success
+
+#=======================================================================================================================
 	def _get_voltage(self,returnAsList=True):
 		startTime=time.time()
 		vm=self.oc.get_mpc('bus','vm');

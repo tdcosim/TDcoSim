@@ -447,3 +447,16 @@ class OpenDSSInterface(object):
 				break
 		return success
 
+#===================================================================================================
+	def post_checker(self, vmin=0.95, vmax=1.05):
+		success=True
+		vm=self.Circuit.AllBusVmagPu
+		violation=np.where(((vm < vmin) & (vm>=0.5)) | (vm > vmax))
+		if violation[0].shape[0]>0:
+			success=False
+		return success
+
+
+
+
+

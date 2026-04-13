@@ -85,6 +85,9 @@ if __name__=="__main__":
 			elif msg['method'].lower()=='getload':
 				replyMsg['P'],replyMsg['Q'],replyMsg['convergenceFlg'],replyMsg['derX']=\
 				dssProcedure.getLoad(pccName=msg['pccName'],t=msg['t'],dt=msg['dt'])
+				# run post_checker
+				replyMsg['postCheckerFlag']=dssProcedure.post_checker()
+				OpenDSSData.logger.info(f'postCheckerFlag::::{replyMsg}')
 			elif msg['method'].lower()=='scaleload':
 				dssProcedure.scaleLoad(scale=msg['scale'])
 			elif msg['method'].lower()=='setter':

@@ -64,16 +64,17 @@ class DefaultStaticProcedure(DefaultProcedure):
 		return success
 
 #===================================================================================================
-	def costadmg_interface_output(self,data,t):
+	def costadmg_interface_output(self,data,t,postCheckerFlag):
 		simId=GlobalData.config['outputConfig']['simID']
 		fpath=os.path.join(GlobalData.config['outputConfig']['outputDir'],f'costadmg_results_{simId}.csv')
 		GlobalData.log(level=20,msg=fpath)
 		GlobalData.log(level=20,msg=f"dir::::{GlobalData.config['outputConfig']['outputDir']}")
-		success=True
-		for busId in data:
-			if not data[busId]['convergenceFlg']:
-				success=False
-				break
+		success=postCheckerFlag
+		if success:
+			for busId in data:
+				if not data[busId]['convergenceFlg']:
+					success=False
+					break
 		f=open(fpath,'a')
 		f.write(f'{t},{success}\n')
 		f.close()
@@ -111,7 +112,6 @@ class DefaultStaticProcedure(DefaultProcedure):
 					success=self.costadmg_interface_distribution_handler(count)
 					assert success,'costadmg interface failed to set values'
 				S = self._dnet_model.getLoad()# get complex power injection
-				print(S,Vpcc)
 
 				self._tnet_model.setLoad(S)# set complex power injection as seen from T side
 				Vcheck[:,0]=Vcheck[:,1]#iterate for tight coupling
@@ -119,7 +119,13 @@ class DefaultStaticProcedure(DefaultProcedure):
 				iteration+=1
 
 			if hasCostadmgInterface:
-				self.costadmg_interface_output(S,count)
+				postCheckerFlagTransmission=self._tnet_model.post_checker()
+				postCheckerFlagDistribution=True
+				for entry in S:
+					if not S[entry]['postCheckerFlag']:
+						postCheckerFlagDistribution=False
+				postCheckerFlag=True if postCheckerFlagTransmission and postCheckerFlagDistribution else False
+				self.costadmg_interface_output(S,count,postCheckerFlag)
 
 			progressBar.update(1)
 			GlobalData.log(20,'Loadshape {} Converged in {} iterations with mismatch {}'.format(\
